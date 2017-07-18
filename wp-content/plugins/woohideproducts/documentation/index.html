@@ -1,0 +1,254 @@
+<!doctype html>  
+<!--[if IE 6 ]><html lang="en-us" class="ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en-us" class="ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en-us" class="ie8"> <![endif]-->
+<!--[if (gt IE 7)|!(IE)]><!-->
+<html lang="en-us"><!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	
+	<title>WooCommerce Hide Products by User Roles</title>
+	
+	<meta name="description" content="">
+	<meta name="author" content="CodeWooGeek">
+	<meta name="copyright" content="CodeWooGeek">
+	<meta name="generator" content="Documenter v2.0 http://rxa.li/documenter">
+	<meta name="date" content="2016-05-29T00:00:00+02:00">
+	
+	<link rel="stylesheet" href="assets/css/documenter_style.css" media="all">
+	
+	
+	
+	<script src="assets/js/jquery.js"></script>
+	
+	<script src="assets/js/jquery.scrollTo.js"></script>
+	<script src="assets/js/jquery.easing.js"></script>
+	
+	<script>document.createElement('section');var duration='500',easing='swing';</script>
+	<script src="assets/js/script.js"></script>
+	
+	<style>
+		html{background-color:#FFFFFF;color:#383838;}
+		::-moz-selection{background:#444444;color:#DDDDDD;}
+		::selection{background:#444444;color:#DDDDDD;}
+		#documenter_sidebar #documenter_logo{background-image:url(assets/images/image_5.png);}
+		a{color:#0000FF;}
+		.btn {
+			border-radius:3px;
+		}
+		.btn-primary {
+			  background-image: -moz-linear-gradient(top, #0088CC, #0044CC);
+			  background-image: -ms-linear-gradient(top, #0088CC, #0044CC);
+			  background-image: -webkit-gradient(linear, 0 0, 0 0088CC%, from(#DDDDDD), to(#0044CC));
+			  background-image: -webkit-linear-gradient(top, #0088CC, #0044CC);
+			  background-image: -o-linear-gradient(top, #0088CC, #0044CC);
+			  background-image: linear-gradient(top, #0088CC, #0044CC);
+			  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088CC', endColorstr='#0044CC', GradientType=0);
+			  border-color: #0044CC #0044CC #bfbfbf;
+			  color:#FFFFFF;
+		}
+		.btn-primary:hover,
+		.btn-primary:active,
+		.btn-primary.active,
+		.btn-primary.disabled,
+		.btn-primary[disabled] {
+		  border-color: #0088CC #0088CC #bfbfbf;
+		  background-color: #0044CC;
+		}
+		hr{border-top:1px solid #EBEBEB;border-bottom:1px solid #FFFFFF;}
+		#documenter_sidebar, #documenter_sidebar ul a{background-color:#DDDDDD;color:#222222;}
+		#documenter_sidebar ul a{-webkit-text-shadow:1px 1px 0px #EEEEEE;-moz-text-shadow:1px 1px 0px #EEEEEE;text-shadow:1px 1px 0px #EEEEEE;}
+		#documenter_sidebar ul{border-top:1px solid #AAAAAA;}
+		#documenter_sidebar ul a{border-top:1px solid #EEEEEE;border-bottom:1px solid #AAAAAA;color:#444444;}
+		#documenter_sidebar ul a:hover{background:#444444;color:#DDDDDD;border-top:1px solid #444444;}
+		#documenter_sidebar ul a.current{background:#444444;color:#DDDDDD;border-top:1px solid #444444;}
+		#documenter_copyright{display:block !important;visibility:visible !important;}
+	</style>
+	
+</head>
+<body class="documenter-project-woocommerce-hide-products-by-user-roles">
+	<div id="documenter_sidebar">
+		<a href="#documenter_cover" id="documenter_logo"></a>
+		<ul id="documenter_nav">
+			<li><a class="current" href="#documenter_cover">Start</a></li>
+				
+			<li><a href="#description" title="Description">Description</a></li>
+			<li><a href="#features" title="Features">Features</a></li>
+			<li><a href="#how_to_install_our_plugin" title="How to Install Our Plugin">How to Install Our Plugin</a></li>
+			<li><a href="#how_to_configure_this_plugin" title="How to Configure this Plugin?">How to Configure this Plugin?</a></li>
+			<li><a href="#frequently_ask_questions" title="Frequently Ask Questions">Frequently Ask Questions</a></li>
+			<li><a href="#support" title="Support">Support</a></li>
+
+		</ul>
+		<div id="documenter_copyright">Copyright CodeWooGeek 2016<br>
+		made with the <a href="http://rxa.li/documenter">Documenter v2.0</a> 
+		</div>
+	</div>
+	<div id="documenter_content">
+	<section id="documenter_cover">
+	<h1>WooCommerce Hide Products by User Roles</h1>
+	
+	<div id="documenter_buttons">
+		
+	</div>
+	<hr>
+	<ul>
+	<li>created: 05/29/2016</li>
+	<li>latest update: 05/29/2016</li>
+	<li>by: CodeWooGeek</li>
+	<li><a href=""></a></li>
+	<li>email: <a href="mailto:&#99;&#111;&#100;&#101;&#119;&#111;&#111;&#103;&#101;&#101;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#99;&#111;&#100;&#101;&#119;&#111;&#111;&#103;&#101;&#101;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></li>
+	</ul>
+	<p>Thank you</p>
+	</section>
+	
+	<section id="description">
+	<div class="page-header"><h3>Description</h3><hr class="notop"></div>
+<p>
+	Hi all,</p>
+<div class="alert alert-success">
+	Thanks for purchasing our product :)</div>
+<p>
+	WooCommerce Hide Products by User Role(s) is an Extension for WooCommerce and has some features to hide products based on User Roles. Site admin/Store Owner can decide to bring certain products for certain user role to sell in their site. Install this plugin, configure the products, hide/visible the products right away.</p>
+<p>
+	Once you configured the products by hidden then you cannot view that product(s) from their entire site.</p>
+<p>
+	&nbsp;</p>
+<p>
+	&nbsp;</p>
+</section>
+<section id="features">
+	<div class="page-header"><h3>Features</h3><hr class="notop"></div>
+<ul>
+	<li>
+		Hide entire products from your site based on User Role(s)</li>
+	<li>
+		Hide based on Product(s)</li>
+	<li>
+		Hide based on Categories</li>
+	<li>
+		Sell Products with certain User Role(s)</li>
+	<li>
+		Simple, Effective and Easy to Use</li>
+	<li>
+		Optimized Product Search</li>
+	<li>
+		Include/Exclude Product(s) and Categories</li>
+	<li>
+		and many more</li>
+</ul>
+<p>
+	&nbsp;</p>
+</section>
+<section id="how_to_install_our_plugin">
+	<div class="page-header"><h3>How to Install Our Plugin</h3><hr class="notop"></div>
+<p class="alert alert-info">
+	Installation can be done in couple of mode</p>
+<ol>
+	<li class="alert alert-info">
+		Automatic Installation</li>
+	<li class="alert alert-info">
+		Manual Installation</li>
+</ol>
+<h2 class="alert alert-info">
+	Automatic Installation</h2>
+<p>
+	Automatic Installation mean, Once you download file from Codecanyon no need to unzip the file, you can directly upload it in WordPress Admin Dashboard</p>
+<p>
+	<strong>Go to Admin Dashboard</strong></p>
+<p>
+	<strong>1. Admin Dashboard</strong></p>
+<p>
+	<strong><img alt="" src="assets/images/image_3.png" style="width: 1301px; height: 673px;"></strong></p>
+<p>
+	<strong>2. Add New Plugin</strong></p>
+<p>
+	<strong><img alt="" src="assets/images/image_2.png" style="width: 1282px; height: 620px;"></strong></p>
+<p>
+	<strong>3. Upload Plugin</strong></p>
+<p>
+	<img alt="" src="assets/images/image_6.png" style="width: 1301px; height: 673px;"></p>
+<p>
+	<strong>4. Installing the Plugin</strong></p>
+<p>
+	<img alt="" src="assets/images/image_7.png" style="width: 1301px; height: 673px;"></p>
+<p>
+	<strong>5. Activate the Plugin</strong></p>
+<p>
+	<img alt="" src="assets/images/image_1.png" style="width: 1281px; height: 905px;"></p>
+<h2 class="alert alert-info">
+	Manual Installation</h2>
+<p>
+	Manual Installation mean, Once you download file from Codecanyon, unzip the file take up that unzipped folder upload it to plugins directory in wp-content folder</p>
+<p>
+	Using FTP Client or CPanel you can upload the plugin.</p>
+<p>
+	Once you uploaded you can directly access to Plugin Dashboard in Admin, find the plugin name called<strong> WooCommerce</strong> <strong>Hide Products</strong> finally activate the plugin done.</p>
+<p>
+	&nbsp;</p>
+</section>
+<section id="how_to_configure_this_plugin">
+	<div class="page-header"><h3>How to Configure this Plugin?</h3><hr class="notop"></div>
+<p>
+	Once successfully activated the plugin 70% of work done, remaining 30% can be configured by visiting settings page of WooCommerce Hide Products which represent settings for each user roles.</p>
+<p>
+	It also works for Custom User Role</p>
+<p>
+	Same Options and its value may vary from different User Roles</p>
+<p>
+	1. Hide by -&gt; It has couple of options one is</p>
+<p>
+	a) Products&nbsp; -&gt; Select Individual Product(s) to Hide</p>
+<p>
+	b) Categories -&gt; If Thousands of Products need to be hide Category is the best option to hide products in a bulk manner</p>
+<p>
+	&nbsp;</p>
+<p>
+	If the Hide by Option was choosed &quot;Products&quot; then option to select Multiple Products, If it is Categories then Product Category will be listed as a chosen option to choose from</p>
+<p>
+	2. Include/Exclude Product(s) or Categories</p>
+<p>
+	a) Include (Hidden)</p>
+<p>
+	b) Exclude (Visible)</p>
+<p>
+	&nbsp;</p>
+<p>
+	Include means it hide the selected products/associated products and then other products will be visible</p>
+<p>
+	Exclude means it shows the selected products/associated products and hence other products will be hidden</p>
+<p>
+	&nbsp;</p>
+<p>
+	Settings Page of this Plugin</p>
+<p>
+	<img alt="" src="assets/images/image_4.png"  ></p>
+<p>
+	&nbsp;</p>
+</section>
+<section id="frequently_ask_questions">
+	<div class="page-header"><h3>Frequently Ask Questions</h3><hr class="notop"></div>
+<p>
+	<strong>Q) Plugin Not Hiding my Products?</strong></p>
+<p>
+	A) Please do cross check by switch back default wordpress theme to see if the problem persist with default, if so let us know, otherwise it incompatibility with your theme.</p>
+<p>
+	<strong>Q)</strong> <strong>Is it work with Custom User Role?</strong></p>
+<p>
+	A) Yes it dynamically fetch and list Custom User Role in Settings, there you can configure to show/hide</p>
+<p>
+	<strong>Q)</strong> <strong>What does Include/Exclude mean?</strong></p>
+<p>
+	A) It means simple term to Hide/Show, If i select Products and choose Include means selected products alone will hidden and other existing products will be visible, for Exclude Selected Products will be shown and other existing products will be hidden</p>
+<p>
+	&nbsp;</p>
+</section>
+<section id="support">
+	<div class="page-header"><h3>Support</h3><hr class="notop"></div>
+<p>
+	We always happy to assist you :) Please feel free to contact us at &#99;&#111;&#100;&#101;&#119;&#111;&#111;&#103;&#101;&#101;&#107;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109; or comment us in codecanyon.</p>
+</section>
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+# Copyright (C) 2015 WooThemes
+# This file is distributed under the same license as the WooCommerce package.
+# Translators:
+# ideodora <ideodora@gmail.com>, 2013
+# Naoko Takano <naokomc@gmail.com>, 2015
+# 田中　昌平 <shohei.tanaka@artisanworkshop.biz>, 2013
+# ThemeBoy <support@themeboy.com>, 2014
+# 田中　昌平 <shohei.tanaka@artisanworkshop.biz>, 2013-2015
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce\n"
+"Report-Msgid-Bugs-To: https://github.com/woothemes/woocommerce/issues\n"
+"POT-Creation-Date: 2015-08-24 16:25:50+00:00\n"
+"PO-Revision-Date: 2015-09-07 00:46+0000\n"
+"Last-Translator: 田中　昌平 <shohei.tanaka@artisanworkshop.biz>\n"
+"Language-Team: Japanese (http://www.transifex.com/woothemes/woocommerce/language/ja/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: grunt-wp-i18n 0.5.3\n"
+
+#: i18n/states/JP.php:13
+msgid "Hokkaido"
+msgstr "北海道"
+
+#: i18n/states/JP.php:14
+msgid "Aomori"
+msgstr "青森県"
+
+#: i18n/states/JP.php:15
+msgid "Iwate"
+msgstr "岩手県"
+
+#: i18n/states/JP.php:16
+msgid "Miyagi"
+msgstr "宮城県"
+
+#: i18n/states/JP.php:17
+msgid "Akita"
+msgstr "秋田県"
+
+#: i18n/states/JP.php:18
+msgid "Yamagata"
+msgstr "山形県"
+
+#: i18n/states/JP.php:19
+msgid "Fukushima"
+msgstr "福島県"
+
+#: i18n/states/JP.php:20
+msgid "Ibaraki"
+msgstr "茨城県"
+
+#: i18n/states/JP.php:21
+msgid "Tochigi"
+msgstr "栃木県"
+
+#: i18n/states/JP.php:22
+msgid "Gunma"
+msgstr "群馬県"
+
+#: i18n/states/JP.php:23
+msgid "Saitama"
+msgstr "埼玉県"
+
+#: i18n/states/JP.php:24
+msgid "Chiba"
+msgstr "千葉県"
+
+#: i18n/states/JP.php:25
+msgid "Tokyo"
+msgstr "東京都"
+
+#: i18n/states/JP.php:26
+msgid "Kanagawa"
+msgstr "神奈川県"
+
+#: i18n/states/JP.php:27
+msgid "Niigata"
+msgstr "新潟県"
+
+#: i18n/states/JP.php:28
+msgid "Toyama"
+msgstr "富山県"
+
+#: i18n/states/JP.php:29
+msgid "Ishikawa"
+msgstr "石川県"
+
+#: i18n/states/JP.php:30
+msgid "Fukui"
+msgstr "福井県"
+
+#: i18n/states/JP.php:31
+msgid "Yamanashi"
+msgstr "山梨県"
+
+#: i18n/states/JP.php:32
+msgid "Nagano"
+msgstr "長野県"
+
+#: i18n/states/JP.php:33
+msgid "Gifu"
+msgstr "岐阜県"
+
+#: i18n/states/JP.php:34
+msgid "Shizuoka"
+msgstr "静岡県"
+
+#: i18n/states/JP.php:35
+msgid "Aichi"
+msgstr "愛知県"
+
+#: i18n/states/JP.php:36
+msgid "Mie"
+msgstr "三重県"
+
+#: i18n/states/JP.php:37
+msgid "Shiga"
+msgstr "滋賀県"
+
+#: i18n/states/JP.php:38
+msgid "Kyoto"
+msgstr "京都府"
+
+#: i18n/states/JP.php:39
+msgid "Osaka"
+msgstr "大阪府"
+
+#: i18n/states/JP.php:40
+msgid "Hyogo"
+msgstr "兵庫県"
+
+#: i18n/states/JP.php:41
+msgid "Nara"
+msgstr "奈良県"
+
+#: i18n/states/JP.php:42
+msgid "Wakayama"
+msgstr "和歌山県"
+
+#: i18n/states/JP.php:43
+msgid "Tottori"
+msgstr "鳥取県"
+
+#: i18n/states/JP.php:44
+msgid "Shimane"
+msgstr "島根県"
+
+#: i18n/states/JP.php:45
+msgid "Okayama"
+msgstr "岡山県"
+
+#: i18n/states/JP.php:46
+msgid "Hiroshima"
+msgstr "広島県"
+
+#: i18n/states/JP.php:47
+msgid "Yamaguchi"
+msgstr "山口県"
+
+#: i18n/states/JP.php:48
+msgid "Tokushima"
+msgstr "徳島県"
+
+#: i18n/states/JP.php:49
+msgid "Kagawa"
+msgstr "香川県"
+
+#: i18n/states/JP.php:50
+msgid "Ehime"
+msgstr "愛媛県"
+
+#: i18n/states/JP.php:51
+msgid "Kochi"
+msgstr "高知県"
+
+#: i18n/states/JP.php:52
+msgid "Fukuoka"
+msgstr "福岡県"
+
+#: i18n/states/JP.php:53
+msgid "Saga"
+msgstr "佐賀県"
+
+#: i18n/states/JP.php:54
+msgid "Nagasaki"
+msgstr "長崎県"
+
+#: i18n/states/JP.php:55
+msgid "Kumamoto"
+msgstr "熊本県"
+
+#: i18n/states/JP.php:56
+msgid "Oita"
+msgstr "大分県"
+
+#: i18n/states/JP.php:57
+msgid "Miyazaki"
+msgstr "宮崎県"
+
+#: i18n/states/JP.php:58
+msgid "Kagoshima"
+msgstr "鹿児島県"
+
+#: i18n/states/JP.php:59
+msgid "Okinawa"
+msgstr "沖縄県"
+

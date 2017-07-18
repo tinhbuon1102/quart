@@ -1,0 +1,333 @@
+﻿<?php
+// File Security Check
+if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename( $_SERVER['SCRIPT_FILENAME'] ) ) {
+    die ( 'You do not have sufficient permissions to access this page!' );
+}
+?>
+<?php
+
+
+/*-----------------------------------------------------------------------------------*/
+/* Start WooThemes Functions - Please refrain from editing this section */
+/*-----------------------------------------------------------------------------------*/
+
+// Define the theme-specific key to be sent to PressTrends.
+define( 'WOO_PRESSTRENDS_THEMEKEY', 'zdmv5lp26tfbp7jcwiw51ix9sj389e712' );
+
+// WooFramework init
+require_once ( get_template_directory() . '/functions/admin-init.php' );
+
+/*-----------------------------------------------------------------------------------*/
+/* Load the theme-specific files, with support for overriding via a child theme.
+/*-----------------------------------------------------------------------------------*/
+
+$includes = array(
+				'includes/theme-options.php', 			// Options panel settings and custom settings
+				'includes/theme-functions.php', 		// Custom theme functions
+				'includes/theme-actions.php', 			// Theme actions & user defined hooks
+				'includes/theme-comments.php', 			// Custom comments/pingback loop
+				'includes/theme-js.php', 				// Load JavaScript via wp_enqueue_script
+				'includes/sidebar-init.php', 			// Initialize widgetized areas
+				'includes/theme-widgets.php',			// Theme widgets
+				'includes/theme-install.php',			// Theme installation
+				'includes/theme-woocommerce.php',		// WooCommerce options
+				'includes/theme-plugin-integrations.php'	// Plugin integrations
+				);
+
+// Allow child themes/plugins to add widgets to be loaded.
+$includes = apply_filters( 'woo_includes', $includes );
+
+foreach ( $includes as $i ) {
+	locate_template( $i, true );
+}
+
+/*-----------------------------------------------------------------------------------*/
+/* You can add custom functions below */
+/*-----------------------------------------------------------------------------------*/
+
+
+
+
+
+//管理バーを非表示
+add_filter( 'show_admin_bar', '__return_false' );
+
+
+add_filter( 'woocommerce_product_tabs', 'wcs_woo_remove_reviews_tab', 98 );
+function wcs_woo_remove_reviews_tab($tabs) {
+ unset($tabs['reviews']);
+ return $tabs;
+}
+
+
+/*-----------------------------------------------------------------------------------*/
+/* Don't add any code below here or the sky will fall down */
+/*-----------------------------------------------------------------------------------*/
+
+function wc_custom_shop_archive_title( $title ) {
+    if ( is_shop() ) {
+        return str_replace( __( 'Products', 'woocommerce' ), 'Products', $title );
+    }
+
+    return $title;
+}
+add_filter( 'wp_title', 'wc_custom_shop_archive_title' );
+add_filter( 'woocommerce_breadcrumb_defaults', 'jk_change_breadcrumb_home_text' );
+function jk_change_breadcrumb_home_text( $defaults ) {
+    // Change the breadcrumb home text from 'Home' to 'HOME'
+	$defaults['home'] = 'HOME';
+	return $defaults;
+}
+add_filter( 'woocommerce_product_single_add_to_cart_text', 'woo_custom_cart_button_text' );    // 2.1 +
+ 
+function woo_custom_cart_button_text() {
+
+ 
+        return __( 'ADD TO CART', 'woocommerce' );
+ 
+}
+//////////////////////////////////////////WIDGET/////////////////////////////////////////////
+// Creating the widget
+	class wpb_widget extends WP_Widget {
+	function __construct() {
+	parent::__construct(
+	// Base ID of your widget
+	'wpb_widget',
+	// Widget name will appear in UI
+	__('WPBeginner Widget', 'wpb_widget_domain'),
+	// Widget description
+	array( 'description' => __( 'Sample widget based on WPBeginner Tutorial', 'wpb_widget_domain' ), )
+	);
+	}
+// Creating widget front-end
+	// This is where the action happens
+	public function widget( $args, $instance ) 
+	
+	{
+$taxonomies = array( 
+    'product_cat'
+);
+
+$args = array(
+    'orderby'           => 'id', 
+    'order'             => 'DESC',
+    'hide_empty'        => false, 
+    'number'            => '', 
+    'fields'            => 'all', 
+    'slug'              => '',
+    'parent'            => 0,
+    'hierarchical'      => true, 
+    'child_of'          => 0,
+    'childless'         => false
+); 
+
+$terms = get_terms($taxonomies, $args);
+foreach ($terms as $term)
+{
+	$termiid=$term->term_id;
+	?>
+    <style type="text/css">
+	.sssx::after {
+    content: "+";
+	font-size: 25px;
+}
+.cat-item
+{
+	list-style:none;
+}
+.subitem {
+    font-size: 13px;
+    list-style: outside none none;
+    margin-left: -23px;
+}
+li.subitem a{color:#c9b8b5;}
+	</style>
+<script type="text/javascript">
+
+function calltosee()
+{
+	jQuery('#wert').toggle();
+}
+jQuery('.dcft').click(function(){
+	jQuery('#wert').toggle();
+	});
+	
+jQuery('.dcftx').click(function(){
+	jQuery('#wert').hide();
+	jQuery('#wert').css( "display", "none" );
+	jQuery('.sssx').removeClass('dcftx');
+	jQuery('.sssx').addClass('dcft');
+});
+	
+</script> 
+    <li class="cat-item cat-item-<?php echo $termiid;?>" style="font-size:16px;">
+    <a <?php if($termiid==14){?> href="javascript:void(0);" onclick="calltosee();" <?php } else{?>href="<?php echo get_term_link($term );?>"<?php } ?>>
+	<?php echo $term->name;?></a><?php if($termiid==14){?><span class="sssx dcft"></span><?php }?>
+<?php
+$taxonomiesx = array('product_cat');									
+$argsx = array(
+    'orderby'           => 'id', 
+    'order'             => 'DESC',
+    'hide_empty'        => false, 
+    'number'            => '', 
+    'fields'            => 'all', 
+    'slug'              => '',
+    'parent'            => $termiid,
+    'hierarchical'      => true, 
+    'child_of'          => 0,
+    'childless'         => false
+); 
+
+$termxs = get_terms($taxonomiesx, $argsx);
+if (!empty($termxs))
+{
+				?>
+                	<ul class="cute" <?php if($termiid==14){?>style="display:none;" id="wert"<?php }?>>
+                    <?php 
+					foreach($termxs as $termx)
+					{
+						$term=get_term_by('id',$term_childern,$taxonomy_name);
+						echo '<li class="subitem"><a href="'.get_term_link($termx).'">'.$termx->name.'</a></li>';
+$argsy = array(
+    'orderby'           => 'id', 
+    'order'             => 'DESC',
+    'hide_empty'        => false, 
+    'number'            => '', 
+    'fields'            => 'all', 
+    'slug'              => '',
+    'parent'            => $termx->term_id,
+    'hierarchical'      => true, 
+    'child_of'          => 0,
+    'childless'         => false
+); 
+$termys = get_terms($taxonomiesx, $argsy);
+if (!empty($termys))
+{
+?>
+<ul class="cutesubb">
+                    <?php 
+					foreach($termys as $termy)
+					{
+						echo '<li class="subitem sub"><a href="'.get_term_link($termy).'">'.$termy->name.'</a></li>';
+
+					}
+					?>
+</ul>
+<?php
+}
+					} 
+					?>	
+                    </ul>
+                    <?php } ?>
+                    </li>
+
+    <?php
+	
+}
+	}
+	
+	// Widget Backend
+	public function form( $instance ) {
+	if ( isset( $instance[ 'title' ] ) ) {
+	$title = $instance[ 'title' ];
+	}
+	else {
+	$title = __( 'New title', 'wpb_widget_domain' );
+	}
+	// Widget admin form
+	?>
+	<p>
+	<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+	</p>
+	<?php
+	}
+	// Updating widget replacing old instances with new
+	public function update( $new_instance, $old_instance ) {
+	$instance = array();
+	$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+	return $instance;
+	}
+	} // Class wpb_widget ends here
+// Register and load the widget
+	function wpb_load_widget() {
+	    register_widget( 'wpb_widget' );
+	}
+	add_action( 'widgets_init', 'wpb_load_widget' );
+	remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
+register_nav_menu( 'footer-navi', 'フッターのナビゲーション' );
+// Override theme default specification for product # per row
+function loop_columns() {
+return 3; // 3 products per row
+}
+add_filter('loop_shop_columns', 'loop_columns', 999);
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cart_totals', 10 );
+add_action ("woocommerce_after_shop_loop", "add_footer_menu_shop") ;
+function add_footer_menu_shop(){
+	$shopmenu = get_terms('product_cat', array('hide_empty' => 0, 'orderby' => 'id', 'order' => 'DESC',  'parent' =>0)); //, 'exclude' => '17,77'		
+?>
+<div class="primary">
+<div class="mobile category-product-menu" 
+<ul>
+<?php foreach($shopmenu as $menu){ 
+		$wsubargs = array(
+		   'hierarchical' => 1,
+		   'show_option_none' => '',
+		   'hide_empty' => 0,
+		   'parent' => $menu->term_id,
+		   'taxonomy' => 'product_cat'
+		);
+		$wsubcats = get_categories($wsubargs);
+
+		?>
+		<li class="cat-item cat-item-<?php echo $menu->id ;?>">	
+			<?php if($wsubcats) {?>
+				<a href="#" ><?php echo $menu->name; ?> +</a>
+				<ul class="cute submenu" style="display: none;">
+			<?php
+				foreach ($wsubcats as $wsc){
+					$tmp = array(
+					   'hierarchical' => 1,
+					   'show_option_none' => '',
+					   'hide_empty' => 0,
+					   'parent' => $wsc->term_id,
+					   'taxonomy' => 'product_cat'
+					);
+					$sub3menu = get_categories($tmp);
+					
+				?>
+				<li class="subitem">
+					<a href="<?php echo get_term_link( $wsc->slug, $wsc->taxonomy );?>"><?php echo $wsc->name;?></a>
+					<?php if($sub3menu) {?>
+						<ul class="cute">
+						<?php foreach($sub3menu as $menu2){ ?>
+							<li class="subitem2">
+								<a href="<?php echo get_term_link( $menu2->slug, $menu2->taxonomy );?>"><?php echo $menu2->name;?></a>
+							</li>
+						<?php } ?>
+						</ul>
+					
+					<?php } ?>
+				</li>
+			<?php } ?>
+				</ul>
+		<?php }else{ ?>
+			<a href="<?php echo get_term_link( $menu->slug, $menu->taxonomy ); ?>"><?php echo $menu->name; ?></a>
+		<?php } ?>
+		</li>
+<?php }?>
+</ul>
+</div>
+</div>
+<script>
+jQuery(function($){
+	$(".category-product-menu li.cat-item > a").click(function(event){
+		event.preventDefault();
+		$(this).parent().find(".submenu").toggle();
+	});
+});
+</script>
+<?php
+}

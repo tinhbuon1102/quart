@@ -1,0 +1,398 @@
+# Copyright (C) 2015 Flat Rate per State/Country/Region for WooCommerce
+# This file is distributed under the same license as the Flat Rate per State/Country/Region for WooCommerce package.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Flat Rate per State/Country/Region for WooCommerce 2.4.6\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/flat-rate-per-countryregion-for-woocommerce\n"
+"POT-Creation-Date: 2016-08-09 09:57+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Webdados <info@webdados.pt>\n"
+"Language-Team: Webdados <info@webdados.pt>\n"
+"X-Generator: Poedit 1.8.8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: woocommerce_flatrate_percountry.php:41 woocommerce_flatrate_percountry.php:335
+msgid "Flat Rate per State/Country/Region"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:42
+msgid "Allows you to set a flat delivery rate per country and/or world region.<br/><br/>If you set a rate for the client's country it will be used. Otherwise, if you set a rate for client's region it will be used.<br/>If none of the rates are set, the \"Rest of the World\" rate will be used."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:42
+msgid "You can also choose either to apply the shipping fee for the whole order or multiply it per each item."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:81
+msgid "Africa - Eastern Africa"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:85
+msgid "Africa - Middle Africa"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:89
+msgid "Africa - Northern Africa"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:93
+msgid "Africa - Southern Africa"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:97
+msgid "Africa - Western Africa"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:102
+msgid "Americas - Latin America and the Caribbean"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:106
+msgid "Americas - Central America"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:110
+msgid "Americas - South America"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:114
+msgid "Americas - Northern America"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:119
+msgid "Asia - Central Asia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:123
+msgid "Asia - Eastern Asia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:127
+msgid "Asia - Southern Asia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:131
+msgid "Asia - South-Eastern Asia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:135
+msgid "Asia - Western Asia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:140
+msgid "Europe - Eastern Europe"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:144
+msgid "Europe - Northern Europe"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:148
+msgid "Europe - Southern Europe"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:152
+msgid "Europe - Western Europe"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:162 woocommerce_flatrate_percountry.php:167
+msgid "European Union"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:167
+msgid "Monaco and Isle of Man"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:172
+msgid "Oceania - Australia and New Zealand"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:176
+msgid "Oceania - Melanesia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:180
+msgid "Oceania - Micronesia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:184
+msgid "Oceania - Polynesia"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:280
+#, php-format
+msgid "You should now check and, if necessary, translate the rule names and method title on <a href=\"%s\">WPML String Translation</a>"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:321
+msgid "Global settings"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:334
+msgid "(If chosen below)"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:339
+msgid "Label to show to the user"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:341
+msgid "Choose either to show the region name, the country name, the method title (or a combination of these) on the checkout screen."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:344 woocommerce_flatrate_percountry.php:347 woocommerce_flatrate_percountry.php:554 woocommerce_flatrate_percountry.php:643
+msgid "Country"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:345 woocommerce_flatrate_percountry.php:348
+msgid "State or Country or Region name or \"Rest of the World\""
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:346
+msgid "(as defined above)"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:349 woocommerce_flatrate_percountry.php:385 woocommerce_flatrate_percountry.php:475 woocommerce_flatrate_percountry.php:564 woocommerce_flatrate_percountry.php:664
+msgid "Rule name"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:365
+msgid "Remove \"(Free)\""
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:367
+msgid "If the final rate is zero, remove the \"(Free)\" text from the checkout screen. Useful if you need to get a quote for the shipping cost from the carrier."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:368
+msgid "Remove \"(Free)\" from checkout if delivery rate equals zero"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:373
+msgid "\"Rest of the World\" Rates"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:377
+msgid "Disable"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:379
+msgid "If this checkbox is enabled, this shipping method will only be available for the World Regions, Countries and States rules set below."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:380
+msgid "Disable \"Rest of the World\" fee"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:387 woocommerce_flatrate_percountry.php:477 woocommerce_flatrate_percountry.php:566 woocommerce_flatrate_percountry.php:666
+msgid "The name for this rule, if you choose to show it to the client."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:388 woocommerce_flatrate_percountry.php:1193
+msgid "Rest of the World"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:393 woocommerce_flatrate_percountry.php:483 woocommerce_flatrate_percountry.php:572 woocommerce_flatrate_percountry.php:672
+msgid "Apply rate"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:395 woocommerce_flatrate_percountry.php:485 woocommerce_flatrate_percountry.php:574 woocommerce_flatrate_percountry.php:674
+msgid "Choose either to apply the shipping fee for the whole order or multiply it per each item."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:398 woocommerce_flatrate_percountry.php:488 woocommerce_flatrate_percountry.php:577 woocommerce_flatrate_percountry.php:677
+msgid "Per order"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:399 woocommerce_flatrate_percountry.php:489 woocommerce_flatrate_percountry.php:578 woocommerce_flatrate_percountry.php:678
+msgid "Per item"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:404 woocommerce_flatrate_percountry.php:494 woocommerce_flatrate_percountry.php:583 woocommerce_flatrate_percountry.php:683
+msgid "Rate"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:406
+msgid "The shipping fee for all the Countries/Regions not specified below."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:412 woocommerce_flatrate_percountry.php:502 woocommerce_flatrate_percountry.php:591 woocommerce_flatrate_percountry.php:691
+msgid "Free for orders above"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:414 woocommerce_flatrate_percountry.php:504 woocommerce_flatrate_percountry.php:593 woocommerce_flatrate_percountry.php:693
+msgid "The shipping fee will be free if the order total reaches this value. Empty or zero for no free shipping."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:420 woocommerce_flatrate_percountry.php:510 woocommerce_flatrate_percountry.php:599 woocommerce_flatrate_percountry.php:699
+msgid "Free for shipping classes"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:420 woocommerce_flatrate_percountry.php:422 woocommerce_flatrate_percountry.php:510 woocommerce_flatrate_percountry.php:512 woocommerce_flatrate_percountry.php:599 woocommerce_flatrate_percountry.php:601 woocommerce_flatrate_percountry.php:699
+#: woocommerce_flatrate_percountry.php:701
+msgid "Choose all languages variations"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:422
+msgid "The shipping fee will be free if at least one item, or all items, depending on the setting below, belong to the selected shipping classes."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:430 woocommerce_flatrate_percountry.php:520 woocommerce_flatrate_percountry.php:609 woocommerce_flatrate_percountry.php:709
+msgid "Free for shipping classes if"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:432 woocommerce_flatrate_percountry.php:522 woocommerce_flatrate_percountry.php:611 woocommerce_flatrate_percountry.php:711
+msgid "Choose either one item on Shipping Class is enough to set the rate as free or all items should belong to the Shipping Classes."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:435 woocommerce_flatrate_percountry.php:525 woocommerce_flatrate_percountry.php:614 woocommerce_flatrate_percountry.php:714
+msgid "At least one item belongs to the class(es) set above"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:436 woocommerce_flatrate_percountry.php:526 woocommerce_flatrate_percountry.php:615 woocommerce_flatrate_percountry.php:715
+msgid "All items belong to class(es) set above"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:447
+msgid "Per Region Rates"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:451
+msgid "Number of Region rules"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:453
+msgid "How many diferent \"per region\" rates do you want to set?"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:453 woocommerce_flatrate_percountry.php:542 woocommerce_flatrate_percountry.php:631 woocommerce_flatrate_percountry.php:645
+msgid "Please save the options after changing this value."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:460
+#, php-format
+msgid "Region rule #%s"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:465
+msgid "Region"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:467
+msgid "Choose one or more regions for this rule."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:496
+msgid "The shipping fee for the regions specified above."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:512 woocommerce_flatrate_percountry.php:601 woocommerce_flatrate_percountry.php:701
+msgid "The shipping fee will be free if at least one item belongs to the selected shipping classes."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:536
+msgid "Per Country Rates"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:540
+msgid "Number of Country rules"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:542
+msgid "How many diferent \"per country\" rates do you want to set?"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:549
+#, php-format
+msgid "Country rule #%s"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:556
+msgid "Choose one or more countries for this rule."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:585
+msgid "The shipping fee for the countries specified above."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:625
+msgid "Per State Rates"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:629
+msgid "Number of State rules"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:631
+msgid "How many diferent \"per state\" rates do you want to set?"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:638
+#, php-format
+msgid "State rule #%s"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:645
+msgid "Choose the country for this rule."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:654
+msgid "State"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:656
+msgid "Choose one or more states for this rule."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:685
+msgid "The shipping fee for the states specified above."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:746
+msgid "Free technical support (limited)"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:748
+msgid "Premium technical support or custom WordPress / WooCommerce development"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:749
+#, php-format
+msgid "Please contact %s"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:750
+msgid "Help us translate this plugin"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:751
+#, php-format
+msgid "Download the <a href=\"%s\">.pot file</a> and send us the translation on your language"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:753
+msgid "Please rate our plugin at WordPress.org"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:762
+msgid "Click here to see list of regions, and the countries included on each one."
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:780
+msgid "NOT ASSIGNED"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:796
+msgid "Close country list"
+msgstr ""
+
+#: woocommerce_flatrate_percountry.php:1245
+msgid "Flat rate not set"
+msgstr ""

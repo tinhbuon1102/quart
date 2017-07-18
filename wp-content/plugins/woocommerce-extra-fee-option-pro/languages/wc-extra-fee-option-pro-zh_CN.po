@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Extra Fee Options PRO v1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2013-10-21 04:41:59+0000\n"
+"Last-Translator: admin <terrytsang811@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=1;\n"
+"X-Poedit-Language: Chinese\n"
+"X-Poedit-Country: PEOPLE'S REPUBLIC OF CHINA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: wc-extra-fee-option-pro.php:211
+#: wc-extra-fee-option-pro.php:294
+#@ wc-extra-fee-option-pro
+msgid "Extra Fee Options PRO"
+msgstr "额外费用选项(专业版)"
+
+#: wc-extra-fee-option-pro.php:283
+#@ wc-extra-fee-option-pro
+msgid "WooCommerce Extra Fee Options saved."
+msgstr "WooCommerce 额外收费选项储存。"
+
+#: wc-extra-fee-option-pro.php:310
+#@ wc-extra-fee-option-pro
+msgid "Enable"
+msgstr "开启"
+
+#: wc-extra-fee-option-pro.php:311
+#@ wc-extra-fee-option-pro
+msgid "Label"
+msgstr "标题"
+
+#: wc-extra-fee-option-pro.php:312
+#@ wc-extra-fee-option-pro
+msgid "Amount"
+msgstr "数目"
+
+#: wc-extra-fee-option-pro.php:313
+#@ wc-extra-fee-option-pro
+msgid "Type"
+msgstr "分类"
+
+#: wc-extra-fee-option-pro.php:314
+#@ wc-extra-fee-option-pro
+msgid "Taxable"
+msgstr "计算税在内"
+
+#: wc-extra-fee-option-pro.php:315
+#@ wc-extra-fee-option-pro
+msgid "Min Order"
+msgstr "最低消费"
+
+#: wc-extra-fee-option-pro.php:316
+#@ wc-extra-fee-option-pro
+msgid "Cart Items"
+msgstr "购物车总物品数量"
+
+#: wc-extra-fee-option-pro.php:317
+#@ wc-extra-fee-option-pro
+msgid "Payment"
+msgstr "付费方法"
+
+#: wc-extra-fee-option-pro.php:318
+#@ wc-extra-fee-option-pro
+msgid "Shipping"
+msgstr "运输方法"
+
+#: wc-extra-fee-option-pro.php:516
+#@ wc-extra-fee-option-pro
+msgid "Save Options"
+msgstr "储存选项"
+
