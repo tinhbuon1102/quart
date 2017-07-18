@@ -16,4 +16,7 @@ wp-snapshots
 /readme.html
 /sitemap.xml
 /sitemap.xml.gz
+/commit.php
+/deploy.php
+/pull.php
 
