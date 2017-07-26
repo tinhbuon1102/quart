@@ -16,6 +16,9 @@ Add styles beneath this line that you want to be applied across your entire site
 li.cat-item.cat-item-82 {
     display: none;
 }
+.product .newlabel {
+	display: none;
+}
 @media only screen and (min-width: 768px) {
 	.wbm_banner_image img, .wbm_category_banner_image {
     float: left;

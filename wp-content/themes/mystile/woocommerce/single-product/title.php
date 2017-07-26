@@ -19,4 +19,15 @@ global $post, $product;
 
 <?php endif; ?>
 
-<h1 itemprop="name" class="product_title entry-title"><?php the_title(); ?></h1>
+<?php $pbl_date = get_the_date( 'Y-m-d' );
+		 if(strtotime(date('Y-m-d')) < strtotime(date( "Y-m-d", strtotime( $pbl_date." +15 day" ) )))
+			     {
+					 ?>
+					 <span class="newlabel">New</span>
+					 <?php
+				 }				 
+ ?>
+ <?php if(get_field( "show_stock_label" )==1){ ?>
+					 <span class="restocklabel">Restock</span>
+ <?php } ?>
+<h1 itemprop="name" class="product_title entry-title "><?php the_title(); ?></h1>

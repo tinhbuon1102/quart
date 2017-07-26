@@ -23,7 +23,18 @@ if ( ! $post->post_excerpt ) {
 <?php if ( $product->get_sku() ) : ?>
 <div class="sku"><span class="jp">品番</span>: <?php echo $product->get_sku(); ?></div>
 <?php endif; ?>
-<?php if ( is_product() && has_term( 'pre-order', 'product_cat' ) ) { ?>                       
+<?php  $categ = $product->get_categories();
+if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
+    ?>                       
+<div class="pre-note">
+<ul class="pre-list"><li>10月からの発送開始となります。</li>
+<li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
+<li>キャンセル、不良品理由以外での返品は不可となります。</li>
+</ul>
+</div>
+<?php } 
+ elseif(preg_match("/Pre Order/i", $categ)) {
+    ?>                       
 <div class="pre-note">
 <ul class="pre-list">
 <li>9月初旬からの発送開始となります。</li>
@@ -31,7 +42,10 @@ if ( ! $post->post_excerpt ) {
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
 </div>
-<?php } ?>
+<?php } 
+else {
+	
+}?>
 
 	<?php echo apply_filters( 'woocommerce_short_description', $post->post_excerpt ) ?>
 </div>

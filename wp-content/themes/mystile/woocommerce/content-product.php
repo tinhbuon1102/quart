@@ -44,6 +44,17 @@ if ( ! $product || ! $product->is_visible() )
 	<?php echo apply_filters( 'woocommerce_sale_flash', '<span class="onsale">' . __( 'Sale!', 'woocommerce' ) . '</span>', $post, $product ); ?>
 
 <?php endif; ?>
+<?php $pbl_date = get_the_date( 'Y-m-d' );
+		 if(strtotime(date('Y-m-d')) < strtotime(date( "Y-m-d", strtotime( $pbl_date." +15 day" ) )))
+			     {
+					 ?>
+					 <span class="newlabel">New</span>
+					 <?php
+				 } 
+ ?>
+  <?php if(get_field( "show_stock_label" )==1){ ?>
+					 <span class="restocklabel">Restock</span>
+ <?php } ?>
 		<?php
 			/**
 			 * woocommerce_before_shop_loop_item_title hook

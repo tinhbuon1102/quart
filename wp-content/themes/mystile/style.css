@@ -89,6 +89,60 @@ INDEX:
 .wcmd_email .wcmd-btn {
     padding: 0 20px;
 }
+.no-border img {
+    border: none !important;
+    background: none !important;
+}
+.mbt60 { margin-bottom: 60px;}
+.mbt40 { margin-bottom: 40px;}
+.mbt20 { margin-bottom: 20px;}
+.max600 { max-width: 600px; margin: 0 auto;}
+.clblk { color: #000;}
+ul.medilq {
+    margin: 0;
+    padding: 0;
+}
+.fullwidthimg img {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+  
+ul.medilq:before, ul.medilq:after {
+  content: "";
+  display: table;
+}
+ul.medilq:after {
+  clear: both;
+}
+ul.medilq li {
+    float: left;
+  text-align: left;
+  width: 50%;
+      box-sizing: border-box;
+}
+ul.medilq li img {
+    display: inline-block;
+    max-width: 380px;
+    width: 100%;
+    height: auto;
+}
+ul.medilq li:first-child { text-align:right; border-right: 2px solid #000;}
+@media only screen and (max-width: 768px) {
+article.post-2384 section.entry {
+    float: none;
+    display: block;
+    margin-right: 0;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 3em;
+    margin-bottom: 3em;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+div#pg-2384-1 {
+    padding: 0 20px;
+}
+}
 html,
 body,
 div,
