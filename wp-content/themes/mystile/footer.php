@@ -97,8 +97,20 @@ jQuery(function($){
 	});
 });
   </script>
+		<script src="<?php echo get_template_directory_uri(); ?>/js/grid/modernizr.custom.js"></script>
+
 <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/js/masonry.pkgd.min.js"></script>
-<script>
+<script src="<?php echo get_template_directory_uri(); ?>/js/grid/imagesloaded.js"></script>
+		<script src="<?php echo get_template_directory_uri(); ?>/js/grid/classie.js"></script>
+		<script src="<?php echo get_template_directory_uri(); ?>/js/grid/AnimOnScroll.js"></script>
+		<script>
+			new AnimOnScroll( document.getElementById( 'ngrid' ), {
+				minDuration : 0.4,
+				maxDuration : 0.7,
+				viewportFactor : 0.2
+			} );
+		</script>
+		<script>
 jQuery(function($){	
 	$('#news-grid').masonry({
     itemSelector: '.item',

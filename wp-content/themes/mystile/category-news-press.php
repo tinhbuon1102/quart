@@ -18,27 +18,58 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
 	get_header();
 	global $woo_options;
 ?>
+<link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/component.css" />
+    <style>
+	.grid li
+	{
+		padding:0.5%;
+		width:32%;
+	}
+	.grid li .item
+	{
+		width:100% !important;
+	}
+	@media screen and (max-width: 900px){
+		.grid li
+	{
+		padding:0.5%;
+		width:49%;
+	}
+		
+	}
+	@media screen and (max-width: 400px){
+		.grid li
+	{
+		padding:0.5%;
+		width:100%;
+	}
+		
+	}
+	</style>
        
     <div id="content" class="page col-full">
     
     	<?php woo_main_before(); ?>
     	
 		<section id="main" class="col-full page"> 	
+		
+
 <article <?php post_class(); ?>>
 				
 				<header>
 			    	<hgroup><h1><?php single_cat_title(); ?></h1></hgroup>
 				</header>	
-<section class="entry">	
-
+<section class="">	
+<ul class=" grid effect-2" id="ngrid">
         <?php
         	if ( have_posts() ) { $count = 0;
         		while ( have_posts() ) { the_post(); $count++;
         ?>                                                           
             
 				
-                
+                <li>
                 	<?php get_template_part('content-news'); ?>
+				</li>	
 
 					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'woothemes' ), 'after' => '</div>' ) ); ?>
                	
@@ -63,7 +94,7 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
 </section><!-- /.entry -->
         </article><!-- /.post -->
 		</section><!-- /#main -->
-		
+		</ul>
 		<?php woo_main_after(); ?>
 
     
