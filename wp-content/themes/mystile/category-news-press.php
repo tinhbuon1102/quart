@@ -89,18 +89,11 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
             	<div class="coming"><p>COMING SOON</p></div>
             </article><!-- /.post -->
         <?php } // End IF Statement ?>  
-<<<<<<< HEAD
 		</ul>
 </section><!-- /.entry -->
         </article><!-- /.post -->
 		</section><!-- /#main -->
 		
-=======
-</section><!-- /.entry -->
-        </article><!-- /.post -->
-		</section><!-- /#main -->
-		</ul>
->>>>>>> 73ef1e63214652ad92c8fccddbcc2be88e7ec156
 		<?php woo_main_after(); ?>
 
     
