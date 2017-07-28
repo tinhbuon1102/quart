@@ -110,7 +110,7 @@ jQuery(function($){
 				viewportFactor : 0.2
 			} );
 		</script>
-<script>
+		<script>
 jQuery(function($){	
 	$('#news-grid').masonry({
     itemSelector: '.item',

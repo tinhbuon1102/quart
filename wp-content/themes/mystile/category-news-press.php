@@ -29,7 +29,24 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
 	{
 		width:100% !important;
 	}
+	@media screen and (max-width: 900px){
+		.grid li
+	{
+		padding:0.5%;
+		width:49%;
+	}
+		
+	}
+	@media screen and (max-width: 400px){
+		.grid li
+	{
+		padding:0.5%;
+		width:100%;
+	}
+		
+	}
 	</style>
+       
     <div id="content" class="page col-full">
     
     	<?php woo_main_before(); ?>
@@ -72,11 +89,18 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
             	<div class="coming"><p>COMING SOON</p></div>
             </article><!-- /.post -->
         <?php } // End IF Statement ?>  
+<<<<<<< HEAD
 		</ul>
 </section><!-- /.entry -->
         </article><!-- /.post -->
 		</section><!-- /#main -->
 		
+=======
+</section><!-- /.entry -->
+        </article><!-- /.post -->
+		</section><!-- /#main -->
+		</ul>
+>>>>>>> 73ef1e63214652ad92c8fccddbcc2be88e7ec156
 		<?php woo_main_after(); ?>
 
     

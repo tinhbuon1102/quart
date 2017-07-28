@@ -16,8 +16,8 @@ Add styles beneath this line that you want to be applied across your entire site
 li.cat-item.cat-item-82 {
     display: none;
 }
-.product .newlabel {
-	display: none;
+.imagethum-wrap {
+    position: relative;
 }
 @media only screen and (min-width: 768px) {
 	.wbm_banner_image img, .wbm_category_banner_image {
@@ -880,6 +880,7 @@ h1.product_title{
 color: #363636;
 font-family: 'Oswald', sans-serif;
 font-weight: 600;
+	clear: both;
 }
 .single-product .summary .price:first-child{
 color: #363636;
@@ -1713,11 +1714,16 @@ body.term-pre-order-sale #collection-promo-banner {
   background-size: cover;
   position: relative;
 }
-.onsale {
+.tags-wrap {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #000;
+    width: 100%;
+}
+.onsale {
+	position: relative;
+    margin-top: 5px;
+    display: inline-block;
+    float: right;
+    background: #aa0000;
     color: #fff;
     font-weight: bold;
     padding: 0 .857em;
@@ -1732,20 +1738,51 @@ body.term-pre-order-sale #collection-promo-banner {
 body.single-product .onsale {
     display: inline-block;
     position: relative;
-    top: 0;
-    left: 0;
+	float: left;
+	margin-right: 5px;
     margin-left: 0;
-    background: #000;
-    color: #fff;
     font-weight: bold;
     padding: 0 .857em;
-    line-height: 25px;
+    line-height: 20px;
     -webkit-border-radius: 0;
     border-radius: 0;
     -moz-background-clip: padding;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
     text-transform: uppercase;
+}
+.product .newlabel {
+	font-weight: bold;
+	position: relative;
+	margin-top: 5px;
+    display: inline-block;
+    float: left;
+	background: #000;
+	color: #FFF;
+	line-height: 20px;
+	padding: 0 10px;
+}
+.restocklabel {
+	font-weight: bold;
+    position: relative;
+    margin-top: 5px;
+    display: inline-block;
+    float: left;
+    background: #6a00d5;
+    color: #FFF;
+    line-height: 20px;
+    padding: 0 10px;
+}
+@media only screen and (max-width: 428px) {
+	.product .newlabel, .onsale, .restocklabel {
+		float: none;
+		margin: 0;
+		font-size: .7em;
+		display: block;
+	}
+	#pdp-description-wrapper .newlabel, #pdp-description-wrapper .onsale, #pdp-description-wrapper .restocklabel {
+    display: inline-block;
+	}
 }
 @media only screen and (max-width: 768px) {
 #collection-promo-banner {

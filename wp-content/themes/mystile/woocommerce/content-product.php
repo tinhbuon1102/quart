@@ -29,12 +29,14 @@ if ( ! $product || ! $product->is_visible() )
 	<?php do_action( 'woocommerce_before_shop_loop_item' ); ?>
 
 	<a class="xx" href="<?php the_permalink(); ?>">
+	<div class="imagethum-wrap">
 <?php $categ = $product->get_categories();?>    
 <?php if (preg_match("/Pre Order Sale/i", $categ)) {
     $succes='yes';
 } else {
     $succes='no';
 } ?>
+<div class="tags-wrap">
 <?php if ( $product->is_on_sale() && $succes=='yes' ) : ?>
 
 <?php echo apply_filters( 'woocommerce_sale_flash', '<span class="onsale">' . __( 'Pre Order Sale', 'woocommerce' ) . '</span>', $post, $product ); ?>
@@ -55,6 +57,7 @@ if ( ! $product || ! $product->is_visible() )
   <?php if(get_field( "show_stock_label" )==1){ ?>
 					 <span class="restocklabel">Restock</span>
  <?php } ?>
+ </div><!--/tags-wrap-->
 		<?php
 			/**
 			 * woocommerce_before_shop_loop_item_title hook
@@ -64,6 +67,7 @@ if ( ! $product || ! $product->is_visible() )
 			 */
 			do_action( 'woocommerce_before_shop_loop_item_title' );
 		?>
+		</div><!--/imagethum-wrap-->
 
 		<h3><?php the_title(); ?></h3>
 
