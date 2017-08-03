@@ -13,6 +13,12 @@ from style.css to this file, and modify it to your liking. */
 GLOBAL STYLES
 ----------------
 Add styles beneath this line that you want to be applied across your entire site */
+#sidebar-nav li.cat-item-113 {
+    display: none;
+}
+span.woosticker.soldout_round_right.pos_right {
+    left: 10px;
+}
 li.cat-item.cat-item-82 {
     display: none;
 }
@@ -27,6 +33,12 @@ li.cat-item.cat-item-82 {
     width: 66.14683%;
 	}
 }
+body.term-summer-sale17 #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0803-banner.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
 .wbm_banner_image img, .wbm_category_banner_image {
     margin-bottom: 20px;
     border: 1px solid rgba(0,0,0,0.1);
@@ -121,6 +133,13 @@ text-transform: uppercase;
     width: 100%;
     float: none;
 }
+body.term-summer-sale17 #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0803-banner-sp3.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+	
 }
 /********
 ABOUT
@@ -1774,6 +1793,12 @@ body.single-product .onsale {
     padding: 0 10px;
 }
 @media only screen and (max-width: 428px) {
+	span.woosticker.soldout_round_right.pos_right {
+    left: 50%;
+    margin-left: -22px;
+    top: 50%;
+    margin-top: -22px;
+}
 	.product .newlabel, .onsale, .restocklabel {
 		float: none;
 		margin: 0;

@@ -425,8 +425,10 @@ class WAD_Products_List {
             $raw_args=  $this->args;
         
         $args = array(
-            "post_type"=>array("product", "product_variation")
+            "post_type"=>array("product", "product_variation"),
+            "post_status"=>array("publish", "future")
             );
+			
         if(isset($raw_args["type"])&&$raw_args["type"]=="by-id")
         {
             $args['post__in'] = explode(",",$raw_args["ids"]);
