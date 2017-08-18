@@ -13,11 +13,7 @@ from style.css to this file, and modify it to your liking. */
 GLOBAL STYLES
 ----------------
 Add styles beneath this line that you want to be applied across your entire site */
-/*23:00外す*/
-li.cat-item.cat-item-117 {
-    display: none;
-}
-/*23:00外す*/
+
 span.woosticker.soldout_round_right.pos_right {
     left: 10px;
 }
