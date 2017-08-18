@@ -19,4 +19,8 @@ wp-snapshots
 /commit.php
 /deploy.php
 /pull.php
+/.DS_Store
+/.buildpath
+/.htaccess.170818020051.orig
+/.project
 
