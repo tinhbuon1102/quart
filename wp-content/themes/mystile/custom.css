@@ -1807,6 +1807,9 @@ body.single-product .onsale {
     padding: 0 10px;
 }
 @media only screen and (max-width: 428px) {
+ul.products li.product {
+    min-height: initial;
+}
 	span.woosticker.soldout_round_right.pos_right {
     left: 50%;
     margin-left: -22px;
