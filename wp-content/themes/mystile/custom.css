@@ -47,6 +47,24 @@ body.term-summer-final-sale #collection-promo-banner {
     -webkit-background-size: cover;
     background-size: cover;
 	}
+body.term-50_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner_50off.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+body.term-40_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner_40off.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+body.term-30_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner_30off.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
 .wbm_banner_image img, .wbm_category_banner_image {
     margin-bottom: 20px;
     border: 1px solid rgba(0,0,0,0.1);
@@ -149,6 +167,24 @@ body.term-summer-sale #collection-promo-banner {
 	}
 body.term-summer-final-sale #collection-promo-banner {
 	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner-sp.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+ body.term-50_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner-sp_50off.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+   body.term-40_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner-sp_40off.jpg);
+    background-position: center;
+    -webkit-background-size: cover;
+    background-size: cover;
+	}
+   body.term-30_off #collection-promo-banner {
+	background-image: url(http://l-quartet.com/wp/wp-content/uploads/2017/08/sale0818-banner-sp_30off.jpg);
     background-position: center;
     -webkit-background-size: cover;
     background-size: cover;
