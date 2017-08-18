@@ -2004,6 +2004,7 @@ ul.products li.product {
   margin-right: 3.8%;
   margin-bottom: 1.618em;
   text-align: center;
+  min-height: 405px;
 }
 ul.products li.product h3 {
   margin-bottom: 0;
