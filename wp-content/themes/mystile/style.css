@@ -86,6 +86,12 @@ INDEX:
 /*-------------------------------------------------------------------------------------------*/
 /* RESET - http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
 /*-------------------------------------------------------------------------------------------*/
+ul.buy-multi.new-style li .price {
+    display: block;
+}
+ul.buy-multi.new-style li {
+    font-family: 'Droid Serif', "Times New Roman", Georgia, Serif;
+}
 .wcmd_email .wcmd-btn {
     padding: 0 20px;
 }

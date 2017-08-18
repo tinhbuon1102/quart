@@ -24,7 +24,7 @@ global $woo_options, $woocommerce;
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/Fontsaddict.css" media="screen" />
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
-
+<link href="https://fonts.googleapis.com/css?family=Droid+Serif" rel="stylesheet">
 <?php
 	wp_head();
 	woo_head();
