@@ -126,6 +126,11 @@ class WAFS_Condition {
 				'stock_status' => __( 'Stock status', 'woocommerce-advanced-free-shipping' ),
 				'category'     => __( 'Category', 'woocommerce-advanced-free-shipping' ),
 			),
+			__( 'Time', 'woocommerce-advanced-free-shipping' ) => array(
+				'day'        => __( 'Day', 'woocommerce-advanced-free-shipping' ),
+				'date'       => __( 'Date', 'woocommerce-advanced-free-shipping' ),
+				'time'       => __( 'Time', 'woocommerce-advanced-free-shipping' ),
+			),
 		);
 		$conditions = apply_filters( 'wafs_conditions', $conditions );
 

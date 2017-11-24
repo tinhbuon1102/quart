@@ -822,3 +822,21 @@ function wc_ninja_outofstock_notify_on_archives() {
     //}
 }
 
+function hide_plugin_order_by_product ()
+{
+	global $wp_list_table;
+	$hidearr = array(
+		'woocommerce-advanced-free-shipping/woocommerce-advanced-free-shipping.php',
+	);
+	$active_plugins = get_option('active_plugins');
+
+	$myplugins = $wp_list_table->items;
+	foreach ( $myplugins as $key => $val )
+	{
+		if ( in_array($key, $hidearr) && in_array($key, $active_plugins))
+		{
+			unset($wp_list_table->items[$key]);
+		}
+	}
+}
+add_action('pre_current_active_plugins', 'hide_plugin_order_by_product');
