@@ -1621,6 +1621,11 @@ final class WOOF {
 		$order = 'DESC';
 		$meta_key = '_wc_average_rating';
 		break;
+		case 'salenew':
+			$orderby = "meta_value_num {$wpdb->posts}.ID";
+			$order = 'DESC';
+			$meta_key = 'sortingdt';
+		break;
 	    case 'title' :
 		$orderby = 'title';
 		break;
