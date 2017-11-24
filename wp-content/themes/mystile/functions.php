@@ -129,8 +129,8 @@ $taxonomies = array(
 );
 
 $args = array(
-    'orderby'           => 'id', 
-    'order'             => 'DESC',
+   /* 'orderby'           => 'id', 
+    'order'             => 'DESC',*/
     'hide_empty'        => false, 
     'number'            => '', 
     'fields'            => 'all', 
@@ -186,8 +186,8 @@ jQuery('.dcftx').click(function(){
 <?php
 $taxonomiesx = array('product_cat');									
 $argsx = array(
-    'orderby'           => 'id', 
-    'order'             => 'DESC',
+    /*'orderby'           => 'id', 
+    'order'             => 'DESC',*/
     'hide_empty'        => false, 
     'number'            => '', 
     'fields'            => 'all', 
@@ -209,8 +209,8 @@ if (!empty($termxs))
 						$term=get_term_by('id',$term_childern,$taxonomy_name);
 						echo '<li class="subitem"><a href="'.get_term_link($termx).'">'.$termx->name.'</a></li>';
 $argsy = array(
-    'orderby'           => 'id', 
-    'order'             => 'DESC',
+   /* 'orderby'           => 'id', 
+    'order'             => 'DESC',*/
     'hide_empty'        => false, 
     'number'            => '', 
     'fields'            => 'all', 

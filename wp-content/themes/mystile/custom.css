@@ -1310,6 +1310,13 @@ display: block;
   position: absolute;
   top: 3%;
   right: 2%;
+    max-height:700px;
+  overflow-y:auto;
+}
+.description .su-tabs-pane
+{
+	 max-height:250px;
+  overflow-y:auto;
 }
 #content #pdp-image-wrapper {
   width: 100%;
