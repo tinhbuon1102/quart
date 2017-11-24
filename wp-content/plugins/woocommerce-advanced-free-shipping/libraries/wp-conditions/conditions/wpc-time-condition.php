@@ -19,7 +19,7 @@ if ( ! class_exists( 'WPC_Time_Condition' ) ) {
 		}
 
 		public function get_compare_value() {
-			return current_time( 'H:i' ); // Compares against current time in Hour:Minutes
+			return date( 'H:i' ); // Compares against current time in Hour:Minutes
 		}
 
 		public function get_value_field_args() {

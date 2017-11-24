@@ -19,7 +19,7 @@ if ( ! class_exists( 'WPC_Date_Condition' ) ) {
 		}
 
 		public function get_compare_value() {
-			return current_time( 'Y-m-d' ); // Today's date in Year-Month-Day format
+			return date( 'Y-m-d' ); // Today's date in Year-Month-Day format
 		}
 
 		public function get_value_field_args() {
