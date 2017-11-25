@@ -128,6 +128,7 @@ class WAFS_Condition {
 			),
 			__( 'Time', 'woocommerce-advanced-free-shipping' ) => array(
 				'day'        => __( 'Day', 'woocommerce-advanced-free-shipping' ),
+				'datetime'       => __( 'DateTime', 'woocommerce-advanced-free-shipping' ),
 				'date'       => __( 'Date', 'woocommerce-advanced-free-shipping' ),
 				'time'       => __( 'Time', 'woocommerce-advanced-free-shipping' ),
 			),

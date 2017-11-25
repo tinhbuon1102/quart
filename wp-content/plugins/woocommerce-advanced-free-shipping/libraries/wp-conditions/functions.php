@@ -11,6 +11,7 @@ require_once 'conditions/wpc-fallback-condition.php';
 // General
 require_once 'conditions/wpc-page-condition.php';
 require_once 'conditions/wpc-day-condition.php';
+require_once 'conditions/wpc-datetime-condition.php';
 require_once 'conditions/wpc-date-condition.php';
 require_once 'conditions/wpc-time-condition.php';
 
