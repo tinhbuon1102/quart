@@ -843,6 +843,15 @@ add_action('pre_current_active_plugins', 'hide_plugin_order_by_product');
 
 function pr($data)
 {
-	echo '<pre>'; print_r($items); echo'</pre>';
+	echo '<pre>'; print_r($data); echo'</pre>';
 }
 
+add_filter( 'woocommerce_get_catalog_ordering_args', 'mystile_woocommerce_get_catalog_ordering_args', 10000, 1 );
+function mystile_woocommerce_get_catalog_ordering_args($args) {
+	if($_SERVER['REDIRECT_URL'] == '/shop' && !$_GET['orderby']){
+		$args['orderby']  = 'menu_order title';
+		$args['order']    = 'ASC';
+		$args['meta_key'] = '';
+	}
+	return $args;
+}
