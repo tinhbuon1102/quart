@@ -131,7 +131,7 @@ $taxonomies = array(
 $args = array(
    /* 'orderby'           => 'id', 
     'order'             => 'DESC',*/
-    'hide_empty'        => false, 
+    'hide_empty'        => true, 
     'number'            => '', 
     'fields'            => 'all', 
     'slug'              => '',
@@ -188,7 +188,7 @@ $taxonomiesx = array('product_cat');
 $argsx = array(
     /*'orderby'           => 'id', 
     'order'             => 'DESC',*/
-    'hide_empty'        => false, 
+    'hide_empty'        => true, 
     'number'            => '', 
     'fields'            => 'all', 
     'slug'              => '',
@@ -211,7 +211,7 @@ if (!empty($termxs))
 $argsy = array(
    /* 'orderby'           => 'id', 
     'order'             => 'DESC',*/
-    'hide_empty'        => false, 
+    'hide_empty'        => true, 
     'number'            => '', 
     'fields'            => 'all', 
     'slug'              => '',
@@ -840,3 +840,9 @@ function hide_plugin_order_by_product ()
 	}
 }
 add_action('pre_current_active_plugins', 'hide_plugin_order_by_product');
+
+function pr($data)
+{
+	echo '<pre>'; print_r($items); echo'</pre>';
+}
+
