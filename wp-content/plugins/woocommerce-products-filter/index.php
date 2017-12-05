@@ -1,13 +1,13 @@
 <?php
 /*
-  Plugin Name: WOOF - WooCommerce Products Filter
+  Plugin Name: WOOF - WooCommerce Products Filter1
   Plugin URI: http://woocommerce-filter.com/
   Description: WOOF - WooCommerce Products Filter. Flexible, easy and robust products filter for WooCommerce store site!
   Requires at least: WP 4.1.0
   Tested up to: WP 4.7
   Author: realmag777
-  Author URI: https://pluginus.net/
-  Version: 1.1.7
+  Author URI: https://pluginus.net1/
+  Version: 1111.1.7
   Tags: filter,search,woocommerce,woocommerce filter,woocommerce product filter,woocommerce products filter,products filter,product filter,filter of products,filter for products,filter for woocommerce
   Text Domain: woocommerce-products-filter
   Domain Path: /languages
@@ -1806,7 +1806,9 @@ final class WOOF {
 	//***
 	$data = $this->get_request_data();
 	$catalog_orderby = $this->get_catalog_orderby(isset($data['orderby']) ? $data['orderby'] : '');
-
+	
+	$catalog_orderby = apply_filters('woocommerce_get_catalog_ordering_args', $catalog_orderby);
+	
 	//https://gist.github.com/mikejolley/1622323
 	extract(shortcode_atts(array(
 	    'columns' => apply_filters('loop_shop_columns', 4),
