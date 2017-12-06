@@ -856,3 +856,20 @@ function mystile_woocommerce_get_catalog_ordering_args($args) {
 	}
 	return $args;
 }
+
+add_filter( 'post_limits', 'mystile_modify_request_perpage', 1000, 2 );
+function mystile_modify_request_perpage( $limit, $query ) {
+	if ( is_admin() && isset( $_GET['post_type'] ) && 'product' == $_GET['post_type'] && $_GET['orderby'] == 'menu_order title' ) {
+		$limit = "LIMIT 0, 20000000";
+	}
+	return $limit;
+}
+
+add_filter( 'edit_posts_per_page', 'mystile_modify_edit_products_per_page', 1000, 2 );
+function mystile_modify_edit_products_per_page( $per_page, $post_type ) {
+	if ( is_admin() && 'product' == $post_type && $_GET['orderby'] == 'menu_order title' ) {
+		$per_page = 20000000;
+	}
+	return $per_page;
+}
+
