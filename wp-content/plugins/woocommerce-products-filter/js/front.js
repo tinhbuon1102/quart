@@ -672,6 +672,8 @@ function woof_hide_info_popup() {
 }
 
 function woof_load_more_product() {
+	$('#woof_results_by_ajax > .col-left').append($('#load_more_wraper'));
+	
 	jQuery('body').on('click', '#load_more_wraper > button', function(e){
 		e.preventDefault();
 		var nextIndex = 0;
