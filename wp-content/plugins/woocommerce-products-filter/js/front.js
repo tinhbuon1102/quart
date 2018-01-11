@@ -463,6 +463,7 @@ function woof_submit_link(link) {
 	    woof_infinite();
 	    //*** script after ajax loading here
 	    woof_js_after_ajax_done();
+	    is_load_more = false;
 	});
 
     } else {
