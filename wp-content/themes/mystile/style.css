@@ -86,6 +86,13 @@ INDEX:
 /*-------------------------------------------------------------------------------------------*/
 /* RESET - http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
 /*-------------------------------------------------------------------------------------------*/
+#sidebar-nav li.cat-item-141 {
+    display: none;
+}
+.term-sale #sidebar-nav li.cat-item-141 {
+    display: list-item;
+}
+
 ul.buy-multi.new-style li .price {
     display: block;
 }
