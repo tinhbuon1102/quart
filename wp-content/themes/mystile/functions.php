@@ -803,6 +803,15 @@ function woocommerce_paginations() {
 					 $format = 'page/%#%/';
 				 }
 				 
+				 $load_more = true;
+				 if ($load_more == true)
+				 {
+				 	echo '
+					<div id="load_more_wraper">
+						<button class="button">'. __('Load More', 'woocommerce') .'</button>
+				 	</div>';
+				 }
+				 
 				 echo "<nav class='pagination woo-pagination'>";
 				 echo paginate_links( apply_filters( 'woocommerce_pagination_args', array(
 				 	'base'         => esc_url_raw( str_replace( 999999999, '%#%', remove_query_arg( 'add-to-cart', get_pagenum_link( 999999999, false ) ) ) ),

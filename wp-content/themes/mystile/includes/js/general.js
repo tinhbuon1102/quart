@@ -43,10 +43,10 @@ jQuery(document).ready(function($){
     // Add parent class to nav parents
 	jQuery("ul.sub-menu, ul.children").parents().addClass('parent');
 	
-	$('body').on('click', '.woo-pagination', function(){
-	   $('html, body').animate({
-	        scrollTop: $("#utility").offset().top
-	    }, 500);
-	})
+//	$('body').on('click', '.woo-pagination', function(){
+//	   $('html, body').animate({
+//	        scrollTop: $("#utility").offset().top
+//	    }, 500);
+//	})
 
 });

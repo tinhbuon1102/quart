@@ -1,4 +1,5 @@
 var woof_redirect = '';//if we use redirect attribute in shortcode [woof]
+var is_load_more = false;
 //***
 
 jQuery(function ($) {
@@ -234,7 +235,7 @@ jQuery(function ($) {
     }
 
     woof_init_toggles();
-
+    woof_load_more_product();
 });
 
 //if we use redirect attribute in shortcode [woof is_ajax=0]
@@ -312,7 +313,10 @@ function woof_init_reset_button() {
 	    //***
 	    woof_submit_link(link);
 	    if (woof_is_ajax) {
-		history.pushState({}, "", link);
+	    	if (!is_load_more)
+	    	{
+	    		history.pushState({}, "", link);
+	    	}
 		if (woof_current_values.hasOwnProperty('page_id')) {
 		    woof_current_values = {'page_id': woof_current_values.page_id};
 		} else {
@@ -423,9 +427,23 @@ function woof_submit_link(link) {
 	jQuery.post(woof_ajaxurl, data, function (content) {
 	    content = jQuery.parseJSON(content);
 	    if (jQuery('.woof_results_by_ajax_shortcode').length) {
-		jQuery('#woof_results_by_ajax').replaceWith(content.products);
+	    	if (is_load_more)
+	    	{
+	    		jQuery('#woof_results_by_ajax ul.products').append(jQuery(content.products).find('ul.products').html());
+	    		jQuery('.pagination.woo-pagination').replaceWith(jQuery(content.products).find('.pagination.woo-pagination'));
+	    	}
+	    	else {
+	    		jQuery('#woof_results_by_ajax').replaceWith(content.products);
+	    	}
 	    } else {
-		jQuery('.woof_shortcode_output').replaceWith(content.products);
+	    	if (is_load_more)
+	    	{
+	    		jQuery('.woof_shortcode_output ul.products').append(jQuery(content.products).find('ul.products').html());
+	    		jQuery('.pagination.woo-pagination').replaceWith(jQuery(content.products).find('.pagination.woo-pagination'));
+	    	}
+	    	else {
+	    		jQuery('.woof_shortcode_output').replaceWith(content.products);
+	    	}
 	    }
 
 	    jQuery('div.woof_redraw_zone').replaceWith(jQuery(content.form).find('.woof_redraw_zone'));
@@ -520,7 +538,10 @@ function woof_get_submit_link() {
 	if (('min_price' in woof_current_values) && ('max_price' in woof_current_values)) {
 	    var l = woof_current_page_link + '?min_price=' + woof_current_values.min_price + '&max_price=' + woof_current_values.max_price;
 	    if (woof_is_ajax) {
-		history.pushState({}, "", l);
+	    	if (!is_load_more)
+	    	{
+	    		history.pushState({}, "", l);
+	    	}
 	    }
 	    return l;
 	}
@@ -532,7 +553,10 @@ function woof_get_submit_link() {
 
     if (Object.keys(woof_current_values).length === 0) {
 	if (woof_is_ajax) {
-	    history.pushState({}, "", woof_current_page_link);
+		if (!is_load_more)
+    	{
+    		history.pushState({}, "", woof_current_page_link);
+    	}
 	}
 	return woof_current_page_link;
     }
@@ -594,7 +618,10 @@ function woof_get_submit_link() {
     //remove wp pagination like 'page/2'
     link = link.replace(new RegExp(/page\/(\d+)\//), "");
     if (woof_is_ajax) {
-	history.pushState({}, "", link);
+    	if (!is_load_more)
+    	{
+    		history.pushState({}, "", link);
+    	}
 
     }
 
@@ -605,6 +632,7 @@ function woof_get_submit_link() {
 
 
 function woof_show_info_popup(text) {
+	jQuery('#load_more_wraper').hide();
     if (woof_overlay_skin == 'default') {
 	jQuery("#woof_html_buffer").text(text);
 	jQuery("#woof_html_buffer").fadeTo(200, 0.9);
@@ -632,6 +660,7 @@ function woof_show_info_popup(text) {
 
 
 function woof_hide_info_popup() {
+	jQuery('#load_more_wraper').show();
     if (woof_overlay_skin == 'default') {
 	window.setTimeout(function () {
 	    jQuery("#woof_html_buffer").fadeOut(400);
@@ -639,6 +668,28 @@ function woof_hide_info_popup() {
     } else {
 	jQuery('body').plainOverlay('hide');
     }
+}
+
+function woof_load_more_product() {
+	jQuery('body').on('click', '#load_more_wraper > button', function(e){
+		e.preventDefault();
+		var nextIndex = 0;
+		jQuery('.pagination.woo-pagination ul.page-numbers > li').each(function(){
+			if (jQuery(this).find('span.current').length)
+			{
+				nextIndex = jQuery(this).index() + 1;
+				is_load_more = true;
+			}
+		});
+		
+		if (jQuery('.pagination.woo-pagination ul.page-numbers > li:eq('+ nextIndex +') a.page-numbers').length)
+		{
+			jQuery('.pagination.woo-pagination ul.page-numbers > li:eq('+ nextIndex +') a.page-numbers').click();
+		}
+		else {
+			jQuery('#load_more_wraper').hide();
+		}
+	})
 }
 
 function woof_draw_products_top_panel() {
