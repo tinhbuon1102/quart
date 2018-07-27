@@ -29,6 +29,7 @@ li.cat-item.cat-item-82 {
 #load_more_wraper {
 	clear: both;
     text-align: center;
+	margin-bottom: 60px;
 }
 
 @media only screen and (min-width: 768px) {

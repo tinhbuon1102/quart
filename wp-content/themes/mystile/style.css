@@ -87,12 +87,75 @@ INDEX:
 /* RESET - http://meyerweb.com/eric/tools/css/reset/ | v2.0 | 20110126 */
 /*-------------------------------------------------------------------------------------------*/
 #sidebar-nav li.cat-item-141 {
-    display: none;
+   
 }
 .term-sale #sidebar-nav li.cat-item-141 {
-    display: list-item;
+    
 }
 
+
+.term-sale #collection-promo-banner {
+    background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_70 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner_70.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_60 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner_60.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_50 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner_50.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_40 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner_40.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_30 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner_30.jpg);
+    background-size: cover;
+    background-position: center;
+}
+@media only screen and (max-width: 560px) {
+.term-sale #collection-promo-banner {
+    background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_70 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp_70.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_60 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp_60.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_50 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp_50.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_40 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp_40.jpg);
+    background-size: cover;
+    background-position: center;
+}
+.term-sale_30 #collection-promo-banner {
+	background: url(http://l-quartet.com/wp/wp-content/uploads/2018/01/sale01122018-banner-sp_30.jpg);
+    background-size: cover;
+    background-position: center;
+}
+}
 ul.buy-multi.new-style li .price {
     display: block;
 }
@@ -3151,6 +3214,25 @@ form.cart .variations tr td.value .value-select {
     right: 10px;
     pointer-events: none;
     line-height: 45px;
+}
+.panel-grid-cell .sow-image-container .so-widget-image {
+    box-sizing: border-box;
+}
+@media only screen and (min-width: 768px) {
+	.panel-grid {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+	.panel-grid > .panel-grid-cell {
+    width: 50% !important;
+    padding: 20px;
+    box-sizing: border-box;
+}
 }
 @media only screen and (max-width: 768px) {
 

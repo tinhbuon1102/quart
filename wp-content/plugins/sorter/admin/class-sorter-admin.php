@@ -125,11 +125,7 @@ function wpdocs_register_my_custom_menu_page() {
 function my_custom_menu_page(){
   global $wad_discounts;
   global $woocommerce;
-  
-    esc_html_e( 'Product Sorting Completed', 'textdomain' );  
-		
 	$loop = new WP_Query( array( 'post_type' => array('product'), 'posts_per_page' => -1 ,"post_status"=>array("publish", "future")) );
- echo "<pre>";
  $i=0;
  $discount= new WAD_Discount(false);
 // print_r($wad_discounts);
