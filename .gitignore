@@ -24,4 +24,5 @@ wp-snapshots
 /.htaccess.170818020051.orig
 /.project
 /wp-content/plugins/bwp-minify/cache
-
+.DS_Store
+/.settings
