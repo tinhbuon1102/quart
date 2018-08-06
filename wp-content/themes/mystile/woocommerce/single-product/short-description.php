@@ -51,14 +51,16 @@ else {
 <?php
 $table = get_field( 'product_size' );
 
-if ( $table ) { ?>
-<?php
-echo do_shortcode('[su_tabs class="my-custom-tabs"]');
-echo do_shortcode('[su_tab title="アイテム説明"]');
-echo apply_filters( 'woocommerce_short_description', $post->post_excerpt );
-echo do_shortcode('[/su_tab]');
+if ( $table ) { 
+	ob_start();
 ?>
-<?php echo do_shortcode('[su_tab title="サイズ詳細"]');
+<?php
+echo ('[su_tabs class="my-custom-tabs"]');
+echo ('[su_tab title="アイテム説明"]');
+echo apply_filters( 'woocommerce_short_description', $post->post_excerpt );
+echo ('[/su_tab]');
+?>
+<?php echo ('[su_tab title="サイズ詳細"]');
 
     echo '<table border="0">';
 
@@ -100,12 +102,16 @@ echo do_shortcode('[/su_tab]');
 
     echo '</table>';
 	
-echo do_shortcode('[/su_tab]');
-echo do_shortcode('[/su_tabs]'); ?>
+echo ('[/su_tab]');
+echo ('[/su_tabs]'); ?>
 <?php } else { ?>
 	<?php echo apply_filters( 'woocommerce_short_description', $post->post_excerpt ) ?>
 	<?php }
-	?>
+	
+$tabs_shortcode = ob_get_contents();
+ob_end_clean();
+echo do_shortcode($tabs_shortcode);
+?>
 
 
 </div>
