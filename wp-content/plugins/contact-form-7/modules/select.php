@@ -10,12 +10,14 @@ add_action( 'wpcf7_init', 'wpcf7_add_form_tag_select' );
 function wpcf7_add_form_tag_select() {
 	wpcf7_add_form_tag( array( 'select', 'select*' ),
 		'wpcf7_select_form_tag_handler',
-		array( 'name-attr' => true, 'selectable-values' => true ) );
+		array(
+			'name-attr' => true,
+			'selectable-values' => true,
+		)
+	);
 }
 
 function wpcf7_select_form_tag_handler( $tag ) {
-	$tag = new WPCF7_FormTag( $tag );
-
 	if ( empty( $tag->name ) ) {
 		return '';
 	}
@@ -32,7 +34,7 @@ function wpcf7_select_form_tag_handler( $tag ) {
 
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_id_option();
-	$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
+	$atts['tabindex'] = $tag->get_option( 'tabindex', 'signed_int', true );
 
 	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
@@ -64,30 +66,14 @@ function wpcf7_select_form_tag_handler( $tag ) {
 		$labels = array_merge( $labels, array_values( $data ) );
 	}
 
-	$defaults = array();
-
-	$default_choice = $tag->get_default_option( null, 'multiple=1' );
-
-	foreach ( $default_choice as $value ) {
-		$key = array_search( $value, $values, true );
-
-		if ( false !== $key ) {
-			$defaults[] = (int) $key + 1;
-		}
-	}
-
-	if ( $matches = $tag->get_first_match_option( '/^default:([0-9_]+)$/' ) ) {
-		$defaults = array_merge( $defaults, explode( '_', $matches[1] ) );
-	}
-
-	$defaults = array_unique( $defaults );
-
-	$shifted = false;
+	$default_choice = $tag->get_default_option( null, array(
+		'multiple' => $multiple,
+		'shifted' => $include_blank,
+	) );
 
 	if ( $include_blank || empty( $values ) ) {
 		array_unshift( $labels, '---' );
 		array_unshift( $values, '' );
-		$shifted = true;
 	} elseif ( $first_as_label ) {
 		$values[0] = '';
 	}
@@ -96,25 +82,16 @@ function wpcf7_select_form_tag_handler( $tag ) {
 	$hangover = wpcf7_get_hangover( $tag->name );
 
 	foreach ( $values as $key => $value ) {
-		$selected = false;
-
 		if ( $hangover ) {
-			if ( $multiple ) {
-				$selected = in_array( esc_sql( $value ), (array) $hangover );
-			} else {
-				$selected = ( $hangover == esc_sql( $value ) );
-			}
+			$selected = in_array( $value, (array) $hangover, true );
 		} else {
-			if ( ! $shifted && in_array( (int) $key + 1, (array) $defaults ) ) {
-				$selected = true;
-			} elseif ( $shifted && in_array( (int) $key, (array) $defaults ) ) {
-				$selected = true;
-			}
+			$selected = in_array( $value, (array) $default_choice, true );
 		}
 
 		$item_atts = array(
 			'value' => $value,
-			'selected' => $selected ? 'selected' : '' );
+			'selected' => $selected ? 'selected' : '',
+		);
 
 		$item_atts = wpcf7_format_atts( $item_atts );
 
@@ -146,8 +123,6 @@ add_filter( 'wpcf7_validate_select', 'wpcf7_select_validation_filter', 10, 2 );
 add_filter( 'wpcf7_validate_select*', 'wpcf7_select_validation_filter', 10, 2 );
 
 function wpcf7_select_validation_filter( $result, $tag ) {
-	$tag = new WPCF7_FormTag( $tag );
-
 	$name = $tag->name;
 
 	if ( isset( $_POST[$name] ) && is_array( $_POST[$name] ) ) {

@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce Module
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.2.0
  * @author  Algoritmika Ltd.
  */
@@ -37,6 +37,98 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	}
 
 	/**
+	 * get_deprecated_options.
+	 *
+	 * @version 3.8.0
+	 * @since   3.8.0
+	 */
+	function get_deprecated_options() {
+		return false;
+	}
+
+	/**
+	 * handle_deprecated_options.
+	 *
+	 * @version 3.8.0
+	 * @since   3.8.0
+	 */
+	function handle_deprecated_options() {
+		if ( $deprecated_options = $this->get_deprecated_options() ) {
+			foreach ( $deprecated_options as $new_option => $old_options ) {
+				$new_value = get_option( $new_option, array() );
+				foreach ( $old_options as $new_key => $old_option ) {
+					if ( null !== ( $old_value = get_option( $old_option, null ) ) ) {
+						$new_value[ $new_key ] = $old_value;
+						delete_option( $old_option );
+					}
+				}
+				update_option( $new_option, $new_value );
+			}
+		}
+	}
+
+	/**
+	 * save_meta_box_validate_value.
+	 *
+	 * @version 2.9.1
+	 * @since   2.9.1
+	 */
+	function save_meta_box_validate_value( $option_value, $option_name, $module_id ) {
+		if ( true === apply_filters( 'booster_option', false, true ) ) {
+			return $option_value;
+		}
+		if ( 'no' === $option_value ) {
+			return $option_value;
+		}
+		if ( $this->id === $module_id && $this->meta_box_validate_value === $option_name ) {
+			$args = array(
+				'post_type'      => 'product',
+				'post_status'    => 'any',
+				'posts_per_page' => 1,
+				'meta_key'       => '_' . $this->meta_box_validate_value,
+				'meta_value'     => 'yes',
+				'post__not_in'   => array( get_the_ID() ),
+			);
+			$loop = new WP_Query( $args );
+			$c = $loop->found_posts + 1;
+			if ( $c >= 2 ) {
+				add_filter( 'redirect_post_location', array( $this, 'validate_value_add_notice_query_var' ), 99 );
+				return 'no';
+			}
+		}
+		return $option_value;
+	}
+
+	/**
+	 * validate_value_add_notice_query_var.
+	 *
+	 * @version 2.9.1
+	 * @since   2.9.1
+	 */
+	function validate_value_add_notice_query_var( $location ) {
+		remove_filter( 'redirect_post_location', array( $this, 'validate_value_add_notice_query_var' ), 99 );
+		return add_query_arg( array( 'wcj_' . $this->id . '_meta_box_admin_notice' => true ), $location );
+	}
+
+	/**
+	 * validate_value_admin_notices.
+	 *
+	 * @version 2.9.1
+	 * @since   2.9.1
+	 */
+	function validate_value_admin_notices() {
+		if ( ! isset( $_GET[ 'wcj_' . $this->id . '_meta_box_admin_notice' ] ) ) {
+			return;
+		}
+		echo '<div class="error">' . '<p>' . '<div class="message">' .
+			sprintf(
+				__( 'Booster: Free plugin\'s version is limited to only one "%1$s" product with settings on per product basis enabled at a time. You will need to get <a href="%2$s" target="_blank">Booster Plus</a> to add unlimited number of "%1$s" products.', 'woocommerce-jetpack' ),
+				$this->short_desc, 'https://booster.io/plus/'
+			) .
+		'</div>' . '</p>' . '</div>';
+	}
+
+	/**
 	 * get_meta_box_options.
 	 *
 	 * @version 2.8.0
@@ -48,14 +140,43 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	}
 
 	/**
+	 * maybe_fix_settings.
+	 *
+	 * @version 3.2.1
+	 * @since   3.2.1
+	 */
+	function maybe_fix_settings( $settings ) {
+		if ( ! WCJ_IS_WC_VERSION_BELOW_3_2_0 ) {
+			foreach ( $settings as &$setting ) {
+				if ( isset( $setting['type'] ) && 'select' === $setting['type'] ) {
+					if ( ! isset( $setting['class'] ) || '' === $setting['class'] ) {
+						$setting['class'] = 'wc-enhanced-select';
+					} else {
+						$setting['class'] .= ' ' . 'wc-enhanced-select';
+					}
+				}
+				if ( isset( $setting['type'] ) && 'text' === $setting['type'] && isset( $setting['class'] ) && 'widefat' === $setting['class'] ) {
+					if ( ! isset( $setting['css'] ) || '' === $setting['css'] ) {
+						$setting['css'] = 'width:100%;';
+					} else {
+						$setting['css'] .= ' ' . 'width:100%;';
+					}
+				}
+			}
+		}
+		return $settings;
+	}
+
+	/**
 	 * add_settings_from_file.
 	 *
-	 * @version 2.8.0
+	 * @version 3.2.1
 	 * @since   2.8.0
 	 */
 	function add_settings_from_file( $settings ) {
 		$filename = wcj_plugin_path() . '/includes/settings/wcj-settings-' . str_replace( '_', '-', $this->id ) . '.php';
-		return ( file_exists ( $filename ) ? require( $filename ) : $settings );
+		$settings = ( file_exists ( $filename ) ? require( $filename ) : $settings );
+		return $this->maybe_fix_settings( $settings );
 	}
 
 	/*
@@ -75,7 +196,7 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	 * @since   2.5.3
 	 */
 	function save_meta_box_value( $option_value, $option_name, $module_id ) {
-		if ( true === apply_filters( 'booster_get_option', false, true ) ) {
+		if ( true === apply_filters( 'booster_option', false, true ) ) {
 			return $option_value;
 		}
 		if ( 'no' === $option_value ) {
@@ -127,14 +248,21 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	/**
 	 * reset_settings.
 	 *
-	 * @version 2.5.9
+	 * @version 3.7.0
 	 * @since   2.4.0
+	 * @todo    (maybe) always `delete_option()` (instead of `update_option()`)
 	 */
 	function reset_settings() {
 		if ( isset( $_GET['wcj_reset_settings'] ) && $this->id === $_GET['wcj_reset_settings'] && wcj_is_user_role( 'administrator' ) && ! isset( $_POST['save'] ) ) {
 			foreach ( $this->get_settings() as $settings ) {
-				$default_value = isset( $settings['default'] ) ? $settings['default'] : '';
-				update_option( $settings['id'], $default_value );
+				if ( false !== strpos( $settings['id'], '[' ) ) {
+					$id = explode( '[', $settings['id'] );
+					$id = $id[0];
+					delete_option( $id );
+				} else {
+					$default_value = isset( $settings['default'] ) ? $settings['default'] : '';
+					update_option( $settings['id'], $default_value );
+				}
 			}
 			wp_safe_redirect( remove_query_arg( 'wcj_reset_settings' ) );
 			exit();
@@ -168,13 +296,19 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	/**
 	 * save_meta_box.
 	 *
-	 * @since 2.5.0
+	 * @version 3.6.0
+	 * @since   2.5.0
+	 * @todo    (maybe) also order_id in `$the_post_id = ...`
 	 */
-	function save_meta_box( $post_id, $post ) {
+	function save_meta_box( $post_id, $__post ) {
 		// Check that we are saving with current metabox displayed.
 		if ( ! isset( $_POST[ 'woojetpack_' . $this->id . '_save_post' ] ) ) {
 			return;
 		}
+		// Setup post (just in case...)
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
 		// Save options
 		foreach ( $this->get_meta_box_options() as $option ) {
 			if ( 'title' === $option['type'] ) {
@@ -183,11 +317,13 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 			$is_enabled = ( isset( $option['enabled'] ) && 'no' === $option['enabled'] ) ? false : true;
 			if ( $is_enabled ) {
 				$option_value  = ( isset( $_POST[ $option['name'] ] ) ) ? $_POST[ $option['name'] ] : $option['default'];
-				$the_post_id   = ( isset( $option['product_id'] )     ) ? $option['product_id']     : $post_id; // todo: maybe also order_id?
+				$the_post_id   = ( isset( $option['product_id'] )     ) ? $option['product_id']     : $post_id;
 				$the_meta_name = ( isset( $option['meta_name'] ) )      ? $option['meta_name']      : '_' . $option['name'];
 				update_post_meta( $the_post_id, $the_meta_name, apply_filters( 'wcj_save_meta_box_value', $option_value, $option['name'], $this->id ) );
 			}
 		}
+		// Reset post
+		wp_reset_postdata();
 	}
 
 	/**
@@ -213,7 +349,11 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	/**
 	 * create_meta_box.
 	 *
-	 * @version 2.8.0
+	 * @version 3.3.0
+	 * @todo    `placeholder` for textarea
+	 * @todo    `class` for all types (now only for select)
+	 * @todo    `show_value` for all types (now only for multiple select)
+	 * @todo    `$the_post_id` maybe also `order_id` (i.e. not only `product_id`)?
 	 */
 	function create_meta_box() {
 		$current_post_id = get_the_ID();
@@ -224,18 +364,20 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 			if ( $is_enabled ) {
 				if ( 'title' === $option['type'] ) {
 					$html .= '<tr>';
-					$html .= '<th colspan="3" style="text-align:left;font-weight:bold;">' . $option['title'] . '</th>';
+					$html .= '<th colspan="3" style="' . ( isset( $option['css'] ) ? $option['css'] : 'text-align:left;font-weight:bold;' ) . '">' . $option['title'] . '</th>';
 					$html .= '</tr>';
 				} else {
 					$custom_attributes = '';
-					$the_post_id   = ( isset( $option['product_id'] ) ) ? $option['product_id'] : $current_post_id; // todo: maybe also order_id?
+					$the_post_id   = ( isset( $option['product_id'] ) ) ? $option['product_id'] : $current_post_id;
 					$the_meta_name = ( isset( $option['meta_name'] ) )  ? $option['meta_name']  : '_' . $option['name'];
 					if ( get_post_meta( $the_post_id, $the_meta_name ) ) {
 						$option_value = get_post_meta( $the_post_id, $the_meta_name, true );
 					} else {
 						$option_value = ( isset( $option['default'] ) ) ? $option['default'] : '';
 					}
-					$css = ( isset( $option['css'] ) ) ? $option['css']  : '';
+					$css          = ( isset( $option['css'] )   ? $option['css']   : '' );
+					$class        = ( isset( $option['class'] ) ? $option['class'] : '' );
+					$show_value   = ( isset( $option['show_value'] ) && $option['show_value'] );
 					$input_ending = '';
 					if ( 'select' === $option['type'] ) {
 						if ( isset( $option['multiple'] ) ) {
@@ -270,10 +412,14 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 						if ( isset( $option['custom_attributes'] ) ) {
 							$input_ending = ' ' . $option['custom_attributes'] . $input_ending;
 						}
+						if ( isset( $option['placeholder'] ) ) {
+							$input_ending = ' placeholder="' . $option['placeholder'] . '"' . $input_ending;
+						}
 					}
 					switch ( $option['type'] ) {
 						case 'price':
-							$field_html = '<input style="' . $css . '" class="short wc_input_price" type="number" step="' . apply_filters( 'wcj_get_meta_box_options_type_price_step', '0.0001' ) . '"' . $input_ending;
+							$field_html = '<input style="' . $css . '" class="short wc_input_price" type="number" step="' .
+								apply_filters( 'wcj_get_meta_box_options_type_price_step', '0.0001' ) . '"' . $input_ending;
 							break;
 						case 'date':
 							$field_html = '<input style="' . $css . '" class="input-text" display="date" type="text"' . $input_ending;
@@ -282,15 +428,17 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 							$field_html = '<textarea style="' . $css . '" id="' . $option['name'] . '" name="' . $option['name'] . '">' . $option_value . '</textarea>';
 							break;
 						case 'select':
-							$field_html = '<select' . $custom_attributes . ' style="' . $css . '" id="' . $option['name'] . '" name="' . $option_name . '">' . $options . '</select>';
+							$field_html = '<select' . $custom_attributes . ' class="' . $class . '" style="' . $css . '" id="' . $option['name'] . '" name="' .
+								$option_name . '">' . $options . '</select>' .
+								( $show_value && ! empty( $option_value ) ? sprintf( '<em>' . __( 'Selected: %s.', 'woocommerce-jetpack' ), implode( ', ', $option_value ) ) . '</em>' : '' );
 							break;
 						default:
 							$field_html = '<input style="' . $css . '" class="short" type="' . $option['type'] . '"' . $input_ending;
 							break;
 					}
 					$html .= '<tr>';
-					$maybe_tooltip = ( isset( $option['tooltip'] ) && '' != $option['tooltip'] ) ? wc_help_tip( $option['tooltip'], true ) : '';
-					$html .= '<th style="text-align:left;width:25%;">' . $option['title'] . $maybe_tooltip . '</th>';
+					$maybe_tooltip = ( isset( $option['tooltip'] ) && '' != $option['tooltip'] ) ? '<span style="float:right;">' . wc_help_tip( $option['tooltip'], true ) . '</span>' : '';
+					$html .= '<th style="text-align:left;width:25%;font-weight:bold;">' . $option['title'] . $maybe_tooltip . '</th>';
 					if ( isset( $option['desc'] ) && '' != $option['desc'] ) {
 						$html .= '<td style="font-style:italic;width:25%;">' . $option['desc'] . '</td>';
 					}
@@ -306,17 +454,18 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 
 	/**
 	 * is_enabled.
+	 *
+	 * @version 3.3.0
 	 */
-	public function is_enabled() {
-		$the_id = ( 'module' === $this->type ) ? $this->id : $this->parent_id;
-		return ( 'yes' === get_option( 'wcj_' . $the_id . '_enabled' ) ) ? true : false;
+	function is_enabled() {
+		return wcj_is_module_enabled( ( 'module' === $this->type ? $this->id : $this->parent_id ) );
 	}
 
 	/**
 	 * add_enabled_option.
 	 * only for `module`
 	 *
-	public function add_enabled_option( $settings ) {
+	function add_enabled_option( $settings ) {
 		$all_settings = $this->get_settings();
 		$settings[] = $all_settings[1];
 		return $settings;
@@ -449,7 +598,7 @@ if ( ! class_exists( 'WCJ_Module' ) ) :
 	 * @version 2.3.10
 	 * @since   2.3.10
 	 */
-	public function add_module_tools_info_to_tools_dashboard() {
+	function add_module_tools_info_to_tools_dashboard() {
 		$is_enabled_html = ( $this->is_enabled() ) ?
 			'<span style="color:green;font-style:italic;">' . __( 'enabled', 'woocommerce-jetpack' )  . '</span>' :
 			'<span style="color:gray;font-style:italic;">'  . __( 'disabled', 'woocommerce-jetpack' ) . '</span>';

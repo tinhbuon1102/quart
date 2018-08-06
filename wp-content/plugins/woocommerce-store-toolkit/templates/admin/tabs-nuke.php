@@ -2,15 +2,16 @@
 	<li><a href="#empty-woocommerce-tables"><?php _e( 'Empty WooCommerce Tables', 'woocommerce-store-toolkit' ); ?></a> |</li>
 	<li><a href="#empty-product-by-category"><?php _e( 'Delete Products by Product Category', 'woocommerce-store-toolkit' ); ?></a> |</li>
 	<li><a href="#delete-sales-by-sale-status"><?php _e( 'Delete Orders by Order Status', 'woocommerce-store-toolkit' ); ?></a> |</li>
+	<li><a href="#delete-sales-by-date"><?php _e( 'Delete Orders by Order Date', 'woocommerce-store-toolkit' ); ?></a> |</li>
 	<li><a href="#empty-wordpress-tables"><?php _e( 'Empty WordPress Tables', 'woocommerce-store-toolkit' ); ?></a></li>
 </ul>
 <br class="clear" />
 <h3><?php _e( 'Nuke WooCommerce', 'woocommerce-store-toolkit' ); ?></h3>
 <p><?php _e( 'Select the WooCommerce tables you wish to empty then click Remove to permanently remove WooCommerce generated details from your WordPress database.', 'woocommerce-store-toolkit' ); ?></p>
-<form method="post" onsubmit="showProgress()">
+<form method="post" id="postform">
 	<div id="poststuff">
 
-		<div class="postbox" id="empty-woocommerce-tables">
+		<div id="empty-woocommerce-tables" class="postbox">
 			<h3 class="hndle"><?php _e( 'Empty WooCommerce Tables', 'woocommerce-store-toolkit' ); ?></h3>
 			<div class="inside">
 				<p class="description"><?php _e( 'Permanently remove WooCommerce details.', 'woocommerce-store-toolkit' ); ?></p>
@@ -65,10 +66,10 @@
 
 						<tr>
 							<th>
-								<label for="sales_orders"><?php _e( 'Orders', 'woocommerce-store-toolkit' ); ?></label>
+								<label for="orders"><?php _e( 'Orders', 'woocommerce-store-toolkit' ); ?></label>
 							</th>
 							<td>
-								<input type="checkbox" id="sales_orders" name="woo_st_sales_orders"<?php echo disabled( $orders, 0 ); ?> /> (<?php echo $orders; ?>)
+								<input type="checkbox" id="orders" name="woo_st_orders"<?php echo disabled( $orders, 0 ); ?> /> (<?php echo $orders; ?>)
 							</td>
 						</tr>
 
@@ -105,6 +106,15 @@
 							</th>
 							<td>
 								<input type="checkbox" id="shipping_classes" name="woo_st_shipping_classes"<?php echo disabled( $shipping_classes, 0 ); ?> /> (<?php echo $shipping_classes; ?>)
+							</td>
+						</tr>
+
+						<tr>
+							<th>
+								<label for="woocommerce_logs"><?php _e( 'WooCommerce Logs', 'woocommerce-store-toolkit' ); ?></label>
+							</th>
+							<td>
+								<input type="checkbox" id="woocommerce_logs" name="woo_st_woocommerce_logs"<?php echo disabled( $woocommerce_logs, 0 ); ?> /> (<?php echo $woocommerce_logs; ?>)
 							</td>
 						</tr>
 
@@ -237,8 +247,8 @@
 		</div>
 		<!-- .postbox -->
 
-		<div class="postbox">
-			<h3 class="hndle" id="empty-product-by-category"><?php _e( 'Delete Products by Product Category', 'woocommerce-store-toolkit' ); ?></h3>
+		<div id="empty-product-by-category" class="postbox">
+			<h3 class="hndle"><?php _e( 'Delete Products by Product Category', 'woocommerce-store-toolkit' ); ?></h3>
 			<div class="inside">
 <?php if( $categories ) { ?>
 				<p class="description"><?php _e( 'Remove Products from specific Product Categories by selecting the Product Categories below, then click Remove to permanently remove those Products.', 'woocommerce-store-toolkit' ); ?></p>
@@ -246,14 +256,14 @@
 	<?php foreach( $categories_data as $category_single ) { ?>
 					<li>
 						<label>
-							<input type="checkbox" name="woo_st_categories[<?php echo $category_single->term_id; ?>]" value="<?php echo $category_single->term_id; ?>"<?php if( $category_single->count == 0 ) { ?> disabled="disabled"<?php } ?> />
+							<input type="checkbox" name="woo_st_products_category[<?php echo $category_single->term_id; ?>]" value="<?php echo $category_single->term_id; ?>"<?php if( $category_single->count == 0 ) { ?> disabled="disabled"<?php } ?> />
 							<?php echo $category_single->name; ?> (<?php echo $category_single->count; ?>)
 						</label>
 					</li>
 	<?php } ?>
 				</ul>
 				<p class="submit">
-					<input type="submit" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary" />
+					<input type="button" id="empty-product-by-category-remove" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary confirm-button" data-confirm="<?php _e( 'This will permanently remove Products associated to the selected Product Categories. Are you sure you want to proceed?', 'woocommerce-store-toolkit' ); ?>" />
 				</p>
 <?php } else { ?>
 				<p><?php _e( 'No Categories have been created.', 'woocommerce-store-toolkit' ); ?></p>
@@ -262,8 +272,8 @@
 		</div>
 		<!-- .postbox -->
 
-		<div class="postbox">
-			<h3 class="hndle" id="delete-sales-by-sale-status"><?php _e( 'Delete Orders by Order Status', 'woocommerce-store-toolkit' ); ?></h3>
+		<div id="delete-sales-by-sale-status" class="postbox">
+			<h3 class="hndle"><?php _e( 'Delete Orders by Order Status', 'woocommerce-store-toolkit' ); ?></h3>
 			<div class="inside">
 <?php if( $orders ) { ?>
 				<p class="description"><?php _e( 'Remove Orders based on the Order Status by selecting the the Order Status below, then click Remove to permanently remove those Orders.', 'woocommerce-store-toolkit' ); ?></p>
@@ -272,7 +282,7 @@
 	<?php foreach( $order_statuses as $order_status ) { ?>
 					<li>
 						<label>
-							<input type="checkbox" name="woo_st_orders[<?php echo $order_status->term_id; ?>]" value="<?php echo $order_status->term_id; ?>"<?php if( $order_status->count == 0 ) { ?> disabled="disabled"<?php } ?> />
+							<input type="checkbox" name="woo_st_orders_status[<?php echo $order_status->term_id; ?>]" value="<?php echo $order_status->term_id; ?>"<?php if( $order_status->count == 0 ) { ?> disabled="disabled"<?php } ?> />
 							<?php echo woo_st_convert_sale_status( $order_status->name ); ?> (<?php echo $order_status->count; ?>)
 						</label>
 					</li>
@@ -282,7 +292,7 @@
 <?php } ?>
 				</ul>
 				<p class="submit">
-					<input type="submit" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary" />
+					<input type="button" id="delete-sales-by-sale-status-remove" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary confirm-button" data-confirm="<?php _e( 'This will permanently remove Orders matching the selected Order Status. Are you sure you want to proceed?', 'woocommerce-store-toolkit' ); ?>" />
 				</p>
 <?php } else { ?>
 				<p><?php _e( 'No Orders were found.', 'woocommerce-store-toolkit' ); ?></p>
@@ -291,7 +301,37 @@
 		</div>
 		<!-- .postbox -->
 
-		<div class="postbox" id="empty-wordpress-tables">
+		<div id="delete-sales-by-date" class="postbox">
+			<h3 class="hndle"><?php _e( 'Delete Orders by Order Date', 'woocommerce-store-toolkit' ); ?></h3>
+			<div class="inside">
+				<p class="description"><?php _e( 'Remove Orders based on the Order Date by selecting the required date filter, then click Remove to permanently remove those Orders.', 'woocommerce-store-toolkit' ); ?></p>
+				<ul>
+					<li>
+						<label><input type="radio" name="woo_st_orders_date" value=""<?php checked( $orders_date, false ); ?>/><?php _e( 'All dates', 'woocommerce-store-toolkit' ); ?></label>
+					</li>
+					<li>
+						<label><input type="radio" name="woo_st_orders_date" value="today"<?php checked( $orders_date, 'today' ); ?> /><?php _e( 'Today', 'woocommerce-store-toolkit' ); ?></label>
+					</li>
+					<li>
+						<label><input type="radio" name="woo_st_orders_date" value="current_month"<?php checked( $orders_date, 'current_month' ); ?> /><?php _e( 'This month', 'woocommerce-store-toolkit' ); ?></label>
+					</li>
+					<li>
+						<label><input type="radio" name="woo_st_orders_date" value="manual"<?php checked( $orders_date, 'manual' ); ?> /><?php _e( 'Fixed date', 'woocommerce-store-toolkit' ); ?></label><br />
+						<div style="margin-top:0.2em;">
+							<input type="text" size="10" maxlength="10" id="orders_date_from" name="woo_st_orders_date_from" value="<?php echo $orders_date_from; ?>" class="text code datepicker order_export" />
+							 to 
+							<input type="text" size="10" maxlength="10" id="orders_date_to" name="woo_st_orders_date_to" value="<?php echo $orders_date_to; ?>" class="text code datepicker order_export" />
+						</div>
+					</li>
+				</ul>
+				<p class="submit">
+					<input type="button" id="delete-sales-by-date-remove" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary confirm-button" data-confirm="<?php _e( 'This will permanently remove Orders within the selected Order date range. Are you sure you want to proceed?', 'woocommerce-store-toolkit' ); ?>" />
+				</p>
+			</div>
+		</div>
+		<!-- .postbox -->
+
+		<div id="empty-wordpress-tables" class="postbox">
 			<h3 class="hndle"><?php _e( 'Empty WordPress Tables', 'woocommerce-store-toolkit' ); ?></h3>
 			<div class="inside">
 				<p class="description"><?php _e( 'Permanently remove WordPress details.', 'woocommerce-store-toolkit' ); ?></p>

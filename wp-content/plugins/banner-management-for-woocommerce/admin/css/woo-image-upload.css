@@ -19,7 +19,7 @@ body {position:relative;z-index:0;}
 .accordion-section-content {padding:15px;display:none;border-top: 1px solid #ccc;}
 .accordion-section-title {text-decoration: none;}
 .accordion-section .enable-disable {margin-bottom: 15px;}
-.accordion {margin-top:15px;}
+/*.accordion {margin-top:15px;}*/
 .accordion-section {margin: 0; margin-bottom: 12px;border: 1px solid #ccc;}
 .set_accordion_classes {width: 100%;}
 .set_accordion_classes .enable-disable {display: inline-block;}
@@ -113,7 +113,7 @@ input#wbm_shop_setting_enable {
     margin-top: 1%;
 }
 img.preview_category_page_image {
-    width: 61%;
+    width: 100%;
 }
 label.wbm_leble_setting_css {
     padding-top: 4px !important;

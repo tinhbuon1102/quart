@@ -2,40 +2,55 @@
 /**
  * Booster for WooCommerce - Settings - Wholesale Price
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-$products = wcj_get_products();
+$products     = wcj_get_products();
+$product_cats = wcj_get_terms( 'product_cat' );
 $settings = array(
 	array(
 		'title'    => __( 'Options', 'woocommerce-jetpack' ),
 		'type'     => 'title',
-		'desc'     => __( 'Wholesale Price Levels Options. If you want to display prices table on frontend, use [wcj_product_wholesale_price_table] shortcode.', 'woocommerce-jetpack' ),
+		'desc'     => sprintf( __( 'If you want to display prices table on frontend, use %s shortcode.', 'woocommerce-jetpack' ),
+			'<code>[wcj_product_wholesale_price_table]</code>' ),
 		'id'       => 'wcj_wholesale_price_general_options',
 	),
 	array(
-		'title'    => __( 'Enable per Product', 'woocommerce-jetpack' ),
+		'title'    => __( 'Enable per product', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'This will add new meta box to each product\'s edit page.', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_wholesale_price_per_product_enable',
 		'default'  => 'yes',
 		'type'     => 'checkbox',
 	),
 	array(
-		'title'    => __( 'Use total cart quantity instead of product quantity', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'title'    => __( 'Quantity calculation', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_wholesale_price_use_total_cart_quantity',
 		'default'  => 'no',
-		'type'     => 'checkbox',
+		'type'     => 'select',
+		'options'  => array(
+			'no'              => __( 'Product quantity', 'woocommerce-jetpack' ),
+			'total_wholesale' => __( 'Total cart quantity (wholesale products only)', 'woocommerce-jetpack' ),
+			'yes'             => __( 'Total cart quantity', 'woocommerce-jetpack' ),
+		),
 	),
 	array(
 		'title'    => __( 'Apply wholesale discount only if no other cart discounts were applied', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_wholesale_price_apply_only_if_no_other_discounts',
 		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Round single product price', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'If enabled will round single product price with precision set in WooCommerce > Settings > General > Number of decimals.', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_wholesale_price_rounding_enabled',
+		'default'  => 'yes',
 		'type'     => 'checkbox',
 	),
 	array(
@@ -47,14 +62,14 @@ $settings = array(
 	),
 	array(
 		'title'    => __( 'If show discount info on cart page is enabled, set format here', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'Replaced values: %old_price%, %price%, %discount_value%.', 'woocommerce-jetpack' ),
+		'desc'     => wcj_message_replaced_values( array( '%old_price%', '%price%', '%discount_value%' ) ),
 		'id'       => 'wcj_wholesale_price_show_info_on_cart_format',
 		'default'  => '<del>%old_price%</del> %price%<br>You save: <span style="color:red;">%discount_value%</span>',
 		'type'     => 'textarea',
-		'css'      => 'width: 450px;',
+		'css'      => 'width:100%;',
 	),
 	array(
-		'title'    => __( 'Discount Type', 'woocommerce-jetpack' ),
+		'title'    => __( 'Discount type', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_wholesale_price_discount_type',
 		'default'  => 'percent',
 		'type'     => 'select',
@@ -81,6 +96,31 @@ $settings = array(
 		'options'  => $products,
 	),
 	array(
+		'title'    => __( 'Product Categories to include', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_wholesale_price_product_cats_to_include',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $product_cats,
+	),
+	array(
+		'title'    => __( 'Product Categories to exclude', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_wholesale_price_product_cats_to_exclude',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $product_cats,
+	),
+	array(
+		'title'    => __( 'Advanced: Price Changes', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Disable wholesale pricing for products with "Price Changes"', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Try enabling this checkbox, if you are having compatibility issues with other plugins.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_wholesale_price_check_for_product_changes_price',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
 		'type'     => 'sectionend',
 		'id'       => 'wcj_wholesale_price_general_options',
 	),
@@ -94,14 +134,14 @@ $settings = array(
 		'id'       => 'wcj_wholesale_price_levels_number',
 		'default'  => 1,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array('step' => '1', 'min' => '1', ) ),
 		'css'      => 'width:100px;',
 	),
 );
-for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_wholesale_price_levels_number', 1 ) ); $i++ ) {
+for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_wholesale_price_levels_number', 1 ) ); $i++ ) {
 	$settings = array_merge( $settings, array(
 		array(
 			'title'    => __( 'Min quantity', 'woocommerce-jetpack' ) . ' #' . $i,
@@ -129,11 +169,11 @@ $settings = array_merge( $settings, array(
 	array(
 		'title'    => __( 'Additional User Roles Options', 'woocommerce-jetpack' ),
 		'type'     => 'title',
-		'desc'     => __( 'If you want to set different wholesale pricing options for different user roles, fill this section. Please note that you can also use Booster\'s "Price by User Role" module without filling this section.', 'woocommerce-jetpack' ),
+		'desc'     => __( 'If you want to set different wholesale pricing options for different user roles, fill this section. Please note that you can also use Booster\'s "Price based on User Role" module without filling this section.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_wholesale_price_by_user_role_options',
 	),
 	array(
-		'title'    => __( 'User Roles Settings', 'woocommerce-jetpack' ),
+		'title'    => __( 'User roles settings', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Save settings after you change this option. Leave blank to disable.', 'woocommerce-jetpack' ),
 		'type'     => 'multiselect',
 		'id'       => 'wcj_wholesale_price_by_user_role_roles',
@@ -151,14 +191,14 @@ if ( ! empty( $user_roles ) ) {
 				'id'      => 'wcj_wholesale_price_levels_number_' . $user_role_key,
 				'default' => 1,
 				'type'    => 'custom_number',
-				'desc'    => apply_filters( 'booster_get_message', '', 'desc' ),
+				'desc'    => apply_filters( 'booster_message', '', 'desc' ),
 				'custom_attributes' => array_merge(
-					is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+					is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 					array('step' => '1', 'min' => '1', ) ),
 				'css'     => 'width:100px;',
 			),
 		) );
-		for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_wholesale_price_levels_number_' . $user_role_key, 1 ) ); $i++ ) {
+		for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_wholesale_price_levels_number_' . $user_role_key, 1 ) ); $i++ ) {
 			$settings = array_merge( $settings, array(
 				array(
 					'title'   => __( 'Min quantity', 'woocommerce-jetpack' ) . ' #' . $i . ' [' . $user_role_key . ']',

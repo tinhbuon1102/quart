@@ -11,6 +11,7 @@
 	$mysqlDumpSupport = ($mysqldumpPath) ? $mysqldumpPath : 'Path Not Found';
 	
 	$client_ip_address = DUP_Server::getClientIP();
+	$error_log_path = ini_get('error_log');
 ?>
 
 <!-- ==============================
@@ -131,7 +132,18 @@ SERVER SETTINGS -->
 		</tr>
 		<tr>
 			<td><a href="http://www.php.net/manual/en/info.configuration.php#ini.max-execution-time" target="_blank"><?php _e("Max Execution Time", 'duplicator'); ?></a></td>
-			<td><?php echo @ini_get( 'max_execution_time' ); ?></td>
+			<td>
+				<?php
+					echo @ini_get('max_execution_time');
+					$try_update = set_time_limit(0);
+					$try_update = $try_update ? 'is dynamic' : 'value is fixed';
+					echo " (default) - {$try_update}";
+				?>
+				<i class="fa fa-question-circle data-size-help"
+					data-tooltip-title="<?php _e("Max Execution Time", 'duplicator'); ?>"
+					data-tooltip="<?php _e('If the value shows dynamic then this means its possible for PHP to run longer than the default.  '
+						. 'If the value is fixed then PHP will not be allowed to run longer than the default.', 'duplicator'); ?>"></i>
+			</td>
 		</tr>
 		<tr>
 			<td><a href="http://us3.php.net/shell_exec" target="_blank"><?php _e("Shell Exec", 'duplicator'); ?></a></td>
@@ -144,6 +156,10 @@ SERVER SETTINGS -->
         <tr>
             <td><a href="https://suhosin.org/stories/index.html" target="_blank"><?php _e("Suhosin Extension", 'duplicator'); ?></a></td>
             <td><?php echo extension_loaded('suhosin') ? _e("Enabled", 'duplicator') : _e("Disabled", 'duplicator'); ?></td>
+        </tr>
+		<tr>
+            <td><?php _e("Error Log File ", 'duplicator'); ?></td>
+            <td><?php echo $error_log_path; ?></td>
         </tr>
 		<tr>
 			<td class='dup-settings-diag-header' colspan="2">MySQL</td>

@@ -238,14 +238,43 @@ class Woo_Stickers_By_Webline_Public {
 				$classSoldPosition=(($this->sold_product_settings['sold_product_position']=='left') ? ((is_product())? " pos_left_detail " : " pos_left " ) : ((is_product())? " pos_right_detail " : " pos_right "));	
 				
 				$classSold=(($this->sold_product_settings['sold_product_custom_sticker']=='')?(($this->sold_product_settings['enable_sold_product_style'] == "ribbon") ? (($this->sold_product_settings['sold_product_position']=='left')?" woosticker soldout_ribbon_left ":" woosticker soldout_ribbon_right ") : (($this->sold_product_settings['sold_product_position']=='left')?" woosticker soldout_round_left ":" woosticker soldout_round_right ")):"woosticker custom_sticker_image");
-				
-				if (! $product->is_in_stock ()) {
-					if($this->sold_product_settings['enable_sold_product_sticker']=="yes") {
-						if($this->sold_product_settings['sold_product_custom_sticker']=='') { 
-							echo '<span class="'.$classSold . $classSoldPosition .'">Sold Out</span>';
-						}							
-						else {
-							echo '<span class="' . $classSold . $classSoldPosition . '" style="background-image:url('.$this->sold_product_settings['sold_product_custom_sticker'].');"> Sold Out </span>';
+
+				if($product->product_type=='variable') {
+
+					$total_qty=0;
+					
+					$available_variations = $product->get_available_variations();
+				   
+					foreach ($available_variations as $variation) {
+
+						if($variation['is_in_stock']==true){
+							$total_qty++;
+						}
+						
+					}
+					
+					if($total_qty==0){
+						if($this->sold_product_settings['enable_sold_product_sticker']=="yes") {
+							if($this->sold_product_settings['sold_product_custom_sticker']=='') { 
+								echo '<span class="'.$classSold . $classSoldPosition .'">Sold Out</span>';
+							}							
+							else {
+								echo '<span class="' . $classSold . $classSoldPosition . '" style="background-image:url('.$this->sold_product_settings['sold_product_custom_sticker'].');"> Sold Out </span>';
+							}
+						}
+					}				
+
+				}
+				else {
+
+					if (! $product->is_in_stock ()) {
+						if($this->sold_product_settings['enable_sold_product_sticker']=="yes") {
+							if($this->sold_product_settings['sold_product_custom_sticker']=='') { 
+								echo '<span class="'.$classSold . $classSoldPosition .'">Sold Out</span>';
+							}							
+							else {
+								echo '<span class="' . $classSold . $classSoldPosition . '" style="background-image:url('.$this->sold_product_settings['sold_product_custom_sticker'].');"> Sold Out </span>';
+							}
 						}
 					}
 				}

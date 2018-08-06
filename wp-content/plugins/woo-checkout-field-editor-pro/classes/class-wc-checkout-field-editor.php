@@ -9,7 +9,7 @@ class WC_Checkout_Field_Editor {
 	/**
 	 * __construct function.
 	 */
-	function __construct() {
+	public function __construct() {
 		// Validation rules are controlled by the local fields and can't be changed
 		$this->locale_fields = array(
 			'billing_address_1', 'billing_address_2', 'billing_state', 'billing_postcode', 'billing_city',
@@ -19,13 +19,14 @@ class WC_Checkout_Field_Editor {
 
 		add_action('admin_menu', array($this, 'admin_menu'));
 		add_filter('woocommerce_screen_ids', array($this, 'add_screen_id'));
+		add_filter('plugin_action_links_'.TH_WCFD_BASE_NAME, array($this, 'add_settings_link'));
 		add_action('woocommerce_checkout_update_order_meta', array($this, 'save_data'), 10, 2);
 	}
 	
 	/**
 	 * menu function.
 	 */
-	function admin_menu() {
+	public function admin_menu() {
 		$this->screen_id = add_submenu_page('woocommerce', __('WooCommerce Checkout Form Designer', 'thwcfd'), __('Checkout Form', 'thwcfd'), 
 		'manage_woocommerce', 'checkout_form_designer', array($this, 'the_designer'));
 
@@ -33,12 +34,28 @@ class WC_Checkout_Field_Editor {
 	}
 	
 	/**
+	 * add_screen_id function.
+	 */
+	public function add_screen_id($ids){
+		$ids[] = 'woocommerce_page_checkout_form_designer';
+		$ids[] = strtolower(__('WooCommerce', 'thwcfd')) .'_page_checkout_form_designer';
+
+		return $ids;
+	}
+	
+	public function add_settings_link($links) {
+		$settings_link = '<a href="'.admin_url('admin.php?page=checkout_form_designer').'">'. __('Settings') .'</a>';
+		array_unshift($links, $settings_link);
+		return $links;
+	}
+	
+	/**
 	 * scripts function.
 	 */
-	function enqueue_admin_scripts() {
+	public function enqueue_admin_scripts() {
 		wp_enqueue_style ('thwcfd-style', plugins_url('/assets/css/thwcfd-style.css', dirname(__FILE__)));
 		wp_enqueue_script('thwcfd-admin-script', plugins_url('/assets/js/thwcfd-admin.js', dirname(__FILE__)), array('jquery', 'jquery-ui-dialog', 'jquery-ui-sortable',
-		'woocommerce_admin', 'select2', 'jquery-tiptip'), '1.0', true);	
+		'woocommerce_admin', 'select2', 'jquery-tiptip'), TH_WCFD_VERSION, true);	
 	}
 	
 	public function output_premium_version_notice(){
@@ -67,28 +84,18 @@ class WC_Checkout_Field_Editor {
         </div>
         <?php
 	}
-	
-	/**
-	 * add_screen_id function.
-	 */
-	function add_screen_id($ids){
-		$ids[] = 'woocommerce_page_checkout_form_designer';
-		$ids[] = strtolower(__('WooCommerce', 'thwcfd')) .'_page_checkout_form_designer';
-
-		return $ids;
-	}
 
 	/**
 	 * Reset checkout fields.
 	 */
-	function reset_checkout_fields() {
+	public function reset_checkout_fields() {
 		delete_option('wc_fields_billing');
 		delete_option('wc_fields_shipping');
 		delete_option('wc_fields_additional');
 		echo '<div class="updated"><p>'. __('SUCCESS: Checkout fields successfully reset', 'thwcfd') .'</p></div>';
 	}
 	
-	function is_reserved_field_name( $field_name ){
+	public function is_reserved_field_name( $field_name ){
 		if($field_name && in_array($field_name, array(
 			'billing_first_name', 'billing_last_name', 'billing_company', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_state', 
 			'billing_country', 'billing_postcode', 'billing_phone', 'billing_email',
@@ -100,7 +107,7 @@ class WC_Checkout_Field_Editor {
 		return false;
 	}
 	
-	function is_default_field_name($field_name){
+	public function is_default_field_name($field_name){
 		if($field_name && in_array($field_name, array(
 			'billing_first_name', 'billing_last_name', 'billing_company', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_state', 
 			'billing_country', 'billing_postcode', 'billing_phone', 'billing_email',
@@ -115,7 +122,7 @@ class WC_Checkout_Field_Editor {
 	/**
 	 * Save Data function.
 	 */
-	function save_data($order_id, $posted){
+	public function save_data($order_id, $posted){
 		$types = array('billing', 'shipping', 'additional');
 
 		foreach($types as $type){
@@ -153,14 +160,14 @@ class WC_Checkout_Field_Editor {
 		return $fields;
 	}
 			
-	function sort_fields_by_order($a, $b){
+	public function sort_fields_by_order($a, $b){
 	    if(!isset($a['order']) || $a['order'] == $b['order']){
 	        return 0;
 	    }
 	    return ($a['order'] < $b['order']) ? -1 : 1;
 	}
 	
-	function get_field_types(){
+	public function get_field_types(){
 		return array(
 			'text' => 'Text',
 			'select' => 'Select',				
@@ -170,7 +177,7 @@ class WC_Checkout_Field_Editor {
 	/*
 	 * New field form popup
 	 */	
-	function wcfd_new_field_form_pp(){
+	public function wcfd_new_field_form_pp(){
 		$field_types = $this->get_field_types();
 		?>
         <div id="wcfd_new_field_form_pp" title="New Checkout Field" class="wcfd_popup_wrapper">
@@ -220,6 +227,8 @@ class WC_Checkout_Field_Editor {
                         style="width: 250px; height:30px;">
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="postcode">Postcode</option>
+                            <option value="state">State</option>
                         </select>
                     </td>
 				</tr>  
@@ -259,7 +268,7 @@ class WC_Checkout_Field_Editor {
 	/*
 	 * New field form popup
 	 */	
-	function wcfd_edit_field_form_pp(){
+	public function wcfd_edit_field_form_pp(){
 		$field_types = $this->get_field_types();
 		?>
         <div id="wcfd_edit_field_form_pp" title="Edit Checkout Field" class="wcfd_popup_wrapper">
@@ -313,6 +322,8 @@ class WC_Checkout_Field_Editor {
                         style="width: 250px; height:30px;">
                             <option value="email">Email</option>
                             <option value="phone">Phone</option>
+                            <option value="postcode">Postcode</option>
+                            <option value="state">State</option>
                         </select>
                     </td>
 				</tr>  
@@ -349,7 +360,7 @@ class WC_Checkout_Field_Editor {
         <?php
 	}
 	
-	function render_tabs_and_sections(){
+	public function render_tabs_and_sections(){
 		$tabs = array( 'fields' => 'Checkout Fields' );
 		$tab  = isset( $_GET['tab'] ) ? esc_attr( $_GET['tab'] ) : 'fields';
 		
@@ -384,11 +395,11 @@ class WC_Checkout_Field_Editor {
 		$this->output_premium_version_notice();
 	}
 	
-	function get_current_tab(){
+	public function get_current_tab(){
 		return isset( $_GET['tab'] ) ? esc_attr( $_GET['tab'] ) : 'fields';
 	}
 	
-	function get_current_section(){
+	public function get_current_section(){
 		$tab = $this->get_current_tab();
 		$section = '';
 		if($tab === 'fields'){
@@ -397,7 +408,7 @@ class WC_Checkout_Field_Editor {
 		return $section;
 	}
 
-	function render_checkout_fields_heading_row(){
+	public function render_checkout_fields_heading_row(){
 		?>
 		<th class="sort"></th>
 		<th class="check-column" style="padding-left:0px !important;"><input type="checkbox" style="margin-left:7px;" onclick="thwcfdSelectAllCheckoutFields(this)"/></th>
@@ -413,7 +424,7 @@ class WC_Checkout_Field_Editor {
         <?php
 	}
 	
-	function render_actions_row($section){
+	public function render_actions_row($section){
 		?>
         <th colspan="7">
             <button type="button" class="button button-primary" onclick="openNewFieldForm('<?php echo $section; ?>')"><?php _e( '+ Add field', 'thwcfd' ); ?></button>
@@ -423,19 +434,20 @@ class WC_Checkout_Field_Editor {
         </th>
         <th colspan="4">
         	<input type="submit" name="save_fields" class="button-primary" value="<?php _e( 'Save changes', 'thwcfd' ) ?>" style="float:right" />
-            <input type="submit" name="reset_fields" class="button" value="<?php _e( 'Reset to default fields', 'thwcfd' ) ?>" style="float:right; margin-right: 5px;" />
+            <input type="submit" name="reset_fields" class="button" value="<?php _e( 'Reset to default fields', 'thwcfd' ) ?>" style="float:right; margin-right: 5px;" 
+			onclick="return confirm('Are you sure you want to reset to default fields? all your changes will be deleted.');"/>
         </th>  
     	<?php 
 	}
 	
-	function the_designer() {
+	public function the_designer() {
 		$tab = $this->get_current_tab();
 		if($tab === 'fields'){
 			$this->checkout_form_field_editor();
 		}
 	}
 	
-	function checkout_form_field_editor() {
+	public function checkout_form_field_editor() {
 		$section = $this->get_current_section();
 						
 		echo '<div class="wrap woocommerce"><div class="icon32 icon32-attributes" id="icon-woocommerce"><br /></div>';
@@ -589,7 +601,7 @@ class WC_Checkout_Field_Editor {
     <?php 		
 	}
 						
-	function save_options( $section ) {
+	public function save_options( $section ) {
 		$o_fields      = $this->get_fields( $section );
 		$fields        = $o_fields;
 		//$core_fields   = array_keys( WC()->countries->get_address_fields( WC()->countries->get_base_country(), $section . '_' ) );
@@ -624,6 +636,7 @@ class WC_Checkout_Field_Editor {
 		for ( $i = 0; $i <= $max; $i ++ ) {
 			$name     = empty( $f_names[$i] ) ? '' : urldecode( sanitize_title( wc_clean( stripslashes( $f_names[$i] ) ) ) );
 			$new_name = empty( $f_names_new[$i] ) ? '' : urldecode( sanitize_title( wc_clean( stripslashes( $f_names_new[$i] ) ) ) );
+			$allow_override = apply_filters('thwcfd_allow_default_field_override_'.$new_name, false);
 			
 			if(!empty($f_deleted[$i]) && $f_deleted[$i] == 1){
 				unset( $fields[$name] );
@@ -631,7 +644,7 @@ class WC_Checkout_Field_Editor {
 			}
 						
 			// Check reserved names
-			if($this->is_reserved_field_name( $new_name )){
+			if($this->is_reserved_field_name( $new_name ) && !$allow_override){
 				continue;
 			}
 						
@@ -675,13 +688,13 @@ class WC_Checkout_Field_Editor {
 			$fields[$name]['clear']   	  = empty( $f_clear[$i] ) ? false : true;
 			
 			$fields[$name]['enabled']     = empty( $f_enabled[$i] ) ? false : true;
-			$fields[$name]['order']       = empty( $f_order[$i] ) ? '' : wc_clean( $f_order[$i] );
+			$fields[$name]['order']       = isset($f_order[$i]) && is_numeric($f_order[$i]) ? wc_clean( $f_order[$i] ) : '';
 					
 			if (!empty( $fields[$name]['options'] )) {
 				$fields[$name]['options'] = array_combine( $fields[$name]['options'], $fields[$name]['options'] );
 			}
 
-			if (!in_array( $name, $this->locale_fields )){
+			if (!in_array( $name, $this->locale_fields ) || apply_filters('thwcfd_allow_address_field_validation_override', false, $name)){
 				$fields[$name]['validate'] = empty( $f_validation[$i] ) ? array() : explode( ',', $f_validation[$i] );
 			}
 

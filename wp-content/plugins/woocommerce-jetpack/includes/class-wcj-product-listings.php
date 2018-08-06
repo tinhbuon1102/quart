@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Product Listings
  *
- * @version 2.8.0
+ * @version 3.5.0
  * @author  Algoritmika Ltd.
  */
 
@@ -15,12 +15,17 @@ class WCJ_Product_Listings extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.5.0
+	 * @todo    more descriptions in settings (i.e. Storefront etc.)
+	 * @todo    add deprecated options (which were moved to Storefront)
+	 * @todo    add options to enable/disable each section
+	 * @todo    add "Exclude Categories Products" to "Category Display Options" also
+	 * @todo    add "Exclude Products" and "Exclude Tags Products"
 	 */
 	function __construct() {
 		$this->id         = 'product_listings';
 		$this->short_desc = __( 'Product Listings', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Change WooCommerce display options for shop and category pages: show/hide categories count, exclude categories, show/hide empty categories.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Change display options for shop and category pages: show/hide categories count, exclude categories, show/hide empty categories.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-product-listings';
 		parent::__construct();
 
@@ -35,59 +40,50 @@ class WCJ_Product_Listings extends WCJ_Module {
 				add_filter( 'woocommerce_subcategory_count_html', array( $this, 'remove_subcategory_count' ), 100 );
 			}
 
-			// Tax Incl./Excl. by product/category
-			add_filter( 'option_woocommerce_tax_display_shop', array( $this, 'tax_display' ), PHP_INT_MAX );
+			// Product visibility by price
+			if ( 'yes' === get_option( 'wcj_product_listings_product_visibility_by_price_enabled', 'no' ) ) {
+				add_filter( 'woocommerce_product_is_visible', array( $this, 'product_visibility_by_price' ), PHP_INT_MAX, 2 );
+			}
+
+			// Product visibility by category
+			$this->cats_products_to_hide_on_shop = get_option( 'wcj_product_listings_exclude_cats_products_on_shop', '' );
+			if ( ! empty( $this->cats_products_to_hide_on_shop ) ) {
+				add_filter( 'woocommerce_product_is_visible', array( $this, 'product_visibility_by_category' ), PHP_INT_MAX, 2 );
+			}
+
 		}
 	}
 
 	/**
-	 * tax_display.
+	 * product_visibility_by_category.
 	 *
-	 * @version 2.5.5
-	 * @since   2.5.5
+	 * @version 3.5.0
+	 * @since   3.5.0
 	 */
-	function tax_display( $value ) {
-		$product_id = get_the_ID();
-		if ( 'product' === get_post_type( $product_id ) ) {
-			$products_incl_tax     = get_option( 'wcj_product_listings_display_taxes_products_incl_tax', '' );
-			$products_excl_tax     = get_option( 'wcj_product_listings_display_taxes_products_excl_tax', '' );
-			$product_cats_incl_tax = get_option( 'wcj_product_listings_display_taxes_product_cats_incl_tax', '' );
-			$product_cats_excl_tax = get_option( 'wcj_product_listings_display_taxes_product_cats_excl_tax', '' );
-			if ( '' != $products_incl_tax || '' != $products_incl_tax || '' != $products_incl_tax || '' != $products_incl_tax ) {
-				// Products
-				if ( ! empty( $products_incl_tax ) ) {
-					if ( in_array( $product_id, $products_incl_tax ) ) {
-						return 'incl';
-					}
-				}
-				if ( ! empty( $products_excl_tax ) ) {
-					if ( in_array( $product_id, $products_excl_tax ) ) {
-						return 'excl';
-					}
-				}
-				// Categories
-				$product_categories = get_the_terms( $product_id, 'product_cat' );
-				if ( ! empty( $product_cats_incl_tax ) ) {
-					if ( ! empty( $product_categories ) ) {
-						foreach ( $product_categories as $product_category ) {
-							if ( in_array( $product_category->term_id, $product_cats_incl_tax ) ) {
-								return 'incl';
-							}
-						}
-					}
-				}
-				if ( ! empty( $product_cats_excl_tax ) ) {
-					if ( ! empty( $product_categories ) ) {
-						foreach ( $product_categories as $product_category ) {
-							if ( in_array( $product_category->term_id, $product_cats_excl_tax ) ) {
-								return 'excl';
-							}
-						}
-					}
-				}
-			}
+	function product_visibility_by_category( $visible, $product_id ) {
+		return ( ! isset( $_GET['s'] ) && is_shop() && wcj_is_product_term( $product_id, $this->cats_products_to_hide_on_shop, 'product_cat' ) ? false : $visible );
+	}
+
+	/**
+	 * product_visibility_by_price.
+	 *
+	 * @version 3.2.4
+	 * @since   3.2.3
+	 * @todo    grouped products
+	 * @todo    (maybe) as new "Product Visibility by Price" module
+	 */
+	function product_visibility_by_price( $visible, $product_id ) {
+		$product = wc_get_product( $product_id );
+		if ( $product->is_type( 'variable' ) ) {
+			$min_price = $product->get_variation_price( 'min' );
+			$max_price = $product->get_variation_price( 'max' );
+		} else {
+			$min_price = $product->get_price();
+			$max_price = $product->get_price();
 		}
-		return $value;
+		$min_price_limit = get_option( 'wcj_product_listings_product_visibility_by_price_min', 0 );
+		$max_price_limit = get_option( 'wcj_product_listings_product_visibility_by_price_max', 0 );
+		return ( ( 0 != $min_price_limit && $min_price < $min_price_limit ) || ( 0 != $max_price_limit && $max_price > $max_price_limit ) ? false : $visible );
 	}
 
 	/**
@@ -96,7 +92,7 @@ class WCJ_Product_Listings extends WCJ_Module {
 	function remove_subcategory_count( $count_html ) {
 		if (
 			( is_shop() && 'yes' === get_option( 'wcj_product_listings_hide_cats_count_on_shop' ) ) ||
-			( ! is_shop() && 'yes' === apply_filters( 'booster_get_option', 'wcj', get_option( 'wcj_product_listings_hide_cats_count_on_archive' ) ) )
+			( ! is_shop() && 'yes' === apply_filters( 'booster_option', 'wcj', get_option( 'wcj_product_listings_hide_cats_count_on_archive' ) ) )
 		) {
 			return '';
 		}

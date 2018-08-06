@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - General
  *
- * @version 2.8.0
+ * @version 3.2.3
  * @author  Algoritmika Ltd.
  */
 
@@ -15,7 +15,8 @@ class WCJ_General extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.2.3
+	 * @todo    expand `$this->desc`
 	 */
 	function __construct() {
 
@@ -39,51 +40,102 @@ class WCJ_General extends WCJ_Module {
 
 		if ( $this->is_enabled() ) {
 
+			// Recalculate cart totals
+			if ( 'yes' === get_option( 'wcj_general_advanced_recalculate_cart_totals', 'no' ) ) {
+				add_action( 'wp_loaded', array( $this, 'fix_mini_cart' ), PHP_INT_MAX );
+			}
+
+			// Product revisions
 			if ( 'yes' === get_option( 'wcj_product_revisions_enabled', 'no' ) ) {
 				add_filter( 'woocommerce_register_post_type_product', array( $this, 'enable_product_revisions' ) );
 			}
 
+			// Shortcodes in text widgets
 			if ( 'yes' === get_option( 'wcj_general_shortcodes_in_text_widgets_enabled' ) ) {
 				add_filter( 'widget_text', 'do_shortcode' );
 			}
 
+			// PayPal email per product
 			if ( 'yes' === get_option( 'wcj_paypal_email_per_product_enabled', 'no' ) ) {
-
 				add_action( 'add_meta_boxes',    array( $this, 'add_meta_box' ) );
 				add_action( 'save_post_product', array( $this, 'save_meta_box' ), PHP_INT_MAX, 2 );
-
 				add_filter( 'woocommerce_payment_gateways', array( $this, 'maybe_change_paypal_email' ) );
 			}
 
+			// Session expiration
 			if ( 'yes' === get_option( 'wcj_session_expiration_section_enabled', 'no' ) ) {
 				add_filter( 'wc_session_expiring',   array( $this, 'change_session_expiring' ),   PHP_INT_MAX );
 				add_filter( 'wc_session_expiration', array( $this, 'change_session_expiration' ), PHP_INT_MAX );
 			}
 
-			// URL Coupons
-			if ( 'yes' === get_option( 'wcj_url_coupons_enabled', 'no' ) ) {
-				add_action( 'wp_loaded', array( $this, 'maybe_apply_url_coupon' ), PHP_INT_MAX );
+			// Booster role user changer
+			if ( wcj_is_booster_role_changer_enabled() ) {
+				add_action( 'admin_bar_menu', array( $this, 'add_user_role_changer' ), PHP_INT_MAX );
+				add_action( 'init',           array( $this, 'change_user_role_meta' ) );
 			}
 
 		}
 	}
 
 	/**
-	 * maybe_apply_url_coupon.
+	 * change_user_role_meta.
 	 *
-	 * @version 2.7.0
-	 * @since   2.7.0
-	 * @todo    (maybe) predefined $arg_key
-	 * @todo    (maybe) additional $_GET['coupon_code']
-	 * @todo    (maybe) if ( ! WC()->cart->has_discount( $coupon_code ) ) {}
+	 * @version 2.9.0
+	 * @since   2.9.0
+	 * @todo    (maybe) optionally via cookies
 	 */
-	function maybe_apply_url_coupon() {
-		$arg_key = get_option( 'wcj_url_coupons_key', 'wcj_apply_coupon' );
-		if ( isset( $_GET[ $arg_key ] ) && '' != $_GET[ $arg_key ] ) {
-			$coupon_code = sanitize_text_field( $_GET[ $arg_key ] );
-			WC()->cart->add_discount( $coupon_code );
-			wp_safe_redirect( remove_query_arg( $arg_key ) );
-			exit;
+	function change_user_role_meta() {
+		if ( isset( $_GET['wcj_booster_user_role'] ) ) {
+			$current_user_id = get_current_user_id();
+			update_user_meta( $current_user_id, '_' . 'wcj_booster_user_role', $_GET['wcj_booster_user_role'] );
+		}
+	}
+
+	/**
+	 * add_user_role_changer.
+	 *
+	 * @version 2.9.0
+	 * @since   2.9.0
+	 */
+	function add_user_role_changer( $wp_admin_bar ) {
+		$current_user_id  = get_current_user_id();
+		$user_roles       = wcj_get_user_roles_options();
+		if ( '' != ( $current_booster_user_role = get_user_meta( $current_user_id, '_' . 'wcj_booster_user_role', true ) ) ) {
+			$current_booster_user_role = ( isset( $user_roles[ $current_booster_user_role ] ) ) ? $user_roles[ $current_booster_user_role ] : $current_booster_user_role;
+			$current_booster_user_role = ' [' . $current_booster_user_role . ']';
+		}
+		$args = array(
+			'parent' => false,
+			'id'     => 'booster-user-role-changer',
+			'title'  => __( 'Booster User Role', 'woocommerce-jetpack' ) . $current_booster_user_role,
+			'href'   => false,
+		);
+		$wp_admin_bar->add_node( $args );
+		foreach ( $user_roles as $user_role_key => $user_role_name ) {
+			$args = array(
+				'parent' => 'booster-user-role-changer',
+				'id'     => 'booster-user-role-changer-role-' . $user_role_key,
+				'title'  => $user_role_name,
+				'href'   => add_query_arg( 'wcj_booster_user_role', $user_role_key ),
+			);
+			$wp_admin_bar->add_node( $args );
+		}
+	}
+
+	/**
+	 * fix_mini_cart.
+	 *
+	 * @version 2.5.2
+	 * @since   2.5.2
+	 * @todo    this is only temporary solution!
+	 */
+	function fix_mini_cart() {
+		if ( wcj_is_frontend() ) {
+			if ( null !== ( $wc = WC() ) ) {
+				if ( isset( $wc->cart ) ) {
+					$wc->cart->calculate_totals();
+				}
+			}
 		}
 	}
 

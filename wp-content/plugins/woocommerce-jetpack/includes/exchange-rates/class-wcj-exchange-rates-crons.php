@@ -1,8 +1,8 @@
 <?php
 /**
- * Booster for WooCommerce Exchange Rates Crons
+ * Booster for WooCommerce - Exchange Rates - Crons
  *
- * @version 2.7.0
+ * @version 3.4.5
  * @author  Algoritmika Ltd.
  */
 
@@ -17,7 +17,7 @@ class WCJ_Exchange_Rates_Crons {
 	 *
 	 * @version 2.7.0
 	 */
-	public function __construct() {
+	function __construct() {
 		$this->update_intervals  = array(
 			'minutely'   => __( 'Update Every Minute', 'woocommerce-jetpack' ),
 			'hourly'     => __( 'Update Hourly', 'woocommerce-jetpack' ),
@@ -59,7 +59,6 @@ class WCJ_Exchange_Rates_Crons {
 	 * @since   2.3.0
 	 */
 	function get_currency_pair( $currency_pairs, $currency_to, $option_name ) {
-
 		foreach ( $currency_pairs as $k => $currency_pair ) {
 			if ( $currency_pair['currency_to'] == $currency_to ) {
 				$currency_pairs[ $k ]['option_name'][] = $option_name;
@@ -77,16 +76,17 @@ class WCJ_Exchange_Rates_Crons {
 	/**
 	 * On the scheduled action hook, run a function.
 	 *
-	 * @version 2.7.0
+	 * @version 3.4.5
+	 * @todo    get currency pairs from "Currency Exchange Rates" module (see `get_all_currencies_exchange_rates_currencies()`)
 	 */
 	function update_the_exchange_rates( $interval ) {
 
-		$currency_pairs[] = array();
+		$currency_pairs = array();
 
 		if ( wcj_is_module_enabled( 'price_by_country' ) ) {
 			// Currency Pairs - Preparation - Price by Country
-			if ( 'manual' != apply_filters( 'booster_get_option', 'manual', get_option( 'wcj_price_by_country_auto_exchange_rates', 'manual' ) ) ) {
-				for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_price_by_country_total_groups_number', 1 ) ); $i++ ) {
+			if ( 'manual' != apply_filters( 'booster_option', 'manual', get_option( 'wcj_price_by_country_auto_exchange_rates', 'manual' ) ) ) {
+				for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_price_by_country_total_groups_number', 1 ) ); $i++ ) {
 					$currency_to = get_option( 'wcj_price_by_country_exchange_rate_currency_group_' . $i );
 					$currency_pairs = $this->get_currency_pair( $currency_pairs, $currency_to, 'wcj_price_by_country_exchange_rate_group_' . $i );
 				}
@@ -95,8 +95,8 @@ class WCJ_Exchange_Rates_Crons {
 
 		if ( wcj_is_module_enabled( 'multicurrency' ) ) {
 			// Currency Pairs - Preparation - Multicurrency
-			if ( 'manual' != apply_filters( 'booster_get_option', 'manual', get_option( 'wcj_multicurrency_exchange_rate_update_auto', 'manual' ) ) ) {
-				for ( $i = 1; $i <= apply_filters( 'booster_get_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) ); $i++ ) {
+			if ( 'manual' != apply_filters( 'booster_option', 'manual', get_option( 'wcj_multicurrency_exchange_rate_update_auto', 'manual' ) ) ) {
+				for ( $i = 1; $i <= apply_filters( 'booster_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) ); $i++ ) {
 					$currency_to = get_option( 'wcj_multicurrency_currency_' . $i );
 					$currency_pairs = $this->get_currency_pair( $currency_pairs, $currency_to, 'wcj_multicurrency_exchange_rate_' . $i );
 				}
@@ -105,8 +105,8 @@ class WCJ_Exchange_Rates_Crons {
 
 		if ( wcj_is_module_enabled( 'multicurrency_base_price' ) ) {
 			// Currency Pairs - Preparation - Multicurrency Product Base Price
-			if ( 'manual' != apply_filters( 'booster_get_option', 'manual', get_option( 'wcj_multicurrency_base_price_exchange_rate_update', 'manual' ) ) ) {
-				for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_multicurrency_base_price_total_number', 1 ) ); $i++ ) {
+			if ( 'manual' != apply_filters( 'booster_option', 'manual', get_option( 'wcj_multicurrency_base_price_exchange_rate_update', 'manual' ) ) ) {
+				for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_multicurrency_base_price_total_number', 1 ) ); $i++ ) {
 					$currency_to = get_option( 'wcj_multicurrency_base_price_currency_' . $i );
 					$currency_pairs = $this->get_currency_pair( $currency_pairs, $currency_to, 'wcj_multicurrency_base_price_exchange_rate_' . $i );
 				}
@@ -115,8 +115,8 @@ class WCJ_Exchange_Rates_Crons {
 
 		if ( wcj_is_module_enabled( 'currency_per_product' ) ) {
 			// Currency Pairs - Preparation - Currency per Product
-			if ( 'manual' != apply_filters( 'booster_get_option', 'manual', get_option( 'wcj_currency_per_product_exchange_rate_update', 'manual' ) ) ) {
-				for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_currency_per_product_total_number', 1 ) ); $i++ ) {
+			if ( 'manual' != apply_filters( 'booster_option', 'manual', get_option( 'wcj_currency_per_product_exchange_rate_update', 'manual' ) ) ) {
+				for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_currency_per_product_total_number', 1 ) ); $i++ ) {
 					$currency_to = get_option( 'wcj_currency_per_product_currency_' . $i );
 					$currency_pairs = $this->get_currency_pair( $currency_pairs, $currency_to, 'wcj_currency_per_product_exchange_rate_' . $i );
 				}
@@ -125,7 +125,7 @@ class WCJ_Exchange_Rates_Crons {
 
 		if ( wcj_is_module_enabled( 'payment_gateways_currency' ) ) {
 			// Currency Pairs - Preparation - Gateway Currency
-			if ( 'manual' != apply_filters( 'booster_get_option', 'manual', get_option( 'wcj_gateways_currency_exchange_rate_update_auto', 'manual' ) ) ) {
+			if ( 'manual' != apply_filters( 'booster_option', 'manual', get_option( 'wcj_gateways_currency_exchange_rate_update_auto', 'manual' ) ) ) {
 				global $woocommerce;
 				$available_gateways = $woocommerce->payment_gateways->payment_gateways();
 				foreach ( $available_gateways as $key => $gateway ) {
@@ -137,16 +137,33 @@ class WCJ_Exchange_Rates_Crons {
 			}
 		}
 
-		// Currency Pairs - Final
-		$rate_offset_percent = get_option( 'wcj_currency_exchange_rates_offset_percent', 0 );
-		if ( 0 != $rate_offset_percent ) {
-			$rate_offset_percent = 1 + ( $rate_offset_percent / 100 );
+		// Additional currencies (via filter)
+		$additional_currencies = apply_filters( 'wcj_currency_exchange_rates_additional_currencies', array() );
+		foreach ( $additional_currencies as $additional_currency ) {
+			$currency_pairs = $this->get_currency_pair( $currency_pairs, $additional_currency, false );
 		}
+
+		// Additional currencies (via custom currencies section)
+		$total_number = apply_filters( 'booster_option', 1, get_option( 'wcj_currency_exchange_custom_currencies_total_number', 1 ) );
+		for ( $i = 1; $i <= $total_number; $i++ ) {
+			if ( 'disabled' != ( $additional_currency = get_option( 'wcj_currency_exchange_custom_currencies_' . $i, 'disabled' ) ) ) {
+				$currency_pairs = $this->get_currency_pair( $currency_pairs, $additional_currency, false );
+			}
+		}
+
+		// Currency Pairs - Final
 		$rate_offset_fixed = get_option( 'wcj_currency_exchange_rates_offset_fixed', 0 );
+		if ( $rate_rounding_enabled = ( 'yes' === get_option( 'wcj_currency_exchange_rates_rounding_enabled', 'no' ) ) ) {
+			$rate_rounding_precision = get_option( 'wcj_currency_exchange_rates_rounding_precision', 0 );
+		}
 		foreach ( $currency_pairs as $currency_pair ) {
 			$currency_from = $currency_pair['currency_from'];
 			$currency_to   = $currency_pair['currency_to'];
-			$the_rate = alg_get_exchange_rate( $currency_from, $currency_to );
+			$rate_offset_percent = wcj_get_currency_exchange_rate_offset_percent( $currency_from, $currency_to );
+			if ( 0 != $rate_offset_percent ) {
+				$rate_offset_percent = 1 + ( $rate_offset_percent / 100 );
+			}
+			$the_rate = wcj_get_exchange_rate( $currency_from, $currency_to );
 			if ( 0 != $the_rate ) {
 				if ( 0 != $rate_offset_percent ) {
 					$the_rate = round( $the_rate * $rate_offset_percent, 6 );
@@ -154,9 +171,14 @@ class WCJ_Exchange_Rates_Crons {
 				if ( 0 != $rate_offset_fixed ) {
 					$the_rate = $the_rate + $rate_offset_fixed;
 				}
+				if ( $rate_rounding_enabled ) {
+					$the_rate = round( $the_rate, $rate_rounding_precision );
+				}
 				if ( $currency_from != $currency_to ) {
 					foreach ( $currency_pair['option_name'] as $option_name ) {
-						update_option( $option_name, $the_rate );
+						if ( false != $option_name ) {
+							update_option( $option_name, $the_rate );
+						}
 					}
 					$field_id = 'wcj_currency_exchange_rates_' . sanitize_title( $currency_from . $currency_to );
 					update_option( $field_id, $the_rate );
@@ -185,11 +207,11 @@ class WCJ_Exchange_Rates_Crons {
 	function cron_add_custom_intervals( $schedules ) {
 		$schedules['weekly'] = array(
 			'interval' => 604800,
-			'display' => __( 'Once Weekly', 'woocommerce-jetpack' )
+			'display'  => __( 'Once Weekly', 'woocommerce-jetpack' )
 		);
 		$schedules['minutely'] = array(
 			'interval' => 60,
-			'display' => __( 'Once a Minute', 'woocommerce-jetpack' )
+			'display'  => __( 'Once a Minute', 'woocommerce-jetpack' )
 		);
 		return $schedules;
 	}

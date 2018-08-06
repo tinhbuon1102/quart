@@ -1,9 +1,4 @@
-/**
- * SiteOrigin Slider Javascript.
- *
- * Copyright 2014, SiteOrigin
- * Released under GPL 2.0 - see http://www.gnu.org/licenses/gpl-2.0.html
- */
+/* globals jQuery, sowb */
 
 var sowb = window.sowb || {};
 
@@ -85,43 +80,44 @@ jQuery( function($){
 				var $slide = $(el);
 				var urlData = $slide.data('url');
 
-				$slide.click(function(event) {
+				if( urlData !== undefined && urlData.hasOwnProperty( 'url' ) ) {
+					$slide.click(function(event) {
 
-					if( urlData !== undefined ) {
-						var $t = $(event.target);
-						// If this isn't a link, we'll use the URL of the frame
-						if( $t.prop("tagName") !== 'A' ) {
-							event.preventDefault();
-							window.open(urlData.url, urlData.new_window ? '_blank' : '_self');
-						}
-					}
-				} );
+						event.preventDefault();
+						var sliderWindow = window.open(
+							urlData.url,
+							urlData.hasOwnProperty( 'new_window' ) && urlData.new_window ? '_blank' : '_self'
+						);
+						sliderWindow.opener = null;
+					} );
+					$slide.find( 'a' ).click( function ( event ) {
+						event.stopPropagation();
+					} );
+				}
 			});
 
-			var setupSlider = function(){
+			var setupSlider = function() {
 
 				// If we're inside a fittext wrapper, wait for it to complete, before setting up the slider.
-                var fitTextWrapper = $$.closest('.so-widget-fittext-wrapper');
-                if ( fitTextWrapper.length > 0 && ! fitTextWrapper.data('fitTextDone') ) {
-                    fitTextWrapper.on('fitTextDone', function () {
-                        setupSlider();
-                    });
-                    return;
-                }
+				var fitTextWrapper = $$.closest('.so-widget-fittext-wrapper');
+				if ( fitTextWrapper.length > 0 && ! fitTextWrapper.data('fitTextDone') ) {
+					fitTextWrapper.on('fitTextDone', function () {
+						setupSlider();
+					});
+					return;
+				}
 
 				// Show everything for this slider
 				$base.show();
-
+				
+				var resizeFrames = function () {
+					$$.find( '.sow-slider-image' ).each( function () {
+						var $i = $( this );
+						$i.css( 'height', $i.find( '.sow-slider-image-wrapper' ).outerHeight() );
+					} );
+				};
 				// Setup each of the slider frames
-				$$.find('.sow-slider-image').each( function(){
-					var $i = $(this);
-
-					$(window)
-						.on('resize panelsStretchRows', function(){
-							$i.css( 'height', $i.find('.sow-slider-image-wrapper').outerHeight() );
-						})
-						.resize();
-				} );
+				$(window).on('resize panelsStretchRows', resizeFrames ).resize();
 
 				// Set up the Cycle with videos
 				$$
@@ -155,8 +151,9 @@ jQuery( function($){
 							}
 
 							$(window).resize();
-							
+
 							setTimeout(function() {
+								resizeFrames();
 								siteoriginSlider.setupActiveSlide( $$, optionHash.slides[0] );
 								// Ensure we keep auto-height functionality, but we don't want the duplicated content.
 								$$.find('.cycle-sentinel').empty();
@@ -265,3 +262,5 @@ jQuery( function($){
 
 	$( sowb ).on( 'setup_widgets', sowb.setupSliders );
 } );
+
+window.sowb = sowb;

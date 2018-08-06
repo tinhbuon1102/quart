@@ -3,11 +3,13 @@
  * Plugin Name: Woo Checkout Field Editor Pro
  * Description: Customize WooCommerce checkout fields(Add, Edit, Delete and re-arrange fields).
  * Author:      ThemeHiGH
- * Version:     1.1.9
+ * Version:     1.2.8
  * Author URI:  https://www.themehigh.com
  * Plugin URI:  https://www.themehigh.com
  * Text Domain: thwcfd
  * Domain Path: /languages
+ * WC requires at least: 3.0.0
+ * WC tested up to: 3.4.3
  */
  
 if(!defined( 'ABSPATH' )) exit;
@@ -31,15 +33,15 @@ if(is_woocommerce_active()) {
 	function thwcfd_init_checkout_field_editor_lite() {
 		global $supress_field_modification;
 		$supress_field_modification = false;
+		
+		define('TH_WCFD_VERSION', '1.2.8');
+		!defined('TH_WCFD_BASE_NAME') && define('TH_WCFD_BASE_NAME', plugin_basename( __FILE__ ));
+		!defined('TH_WCFD_URL') && define('TH_WCFD_URL', plugins_url( '/', __FILE__ ));
+		!defined('TH_WCFD_ASSETS_URL') && define('TH_WCFD_ASSETS_URL', TH_WCFD_URL . 'assets/');
 
 		if(!class_exists('WC_Checkout_Field_Editor')){
 			require_once('classes/class-wc-checkout-field-editor.php');
 		}
-
-		if (!class_exists('WC_Checkout_Field_Editor_Export_Handler')){
-			require_once('classes/class-wc-checkout-field-editor-export-handler.php');
-		}
-		new WC_Checkout_Field_Editor_Export_Handler();
 
 		$GLOBALS['WC_Checkout_Field_Editor'] = new WC_Checkout_Field_Editor();
 	}
@@ -64,6 +66,20 @@ if(is_woocommerce_active()) {
 	  	}
 	  	return false;
 	}
+	
+	function thwcfd_enqueue_scripts(){	
+		global $wp_scripts;
+
+		if(is_checkout()){
+			$in_footer = apply_filters( 'thwcfd_enqueue_script_in_footer', true );
+
+			wp_register_script('thwcfd-field-editor-script', TH_WCFD_ASSETS_URL.'js/thwcfd-checkout-field-editor-frontend.js', 
+			array('jquery', 'select2'), TH_WCFD_VERSION, $in_footer);
+			
+			wp_enqueue_script('thwcfd-field-editor-script');	
+		}
+	}
+	add_action('wp_enqueue_scripts', 'thwcfd_enqueue_scripts');
 	
 	/**
 	 * Hide Additional Fields title if no fields available.
@@ -91,31 +107,43 @@ if(is_woocommerce_active()) {
 	}
 	add_filter('woocommerce_enable_order_notes_field', 'thwcfd_enable_order_notes_field', 1000);
 		
-	function thwcfd_woo_default_address_fields( $original ) {
-		$sname = 'billing';
-		$address_fields = get_option('wc_fields_'.$sname);
+	function thwcfd_woo_default_address_fields( $fields ) {
+		$sname = apply_filters('thwcfd_address_field_override_with', 'billing');
 		
-		if(is_array($address_fields) && !empty($address_fields) && !empty($original)){	
-			foreach($original as $name => $ofield) {
-				$new_field = isset($address_fields[$sname.'_'.$name]) ? $address_fields[$sname.'_'.$name] : false;
-				$override_required = apply_filters( 'thwcfd_address_field_override_required', false );
+		if($sname === 'billing' || $sname === 'shipping'){
+			$address_fields = get_option('wc_fields_'.$sname);
+			
+			if(is_array($address_fields) && !empty($address_fields) && !empty($fields)){
+				$override_required = apply_filters( 'thwcfd_address_field_override_required', true );
 				
-				if($new_field && !( isset($new_field['enabled']) && $new_field['enabled'] == false )){
-					$original[$name]['required'] = isset($new_field['required']) ? $new_field['required'] : 0;
+				foreach($fields as $name => $field) {
+					$fname = $sname.'_'.$name;
+					
+					if(thwcfd_is_locale_field($fname) && $override_required){
+						$custom_field = isset($address_fields[$fname]) ? $address_fields[$fname] : false;
+						
+						if($custom_field && !( isset($custom_field['enabled']) && $custom_field['enabled'] == false )){
+							$fields[$name]['required'] = isset($custom_field['required']) && $custom_field['required'] ? true : false;
+						}
+					}
 				}
 			}
 		}
 		
-		return $original;
+		return $fields;
 	}	
-	//add_filter('woocommerce_default_address_fields' , 'thwcfd_woo_default_address_fields' );
+	add_filter('woocommerce_default_address_fields' , 'thwcfd_woo_default_address_fields' );
 	
 	function thwcfd_prepare_country_locale($fields) {
 		if(is_array($fields)){
+			$sname = apply_filters('thwcfd_address_field_override_with', 'billing');
+			$address_fields = get_option('wc_fields_'.$sname);
+
 			foreach($fields as $key => $props){
-				$override_ph = apply_filters( 'thwcfd_address_field_override_placeholder', true );
-				$override_label = apply_filters( 'thwcfd_address_field_override_label', true );
-				$override_required = apply_filters( 'thwcfd_address_field_override_required', false );
+				$override_ph = apply_filters('thwcfd_address_field_override_placeholder', true);
+				$override_label = apply_filters('thwcfd_address_field_override_label', true);
+				$override_required = apply_filters('thwcfd_address_field_override_required', false);
+				$override_priority = apply_filters('thwcfd_address_field_override_priority', true);
 				
 				if($override_ph && isset($props['placeholder'])){
 					unset($fields[$key]['placeholder']);
@@ -124,11 +152,19 @@ if(is_woocommerce_active()) {
 					unset($fields[$key]['label']);
 				}
 				if($override_required && isset($props['required'])){
-					unset($fields[$key]['required']);
+					$fkey = $sname.'_'.$key;
+					if(is_array($address_fields) && isset($address_fields[$fkey])){
+						$cf_props = $address_fields[$fkey];
+						if(is_array($cf_props) && isset($cf_props['required'])){
+							$fields[$key]['required'] = $cf_props['required'] ? true : false;
+						}
+					}
+					//unset($fields[$key]['required']);
 				}
 				
-				if(isset($props['priority'])){
+				if($override_priority && isset($props['priority'])){
 					unset($fields[$key]['priority']);
+					//unset($fields[$key]['order']);
 				}
 			}
 		}
@@ -146,38 +182,44 @@ if(is_woocommerce_active()) {
 		return $locale;
 	}
 	add_filter('woocommerce_get_country_locale', 'thwcfd_woo_get_country_locale');
-			
+	
 	/**
 	 * wc_checkout_fields_modify_billing_fields function.
 	 *
-	 * @param mixed $old
+	 * @param mixed $fields
 	 */
-	function thwcfd_billing_fields_lite($old){
+	function thwcfd_billing_fields_lite($fields, $country){
 		global $supress_field_modification;
 
 		if($supress_field_modification){
-			return $old;
+			return $fields;
 		}
-
-		return thwcfd_prepare_checkout_fields_lite(get_option('wc_fields_billing'), $old);
+		if(is_wc_endpoint_url('edit-address')){
+			return $fields;
+		}else{
+			return thwcfd_prepare_address_fields(get_option('wc_fields_billing'), $fields, 'billing', $country);
+		}
 	}
-	add_filter('woocommerce_billing_fields', 'thwcfd_billing_fields_lite', 1000);
+	add_filter('woocommerce_billing_fields', 'thwcfd_billing_fields_lite', apply_filters('thwcfd_billing_fields_priority', 1000), 2);
 
 	/**
 	 * wc_checkout_fields_modify_shipping_fields function.
 	 *
 	 * @param mixed $old
 	 */
-	function thwcfd_shipping_fields_lite($old){
+	function thwcfd_shipping_fields_lite($fields, $country){
 		global $supress_field_modification;
 
 		if ($supress_field_modification){
-			return $old;
+			return $fields;
 		}
-
-		return thwcfd_prepare_checkout_fields_lite(get_option('wc_fields_shipping'), $old);
+		if(is_wc_endpoint_url('edit-address')){
+			return $fields;
+		}else{
+			return thwcfd_prepare_address_fields(get_option('wc_fields_shipping'), $fields, 'shipping', $country);
+		}
 	}
-	add_filter('woocommerce_shipping_fields', 'thwcfd_shipping_fields_lite', 1000);
+	add_filter('woocommerce_shipping_fields', 'thwcfd_shipping_fields_lite', apply_filters('thwcfd_shipping_fields_priority', 1000), 2);
 
 	/**
 	 * wc_checkout_fields_modify_shipping_fields function.
@@ -208,7 +250,29 @@ if(is_woocommerce_active()) {
 		
 		return $fields;
 	}
-	add_filter('woocommerce_checkout_fields', 'thwcfd_checkout_fields_lite', 1000);
+	add_filter('woocommerce_checkout_fields', 'thwcfd_checkout_fields_lite', apply_filters('thwcfd_checkout_fields_priority', 1000));
+	
+	/**
+	 *
+	 */
+	function thwcfd_prepare_address_fields($fieldset, $original_fieldset = false, $sname = 'billing', $country){
+		if(is_array($fieldset) && !empty($fieldset)) {
+			$locale = WC()->countries->get_country_locale();
+			if(isset($locale[ $country ]) && is_array($locale[ $country ])) {
+				foreach($locale[ $country ] as $key => $value){
+					if(is_array($value) && isset($fieldset[$sname.'_'.$key])){
+						if(isset($value['required'])){
+							$fieldset[$sname.'_'.$key]['required'] = $value['required'];
+						}
+					}
+				}
+			}
+			$fieldset = thwcfd_prepare_checkout_fields_lite($fieldset, $original_fieldset);
+			return $fieldset;
+		}else {
+			return $original_fieldset;
+		}
+	}
 
 	/**
 	 * checkout_fields_modify_fields function.
@@ -223,8 +287,9 @@ if(is_woocommerce_active()) {
 					unset($fields[$name]);
 				}else{
 					$new_field = false;
+					$allow_override = apply_filters('thwcfd_allow_default_field_override_'.$name, false);
 					
-					if($original_fields && isset($original_fields[$name])){
+					if($original_fields && isset($original_fields[$name]) && !$allow_override){
 						$new_field = $original_fields[$name];
 						
 						$new_field['label'] = isset($field['label']) ? $field['label'] : '';
@@ -234,17 +299,26 @@ if(is_woocommerce_active()) {
 						$new_field['label_class'] = isset($field['label_class']) && is_array($field['label_class']) ? $field['label_class'] : array();
 						$new_field['validate'] = isset($field['validate']) && is_array($field['validate']) ? $field['validate'] : array();
 						
-						if(!thwcfd_is_locale_field($name)){
+						/*if(!thwcfd_is_locale_field($name)){
 							$new_field['required'] = isset($field['required']) ? $field['required'] : 0;
-						}
+						}*/
+						$new_field['required'] = isset($field['required']) ? $field['required'] : 0;
 						$new_field['clear'] = isset($field['clear']) ? $field['clear'] : 0;
 					}else{
 						$new_field = $field;
 					}
 					
+					if(isset($new_field['type']) && $new_field['type'] === 'select'){
+						if(apply_filters('thwcfd_enable_select2_for_select_fields', true)){
+							$new_field['input_class'][] = 'thwcfd-enhanced-select';
+						}
+					}
+										
 					$new_field['order'] = isset($field['order']) && is_numeric($field['order']) ? $field['order'] : 0;
 					if(isset($new_field['order']) && is_numeric($new_field['order'])){
-						$new_field['priority'] = $new_field['order'];
+						$priority = ($new_field['order']+1)*10;
+						$new_field['priority'] = $priority;
+						//$new_field['priority'] = $new_field['order'];
 					}
 					
 					if(isset($new_field['label'])){
@@ -273,21 +347,37 @@ if(is_woocommerce_active()) {
 	 * @param array $keys
 	 * @return array
 	 */
-	function thwcfd_display_custom_fields_in_emails_lite($keys){
-		$custom_keys = array();
+	function thwcfd_display_custom_fields_in_emails_lite($ofields, $sent_to_admin, $order){
+		$custom_fields = array();
 		$fields = array_merge(WC_Checkout_Field_Editor::get_fields('billing'), WC_Checkout_Field_Editor::get_fields('shipping'), 
 		WC_Checkout_Field_Editor::get_fields('additional'));
 
 		// Loop through all custom fields to see if it should be added
-		foreach( $fields as $name => $options ) {
+		foreach( $fields as $key => $options ) {
 			if(isset($options['show_in_email']) && $options['show_in_email']){
-				$custom_keys[ esc_attr( $options['label'] ) ] = esc_attr( $name );
+				$value = '';
+				if(thwcfd_woo_version_check()){
+					$value = get_post_meta( $order->get_id(), $key, true );
+				}else{
+					$value = get_post_meta( $order->id, $key, true );
+				}
+				
+				if(!empty($value)){
+					$label = isset($options['label']) && $options['label'] ? $options['label'] : $key;
+					$label = esc_attr($label);
+					
+					$custom_field = array();
+					$custom_field['label'] = $label;
+					$custom_field['value'] = $value;
+					
+					$custom_fields[$key] = $custom_field;
+				}
 			}
 		}
 
-		return array_merge( $keys, $custom_keys );
+		return array_merge($ofields, $custom_fields);
 	}	
-	add_filter('woocommerce_email_order_meta_keys', 'thwcfd_display_custom_fields_in_emails_lite', 10, 1);
+	add_filter('woocommerce_email_order_meta_fields', 'thwcfd_display_custom_fields_in_emails_lite', 10, 3);
 	
 	/**
 	 * Display custom checkout fields on view order pages
@@ -309,122 +399,63 @@ if(is_woocommerce_active()) {
 			$fields = array_merge(WC_Checkout_Field_Editor::get_fields('billing'), WC_Checkout_Field_Editor::get_fields('additional'));
 		}
 		
-		// Loop through all custom fields to see if it should be added
-		foreach($fields as $name => $options){
-			$enabled = (isset($options['enabled']) && $options['enabled'] == false) ? false : true;
-			$is_custom_field = (isset($options['custom']) && $options['custom'] == true) ? true : false;
-		
-			if(isset($options['show_in_order']) && $options['show_in_order'] && $enabled && $is_custom_field){
-				$value = get_post_meta($order_id, $name, true);
-				
-				if(!empty($value)){
-					$label = isset($options['label']) && !empty($options['label']) ? __( $options['label'], 'woocommerce' ) : $name;
-					echo '<tr><th>'. esc_attr($label) .':</th><td>'. wptexturize($value) .'</td></tr>';
+		if(is_array($fields) && !empty($fields)){
+			$fields_html = '';
+			// Loop through all custom fields to see if it should be added
+			foreach($fields as $name => $options){
+				$enabled = (isset($options['enabled']) && $options['enabled'] == false) ? false : true;
+				$is_custom_field = (isset($options['custom']) && $options['custom'] == true) ? true : false;
+			
+				if(isset($options['show_in_order']) && $options['show_in_order'] && $enabled && $is_custom_field){
+					$value = get_post_meta($order_id, $name, true);
+					
+					if(!empty($value)){
+						$label = isset($options['label']) && !empty($options['label']) ? __( $options['label'], 'woocommerce' ) : $name;
+						
+						if(is_account_page()){
+							if(apply_filters( 'thwcfd_view_order_customer_details_table_view', true )){
+								$fields_html .= '<tr><th>'. esc_attr($label) .':</th><td>'. wptexturize($value) .'</td></tr>';
+							}else{
+								$fields_html .= '<br/><dt>'. esc_attr($label) .':</dt><dd>'. wptexturize($value) .'</dd>';
+							}
+						}else{
+							if(apply_filters( 'thwcfd_thankyou_customer_details_table_view', true )){
+								$fields_html .= '<tr><th>'. esc_attr($label) .':</th><td>'. wptexturize($value) .'</td></tr>';
+							}else{
+								$fields_html .= '<br/><dt>'. esc_attr($label) .':</dt><dd>'. wptexturize($value) .'</dd>';
+							}
+						}
+					}
 				}
+			}
+			
+			if($fields_html){
+				do_action( 'thwcfd_order_details_before_custom_fields_table', $order ); 
+				?>
+				<table class="woocommerce-table woocommerce-table--custom-fields shop_table custom-fields">
+					<?php
+						echo $fields_html;
+					?>
+				</table>
+				<?php
+				do_action( 'thwcfd_order_details_after_custom_fields_table', $order ); 
 			}
 		}
 	}
-	add_action('woocommerce_order_details_after_customer_details', 'thwcfd_order_details_after_customer_details_lite', 20, 1);
+	add_action('woocommerce_order_details_after_order_table', 'thwcfd_order_details_after_customer_details_lite', 20, 1);
 	
 	/*****************************************
 	 ----- Display Field Values - END --------
 	 *****************************************/
-	 		
-	/*function thwcfd_prepare_checkout_fields_lite( $data, $old_fields ) {
-		global $WC_Checkout_Field_Editor;
 
-		if( empty( $data ) ) {
-			return $old_fields;
-			
-		}else {
-			$fields = $data;			
-			foreach( $fields as $name => $values ) {
-				// enabled
-				if ( $values['enabled'] == false ) {
-					unset( $fields[ $name ] );
-				}
-
-				// Replace locale field properties so they are unchanged
-				if ( in_array( $name, array(
-					'billing_country', 'billing_state', 'billing_city', 'billing_postcode',
-					'shipping_country', 'shipping_state', 'shipping_city', 'shipping_postcode',
-					'order_comments'
-				) ) ) {
-					if ( isset( $fields[ $name ] ) ) {
-						$fields[ $name ]          = $old_fields[ $name ];
-						$fields[ $name ]['label'] = ! empty( $data[ $name ]['label'] ) ? $data[ $name ]['label'] : $old_fields[ $name ]['label'];
-
-						if ( ! empty( $data[ $name ]['placeholder'] ) ) {
-							$fields[ $name ]['placeholder'] = $data[ $name ]['placeholder'];
-
-						} elseif ( ! empty( $old_fields[ $name ]['placeholder'] ) ) {
-							$fields[ $name ]['placeholder'] = $old_fields[ $name ]['placeholder'];
-
-						} else {
-							$fields[ $name ]['placeholder'] = '';
-						}
-
-						$fields[ $name ]['class'] = $data[ $name ]['class'];
-						$fields[ $name ]['clear'] = $data[ $name ]['clear'];
-					}
-				}
-				
-				if(isset($fields[$name])){
-					if(isset($fields[$name]['label'])){
-						$fields[ $name ]['label'] = __($fields[ $name ]['label'], 'woocommerce');
-					}
-					if(isset($fields[$name]['placeholder'])){
-						$fields[ $name ]['placeholder'] = __($fields[ $name ]['placeholder'], 'woocommerce');
-					}
-					if(isset($fields[$name]['order'])){
-						$fields[ $name ]['priority'] = is_numeric($fields[$name]['order']) ? $fields[$name]['order'] : '';
-					}
-				}
-			}								
-			return $fields;
-		}
-	}*/
-
-	/**
-	 * wc_checkout_fields_validation function.
-	 *
-	 * @param mixed $posted
-	 */
-	/*function thwcfd_checkout_fields_validation_lite($posted){
-		foreach(WC()->checkout->checkout_fields as $fieldset_key => $fieldset){
-
-			// Skip shipping if its not needed
-			if($fieldset_key === 'shipping' && (wc_ship_to_billing_address_only() || !empty($posted['shiptobilling']) || 
-			(!WC()->cart->needs_shipping() && get_option('woocommerce_require_shipping_address') === 'no'))){
-				continue;
+	function thwcfd_woo_version_check( $version = '3.0' ) {
+	  	if(function_exists( 'is_woocommerce_active' ) && is_woocommerce_active() ) {
+			global $woocommerce;
+			if( version_compare( $woocommerce->version, $version, ">=" ) ) {
+		  		return true;
 			}
-
-			foreach($fieldset as $key => $field){
-				if(!empty($field['validate']) && is_array($field['validate']) && !empty($posted[$key])){
-					foreach($field['validate'] as $rule){
-						switch($rule) {
-							case 'number' :
-								if(!is_numeric($posted[$key])){
-									if(defined('WC_VERSION') && version_compare(WC_VERSION, '2.3.0', '>=')){
-										wc_add_notice('<strong>'. $field['label'] .'</strong> '. sprintf(__('(%s) is not a valid number.', 'woocommerce'), $posted[$key]), 'error');
-									} else {
-										WC()->add_error('<strong>'. $field['label'] .'</strong> '. sprintf(__('(%s) is not a valid number.', 'woocommerce'), $posted[$key]));
-									}
-								}
-								break;
-							case 'email' :
-								if(!is_email($posted[$key])){
-									if(defined('WC_VERSION') && version_compare(WC_VERSION, '2.3.0', '<')){
-										WC()->add_error('<strong>'. $field['label'] .'</strong> '. sprintf(__('(%s) is not a valid email address.', 'woocommerce'), $posted[$key]));
-									}
-								}
-								break;
-						}
-					}
-				}
-			}
-		}
-	}*/
-	//add_action('woocommerce_after_checkout_validation', 'thwcfd_checkout_fields_validation_lite');
-	
+	  	}
+	  	return false;
+	}
+	 
 }

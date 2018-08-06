@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings Meta Box - Multicurrency (Currency Switcher)
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -16,16 +16,18 @@ if ( ! $_product ) {
 }
 $products = array();
 if ( $_product->is_type( 'variable' ) ) {
-	$available_variations = $_product->get_available_variations();
+	$list_available_variations_only = ( 'yes' === get_option( 'wcj_multicurrency_per_product_list_available_variations_only', 'yes' ) );
+	$available_variations = ( $list_available_variations_only ? $_product->get_available_variations() : $_product->get_children() );
 	foreach ( $available_variations as $variation ) {
-		$variation_product = wc_get_product( $variation['variation_id'] );
-		$products[ $variation['variation_id'] ] = ' (' . wcj_get_product_formatted_variation( $variation_product, true ) . ')';
+		$variation_id      = ( $list_available_variations_only ? $variation['variation_id'] : $variation );
+		$variation_product = wc_get_product( $variation_id );
+		$products[ $variation_id ] = ' (' . wcj_get_product_formatted_variation( $variation_product, true ) . ')';
 	}
 } else {
 	$products[ $main_product_id ] = '';
 }
 $currencies = array();
-$total_number = apply_filters( 'booster_get_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) );
+$total_number = apply_filters( 'booster_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) );
 foreach ( $products as $product_id => $desc ) {
 	for ( $i = 1; $i <= $total_number; $i++ ) {
 		$currency_code = get_option( 'wcj_multicurrency_currency_' . $i );
@@ -49,6 +51,21 @@ foreach ( $products as $product_id => $desc ) {
 				'meta_name'  => '_' . 'wcj_multicurrency_per_product_sale_price_' . $currency_code,
 			),
 		) );
+		if ( 'yes' === get_option( 'wcj_multicurrency_per_product_make_empty', 'no' ) ) {
+			$currencies[] = array(
+				'name'       => 'wcj_multicurrency_per_product_make_empty_' . $currency_code . '_' . $product_id,
+				'default'    => 'no',
+				'type'       => 'select',
+				'options'    => array(
+					'no'  => __( 'No', 'woocommerce-jetpack' ),
+					'yes' => __( 'Yes', 'woocommerce-jetpack' ),
+				),
+				'title'      => '[' . $currency_code . '] ' . __( 'Make Empty Price', 'woocommerce-jetpack' ),
+				'desc'       => $desc,
+				'product_id' => $product_id,
+				'meta_name'  => '_' . 'wcj_multicurrency_per_product_make_empty_' . $currency_code,
+			);
+		}
 	}
 }
 return $currencies;

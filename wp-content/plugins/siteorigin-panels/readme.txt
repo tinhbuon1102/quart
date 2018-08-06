@@ -1,9 +1,9 @@
 === Page Builder by SiteOrigin ===
 Tags: page builder, responsive, widget, widgets, builder, page, admin, gallery, content, cms, pages, post, css, layout, grid
 Requires at least: 4.4
-Tested up to: 4.7.3
-Stable tag: 2.5.3
-Build time: 2017-05-11T14:23:19+02:00
+Tested up to: 4.9
+Stable tag: 2.7.3
+Build time: 2018-07-20T09:39:41+02:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/contribution/
@@ -95,6 +95,148 @@ Page Builder is actively developed and updated, so generally I'd recommend that 
 We've tried to ensure that Page Builder is compatible with most plugin widgets. It's best to just download Page Builder and test for yourself.
 
 == Changelog ==
+
+= 2.7.3 - 20 July 2018 =
+* Post Loop: Add filter to allow for custom template directories.
+* Dashboard Assets: Check if $screen exists.
+* Remove Page Builder button from widgets when not in admin context.
+* Fix Yoast compat: Properly create rather than select an image.
+
+= 2.7.2 - 29 June 2018 =
+* Skip Yoast compat for non PB content.
+
+= 2.7.1 - 28 June 2018 =
+* Check for yoast metabox before enqueuing compat JS.
+
+= 2.7.0 - 27 June 2018 =
+* New setting to automatically open widget forms when they're added.
+* New row layout option to make provision for row style padding in full width stretched rows.
+* Make sure prebuilt layouts path is a real path.
+* Better compatibility with Yoast SEO.
+* Row Cell options: Prevent Yoast from resizing fields.
+* Added `panels_data` filter to `generate_css`.
+* Don’t hide the upload UI before initializing it.
+* Fix collapse order in legacy layout.
+* Clear SO widgets' id and timestamp metadata when cloning a PB Page.
+* Fix layout imports in Edge.
+* Apply bottom margin custom styles to main wrapper where PB adds it's bottom margin, to allow users to override.
+* Use https for layouts directory.
+
+= 2.6.9 - 7 June 2018 =
+* Changed dashboard feed URL to use cloudfront for caching.
+
+= 2.6.8 - 5 June 2018 =
+* Remove learn dialogs.
+* Added SiteOrigin news dashboard widget
+
+= 2.6.7 - 7 May 2018 =
+* Prevent debug notice when background fallback image hasn't been set.
+
+= 2.6.6 - 25 April 2018 =
+* Only filter WooCommerce content when on the shop page.
+* Fix Background fallback URL notices.
+
+= 2.6.5 - 23 April 2018 =
+* Don't use `mime_content_type` for external layouts if it's not available. Just check file extensions.
+* Get correct ID for WooCommerce shop page to allow PB to render correctly.
+* Added image fallback url field for background images in row, cell and widget styles.
+* Temporarily remove Jetpack widgets requiring scripts for admin form, until we can reliably enqueue their scripts.
+* Remove loading indicator and display message when loading widget and style forms fail.
+* Allow setting margins around specific widgets.
+
+= 2.6.4 - 4 April 2018 =
+* Only call widget `enqueue_admin_scripts` function for WP core JS widgets.
+
+= 2.6.3 - 6 March 2018 =
+* Use `delete_post_meta_by_key` instead of direct DB query to clear old cache renders.
+* Removed special handling for retrieving data from TinyMCE editor fields. Just use the field value directly.
+* Show correct preview for current editor when another editor has created an autosave.
+* Use minified CSS files.
+
+= 2.6.2 - 23 January 2018 =
+* Prevent Gutenberg from taking over existing PB pages.
+* Remove PB metaboxes from Gutenberg editor.
+
+= 2.6.1 - 18 January 2018 =
+* Switch off output buffering when enqueueing admin scripts.
+* Prevent custom post types from showing in the settings list.
+* Make sure 'SiteOrigin_Panels_Widgets_Layout' exists before setting icon for widgets lists.
+* Hide individual action links when features disabled and prevent editing by clicking directly on spanner when edit row disabled.
+* Adapt PB welcome message when some features not supported.
+* Column width CSS output correctly for locales which use ',' as decimal separator.
+* Fixed prebuilt layout directory items.
+
+= 2.6.0 - 17 December 2017 =
+* Load prebuilt layout JSON files found in themes!
+* Allow post types with numeric slugs.
+* Add a filter for inline styles.
+
+= 2.5.16 - 22 November 2017 =
+* Disabled the Content Cache feature until we've resolved all issues and conflicts.
+
+= 2.5.15 - 17 November 2017 =
+* Don't use deprecated `load` event jQuery function shortcut.
+* Immediately switch to Page Builder if `revertToEditor` feature isn't supported.
+* Fix switching between standard editor and Page Builder.
+* Removed some duplicated jQuery selectors.
+* Prevent error with invalid plugin action links.
+* Add compatibility for new WP core Custom HTML and Media Gallery widgets.
+
+= 2.5.14 - 6 November 2017 =
+* Content Cache: Add Enqueue hook to allow 3rd parties to enqueue cache friendly assets.
+* Added raw_panels_data flag for layout imports.
+* Save ratio and ratio_direction as row attributes.
+* Add rel="noopener noreferrer" for all 3rd party/unknown links.
+
+= 2.5.13 - 29 September 2017 =
+* Always enqueue parallax when in cache mode.
+* Skip saving post meta for revisions in previews.
+* Cast post types as string when adding meta boxes.
+
+= 2.5.12 - 14 September 2017 =
+* Learn: fixed broken image.
+* Prevent JS error when PB active alongside Elementor.
+* Disabling DFW mode no longer hides PB.
+* Hide Cell Vertical Alignment options if Legacy Layout is set to always.
+
+= 2.5.11 - 24 August 2017 =
+* Prevent creating multiple new entries in post meta every time a post is previewed.
+* Avoid using relative asset URLs which may break caching plugins.
+* Import custom widget class from HTML.
+
+= 2.5.10 - 4 August 2017 =
+* Fixed WP widget wrappers broken by WP4.8.1 changes.
+
+= 2.5.9 - 27 July 2017 =
+* Post Loop widget: Use correct base widget properties for post loop helper on Widgets page.
+* Post Loop widget: Set default width of post loop widget control.
+* Reset `widget_id` when cloning widgets.
+* "Reset" fixed background image display setting on mobile.
+* Previews work without saving panels data to parent post meta.
+* Removed tutorials view.
+* Learn dialog fixes.
+
+= 2.5.8 - 4 July 2017 =
+* Replaced themes link with tutorials.
+
+= 2.5.7 - 27 June 2017 =
+* Get post from DB before saving for 'copy content' to avoid overwriting changes by other plugins.
+* Switched toolbar links.
+* Skip cache rendering for password protected posts.
+
+= 2.5.6 - 13 June 2017 =
+* Pass empty post id to 'siteorigin_panels_data' filter to avoid potential fatal errors.
+* Remove unnecessary output of JS widget templates.
+
+= 2.5.5 - 8 June 2017 =
+* Ensure form fields name attributes are correct when using the Widgets Bundle post loop helper.
+* Prevent display of unimplemented preview button for Post Loop widget.
+
+= 2.5.4 - 1 June 2017 =
+* Compatibility with WordPress 4.8 widgets.
+* Refactored core widgets.
+* Compatibility with Widgets Bundle 1.9 posts selector.
+* Ensure custom CSS added in element styles is properly formed.
 
 = 2.5.3 - 9 May 2017 =
 * Added legacy function wrapper for siteorigin_panels_generate_css

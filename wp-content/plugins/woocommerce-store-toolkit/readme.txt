@@ -4,8 +4,8 @@ Contributors: visser, visser.labs
 Donate link: https://www.visser.com.au/donations/
 Tags: woocommerce, mod, delete store, clean store, nuke, store toolkit
 Requires at least: 2.9.2
-Tested up to: 4.8
-Stable tag: 1.7.5
+Tested up to: 4.9.6
+Stable tag: 1.9.2
 License: GPLv2 or later
 
 == Description ==
@@ -19,26 +19,30 @@ Features include:
 **WooCommerce maintainence/debugging tools**
 
 * Re-link rogue Products to the Simple Product Type
+* Delete corrupt Variations
 * Refresh Product Transients
 * Auto-complete Orders with 0 totals
 * Unlock the Edit Product screen for Product Variations
 * All in One SEO Pack integration for Products
-* Show Order Post meta box on Orders screen
-* Show Subscription Post meta box on Subscriptions screen
-* Show Product Post meta box on Products screen
-* Show Coupon Post meta box on Coupons screen
-* Show Product Category Term meta box on Edit Category screen
-* Show User meta box on Edit User screen
-* Show Event meta box on Edit Ticket screen
-* Show Booking meta box on Edit Booking screen
-* Show Membership Plan meta box on Edit Membership Plan screen
-* Show User Membership meta box Edit User Membership Plan screen
+* Show Order custom Post meta from the Edit Order screen
+* Show Order Items custom Post meta on the Edit Order screen
+* Show Refund custom Post meta on the Edit Order screen
+* Show Subscription custom Post meta box on the Edit Subscription screen
+* Show Product custom Post meta box on the Edit Product screen
+* Show Coupon custom Post meta box on the Edit Coupon screen
+* Show Product Category custom Term meta box on the Edit Category screen
+* Show custom User meta box on the Edit User screen
+* Show Event custom Post meta box on the Edit Ticket screen
+* Show Booking custom Post meta box on the Edit Booking screen
+* Show Membership Plan custom Post meta box on the Edit Membership Plan screen
+* Show User Membership custom Post meta box on the Edit User Membership Plan screen
 * List of all registered WordPress Image Sizes on WooCommerce > System Status screen
 * View and manage existing Orders of customers from the User Profile screen
 * View number of Orders linked to each User from the Users screen
 * Filter Orders by Billing Country from the Orders screen
 * Filter Orders by Shipping Country from the Orders screen
 * Filter Orders by Payment Method from the Orders screen
+* WP-CLI support for limitless nukes
 
 **Nuke support for clearing WooCommerce store records**
 
@@ -50,15 +54,18 @@ Features include:
 * Product Vendors
 * Product Images
 * Product Attributes
+* WooCommerce Logs
 * Orders
 * Order Items
 * Tax Rates
 * Download Permissions
 * Coupons
 * Shipping Classes
+* WooCommerce Logs
 * Advanced Google Product Feed
 * Delete Products by Product Category
 * Delete Orders by Order Status
+* Delete Orders by Order Date
 * Bulk permanently Delete Products from the Edit Products screen
 
 **Nuke support for clearing WordPress records**
@@ -113,6 +120,48 @@ If you have any problems, questions or suggestions please join the members discu
 http://www.visser.com.au/woocommerce/forums/
 
 == Changelog ==
+
+= 1.9.2 =
+* Fixed: Delete Products by Category ignoring filter (thanks Rene)
+
+= 1.9.1 =
+* Fixed: Date format incorrect on Edit User/Edit Profile screen (thanks Francisco)
+
+= 1.9 =
+* Added: Validation to the Delete Products by Product Category section
+* Added: Validation to the Delete Orders by Order Status section
+* Fixed: Do not filter deleted Orders by date if not selected (thanks @cleverpixel)
+* Changed: Moved Javascript from inline to toolkit.js
+* Added: Confirmation popup for filter nukes (thanks @alucard001)
+
+= 1.8.3 =
+* Added: Pagination to the User Orders page of the My Profile screen (thanks Michael)
+* Changed: Re-added Remove buttons to individual nuke filters (thanks @onlineatwork)
+
+= 1.8.2 =
+* Fixed: Fatal PHP error on older PHP sites
+
+= 1.8.1 =
+* Added: Tool to delete obviously corrupt Variations (thanks Rupesh)
+
+= 1.8 =
+* Added: Delete Orders by Order Date (thanks @cleverpixel and @coryinthelou)
+
+= 1.7.9 =
+* Added: Refunds Post meta to the Edit Order screen (thanks Lawrence)
+
+= 1.7.8 =
+* Added: Nuke WooCommerce logs
+* Added: WP-CLI support for tactical nukes
+
+= 1.7.7 =
+* Added: Export button support to the Profile/Edit User screen
+* Added: Custom Post meta for WooCommerce Subscriptions
+
+= 1.7.6 =
+* Added: Category heirachy detail to Edit Category screen
+* Added: Category heirachy depth to Edit Category screen
+* Added: Export button support for EPO details within the Edit Order screen
 
 = 1.7.5 =
 * Changed: Styling of Post meta meta boxes to striped

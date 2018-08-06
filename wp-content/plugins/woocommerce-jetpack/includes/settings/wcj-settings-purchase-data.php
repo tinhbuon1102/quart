@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Product Cost Price
  *
- * @version 2.8.0
+ * @version 3.6.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  * @todo    add options to set fields and column titles
@@ -14,7 +14,7 @@ $settings = array(
 	array(
 		'title'     => __( 'Price Fields', 'woocommerce-jetpack' ),
 		'type'      => 'title',
-		'desc'      => __( 'This fields will be added to product\'s edit page and will be included in product\'s purchase cost calculation.', 'woocommerce-jetpack' ),
+		'desc'      => __( 'These fields will be added to product\'s edit page and will be included in product\'s purchase cost calculation.', 'woocommerce-jetpack' ),
 		'id'        => 'wcj_purchase_data_price_fields_options',
 	),
 	array(
@@ -45,7 +45,7 @@ $settings = array(
 	array(
 		'title'     => __( 'Custom Price Fields', 'woocommerce-jetpack' ),
 		'type'      => 'title',
-		'desc'      => __( 'This fields will be added to product\'s edit page and will be included in product\'s purchase cost calculation.', 'woocommerce-jetpack' ),
+		'desc'      => __( 'These fields will be added to product\'s edit page and will be included in product\'s purchase cost calculation.', 'woocommerce-jetpack' ),
 		'id'        => 'wcj_purchase_data_custom_price_fields_options',
 	),
 	array(
@@ -53,11 +53,11 @@ $settings = array(
 		'id'        => 'wcj_purchase_data_custom_price_fields_total_number',
 		'default'   => 1,
 		'type'      => 'custom_number',
-		'desc'      => apply_filters( 'booster_get_message', '', 'desc' ),
-		'custom_attributes' => apply_filters( 'booster_get_message', '', 'readonly' ),
+		'desc'      => apply_filters( 'booster_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
 	),
 );
-$total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_purchase_data_custom_price_fields_total_number', 1 ) );
+$total_number = apply_filters( 'booster_option', 1, get_option( 'wcj_purchase_data_custom_price_fields_total_number', 1 ) );
 for ( $i = 1; $i <= $total_number; $i++ ) {
 	$settings = array_merge( $settings, array(
 		array(
@@ -95,7 +95,7 @@ $settings = array_merge( $settings, array(
 	array(
 		'title'     => __( 'Info Fields', 'woocommerce-jetpack' ),
 		'type'      => 'title',
-		'desc'      => __( 'This fields will be added to product\'s edit page.', 'woocommerce-jetpack' ),
+		'desc'      => __( 'These fields will be added to product\'s edit page.', 'woocommerce-jetpack' ),
 		'id'        => 'wcj_purchase_data_info_fields_options',
 	),
 	array(
@@ -122,6 +122,34 @@ $settings = array_merge( $settings, array(
 	array(
 		'type'      => 'sectionend',
 		'id'        => 'wcj_purchase_data_info_fields_options',
+	),
+	array(
+		'title'     => __( 'Admin Products List Custom Columns', 'woocommerce-jetpack' ),
+		'type'      => 'title',
+		'desc'      => __( 'This section lets you add custom columns to WooCommerce admin products list.', 'woocommerce-jetpack' ),
+		'id'        => 'wcj_purchase_data_custom_products_columns_options',
+	),
+	array(
+		'title'     => __( 'Profit', 'woocommerce-jetpack' ),
+		'desc'      => __( 'Add', 'woocommerce-jetpack' ),
+		'id'        => 'wcj_purchase_data_custom_products_columns_profit',
+		'default'   => 'no',
+		'type'      => 'checkbox',
+		'desc_tip'  => apply_filters( 'booster_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
+	),
+	array(
+		'title'     => __( 'Purchase Cost', 'woocommerce-jetpack' ),
+		'desc'      => __( 'Add', 'woocommerce-jetpack' ),
+		'id'        => 'wcj_purchase_data_custom_products_columns_purchase_cost',
+		'default'   => 'no',
+		'type'      => 'checkbox',
+		'desc_tip'  => apply_filters( 'booster_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
+	),
+	array(
+		'type'      => 'sectionend',
+		'id'        => 'wcj_purchase_data_custom_products_columns_options',
 	),
 	array(
 		'title'     => __( 'Admin Orders List Custom Columns', 'woocommerce-jetpack' ),

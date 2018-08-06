@@ -2,56 +2,66 @@
 /**
  * Booster for WooCommerce - Settings - PDF Invoicing - Styling
  *
- * @version 2.8.2
+ * @version 3.3.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+$is_full_fonts = wcj_check_and_maybe_download_tcpdf_fonts();
 $settings      = array();
 $invoice_types = ( 'yes' === get_option( 'wcj_invoicing_hide_disabled_docs_settings', 'no' ) ) ? wcj_get_enabled_invoice_types() : wcj_get_invoice_types();
 foreach ( $invoice_types as $invoice_type ) {
-	$default_template_filename = ( false === strpos( $invoice_type['id'], 'custom_doc_' ) ? $invoice_type['id'] : 'custom_doc' );
-	$default_template_filename = WCJ()->plugin_path() . '/includes/settings/pdf-invoicing/wcj-' . $default_template_filename . '.css';
-	if ( file_exists( $default_template_filename ) ) {
-		ob_start();
-		include( $default_template_filename );
-		$default_template = ob_get_clean();
-	} else {
-		$default_template = '';
-	}
+	// Font family
+	$font_family_option = ( $is_full_fonts ?
+		array(
+			'title'    => __( 'Font Family', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_general_font_family',
+			'default'  => 'helvetica',
+			'type'     => 'select',
+			'options'  => apply_filters( 'wcj_pdf_invoicing_fonts', array(
+				'courier'           => 'Courier',
+				'helvetica'         => 'Helvetica',
+				'times'             => 'Times',
+				'dejavusans'        => 'DejaVu Sans (Unicode)',
+				'droidsansfallback' => 'Droid Sans Fallback (Unicode)',
+				'angsanaupc'        => 'AngsanaUPC (Unicode)',
+				'cordiaupc'         => 'CordiaUPC (Unicode)',
+				'thsarabun'         => 'THSarabunPSK (Unicode)',
+				'stsongstdlight'    => 'STSong Light (Simp. Chinese)',
+				'cid0ct'            => 'cid0ct (Chinese Traditional)',
+			) ),
+		) :
+		array(
+			'title'    => __( 'Font Family', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_general_font_family_fallback',
+			'default'  => 'helvetica',
+			'type'     => 'select',
+			'options'  => array(
+				'courier'           => 'Courier',
+				'helvetica'         => 'Helvetica',
+				'times'             => 'Times',
+				'stsongstdlight'    => 'STSong Light (Simp. Chinese)',
+			),
+		)
+	);
 	$settings = array_merge( $settings, array(
 		array(
-			'title'    => strtoupper( $invoice_type['desc'] ),
+			'title'    => $invoice_type['title'],
 			'type'     => 'title',
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_styling_options',
 		),
 		array(
 			'title'    => __( 'CSS', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_css',
-			'default'  => $default_template,
+			'default'  => $this->get_default_css_template( $invoice_type['id'] ),
 			'type'     => 'textarea',
-			'css'      => 'width:66%;min-width:300px;height:200px;',
+			'css'      => 'width:100%;height:500px;',
 		),
-		array(
-			'title'    => __( 'Font Family', 'woocommerce-jetpack' ),
-			'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
-			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_general_font_family',
-			'default'  => 'dejavusans',
-			'type'     => 'select',
-			'options'  => array(
-				'dejavusans'        => 'DejaVu Sans (Unicode)',
-				'courier'           => 'Courier',
-				'helvetica'         => 'Helvetica',
-				'times'             => 'Times',
-				'droidsansfallback' => 'Droid Sans Fallback (Unicode)',
-				'angsanaupc'        => 'AngsanaUPC (Unicode)',
-				'cordiaupc'         => 'CordiaUPC (Unicode)',
-				'thsarabun'         => 'THSarabunPSK (Unicode)',
-			),
-			'custom_attributes' => apply_filters( 'booster_get_message', '', 'disabled' ),
-		),
+	),
+	array( $font_family_option ),
+	array(
 		array(
 			'title'    => __( 'Font Size', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_general_font_size',
@@ -60,6 +70,7 @@ foreach ( $invoice_types as $invoice_type ) {
 		),
 		array(
 			'title'    => __( 'Make Font Shadowed', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_general_font_shadowed',
 			'default'  => 'no',
 			'type'     => 'checkbox',
@@ -70,5 +81,4 @@ foreach ( $invoice_types as $invoice_type ) {
 		),
 	) );
 }
-
 return $settings;

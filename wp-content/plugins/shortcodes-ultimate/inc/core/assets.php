@@ -48,15 +48,14 @@ class Su_Assets {
 		wp_register_script( 'simpleslider', plugins_url( 'assets/js/simpleslider.js', SU_PLUGIN_FILE ), array( 'jquery' ), '1.0.0', true );
 		wp_register_style( 'simpleslider', plugins_url( 'assets/css/simpleslider.css', SU_PLUGIN_FILE ), false, '1.0.0', 'all' );
 		// Owl Carousel
-		wp_register_script( 'owl-carousel', plugins_url( 'assets/js/owl-carousel.js', SU_PLUGIN_FILE ), array( 'jquery' ), '1.3.2', true );
-		wp_register_style( 'owl-carousel', plugins_url( 'assets/css/owl-carousel.css', SU_PLUGIN_FILE ), false, '1.3.2', 'all' );
-		wp_register_style( 'owl-carousel-transitions', plugins_url( 'assets/css/owl-carousel-transitions.css', SU_PLUGIN_FILE ), false, '1.3.2', 'all' );
+		wp_register_script( 'owl-carousel', plugins_url( 'assets/js/owl-carousel.js', SU_PLUGIN_FILE ), array( 'jquery' ), '2.2.1', true );
+		wp_register_style( 'owl-carousel', plugins_url( 'assets/css/owl-carousel.css', SU_PLUGIN_FILE ), false, '2.2.1', 'all' );
 		// Font Awesome
-		wp_register_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false, '4.4.0', 'all' );
+		wp_register_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0', 'all' );
 		// Animate.css
 		wp_register_style( 'animate', plugins_url( 'assets/css/animate.css', SU_PLUGIN_FILE ), false, '3.1.1', 'all' );
 		// InView
-		wp_register_script( 'inview', plugins_url( 'assets/js/inview.js', SU_PLUGIN_FILE ), array( 'jquery' ), '2.1.1', true );
+		wp_register_script( 'jquery-inview', plugins_url( 'assets/js/jquery.inview.js', SU_PLUGIN_FILE ), array( 'jquery' ), '1.1.2', true );
 		// qTip
 		wp_register_style( 'qtip', plugins_url( 'assets/css/qtip.css', SU_PLUGIN_FILE ), false, '2.1.1', 'all' );
 		wp_register_script( 'qtip', plugins_url( 'assets/js/qtip.js', SU_PLUGIN_FILE ), array( 'jquery' ), '2.1.1', true );
@@ -153,12 +152,39 @@ class Su_Assets {
 	 * Print custom CSS
 	 */
 	public static function custom_css() {
+
 		// Get custom CSS and apply filters to it
-		$custom_css = apply_filters( 'su/assets/custom_css', str_replace( '&#039;', '\'', html_entity_decode( (string) get_option( 'su_option_custom-css' ) ) ) );
-		// Print CSS if exists
-		if ( $custom_css ) echo "\n\n<!-- Shortcodes Ultimate custom CSS - begin -->\n<style type='text/css'>\n" . stripslashes( str_replace( array( '%theme_url%', '%home_url%', '%plugin_url%' ), array( trailingslashit( get_stylesheet_directory_uri() ), trailingslashit( get_option( 'home' ) ), trailingslashit( plugins_url( '', SU_PLUGIN_FILE ) ) ), $custom_css ) ) . "\n</style>\n<!-- Shortcodes Ultimate custom CSS - end -->\n\n";
+		$custom_css = (string) apply_filters( 'su/assets/custom_css', get_option( 'su_option_custom-css' ) );
+
+		$template = '%1$s<!-- %2$s - %3$s -->%1$s<style type="text/css">%1$s%5$s%1$s</style>%1$s<!-- %2$s - %4$s -->%1$s';
+		$template = apply_filters( 'su/assets/custom_css/template', $template );
+
+		if ( ! empty( $custom_css ) ) {
+
+			$custom_css = str_replace(
+				array( '%theme_url%', '%home_url%', '%plugin_url%' ),
+				array(
+					trailingslashit( get_stylesheet_directory_uri() ),
+					trailingslashit( get_option( 'home' ) ),
+					trailingslashit( plugins_url( '', SU_PLUGIN_FILE ) ),
+				),
+				$custom_css
+			);
+
+			printf(
+				$template,
+				PHP_EOL,
+				'Shortcodes Ultimate custom CSS',
+				'start',
+				'end',
+				strip_tags( $custom_css )
+			);
+
+		}
+
 		// Hook
 		do_action( 'su/assets/custom_css/after' );
+
 	}
 
 	/**
@@ -225,7 +251,6 @@ class Su_Assets {
 	 * Helper to get full URL of a skin file
 	 */
 	public static function skin_url( $file = '' ) {
-		$shult = shortcodes_ultimate();
 		$skin = get_option( 'su_option_skin' );
 		$uploads = wp_upload_dir(); $uploads = $uploads['baseurl'];
 		// Prepare url to skin directory

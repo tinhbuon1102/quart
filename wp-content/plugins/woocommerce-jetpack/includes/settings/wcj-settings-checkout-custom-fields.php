@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Checkout Custom Fields
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -32,10 +32,63 @@ $settings = array(
 		'type'     => 'checkbox',
 	),
 	array(
-		'title'    => __( 'Add All Fields to "Order Received" Page', 'woocommerce-jetpack' ),
+		'title'    => __( 'Emails Fields Template', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Before the fields', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_emails_template_before',
+		'default'  => '',
+		'type'     => 'textarea',
+	),
+	array(
+		'desc'     => __( 'Each field', 'woocommerce-jetpack' ) . '. ' . wcj_message_replaced_values( array( '%label%', '%value%' ) ),
+		'id'       => 'wcj_checkout_custom_fields_emails_template_field',
+		'default'  => '<p><strong>%label%:</strong> %value%</p>',
+		'type'     => 'textarea',
+	),
+	array(
+		'desc'     => __( 'After the fields', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_emails_template_after',
+		'default'  => '',
+		'type'     => 'textarea',
+	),
+	array(
+		'title'    => __( 'Add All Fields to "Order Received" (i.e. "Thank You") and "View Order" Pages', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Add', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_checkout_custom_fields_add_to_order_received',
 		'default'  => 'yes',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( '"Order Received" Fields Template', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Before the fields', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_order_received_template_before',
+		'default'  => '',
+		'type'     => 'textarea',
+	),
+	array(
+		'desc'     => __( 'Each field', 'woocommerce-jetpack' ) . '. ' . wcj_message_replaced_values( array( '%label%', '%value%' ) ),
+		'id'       => 'wcj_checkout_custom_fields_order_received_template_field',
+		'default'  => '<p><strong>%label%:</strong> %value%</p>',
+		'type'     => 'textarea',
+	),
+	array(
+		'desc'     => __( 'After the fields', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_order_received_template_after',
+		'default'  => '',
+		'type'     => 'textarea',
+	),
+	array(
+		'title'    => __( 'Textarea Field Values', 'woocommerce-jetpack' ),
+		'desc'     => __( 'When saving, "clean" textarea field values', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_textarea_clean',
+		'default'  => 'yes',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Textarea Line Breaks', 'woocommerce-jetpack' ),
+		'desc'     => sprintf( __( 'When displaying, replace line breaks with %s in textarea field values', 'woocommerce-jetpack' ), '<code>&lt;br&gt;</code>' ),
+		'desc_tip' => __( 'Does <strong>not</strong> affect admin order edit page.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_checkout_custom_fields_textarea_replace_line_breaks',
+		'default'  => 'no',
 		'type'     => 'checkbox',
 	),
 	array(
@@ -44,10 +97,10 @@ $settings = array(
 		'id'       => 'wcj_checkout_custom_fields_total_number',
 		'default'  => 1,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
-			array( 'step' => '1', 'min'  => '1' )
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
+			array( 'step' => '1', 'min' => '1' )
 		),
 		'css'      => 'width:100px;',
 	),
@@ -56,7 +109,7 @@ $settings = array(
 		'id'       => 'wcj_checkout_custom_fields_options',
 	),
 );
-for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_checkout_custom_fields_total_number', 1 ) ); $i++ ) {
+for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_checkout_custom_fields_total_number', 1 ) ); $i++ ) {
 	$settings = array_merge( $settings,
 		array(
 			array(
@@ -66,7 +119,7 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_che
 			),
 			array(
 				'title'    => __( 'Enable/Disable', 'woocommerce-jetpack' ),
-				'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+				'desc'     => '<strong>' . __( 'Enable', 'woocommerce-jetpack' ) . '</strong>',
 				'desc_tip' => __( 'Key', 'woocommerce-jetpack' ) . ': ' .
 					'<code>' . get_option( 'wcj_checkout_custom_field_section_' . $i, 'billing' ) . '_' . 'wcj_checkout_field_' . $i . '</code>',
 				'id'       => 'wcj_checkout_custom_field_enabled_' . $i,
@@ -116,6 +169,14 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_che
 				'css'      => 'min-width:300px;',
 			),
 			array(
+				'title'    => __( 'Description', 'woocommerce-jetpack' ),
+				'desc'     => __( 'You can use HTML here.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_description_' . $i,
+				'default'  => '',
+				'type'     => 'custom_textarea',
+				'css'      => 'min-width:300px;',
+			),
+			array(
 				'title'    => __( 'Priority (i.e. Order)', 'woocommerce-jetpack' ),
 				'id'       => 'wcj_checkout_custom_field_priority_' . $i,
 				'default'  => '',
@@ -152,12 +213,44 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_che
 				'type'     => 'checkbox',
 			),
 			array(
+				'title'    => __( 'Customer Meta Fields', 'woocommerce-jetpack' ),
+				'desc'     => __( 'Add', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_customer_meta_fields_' . $i,
+				'default'  => 'yes',
+				'type'     => 'checkbox',
+			),
+			array(
 				'title'    => __( 'Select/Radio: Options', 'woocommerce-jetpack' ),
 				'desc'     => __( 'One option per line', 'woocommerce-jetpack' ),
 				'id'       => 'wcj_checkout_custom_field_select_options_' . $i,
 				'default'  => '',
 				'type'     => 'textarea',
 				'css'      => 'min-width:300px;height:150px;',
+			),
+			array(
+				'title'    => __( 'Select: Use select2 Library', 'woocommerce-jetpack' ),
+				'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_select_select2_' . $i,
+				'default'  => 'no',
+				'type'     => 'checkbox',
+			),
+			array(
+				'desc'     => __( 'select2: min input length', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'select2: Number of characters necessary to start a search.', 'woocommerce-jetpack' ) . ' ' .
+					__( 'Ignored if set to zero.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_select_select2_min_input_length' . $i,
+				'default'  => 0,
+				'type'     => 'number',
+				'custom_attributes' => array( 'min' => 0 ),
+			),
+			array(
+				'desc'     => __( 'select2: max input length', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'select2: Maximum number of characters that can be entered for an input.', 'woocommerce-jetpack' ) . ' ' .
+					__( 'Ignored if set to zero.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_select_select2_max_input_length' . $i,
+				'default'  => 0,
+				'type'     => 'number',
+				'custom_attributes' => array( 'min' => 0 ),
 			),
 			array(
 				'id'       => 'wcj_checkout_custom_field_checkbox_yes_' . $i,
@@ -280,6 +373,22 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_che
 				'type'     => 'multiselect',
 				'class'    => 'chosen_select',
 				'options'  => $products,
+			),
+			array(
+				'title'    => __( 'Min Cart Amount', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Show this field only if cart total is at least this amount. Set zero to disable.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_min_cart_amount_' . $i,
+				'default'  => 0,
+				'type'     => 'number',
+				'custom_attributes' => array( 'min' => 0, 'step' => wcj_get_wc_price_step() ),
+			),
+			array(
+				'title'    => __( 'Max Cart Amount', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Show this field only if cart total is not more than this amount. Set zero to disable.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_checkout_custom_field_max_cart_amount_' . $i,
+				'default'  => 0,
+				'type'     => 'number',
+				'custom_attributes' => array( 'min' => 0, 'step' => wcj_get_wc_price_step() ),
 			),
 			array(
 				'type'     => 'sectionend',

@@ -4,11 +4,13 @@
  Plugin URI: https://gti.co.jp/throws-spam-away/
  Description: コメント内に日本語の記述が存在しない場合はあたかも受け付けたように振る舞いながらも捨ててしまうプラグイン
  Author: 株式会社ジーティーアイ　さとう　たけし
- Version: 2.8.2
+ Version: 2.9
  Author URI: https://gti.co.jp/
  License: GPL2
+ Text Domain: throws-spam-away
+ Domain Path: /languages
  */
-/*  Copyright 2016 Takeshi Satoh (https://gti.co.jp/)
+/*  Copyright 2017 Takeshi Satoh (https://gti.co.jp/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
@@ -29,11 +31,12 @@ require_once 'throws_spam_away.class.php';
  * 設定値一覧
  * デフォルト設定
  */
+$tsa_domain = 'throws-spam-away';
 
 $tsa_spam_tbl_name = 'tsa_spam';
 
 // Throws SPAM Awayバージョン
-$tsa_version = '2.8.2';
+$tsa_version = '2.9';
 // スパムデータベースバージョン
 $tsa_db_version = 2.6;  // 2.6からデータベース変更 [error_type]追加
 
@@ -58,13 +61,13 @@ $default_japanese_string_min_count = 3;
 $default_back_second = 0;
 
 // コメント欄下に表示される注意文言（初期設定）
-$default_caution_msg = '日本語が含まれない投稿は無視されますのでご注意ください。（スパム対策）';
+$default_caution_msg = __( '日本語が含まれない投稿は無視されますのでご注意ください。（スパム対策）', $tsa_domain );
 
 // コメント欄下に表示する位置（初期設定）1:コメント送信ボタンの上 2:コメント送信フォームの下
 $default_caution_msg_point = '1';  //1:"comment_form", 2:"comment_form_after"
 
 // エラー時に表示されるエラー文言（初期設定）
-$default_error_msg = '日本語を規定文字数以上含まない記事は投稿できませんよ。';
+$default_error_msg = __( '日本語を規定文字数以上含まない記事は投稿できませんよ。', $tsa_domain );
 
 /** URL文字列除外 設定 */
 // URL数の制限をするか
@@ -79,10 +82,10 @@ $default_url_count_over_error_msg = '';
 /** NGキーワード/必須キーワード 制御設定 */
 
 // キーワードNGエラー時に表示されるエラー文言（初期設定）
-$default_ng_key_error_msg = 'NGキーワードが含まれているため投稿できません。';
+$default_ng_key_error_msg = __( 'NGキーワードが含まれているため投稿できません。', $tsa_domain );
 
 // 必須キーワードが含まれないエラー文言（初期設定）
-$default_must_key_error_msg = '必須キーワードが含まれていないため投稿できません。';
+$default_must_key_error_msg = __( '必須キーワードが含まれていないため投稿できません。', $tsa_domain );
 
 /** トラックバックへの対応設定 */
 
@@ -118,7 +121,7 @@ $default_block_ip_address_error_msg = '';
 
 /** ver.2.8から */
 // ホワイトリスト以外無視するか
-$default_only_whitelist_ip_flg = '2';	// "2":しない
+$default_only_whitelist_ip_flg = '2';    // "2":しない
 /** /ver.2.8 */
 
 /** スパムデータベース */
@@ -130,19 +133,19 @@ $default_spam_data_save = '0';
 $default_spam_data_delete_flg = '1';
 
 // スパムデータ保持期間（日）
-$default_spam_keep_day_count = 15;  /** 30 -> 15 */
+$default_spam_keep_day_count = 15;
+/** 30 -> 15 */
 
 // 最低保存期間（日）
-$lower_spam_keep_day_count =1;
+$lower_spam_keep_day_count = 1;
 
 // ○分以内に○回スパムとなったら○分間そのIPからのコメントははじくかの設定
 $default_spam_limit_flg = 0;    // 1:する Other:しない ※スパム情報保存がデフォルトではないのでこちらも基本はしない方向です。
 // ※スパム情報保存していないと機能しません。
-$default_spam_limit_minutes = 10;       // １０分以内に・・・
-$default_spam_limit_count = 2;          // ２回までは許そうか。
-$default_spam_limit_over_interval = 10; // だがそれを超えたら（デフォルト３回目以降）10分はOKコメントでもスパム扱いするんでよろしく！
+$default_spam_limit_minutes                 = 10;       // １０分以内に・・・
+$default_spam_limit_count                   = 2;          // ２回までは許そうか。
+$default_spam_limit_over_interval           = 10; // だがそれを超えたら（デフォルト３回目以降）10分はOKコメントでもスパム扱いするんでよろしく！
 $default_spam_limit_over_interval_error_msg = '';   // そしてその際のエラーメッセージは・・・
-
 
 
 /** オプションキー */
@@ -188,16 +191,16 @@ add_filter( 'preprocess_comment', array( &$newThrowsSpamAway, 'trackback_spam_aw
 // ダミーフィールド作成
 $dummy_param_field_flg = get_option( 'tsa_dummy_param_field_flg', $default_dummy_param_field_flg );
 if ( '1' == $dummy_param_field_flg ) {
-    add_action( 'wp_head', array( &$newThrowsSpamAway, 'tsa_scripts_init' ), 9997 );
-    add_action( "comment_form", array(&$newThrowsSpamAway, "comment_form_dummy_param_field" ), 9998);
+	add_action( 'wp_head', array( &$newThrowsSpamAway, 'tsa_scripts_init' ), 9997 );
+	add_action( "comment_form", array( &$newThrowsSpamAway, "comment_form_dummy_param_field" ), 9998 );
 }
 // 注意文言表示
 // コメントフォーム表示
-$comment_disp_point = 'comment_form';
+$comment_disp_point        = 'comment_form';
 $comment_form_action_point = get_option( 'tsa_caution_msg_point', $default_caution_msg_point );
 // フォーム内かフォーム外か判断する
 if ( '2' == $comment_form_action_point ) {
-    $comment_disp_point = 'comment_form_after';
+	$comment_disp_point = 'comment_form_after';
 }
 add_action( $comment_disp_point, array( &$newThrowsSpamAway, 'comment_form' ), 9999 );
 // コメントチェックフィルター

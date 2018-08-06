@@ -1,0 +1,24 @@
+suPHP_ConfigPath /home/lquartet/lquartet.xsrv.jp/xserver_php/
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
+SetEnvIf Request_URI ".*" AllowCountry
+AddHandler fcgid-script .php .phps
+FCGIWrapper "/home/lquartet/lquartet.xsrv.jp/xserver_php/php-cgi" .php
+FCGIWrapper "/home/lquartet/lquartet.xsrv.jp/xserver_php/php-cgi" .phps
+
+
+# Order Deny,Allow
+AuthName "Restricted Area"
+AuthType Basic
+AuthUserFile /home/lquartet/lquartet.xsrv.jp/public_html/.htpasswd
+AuthGroupFile /dev/null 
+Require valid-user

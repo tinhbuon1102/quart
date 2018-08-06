@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Related Products
  *
- * @version 2.8.0
+ * @version 3.1.1
  * @author  Algoritmika Ltd.
  */
 
@@ -30,13 +30,13 @@ class WCJ_Related_Products extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.1.1
 	 */
 	function __construct() {
 
 		$this->id         = 'related_products';
 		$this->short_desc = __( 'Related Products', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Change displayed WooCommerce related products number, columns, order; relate by tag, category, product attribute or manually on per product basis. Hide related products completely.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Change displayed related products number, columns, order; relate by tag, category, product attribute or manually on per product basis. Hide related products completely.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-related-products';
 		$this->extra_desc = sprintf(
 			__( 'You may need to <a class="button" href="%s">clear all products transients</a> to immediately see results on frontend after changing module\'s settings. Alternatively you can just update each product individually to clear its transients.', 'woocommerce-jetpack' ),
@@ -50,7 +50,7 @@ class WCJ_Related_Products extends WCJ_Module {
 		if ( $this->is_enabled() ) {
 
 			// Related per Product
-			if ( 'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) ) {
+			if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) ) {
 				add_action( 'add_meta_boxes',    array( $this, 'add_meta_box' ) );
 				add_action( 'save_post_product', array( $this, 'save_meta_box' ), PHP_INT_MAX, 2 );
 			}
@@ -88,19 +88,56 @@ class WCJ_Related_Products extends WCJ_Module {
 
 			// Hide Related
 			if ( 'yes' === get_option( 'wcj_product_info_related_products_hide', 'no' ) ) {
-				add_action( 'init', array( $this, 'remove_output_related_products_action' ), PHP_INT_MAX );
+				add_action( ( $this->do_hide_for_all_products() ? 'init' : 'wp_head' ), array( $this, 'remove_output_related_products_action' ), PHP_INT_MAX );
 			}
 
 		}
 	}
 
 	/**
+	 * do_hide_for_all_products.
+	 *
+	 * @version 3.1.1
+	 * @since   3.1.1
+	 */
+	function do_hide_for_all_products() {
+		return (
+			'' == get_option( 'wcj_product_info_related_products_hide_products_incl', '' ) &&
+			'' == get_option( 'wcj_product_info_related_products_hide_products_excl', '' ) &&
+			'' == get_option( 'wcj_product_info_related_products_hide_cats_incl', '' ) &&
+			'' == get_option( 'wcj_product_info_related_products_hide_cats_excl', '' ) &&
+			'' == get_option( 'wcj_product_info_related_products_hide_tags_incl', '' ) &&
+			'' == get_option( 'wcj_product_info_related_products_hide_tags_excl', '' )
+		);
+	}
+
+	/**
+	 * do_hide_for_product.
+	 *
+	 * @version 3.1.1
+	 * @since   3.1.1
+	 */
+	function do_hide_for_product( $product_id ) {
+		return wcj_is_enabled_for_product( $product_id, array(
+			'include_products'   => get_option( 'wcj_product_info_related_products_hide_products_incl', '' ),
+			'exclude_products'   => get_option( 'wcj_product_info_related_products_hide_products_excl', '' ),
+			'include_categories' => get_option( 'wcj_product_info_related_products_hide_cats_incl', '' ),
+			'exclude_categories' => get_option( 'wcj_product_info_related_products_hide_cats_excl', '' ),
+			'include_tags'       => get_option( 'wcj_product_info_related_products_hide_tags_incl', '' ),
+			'exclude_tags'       => get_option( 'wcj_product_info_related_products_hide_tags_excl', '' ),
+		) );
+	}
+
+	/**
 	 * remove_output_related_products_action.
 	 *
-	 * @version 2.8.0
+	 * @version 3.1.1
 	 * @since   2.8.0
 	 */
 	function remove_output_related_products_action( $args ) {
+		if ( ! $this->do_hide_for_all_products() && ! $this->do_hide_for_product( get_the_ID() ) ) {
+			return;
+		}
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
 	}
 
@@ -144,7 +181,7 @@ class WCJ_Related_Products extends WCJ_Module {
 	function get_related_products_ids_wc3( $product_id ) {
 		$include_ids = array();
 		// Change Related Products
-		if ( 'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) && 'yes' === get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_enabled', true ) ) {
+		if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) && 'yes' === get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_enabled', true ) ) {
 			// Relate per Product (Manual)
 			$related_per_product = get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_ids', true );
 			if ( '' != $related_per_product ) {
@@ -292,7 +329,7 @@ class WCJ_Related_Products extends WCJ_Module {
 		if ( 'yes' === get_option( 'wcj_product_info_related_products_by_attribute_enabled', 'no' ) ) {
 			$do_fix = true;
 		} elseif (
-			'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) &&
+			'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) &&
 			'yes' === get_post_meta( $product_id, '_' . 'wcj_product_info_related_products_enabled', true ) &&
 			'' != get_post_meta( $product_id, '_' . 'wcj_product_info_related_products_ids', true )
 		) {
@@ -322,7 +359,7 @@ class WCJ_Related_Products extends WCJ_Module {
 	/**
 	 * maybe_delete_product_transients.
 	 *
-	 * @since   2.6.0
+	 * @since   3.1.1
 	 * @version 2.6.0
 	 */
 	function maybe_delete_product_transients() {
@@ -332,7 +369,7 @@ class WCJ_Related_Products extends WCJ_Module {
 			while( true ) {
 				$args = array(
 					'post_type'      => 'product',
-					'post_status'    => $post_status,
+					'post_status'    => 'any',
 					'posts_per_page' => $block_size,
 					'offset'         => $offset,
 					'orderby'        => 'title',
@@ -377,7 +414,7 @@ class WCJ_Related_Products extends WCJ_Module {
 			$args['order'] = get_option( 'wcj_product_info_related_products_order', 'desc' );
 		}
 		// Change Related Products
-		if ( 'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) && 'yes' === get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_enabled', true ) ) {
+		if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_product_info_related_products_per_product', 'no' ) ) && 'yes' === get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_enabled', true ) ) {
 			// Relate per Product (Manual)
 			$related_per_product = get_post_meta( get_the_ID(), '_' . 'wcj_product_info_related_products_ids', true );
 			if ( '' != $related_per_product ) {

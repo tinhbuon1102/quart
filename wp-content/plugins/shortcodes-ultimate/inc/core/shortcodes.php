@@ -88,7 +88,7 @@ class Su_Shortcodes {
 		su_query_asset( 'js', 'jquery' );
 		su_query_asset( 'js', 'su-other-shortcodes' );
 		do_action( 'su/shortcode/spoiler', $atts );
-		return '<div class="su-spoiler su-spoiler-style-' . $atts['style'] . ' su-spoiler-icon-' . $atts['icon'] . su_ecssc( $atts ) . '"' . $atts['anchor'] . '><div class="su-spoiler-title"><span class="su-spoiler-icon"></span>' . su_scattr( $atts['title'] ) . '</div><div class="su-spoiler-content su-clearfix" style="display:none">' . su_do_shortcode( $content, 's' ) . '</div></div>';
+		return '<div class="su-spoiler su-spoiler-style-' . $atts['style'] . ' su-spoiler-icon-' . $atts['icon'] . su_ecssc( $atts ) . '"' . $atts['anchor'] . '><div class="su-spoiler-title"><span class="su-spoiler-icon"></span>' . su_scattr( $atts['title'] ) . '</div><div class="su-spoiler-content su-clearfix">' . su_do_nested_shortcodes( $content, 'spoiler' ) . '</div></div>';
 	}
 
 	public static function accordion( $atts = null, $content = null ) {
@@ -197,7 +197,7 @@ class Su_Shortcodes {
 
 	public static function row( $atts = null, $content = null ) {
 		$atts = shortcode_atts( array( 'class' => '' ), $atts );
-		return '<div class="su-row' . su_ecssc( $atts ) . '">' . su_do_shortcode( $content, 'r' ) . '</div>';
+		return '<div class="su-row' . su_ecssc( $atts ) . '">' . su_do_nested_shortcodes( $content, 'row' ) . '</div>';
 	}
 
 	public static function column( $atts = null, $content = null ) {
@@ -210,7 +210,7 @@ class Su_Shortcodes {
 		if ( $atts['last'] !== null && $atts['last'] == '1' ) $atts['class'] .= ' su-column-last';
 		if ( $atts['center'] === 'yes' ) $atts['class'] .= ' su-column-centered';
 		su_query_asset( 'css', 'su-box-shortcodes' );
-		return '<div class="su-column su-column-size-' . str_replace( '/', '-', $atts['size'] ) . su_ecssc( $atts ) . '"><div class="su-column-inner su-clearfix">' . su_do_shortcode( $content, 'c' ) . '</div></div>';
+		return '<div class="su-column su-column-size-' . str_replace( '/', '-', $atts['size'] ) . su_ecssc( $atts ) . '"><div class="su-column-inner su-clearfix">' . su_do_nested_shortcodes( $content, 'column' ) . '</div></div>';
 	}
 
 	public static function su_list( $atts = null, $content = null ) {
@@ -291,7 +291,7 @@ class Su_Shortcodes {
 		}
 		else $atts['icon'] = '<img src="' . $atts['icon'] . '" alt="" />';
 		su_query_asset( 'css', 'su-content-shortcodes' );
-		return '<div class="su-list su-list-style-' . $atts['style'] . su_ecssc( $atts ) . '">' . str_replace( '<li>', '<li>' . $atts['icon'] . ' ', su_do_shortcode( $content, 'l' ) ) . '</div>';
+		return '<div class="su-list su-list-style-' . $atts['style'] . su_ecssc( $atts ) . '">' . str_replace( '<li>', '<li>' . $atts['icon'] . ' ', su_do_nested_shortcodes( $content, 'list' ) ) . '</div>';
 	}
 
 	public static function button( $atts = null, $content = null ) {
@@ -316,6 +316,7 @@ class Su_Shortcodes {
 				'onclick'     => '',
 				'rel'         => '',
 				'title'       => '',
+				'id'          => '',
 				'class'       => ''
 			), $atts, 'button' );
 
@@ -437,8 +438,10 @@ class Su_Shortcodes {
 		$atts['rel'] = ( $atts['rel'] ) ? ' rel="' . $atts['rel'] . '"' : '';
 		// Prepare title attribute
 		$atts['title'] = ( $atts['title'] ) ? ' title="' . $atts['title'] . '"' : '';
+		// Add ID attribute
+		$atts['id'] = ! empty( $atts['id'] ) ? sprintf( ' id="%s"', esc_attr( $atts['id'] ) ) : '';
 		su_query_asset( 'css', 'su-content-shortcodes' );
-		return $before . '<a href="' . su_scattr( $atts['url'] ) . '" class="' . implode( $classes, ' ' ) . '" style="' . implode( $a_css, ';' ) . '" target="_' . $atts['target'] . '"' . $atts['onclick'] . $atts['rel'] . $atts['title'] . '><span style="' . implode( $span_css, ';' ) . '">' . do_shortcode( stripcslashes( $content ) ) . $desc . '</span></a>' . $after;
+		return $before . '<a href="' . su_scattr( $atts['url'] ) . '" class="' . implode( $classes, ' ' ) . '" style="' . implode( $a_css, ';' ) . '" target="_' . $atts['target'] . '"' . $atts['onclick'] . $atts['rel'] . $atts['title'] . $atts['id'] . '><span style="' . implode( $span_css, ';' ) . '">' . do_shortcode( stripcslashes( $content ) ) . $desc . '</span></a>' . $after;
 	}
 
 	public static function service( $atts = null, $content = null ) {
@@ -465,6 +468,7 @@ class Su_Shortcodes {
 	}
 
 	public static function box( $atts = null, $content = null ) {
+
 		$atts = shortcode_atts( array(
 				'title'       => __( 'This is box title', 'shortcodes-ultimate' ),
 				'style'       => 'default',
@@ -474,14 +478,30 @@ class Su_Shortcodes {
 				'radius'      => '3',
 				'class'       => ''
 			), $atts, 'box' );
-		if ( $atts['color'] !== null ) $atts['box_color'] = $atts['color'];
-		// Prepare border-radius
-		$radius = ( $atts['radius'] != '0' ) ? 'border-radius:' . $atts['radius'] . 'px;-moz-border-radius:' . $atts['radius'] . 'px;-webkit-border-radius:' . $atts['radius'] . 'px;' : '';
-		$title_radius = ( $atts['radius'] != '0' ) ? $atts['radius'] - 1 : '';
-		$title_radius = ( $title_radius ) ? '-webkit-border-top-left-radius:' . $title_radius . 'px;-webkit-border-top-right-radius:' . $title_radius . 'px;-moz-border-radius-topleft:' . $title_radius . 'px;-moz-border-radius-topright:' . $title_radius . 'px;border-top-left-radius:' . $title_radius . 'px;border-top-right-radius:' . $title_radius . 'px;' : '';
+
+		if ( $atts['color'] !== null ) {
+			$atts['box_color'] = $atts['color'];
+		}
+
+		$atts['radius'] = is_numeric( $atts['radius'] ) ? intval( $atts['radius'] ) : 0;
+		$atts['inner_radius'] = $atts['radius'] > 2 ? $atts['radius'] - 2 : 0;
+
 		su_query_asset( 'css', 'su-box-shortcodes' );
+
 		// Return result
-		return '<div class="su-box su-box-style-' . $atts['style'] . su_ecssc( $atts ) . '" style="border-color:' . su_hex_shift( $atts['box_color'], 'darker', 20 ) . ';' . $radius . '"><div class="su-box-title" style="background-color:' . $atts['box_color'] . ';color:' . $atts['title_color'] . ';' . $title_radius . '">' . su_scattr( $atts['title'] ) . '</div><div class="su-box-content su-clearfix">' . su_do_shortcode( $content, 'b' ) . '</div></div>';
+		return sprintf(
+			'<div class="su-box su-box-style-%1$s%2$s" style="border-color:%3$s;border-radius:%4$spx"><div class="su-box-title" style="background-color:%5$s;color:%6$s;border-top-left-radius:%7$spx;border-top-right-radius:%7$spx">%8$s</div><div class="su-box-content su-clearfix" style="border-bottom-left-radius:%7$spx;border-bottom-right-radius:%7$spx">%9$s</div></div>',
+			esc_attr( $atts['style'] ),
+			su_ecssc( $atts ),
+			su_hex_shift( $atts['box_color'], 'darker', 20 ),
+			$atts['radius'],
+			$atts['box_color'],
+			$atts['title_color'],
+			$atts['inner_radius'],
+			su_scattr( $atts['title'] ),
+			su_do_nested_shortcodes( $content, 'box' )
+		);
+
 	}
 
 	public static function note( $atts = null, $content = null ) {
@@ -498,7 +518,7 @@ class Su_Shortcodes {
 		// Prepare border-radius
 		$radius = ( $atts['radius'] != '0' ) ? 'border-radius:' . $atts['radius'] . 'px;-moz-border-radius:' . $atts['radius'] . 'px;-webkit-border-radius:' . $atts['radius'] . 'px;' : '';
 		su_query_asset( 'css', 'su-box-shortcodes' );
-		return '<div class="su-note' . su_ecssc( $atts ) . '" style="border-color:' . su_hex_shift( $atts['note_color'], 'darker', 10 ) . ';' . $radius . '"><div class="su-note-inner su-clearfix" style="background-color:' . $atts['note_color'] . ';border-color:' . su_hex_shift( $atts['note_color'], 'lighter', 80 ) . ';color:' . $atts['text_color'] . ';' . $radius . '">' . su_do_shortcode( $content, 'n' ) . '</div></div>';
+		return '<div class="su-note' . su_ecssc( $atts ) . '" style="border-color:' . su_hex_shift( $atts['note_color'], 'darker', 10 ) . ';' . $radius . '"><div class="su-note-inner su-clearfix" style="background-color:' . $atts['note_color'] . ';border-color:' . su_hex_shift( $atts['note_color'], 'lighter', 80 ) . ';color:' . $atts['text_color'] . ';' . $radius . '">' . su_do_nested_shortcodes( $content, 'note' ) . '</div></div>';
 	}
 
 	public static function expand( $atts = null, $content = null ) {
@@ -629,7 +649,7 @@ class Su_Shortcodes {
 		$autoplay = ( $atts['autoplay'] === 'yes' ) ? '?autoplay=1' : '';
 		// Create player
 		$return[] = '<div class="su-youtube su-responsive-media-' . $atts['responsive'] . su_ecssc( $atts ) . '">';
-		$return[] = '<iframe width="' . $atts['width'] . '" height="' . $atts['height'] . '" src="http://www.youtube.com/embed/' . $id . $autoplay . '" frameborder="0" allowfullscreen="true"></iframe>';
+		$return[] = '<iframe width="' . $atts['width'] . '" height="' . $atts['height'] . '" src="https://www.youtube.com/embed/' . $id . $autoplay . '" frameborder="0" allowfullscreen="true"></iframe>';
 		$return[] = '</div>';
 		su_query_asset( 'css', 'su-media-shortcodes' );
 		// Return result
@@ -657,6 +677,7 @@ class Su_Shortcodes {
 				'theme'          => 'dark',
 				'https'          => 'no',
 				'wmode'          => '',
+				'playsinline'    => 'no',
 				'class'          => ''
 			), $atts, 'youtube_advanced' );
 		if ( !$atts['url'] ) return Su_Tools::error( __FUNCTION__, __( 'please specify correct url', 'shortcodes-ultimate' ) );
@@ -665,7 +686,7 @@ class Su_Shortcodes {
 		// Check that url is specified
 		if ( !$id ) return Su_Tools::error( __FUNCTION__, __( 'please specify correct url', 'shortcodes-ultimate' ) );
 		// Prepare params
-		foreach ( array( 'autohide', 'autoplay', 'controls', 'fs', 'loop', 'modestbranding', 'playlist', 'rel', 'showinfo', 'theme', 'wmode' ) as $param ) $params[$param] = str_replace( array( 'no', 'yes', 'alt' ), array( '0', '1', '2' ), $atts[$param] );
+		foreach ( array( 'autohide', 'autoplay', 'controls', 'fs', 'loop', 'modestbranding', 'playlist', 'rel', 'showinfo', 'theme', 'wmode', 'playsinline' ) as $param ) $params[$param] = str_replace( array( 'no', 'yes', 'alt' ), array( '0', '1', '2' ), $atts[$param] );
 		// Correct loop
 		if ( $params['loop'] === '1' && $params['playlist'] === '' ) $params['playlist'] = $id;
 		// Prepare protocol
@@ -825,8 +846,12 @@ class Su_Shortcodes {
 	public static function table( $atts = null, $content = null ) {
 		$atts = shortcode_atts( array(
 				'url'   => false,
+				'responsive' => false,
 				'class' => ''
 			), $atts, 'table' );
+		if ( $atts['responsive'] ) {
+			$atts['class'] .= ' su-table-responsive';
+		}
 		$return = '<div class="su-table' . su_ecssc( $atts ) . '">';
 		$return .= ( $atts['url'] ) ? su_parse_csv( $atts['url'] ) : do_shortcode( $content );
 		$return .= '</div>';
@@ -971,7 +996,7 @@ class Su_Shortcodes {
 				'class'      => ''
 			), $atts, 'gmap' );
 		su_query_asset( 'css', 'su-media-shortcodes' );
-		return '<div class="su-gmap su-responsive-media-' . $atts['responsive'] . su_ecssc( $atts ) . '"><iframe width="' . $atts['width'] . '" height="' . $atts['height'] . '" src="http://maps.google.com/maps?q=' . urlencode( su_scattr( $atts['address'] ) ) . '&amp;output=embed"></iframe></div>';
+		return '<div class="su-gmap su-responsive-media-' . $atts['responsive'] . su_ecssc( $atts ) . '"><iframe width="' . $atts['width'] . '" height="' . $atts['height'] . '" src="//maps.google.com/maps?q=' . urlencode( su_scattr( $atts['address'] ) ) . '&amp;output=embed"></iframe></div>';
 	}
 
 	public static function slider( $atts = null, $content = null ) {
@@ -1021,7 +1046,7 @@ class Su_Shortcodes {
 				// Open slide
 				$return .= '<div class="su-slider-slide">';
 				// Slide content with link
-				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '"' . $target . 'title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
+				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '" ' . $target . ' title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
 				// Slide content without link
 				else $return .= '<a><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
 				// Close slide
@@ -1103,7 +1128,7 @@ class Su_Shortcodes {
 				// Open slide
 				$return .= '<div class="su-carousel-slide">';
 				// Slide content with link
-				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '"' . $target . 'title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
+				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '"' . $target . ' title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
 				// Slide content without link
 				else $return .= '<a><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" />' . $title . '</a>';
 				// Close slide
@@ -1168,7 +1193,7 @@ class Su_Shortcodes {
 				// Open slide
 				$return .= '<div class="su-custom-gallery-slide">';
 				// Slide content with link
-				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '"' . $atts['target'] . 'title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" width="' . $atts['width'] . '" height="' . $atts['height'] . '" />' . $title . '</a>';
+				if ( $slide['link'] ) $return .= '<a href="' . $slide['link'] . '"' . $atts['target'] . ' title="' . esc_attr( $slide['title'] ) . '"><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" width="' . $atts['width'] . '" height="' . $atts['height'] . '" />' . $title . '</a>';
 				// Slide content without link
 				else $return .= '<a><img src="' . $image['url'] . '" alt="' . esc_attr( $slide['title'] ) . '" width="' . $atts['width'] . '" height="' . $atts['height'] . '" />' . $title . '</a>';
 				// Close slide
@@ -1193,8 +1218,9 @@ class Su_Shortcodes {
 	}
 
 	public static function posts( $atts = null, $content = null ) {
-		// Prepare error var
-		$error = null;
+
+		$original_atts = $atts;
+
 		// Parse attributes
 		$atts = shortcode_atts( array(
 				'template'            => 'templates/default-loop.php',
@@ -1214,8 +1240,6 @@ class Su_Shortcodes {
 				'post_status'         => 'publish',
 				'ignore_sticky_posts' => 'no'
 			), $atts, 'posts' );
-
-		$original_atts = $atts;
 
 		$author = sanitize_text_field( $atts['author'] );
 		$id = $atts['id']; // Sanitized later as an array of integers
@@ -1267,6 +1291,7 @@ class Su_Shortcodes {
 			// Term string to array
 			$tax_term = explode( ',', $tax_term );
 			// Validate operator
+			$tax_operator = str_replace( array( 0, 1, 2 ), array( 'IN', 'NOT IN', 'AND' ), $tax_operator );
 			if ( !in_array( $tax_operator, array( 'IN', 'NOT IN', 'AND' ) ) ) $tax_operator = 'IN';
 			$tax_args = array( 'tax_query' => array( array(
 						'taxonomy' => $taxonomy,
@@ -1276,9 +1301,12 @@ class Su_Shortcodes {
 			// Check for multiple taxonomy queries
 			$count = 2;
 			$more_tax_queries = false;
-			while ( isset( $original_atts['taxonomy_' . $count] ) && !empty( $original_atts['taxonomy_' . $count] ) &&
+			while (
+				isset( $original_atts['taxonomy_' . $count] ) &&
+				! empty( $original_atts['taxonomy_' . $count] ) &&
 				isset( $original_atts['tax_' . $count . '_term'] ) &&
-				!empty( $original_atts['tax_' . $count . '_term'] ) ) {
+				! empty( $original_atts['tax_' . $count . '_term'] )
+			) {
 				// Sanitize values
 				$more_tax_queries = true;
 				$taxonomy = sanitize_key( $original_atts['taxonomy_' . $count] );
@@ -1292,14 +1320,23 @@ class Su_Shortcodes {
 					'operator' => $tax_operator );
 				$count++;
 			}
-			if ( $more_tax_queries ):
+			if ( $more_tax_queries ) {
+
 				$tax_relation = 'AND';
-			if ( isset( $original_atts['tax_relation'] ) &&
-				in_array( $original_atts['tax_relation'], array( 'AND', 'OR' ) )
-			) $tax_relation = $original_atts['tax_relation'];
-			$args['tax_query']['relation'] = $tax_relation;
-			endif;
+
+				if (
+					isset( $original_atts['tax_relation'] ) &&
+					in_array( $original_atts['tax_relation'], array( 'AND', 'OR' ) )
+				) {
+					$tax_relation = $original_atts['tax_relation'];
+				}
+
+				$args['tax_query']['relation'] = $tax_relation;
+
+			}
+
 			$args = array_merge( $args, $tax_args );
+
 		}
 
 		// If post parent attribute, set up parent
@@ -1322,7 +1359,7 @@ class Su_Shortcodes {
 		// Search for template in theme directory
 		elseif ( file_exists( TEMPLATEPATH . '/' . $atts['template'] ) ) load_template( TEMPLATEPATH . '/' . $atts['template'], false );
 		// Search for template in plugin directory
-		elseif ( path_join( dirname( SU_PLUGIN_FILE ), $atts['template'] ) ) load_template( path_join( dirname( SU_PLUGIN_FILE ), $atts['template'] ), false );
+		elseif ( file_exists( path_join( dirname( SU_PLUGIN_FILE ), $atts['template'] ) ) ) load_template( path_join( dirname( SU_PLUGIN_FILE ), $atts['template'] ), false );
 		// Template not found
 		else echo Su_Tools::error( __FUNCTION__, __( 'template not found', 'shortcodes-ultimate' ) );
 		$output = ob_get_contents();
@@ -1344,7 +1381,7 @@ class Su_Shortcodes {
 			), $atts, 'dummy_text' );
 		$transient = 'su/cache/dummy_text/' . sanitize_text_field( $atts['what'] ) . '/' . intval( $atts['amount'] );
 		$return = get_transient( $transient );
-		if ( $return && $atts['cache'] === 'yes' && SU_ENABLE_CACHE ) return $return;
+		if ( $return && $atts['cache'] === 'yes' ) return $return;
 		else {
 			$xml = simplexml_load_file( 'http://www.lipsum.com/feed/xml?amount=' . $atts['amount'] . '&what=' . $atts['what'] . '&start=0' );
 			$return = '<div class="su-dummy-text' . su_ecssc( $atts ) . '">' . wpautop( str_replace( "\n", "\n\n", $xml->lipsum ) ) . '</div>';
@@ -1378,7 +1415,7 @@ class Su_Shortcodes {
 		$return = '<' . $tag . ' class="su-animate' . su_ecssc( $atts ) . '" style="visibility:hidden;' . $time . '" data-animation="' . $atts['type'] . '" data-duration="' . $atts['duration'] . '" data-delay="' . $atts['delay'] . '">' . do_shortcode( $content ) . '</' . $tag . '>';
 		su_query_asset( 'css', 'animate' );
 		su_query_asset( 'js', 'jquery' );
-		su_query_asset( 'js', 'inview' );
+		su_query_asset( 'js', 'jquery-inview' );
 		su_query_asset( 'js', 'su-other-shortcodes' );
 		return $return;
 	}
@@ -1403,7 +1440,13 @@ class Su_Shortcodes {
 		// Set default value if meta is empty
 		if ( !$meta ) $meta = $atts['default'];
 		// Apply cutom filter
-		if ( $atts['filter'] && function_exists( $atts['filter'] ) ) $meta = call_user_func( $atts['filter'], $meta );
+		if (
+			$atts['filter'] &&
+			Su_Tools::is_valid_filter( $atts['filter'] ) &&
+			function_exists( $atts['filter'] )
+		) {
+			$meta = call_user_func( $atts['filter'], $meta );
+		}
 		// Return result
 		return ( $meta ) ? $atts['before'] . $meta . $atts['after'] : '';
 	}
@@ -1422,13 +1465,19 @@ class Su_Shortcodes {
 		// Define current user ID
 		if ( !$atts['user_id'] ) $atts['user_id'] = get_current_user_id();
 		// Check user ID
-		if ( !is_numeric( $atts['user_id'] ) || $atts['user_id'] < 1 ) return sprintf( '<p class="su-error">User: %s</p>', __( 'user ID is incorrect', 'shortcodes-ultimate' ) );
+		if ( !is_numeric( $atts['user_id'] ) || $atts['user_id'] < 0 ) return sprintf( '<p class="su-error">User: %s</p>', __( 'user ID is incorrect', 'shortcodes-ultimate' ) );
 		// Get user data
 		$user = get_user_by( 'id', $atts['user_id'] );
 		// Get user data if user was found
-		$user = ( $user && isset( $user->data->$atts['field'] ) ) ? $user->data->$atts['field'] : $atts['default'];
+		$user = ( $user && isset( $user->data->{$atts['field']} ) ) ? $user->data->{$atts['field']} : $atts['default'];
 		// Apply cutom filter
-		if ( $atts['filter'] && function_exists( $atts['filter'] ) ) $user = call_user_func( $atts['filter'], $user );
+		if (
+			$atts['filter'] &&
+			Su_Tools::is_valid_filter( $atts['filter'] ) &&
+			function_exists( $atts['filter'] )
+		) {
+			$user = call_user_func( $atts['filter'], $user );
+		}
 		// Return result
 		return ( $user ) ? $atts['before'] . $user . $atts['after'] : '';
 	}
@@ -1449,9 +1498,15 @@ class Su_Shortcodes {
 		// Get the post
 		$post = get_post( $atts['post_id'] );
 		// Set default value if meta is empty
-		$post = ( empty( $post ) || empty( $post->$atts['field'] ) ) ? $atts['default'] : $post->$atts['field'];
+		$post = ( empty( $post ) || empty( $post->{$atts['field']} ) ) ? $atts['default'] : $post->{$atts['field']};
 		// Apply cutom filter
-		if ( $atts['filter'] && function_exists( $atts['filter'] ) ) $post = call_user_func( $atts['filter'], $post );
+		if (
+			$atts['filter'] &&
+			Su_Tools::is_valid_filter( $atts['filter'] ) &&
+			function_exists( $atts['filter'] )
+		) {
+			$post = call_user_func( $atts['filter'], $post );
+		}
 		// Return result
 		return ( $post ) ? $atts['before'] . $post . $atts['after'] : '';
 	}
@@ -1513,6 +1568,7 @@ class Su_Shortcodes {
 	}
 
 	public static function scheduler( $atts = null, $content = null ) {
+
 		$atts = shortcode_atts( array(
 				'time'       => 'all',
 				'days_week'  => 'all',
@@ -1521,74 +1577,102 @@ class Su_Shortcodes {
 				'years'      => 'all',
 				'alt'        => ''
 			), $atts, 'scheduler' );
-		// Check time
-		if ( $atts['time'] !== 'all' ) {
-			// Get current time
-			$now = current_time( 'timestamp', 0 );
-			// Sanitize
-			$atts['time'] = preg_replace( "/[^0-9-,:]/", '', $atts['time'] );
-			// Loop time ranges
-			foreach( explode( ',', $atts['time'] ) as $range ) {
-				// Check for range symbol
-				if ( strpos( $range, '-' ) === false ) return Su_Tools::error( __FUNCTION__, sprintf( __( 'Incorrect time range (%s). Please use - (minus) symbol to specify time range. Example: 14:00 - 18:00', 'shortcodes-ultimate' ), $range ) );
-				// Split begin/end time
-				$time = explode( '-', $range );
-				// Add minutes
-				if ( strpos( $time[0], ':' ) === false ) $time[0] .= ':00';
-				if ( strpos( $time[1], ':' ) === false ) $time[1] .= ':00';
-				// Parse begin/end time
-				$time[0] = strtotime( $time[0] );
-				$time[1] = strtotime( $time[1] );
-				// Check time
-				if ( $now < $time[0] || $now > $time[1] ) return $atts['alt'];
-			}
-		}
-		// Check day of the week
-		if ( $atts['days_week'] !== 'all' ) {
-			// Get current day of the week
-			$today = date( 'w', current_time( 'timestamp', 0 ) );
-			// Sanitize input
-			$atts['days_week'] = preg_replace( "/[^0-9-,]/", '', $atts['days_week'] );
-			// Parse days range
-			$days = Su_Tools::range( $atts['days_week'] );
-			// Check current day
-			if ( !in_array( $today, $days ) ) return $atts['alt'];
-		}
-		// Check day of the month
-		if ( $atts['days_month'] !== 'all' ) {
-			// Get current day of the month
-			$today = date( 'j', current_time( 'timestamp', 0 ) );
-			// Sanitize input
-			$atts['days_month'] = preg_replace( "/[^0-9-,]/", '', $atts['days_month'] );
-			// Parse days range
-			$days = Su_Tools::range( $atts['days_month'] );
-			// Check current day
-			if ( !in_array( $today, $days ) ) return $atts['alt'];
-		}
-		// Check month
-		if ( $atts['months'] !== 'all' ) {
-			// Get current month
-			$now = date( 'n', current_time( 'timestamp', 0 ) );
-			// Sanitize input
-			$atts['months'] = preg_replace( "/[^0-9-,]/", '', $atts['months'] );
-			// Parse months range
-			$months = Su_Tools::range( $atts['months'] );
-			// Check current month
-			if ( !in_array( $now, $months ) ) return $atts['alt'];
-		}
-		// Check year
+
+		$timestamp = current_time( 'timestamp', 0 );
+		$now = array(
+			'time'      => $timestamp,
+			'day_week'  => date( 'w', $timestamp ),
+			'day_month' => date( 'j', $timestamp ),
+			'month'     => date( 'n', $timestamp ),
+			'year'      => date( 'Y', $timestamp ),
+		);
+
 		if ( $atts['years'] !== 'all' ) {
-			// Get current year
-			$now = date( 'Y', current_time( 'timestamp', 0 ) );
-			// Sanitize input
+
 			$atts['years'] = preg_replace( "/[^0-9-,]/", '', $atts['years'] );
-			// Parse years range
-			$years = Su_Tools::range( $atts['years'] );
-			// Check current year
-			if ( !in_array( $now, $years ) ) return $atts['alt'];
+
+			$selected_years = Su_Tools::range( $atts['years'] );
+
+			if ( ! in_array( $now['year'], $selected_years ) ) {
+				return su_scattr( $atts['alt'] );
+			}
+
 		}
-		// Return result (all check passed)
+
+		if ( $atts['months'] !== 'all' ) {
+
+			$atts['months'] = preg_replace( "/[^0-9-,]/", '', $atts['months'] );
+
+			$selected_months = Su_Tools::range( $atts['months'] );
+
+			if ( ! in_array( $now['month'], $selected_months ) ) {
+				return su_scattr( $atts['alt'] );
+			}
+
+		}
+
+		if ( $atts['days_month'] !== 'all' ) {
+
+			$atts['days_month'] = preg_replace( "/[^0-9-,]/", '', $atts['days_month'] );
+
+			$selected_days_month = Su_Tools::range( $atts['days_month'] );
+
+			if ( ! in_array( $now['day_month'], $selected_days_month ) ) {
+				return su_scattr( $atts['alt'] );
+			}
+
+		}
+
+		if ( $atts['days_week'] !== 'all' ) {
+
+			$atts['days_week'] = preg_replace( "/[^0-9-,]/", '', $atts['days_week'] );
+
+			$selected_days_week = Su_Tools::range( $atts['days_week'] );
+
+			if ( ! in_array( $now['day_week'], $selected_days_week ) ) {
+				return su_scattr( $atts['alt'] );
+			}
+
+		}
+
+		if ( $atts['time'] !== 'all' ) {
+
+			$valid_time = false;
+			$atts['time'] = preg_replace( "/[^0-9-,:]/", '', $atts['time'] );
+
+			foreach ( explode( ',', $atts['time'] ) as $range ) {
+
+				$range = explode( '-', $range );
+
+				if ( ! isset( $range[1] ) ) {
+					$range[1] = $range[0] . ':59:59';
+				}
+
+				if ( strpos( $range[0], ':' ) === false ) {
+					$range[0] .= ':00:00';
+				}
+				if ( strpos( $range[1], ':' ) === false ) {
+					$range[1] .= ':00:00';
+				}
+
+				if (
+					$now['time'] >= strtotime( $range[0], $now['time'] ) &&
+					$now['time'] <= strtotime( $range[1], $now['time'] )
+				) {
+					$valid_time = true;
+					break;
+				}
+
+			}
+
+			if ( ! $valid_time ) {
+				return su_scattr( $atts['alt'] );
+			}
+
+		}
+
 		return do_shortcode( $content );
+
 	}
 
 }

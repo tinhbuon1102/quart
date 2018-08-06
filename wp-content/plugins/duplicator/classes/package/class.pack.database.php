@@ -109,7 +109,7 @@ class DUP_Database
      *
      *  @return array Returns an array full of meta-data about the database
      */
-    public function getScanData()
+    public function getScannerData()
     {
         global $wpdb;
 
@@ -149,9 +149,10 @@ class DUP_Database
 
             $info['Size'] += $size;
             $info['Rows'] += ($table["Rows"]);
-            $info['TableList'][$name]['Case'] = preg_match('/[A-Z]/', $name) ? 1 : 0;
-            $info['TableList'][$name]['Rows'] = number_format($rows);
-            $info['TableList'][$name]['Size'] = DUP_Util::byteSize($size);
+            $info['TableList'][$name]['Case']  = preg_match('/[A-Z]/', $name) ? 1 : 0;
+            $info['TableList'][$name]['Rows']  = number_format($rows);
+            $info['TableList'][$name]['Size']  = DUP_Util::byteSize($size);
+			$info['TableList'][$name]['USize'] = $size;
             $tblCount++;
 
             //Table Uppercase
@@ -238,14 +239,17 @@ class DUP_Database
         }
 
         $cmd .= ' -u '.escapeshellarg(DB_USER);
-        $cmd .= (DB_PASSWORD) ? ' -p'.escapeshellarg(DB_PASSWORD) : '';
+        if(DUP_Util::isWindows())
+         $cmd .= (DB_PASSWORD) ? ' -p'.escapeshellcmd(DB_PASSWORD) : '';
+        else
+         $cmd .= (DB_PASSWORD) ? ' -p'.escapeshellarg(DB_PASSWORD) : '';
+        
         $cmd .= ' -h '.escapeshellarg($host);
         $cmd .= (!empty($port) && is_numeric($port) ) ?
             ' -P '.$port : '';
         $cmd .= ' -r '.escapeshellarg($this->dbStorePath);
         $cmd .= ' '.escapeshellarg(DB_NAME);
         $cmd .= ' 2>&1';
-
         $output = shell_exec($cmd);
 
         // Password bug > 5.6 (@see http://bugs.mysql.com/bug.php?id=66546)
@@ -302,7 +306,10 @@ class DUP_Database
         DUP_Log::Info("TABLES: total:{$tblAllCount} | filtered:{$tblFilterCount} | create:{$tblCreateCount}");
         DUP_Log::Info("FILTERED: [{$this->FilterTables}]");
 
-        $sql_header = "/* DUPLICATOR MYSQL SCRIPT CREATED ON : ".@date("Y-m-d H:i:s")." */\n\n";
+		//Added 'NO_AUTO_VALUE_ON_ZERO' at plugin version 1.2.12 to fix :
+		//**ERROR** database error write 'Invalid default value for for older mysql versions
+        $sql_header  = "/* DUPLICATOR-LITE (PHP BUILD MODE) MYSQL SCRIPT CREATED ON : ".@date("Y-m-d H:i:s")." */\n\n";
+		$sql_header .= "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n\n";
         $sql_header .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
         fwrite($handle, $sql_header);
 
@@ -346,7 +353,9 @@ class DUP_Database
                             if (is_null($value) || !isset($value)) {
                                 ($num_values == $num_counter) ? $sql .= 'NULL' : $sql .= 'NULL, ';
                             } else {
-                                ($num_values == $num_counter) ? $sql .= '"'.@esc_sql($value).'"' : $sql .= '"'.@esc_sql($value).'", ';
+                                ($num_values == $num_counter) 
+									? $sql .= '"' . DUP_DB::escSQL($value, true) . '"'
+									: $sql .= '"' . DUP_DB::escSQL($value, true) . '", ';
                             }
                             $num_counter++;
                         }

@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Gateways Currency
  *
- * @version 2.8.0
+ * @version 3.2.0
  * @since   2.3.0
  * @author  Algoritmika Ltd.
  */
@@ -16,14 +16,14 @@ class WCJ_Payment_Gateways_Currency extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.0.0
 	 */
 	function __construct() {
 
 		$this->id         = 'payment_gateways_currency';
-		$this->short_desc = __( 'Gateways Currency', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Currency per WooCommerce payment gateway.', 'woocommerce-jetpack' );
-		$this->link_slug  = 'woocommerce-payment-gateways-currency';
+		$this->short_desc = __( 'Gateways Currency Converter', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Currency converter for payment gateways.', 'woocommerce-jetpack' );
+		$this->link_slug  = 'woocommerce-payment-gateways-currency-converter';
 		parent::__construct();
 
 		if ( $this->is_enabled() ) {
@@ -59,7 +59,7 @@ class WCJ_Payment_Gateways_Currency extends WCJ_Module {
 	/**
 	 * change_shipping_price_by_gateway.
 	 *
-	 * @version 2.4.8
+	 * @version 3.2.0
 	 * @since   2.4.8
 	 */
 	function change_shipping_price_by_gateway( $package_rates, $package ) {
@@ -68,19 +68,7 @@ class WCJ_Payment_Gateways_Currency extends WCJ_Module {
 			$current_gateway = $woocommerce->session->chosen_payment_method;
 			if ( '' != $current_gateway ) {
 				$gateway_currency_exchange_rate = get_option( 'wcj_gateways_currency_exchange_rate_' . $current_gateway );
-				$modified_package_rates = array();
-				foreach ( $package_rates as $id => $package_rate ) {
-					if ( 1 != $gateway_currency_exchange_rate && isset( $package_rate->cost ) ) {
-						$package_rate->cost = $package_rate->cost * $gateway_currency_exchange_rate;
-						if ( isset( $package_rate->taxes ) && ! empty( $package_rate->taxes ) ) {
-							foreach ( $package_rate->taxes as $tax_id => $tax ) {
-								$package_rate->taxes[ $tax_id ] = $package_rate->taxes[ $tax_id ] * $gateway_currency_exchange_rate;
-							}
-						}
-					}
-					$modified_package_rates[ $id ] = $package_rate;
-				}
-				return $modified_package_rates;
+				return wcj_change_price_shipping_package_rates( $package_rates, $gateway_currency_exchange_rate );
 			}
 		}
 		return $package_rates;
@@ -185,9 +173,11 @@ class WCJ_Payment_Gateways_Currency extends WCJ_Module {
 
 	/**
 	 * register_script.
+	 *
+	 * @version 2.9.0
 	 */
 	function register_script() {
-		wp_register_script( 'wcj-payment-gateways-checkout', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/checkout.js', array( 'jquery' ), false, true );
+		wp_register_script( 'wcj-payment-gateways-checkout', trailingslashit( plugin_dir_url( __FILE__ ) ) . 'js/wcj-checkout.js', array( 'jquery' ), WCJ()->version, true );
 	}
 
 	/**

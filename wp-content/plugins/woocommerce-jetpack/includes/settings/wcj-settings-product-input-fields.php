@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Product Input Fields
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -31,9 +31,9 @@ $settings = array(
 		'desc_tip' => __( 'You will be able to change this number later as well as define the fields, for each product individually, in product\'s "Edit".', 'woocommerce-jetpack' ),
 		'default'  => 1,
 		'type'     => 'number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array( 'step' => '1', 'min'  => '1' )
 		),
 	),
@@ -61,39 +61,145 @@ $settings = array(
 		'id'       => 'wcj_product_input_fields_global_total_number',
 		'default'  => 1,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array( 'step' => '1', 'min'  => '1' )
 		),
 	),
+	array(
+		'type'     => 'sectionend',
+		'id'       => 'wcj_product_input_fields_global_options',
+	),
 );
-$options = $this->get_options();
-for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_product_input_fields_global_total_number', 1 ) ); $i++ ) {
+$is_multiselect_products     = ( 'yes' === get_option( 'wcj_list_for_products', 'yes' ) );
+$products                    = ( $is_multiselect_products ? wcj_get_products() : false );
+$product_cats                = wcj_get_terms( 'product_cat' );
+$product_tags                = wcj_get_terms( 'product_tag' );
+$options                     = $this->get_global_product_fields_options();
+for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_product_input_fields_global_total_number', 1 ) ); $i++ ) {
+	$settings = array_merge( $settings, array(
+		array(
+			'title'    => __( 'Product Input Field', 'woocommerce-jetpack' ) . ' #' . $i,
+			'type'     => 'title',
+			'id'       => 'wcj_product_input_fields_global_options_' . $i,
+		),
+	) );
 	foreach( $options as $option ) {
 		$settings = array_merge( $settings, array(
 			array(
-				'title'    => ( 'wcj_product_input_fields_enabled_global_' === $option['id'] ) ? __( 'Product Input Field', 'woocommerce-jetpack' ) . ' #' . $i : '',
-				'desc'     => $option['title'],
+				'title'    => ( isset( $option['short_title'] ) ? $option['short_title'] : $option['title'] ),
+				'desc'     => ( ( 'checkbox' === $option['type'] ) || isset( $option['short_title'] ) && $option['short_title'] != $option['title'] ? $option['title'] : '' ),
 				'desc_tip' => ( isset( $option['desc_tip'] ) ) ? $option['desc_tip'] : '',
 				'id'       => $option['id'] . $i,
 				'default'  => $option['default'],
 				'type'     => $option['type'],
 				'options'  => isset( $option['options'] ) ? $option['options'] : '',
-				'css'      => 'width:30%;min-width:300px;',
+				'css'      => ( 'wcj_product_input_fields_type_select_options_global_' === $option['id'] ?
+					'width:30%;min-width:300px;height:200px;' : 'width:30%;min-width:300px;' ),
 			),
 		) );
 	}
+	wcj_maybe_convert_and_update_option_value( array(
+		array( 'id' => 'wcj_product_input_fields_in_products_' . 'global' . '_' . $i, 'default' => '' ),
+		array( 'id' => 'wcj_product_input_fields_ex_products_' . 'global' . '_' . $i, 'default' => '' ),
+	), $is_multiselect_products );
+	$settings = array_merge( $settings, array(
+		array(
+			'title'    => __( 'Product Categories - Include', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Product categories to include.', 'woocommerce-jetpack' ),
+			'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_product_input_fields_in_cats_' . 'global' . '_' . $i,
+			'default'  => '',
+			'type'     => 'multiselect',
+			'class'    => 'chosen_select',
+			'css'      => 'width: 450px;',
+			'options'  => $product_cats,
+		),
+		array(
+			'title'    => __( 'Product Categories - Exclude', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Product categories to exclude.', 'woocommerce-jetpack' ),
+			'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_product_input_fields_ex_cats_' . 'global' . '_' . $i,
+			'default'  => '',
+			'type'     => 'multiselect',
+			'class'    => 'chosen_select',
+			'css'      => 'width: 450px;',
+			'options'  => $product_cats,
+		),
+		array(
+			'title'    => __( 'Product Tags - Include', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Product tags to include.', 'woocommerce-jetpack' ),
+			'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_product_input_fields_in_tags_' . 'global' . '_' . $i,
+			'default'  => '',
+			'type'     => 'multiselect',
+			'class'    => 'chosen_select',
+			'css'      => 'width: 450px;',
+			'options'  => $product_tags,
+		),
+		array(
+			'title'    => __( 'Product Tags - Exclude', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Product tags to exclude.', 'woocommerce-jetpack' ),
+			'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_product_input_fields_ex_tags_' . 'global' . '_' . $i,
+			'default'  => '',
+			'type'     => 'multiselect',
+			'class'    => 'chosen_select',
+			'css'      => 'width: 450px;',
+			'options'  => $product_tags,
+		),
+		wcj_get_settings_as_multiselect_or_text(
+			array(
+				'title'    => __( 'Products - Include', 'woocommerce-jetpack' ),
+				'desc'     => __( 'Products to include.', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_product_input_fields_in_products_' . 'global' . '_' . $i,
+				'default'  => '',
+				'css'      => 'width: 450px;',
+			),
+			$products,
+			$is_multiselect_products
+		),
+		wcj_get_settings_as_multiselect_or_text(
+			array(
+				'title'    => __( 'Products - Exclude', 'woocommerce-jetpack' ),
+				'desc'     => __( 'Products to exclude.', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Leave blank to include all products.', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_product_input_fields_ex_products_' . 'global' . '_' . $i,
+				'default'  => '',
+				'css'      => 'width: 450px;',
+			),
+			$products,
+			$is_multiselect_products
+		),
+		array(
+			'type'     => 'sectionend',
+			'id'       => 'wcj_product_input_fields_global_options_' . $i,
+		),
+	) );
 }
 $settings = array_merge( $settings, array(
-	array(
-		'type'     => 'sectionend',
-		'id'       => 'wcj_product_input_fields_global_options',
-	),
 	array(
 		'title'    => __( 'Frontend View Options', 'woocommerce-jetpack' ),
 		'type'     => 'title',
 		'id'       => 'wcj_product_input_fields_frontend_view_options',
+	),
+	array(
+		'title'    => __( 'Position on Single Product Page', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_position',
+		'default'  => 'woocommerce_before_add_to_cart_button',
+		'type'     => 'select',
+		'options'  => array(
+			'woocommerce_before_add_to_cart_button'     => __( 'Before add to cart button', 'woocommerce-jetpack' ),
+			'woocommerce_after_add_to_cart_button'      => __( 'After add to cart button', 'woocommerce-jetpack' ),
+		),
+	),
+	array(
+		'desc'     => __( 'Position priority', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_position_priority',
+		'default'  => 100,
+		'type'     => 'number',
 	),
 	array(
 		'title'    => __( 'HTML Template - Start', 'woocommerce-jetpack' ),
@@ -117,6 +223,13 @@ $settings = array_merge( $settings, array(
 		'css'      => 'width:50%;min-width:300px;',
 	),
 	array(
+		'title'    => __( 'HTML Template - Radio Field', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_field_template_radio',
+		'default'  => '%radio_field_html%<label for="%radio_field_id%" class="radio">%radio_field_title%</label><br>',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:50%;min-width:300px;',
+	),
+	array(
 		'title'    => __( 'HTML to add after required field title', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_input_fields_frontend_view_required_html',
 		'default'  => '&nbsp;<abbr class="required" title="required">*</abbr>',
@@ -124,8 +237,40 @@ $settings = array_merge( $settings, array(
 		'css'      => 'width:50%;min-width:300px;',
 	),
 	array(
-		'title'    => __( 'Item Name Order Table Format', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'Affects Checkout, Emails and Admin Orders View', 'woocommerce-jetpack' ),
+		'title'    => __( 'Cart Display Options', 'woocommerce-jetpack' ),
+		'desc'     => __( 'When "Add to cart item data" is selected, "Cart HTML Template" options below will be ignored.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_display_options',
+		'default'  => 'name',
+		'type'     => 'select',
+		'options'  => array(
+			'name' => __( 'Add to cart item name', 'woocommerce-jetpack' ),
+			'data' => __( 'Add to cart item data', 'woocommerce-jetpack' ),
+		),
+	),
+	array(
+		'title'    => __( 'Cart HTML Template - Start', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_cart_start_template',
+		'default'  => '<dl style="font-size:smaller;">',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:50%;min-width:300px;',
+	),
+	array(
+		'title'    => __( 'Cart HTML Template - Each Field', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_cart_field_template',
+		'default'  => '<dt>%title%</dt><dd>%value%</dd>',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:50%;min-width:300px;',
+	),
+	array(
+		'title'    => __( 'Cart HTML Template - End', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_cart_end_template',
+		'default'  => '</dl>',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:50%;min-width:300px;',
+	),
+	array(
+		'title'    => __( 'Order Table Template - Each Field', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Affects Order received page, Emails and Admin Orders View', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_input_fields_frontend_view_order_table_format',
 		'default'  => '&nbsp;| %title% %value%',
 		'type'     => 'custom_textarea',
@@ -177,6 +322,25 @@ $settings = array_merge( $settings, array(
 	array(
 		'type'     => 'sectionend',
 		'id'       => 'wcj_product_input_fields_admin_view_options',
+	),
+) );
+$settings = array_merge( $settings, array(
+	array(
+		'title'    => __( 'Advanced Options', 'woocommerce-jetpack' ),
+		'type'     => 'title',
+		'id'       => 'wcj_product_input_fields_advanced_options',
+	),
+	array(
+		'title'    => __( 'Check for Outputted Data', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Ensures that data outputted only once. Enable this if you see data outputted on frontend twice. Disable if you see no data outputted.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_input_fields_check_for_outputted_data',
+		'default'  => 'yes',
+		'type'     => 'checkbox',
+	),
+	array(
+		'type'     => 'sectionend',
+		'id'       => 'wcj_product_input_fields_advanced_options',
 	),
 ) );
 return $settings;

@@ -4,8 +4,8 @@ Tags: woocommerce, shipping, delivery, ecommerce, e-commerce, country, countries
 Author URI: http://www.webdados.pt
 Plugin URI: http://www.webdados.pt/produtos-e-servicos/internet/desenvolvimento-wordpress/flat-rate-per-countryregion-woocommerce-wordpress/
 Requires at least: 4.4
-Tested up to: 4.7.3
-Stable tag: 2.4.8.1
+Tested up to: 5.0-alpha-42610
+Stable tag: 2.5
 
 This plugin allows you to set a flat delivery rate per States, Countries or World Regions on WooCommerce.
 
@@ -28,6 +28,7 @@ For each group you can choose either to apply the shipping fee for the whole ord
 * For each group/rule, apply the shipping fee for the whole order or multiply it per each item;
 * For each group/rule, set total order value from which the shipping is free;
 * For each group/rule, set shipping classes for which the shipping is free;
+* For each group/rule, set shipping classes for which the shipping is not available (this may be useful for disabling shipping of certain products to certain destinations, if this plugin is the only one being used for shipping cost calculations);
 * WPML Compatible;
 * PHP7 tested and compatible;
 * Not to be used with WooCommerce 2.6+ Shipping Zones (but an alternative to it);
@@ -59,6 +60,25 @@ Because of the way the WooCommerce Multilingual plugin registers the Shipping Me
 No other question is frequent. Ask us something ;-)
 
 == Changelog ==
+
+= 2.5 =
+* It's now possible to exclude some shipping classes from group/rule (this may be useful for disabling shipping of certain products to certain destinations, if this plugin is the only one being used for shipping cost calculations)
+* Small fix on WooCommerce 3.3 and above
+* Bumped `WC tested up to` tag
+
+= 2.4.9.1 =
+* Tested with WooCommerce 3.3
+* Bumped `Tested up to` tag
+
+= 2.4.9 =
+* Removed the translation files from the plugin `lang` folder (the translations are now managed on [WordPress.org's GlotPress tool](https://translate.wordpress.org/projects/wp-plugins/flat-rate-per-countryregion-for-woocommerce) and will be automatically downloaded from there)
+* Tested with WooCommerce 3.2
+* Added `WC tested up to` tag on the plugin main file
+* Bumped `Tested up to` tag
+
+= 2.4.8.2 =
+* Fix fatal error when WC()->countries is still not defined on WooCommerce 3.1.0
+* Bumped `Tested up to` tag
 
 = 2.4.8.1 =
 * Fixing WordPress.org plugin page because the repo was Cuckoo on the 2.4.8 update

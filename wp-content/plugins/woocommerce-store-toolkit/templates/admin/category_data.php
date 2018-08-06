@@ -47,3 +47,17 @@
 
 	</td>
 </tr>
+
+<tr class="form-field">
+	<th scope="row" valign="top"><label><?php _e( 'Category heirachy', 'woocommerce-store-toolkit' ); ?></label></th>
+	<td>
+		<?php echo $category_heirachy; ?><br />
+	</tr>
+</tr>
+
+<tr class="form-field">
+	<th scope="row" valign="top"><label><?php _e( 'Category heirachy depth', 'woocommerce-store-toolkit' ); ?></label></th>
+	<td>
+		<?php printf( __( '%d level(s) deep', 'woocommerce-store-toolkit' ), $category_depth ); ?>
+	</td>
+</tr>

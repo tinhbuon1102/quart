@@ -35,17 +35,102 @@ class DUP_Util
      */
     public static $on_php_54_plus;
 
+	/**
+     * Is PHP 7 or better running
+     */
+    public static $PHP7_plus;
+
     /**
-     *  Inited on load (see end of file)
+     *  Initialized on load (see end of file)
      */
     public static function init()
     {
         self::$on_php_529_plus = version_compare(PHP_VERSION, '5.2.9') >= 0;
         self::$on_php_53_plus  = version_compare(PHP_VERSION, '5.3.0') >= 0;
         self::$on_php_54_plus  = version_compare(PHP_VERSION, '5.4.0') >= 0;
+		self::$PHP7_plus = version_compare(PHP_VERSION, '7.0.0', '>=');
     }
 
+
+    public static function getWPCoreDirs()
+    {
+        $wp_core_dirs = array(get_home_path().'wp-admin',get_home_path().'wp-includes');
+
+        //if wp_content is overrided
+        $wp_path = get_home_path()."wp-content";
+        if(get_home_path().'wp-content' != WP_CONTENT_DIR){
+            $wp_path = WP_CONTENT_DIR;
+        }
+        $wp_path = str_replace("\\", "/", $wp_path);
+
+        $wp_core_dirs[] = $wp_path;
+        $wp_core_dirs[] = $wp_path.'/plugins';
+        $wp_core_dirs[] = $wp_path.'/themes';
+
+
+        return $wp_core_dirs;
+    }
     /**
+     * return absolute path for the files that are core directories
+     * @return string array
+     */
+    public static function getWPCoreFiles()
+    {
+        $wp_cored_dirs = array(get_home_path().'wp-config.php');
+        return $wp_cored_dirs;
+    }
+
+	/**
+	 * Groups an array into arrays by a given key, or set of keys, shared between all array members.
+	 *
+	 * Based on {@author Jake Zatecky}'s {@link https://github.com/jakezatecky/array_group_by array_group_by()} function.
+	 * This variant allows $key to be closures.
+	 *
+	 * @param array $array   The array to have grouping performed on.
+	 * @param mixed $key,... The key to group or split by. Can be a _string_, an _integer_, a _float_, or a _callable_.
+	 *                       - If the key is a callback, it must return a valid key from the array.
+	 *                       - If the key is _NULL_, the iterated element is skipped.
+	 *                       - string|int callback ( mixed $item )
+	 *
+	 * @return array|null Returns a multidimensional array or `null` if `$key` is invalid.
+	 */
+	public static function array_group_by(array $array, $key)
+	{
+		if (!is_string($key) && !is_int($key) && !is_float($key) && !is_callable($key) ) {
+			trigger_error('array_group_by(): The key should be a string, an integer, or a callback', E_USER_ERROR);
+			return null;
+		}
+		$func = (!is_string($key) && is_callable($key) ? $key : null);
+		$_key = $key;
+		// Load the new array, splitting by the target key
+		$grouped = array();
+		foreach ($array as $value) {
+			$key = null;
+			if (is_callable($func)) {
+				$key = call_user_func($func, $value);
+			} elseif (is_object($value) && isset($value->{$_key})) {
+				$key = $value->{$_key};
+			} elseif (isset($value[$_key])) {
+				$key = $value[$_key];
+			}
+			if ($key === null) {
+				continue;
+			}
+			$grouped[$key][] = $value;
+		}
+		// Recursively build a nested grouping if more parameters are supplied
+		// Each grouped array value is grouped according to the next sequential key
+		if (func_num_args() > 2) {
+			$args = func_get_args();
+			foreach ($grouped as $key => $value) {
+				$params = array_merge(array( $value ), array_slice($args, 2, func_num_args()));
+				$grouped[$key] = call_user_func_array('DUP_Util::array_group_by', $params);
+			}
+		}
+		return $grouped;
+	}
+
+	/**
      * PHP_SAPI for fcgi requires a data flush of at least 256
      * bytes every 40 seconds or else it forces a script hault
      *
@@ -55,6 +140,7 @@ class DUP_Util
     {
         echo(str_repeat(' ', 300));
         @flush();
+		@ob_flush();
     }
 
     /**
@@ -142,14 +228,14 @@ class DUP_Util
      *
      * @return string The size of bytes readable such as 100KB, 20MB, 1GB etc.
      */
-    public static function byteSize($size)
+    public static function byteSize($size, $roundBy = 2)
     {
         try {
             $units = array('B', 'KB', 'MB', 'GB', 'TB');
             for ($i = 0; $size >= 1024 && $i < 4; $i++) {
                 $size /= 1024;
             }
-            return round($size, 2).$units[$i];
+            return round($size, $roundBy).$units[$i];
         } catch (Exception $e) {
             return "n/a";
         }
@@ -479,7 +565,7 @@ class DUP_Util
                 );
 
                 foreach ($possible_paths as $path) {
-                    if (file_exists($path)) {
+                    if (@file_exists($path)) {
                         $filepath = $path;
                         break;
                     }
@@ -495,7 +581,7 @@ class DUP_Util
 	 * Returns a GUIDv4 string
 	 *
 	 * Uses the best cryptographically secure method
-	 * for all supported pltforms with fallback to an older,
+	 * for all supported platforms with fallback to an older,
 	 * less secure version.
 	 *
 	 * @param bool $trim	Trim '}{' curly
@@ -548,6 +634,83 @@ class DUP_Util
 
 		return $guidv4;
 	}
+
+	/**
+     * Returns an array of the WordPress core tables.
+     *
+     * @return array  Returns all WP core tables
+     */
+    public static function getWPCoreTables()
+    {
+		global $wpdb;
+		return array(
+			"{$wpdb->prefix}commentmeta",
+			"{$wpdb->prefix}comments",
+			"{$wpdb->prefix}links",
+			"{$wpdb->prefix}options",
+			"{$wpdb->prefix}postmeta",
+			"{$wpdb->prefix}posts",
+			"{$wpdb->prefix}term_relationships",
+			"{$wpdb->prefix}term_taxonomy",
+			"{$wpdb->prefix}termmeta",
+			"{$wpdb->prefix}terms",
+			"{$wpdb->prefix}usermeta",
+			"{$wpdb->prefix}users");
+    }
+	
+	/**
+     * Runs esc_html and sanitize_textarea_field on a string
+	 *
+	 * @param string   The string to process
+     *
+     * @return string  Returns and escaped and sanitized string
+     */
+    public static function escSanitizeTextAreaField($string)
+    {
+		if (!function_exists('sanitize_textarea_field')) {
+			return esc_html(sanitize_text_field($string));
+		} else {
+			return esc_html(sanitize_textarea_field($string));
+		}	
+    }
+
+	/**
+     * Runs esc_html and sanitize_text_field on a string
+	 *
+	 * @param string   The string to process
+     *
+     * @return string  Returns and escaped and sanitized string
+     */
+    public static function escSanitizeTextField($string)
+    {
+		return esc_html(sanitize_text_field($string));
+    }
+
+	  /**
+    * Finds if its a valid executable or not
+    * @param type $exe A non zero length executable path to find if that is executable or not.
+    * @param type $expectedValue expected value for the result
+    * @return boolean
+    */
+    public static function isExecutable($cmd)
+    {
+        if (strlen($cmd) < 1) return false;
+
+        if (@is_executable($cmd)){
+            return true;
+        }
+
+        $output = shell_exec($cmd);
+        if (!is_null($output)) {
+            return true;
+        }
+
+        $output = shell_exec($cmd . ' -?');
+        if (!is_null($output)) {
+            return true;
+        }
+
+        return false;
+    }
 }
 DUP_Util::init();
-?>

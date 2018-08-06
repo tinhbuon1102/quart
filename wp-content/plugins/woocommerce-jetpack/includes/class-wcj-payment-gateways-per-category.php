@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Gateways per Product or Category
  *
- * @version 2.8.0
+ * @version 3.1.0
  * @since   2.2.0
  * @author  Algoritmika Ltd.
  */
@@ -22,7 +22,7 @@ class WCJ_Payment_Gateways_Per_Category extends WCJ_Module {
 
 		$this->id         = 'payment_gateways_per_category';
 		$this->short_desc = __( 'Gateways per Product or Category', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Show WooCommerce gateway only if there is selected product or product category in cart.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Show payment gateway only if there is selected product or product category in cart.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-payment-gateways-per-product-or-category';
 		parent::__construct();
 
@@ -35,7 +35,7 @@ class WCJ_Payment_Gateways_Per_Category extends WCJ_Module {
 	/**
 	 * filter_available_payment_gateways_per_category.
 	 *
-	 * @version 2.7.0
+	 * @version 3.1.0
 	 */
 	function filter_available_payment_gateways_per_category( $available_gateways ) {
 
@@ -110,7 +110,7 @@ class WCJ_Payment_Gateways_Per_Category extends WCJ_Module {
 			}
 
 			// Including by products
-			$products_in = apply_filters( 'booster_get_option', array(), get_option( 'wcj_gateways_per_products_' . $gateway_id ) );
+			$products_in = wcj_maybe_convert_string_to_array( apply_filters( 'booster_option', array(), get_option( 'wcj_gateways_per_products_' . $gateway_id ) ) );
 			if ( ! empty( $products_in ) ) {
 				$do_skip = true;
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
@@ -130,7 +130,7 @@ class WCJ_Payment_Gateways_Per_Category extends WCJ_Module {
 			}
 
 			// Excluding by products
-			$products_excl = apply_filters( 'booster_get_option', array(), get_option( 'wcj_gateways_per_products_excl_' . $gateway_id ) );
+			$products_excl = wcj_maybe_convert_string_to_array( apply_filters( 'booster_option', array(), get_option( 'wcj_gateways_per_products_excl_' . $gateway_id ) ) );
 			if ( ! empty( $products_excl ) ) {
 				$do_skip = false;
 				foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {

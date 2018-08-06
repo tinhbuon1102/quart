@@ -1,10 +1,10 @@
 === Plugin Name ===
 Contributors: tsato
-Donate link: http://gti.jp/throws-spam-away
+Donate link: https://www.gti.co.jp/throws-spam-away
 Tags: comments, spam
 Requires at least: 3.1
-Tested up to: 4.7-RC1
-Stable tag: 2.8.2.1
+Tested up to: 4.9.1
+Stable tag: 2.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,25 @@ IPアドレスの指定「ブロックリスト」「ホワイトリスト」共
 ※コメント投稿時のスパムコメント対応の煩わしさが原因で作ったものですのでスパム判定されたコメントを保持しておりません。
 
 -- これまでの変更点について
+
+・バージョン 2.9
+　国際化対応
+　コメントバリデーション部分にapply_filters ２つ追加
+
+$result_valid = apply_filters( 'tsa_validate_comment',
+			$this->validate_comment(
+				$author,
+				$comment,
+				array(
+					'post_id'    => $post_id,
+					'tsa_on_flg' => $tsa_on_flg
+				)
+			), $author, $comment, $post_id, $tsa_on_flg );
+
+return apply_filters( 'tsa_validate_comment_result', $result_valid );
+
+　バリデーション方法追加または変更可能にし
+　バリデーション結果自体も変更可能にしました。
 
 ・バージョン 2.8.2
 　2016/12/1
@@ -301,11 +320,31 @@ e.g.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Frequently Asked Questions ==
-質問やご要望はSupportまたは弊社お問い合わせ（http://gti.jp/）へお願いします！
+質問やご要望はSupportまたは弊社お問い合わせ（https://gti.co.jp/）へお願いします！
 
 == Screenshots ==
 
 == Changelog ==
+= 2.9 =
+・バージョン 2.9
+　国際化対応
+　コメントバリデーション部分にapply_filters ２つ追加
+
+$result_valid = apply_filters( 'tsa_validate_comment',
+			$this->validate_comment(
+				$author,
+				$comment,
+				array(
+					'post_id'    => $post_id,
+					'tsa_on_flg' => $tsa_on_flg
+				)
+			), $author, $comment, $post_id, $tsa_on_flg );
+
+return apply_filters( 'tsa_validate_comment_result', $result_valid );
+
+　バリデーション方法追加または変更可能にし
+　バリデーション結果自体も変更可能にしました。
+
 = 2.8.2 =
 　ロードバランサ経由のクライアントIP取得ができるように HTTP_X_FORWARDED_FOR を取得するようにしました。
 　JavaScriptの不具合修正

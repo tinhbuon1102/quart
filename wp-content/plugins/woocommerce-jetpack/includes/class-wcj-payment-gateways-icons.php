@@ -22,7 +22,7 @@ class WCJ_Payment_Gateways_Icons extends WCJ_Module {
 
 		$this->id         = 'payment_gateways_icons';
 		$this->short_desc = __( 'Gateways Icons', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Change or completely remove icons (images) for any (default or custom) WooCommerce payment gateway.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Change or completely remove icons (images) for any (default or custom) payment gateway.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-payment-gateways-icons';
 		parent::__construct();
 
@@ -47,7 +47,7 @@ class WCJ_Payment_Gateways_Icons extends WCJ_Module {
 	 * @version 2.3.1
 	 */
 	function set_icon( $icon, $key ) {
-		$default_gateways = apply_filters( 'booster_get_option', array( 'cod', 'cheque', 'bacs', 'mijireh_checkout', 'paypal' ), array() );
+		$default_gateways = apply_filters( 'booster_option', array( 'cod', 'cheque', 'bacs', 'mijireh_checkout', 'paypal' ), array() );
 		if ( ! empty( $default_gateways ) && ! in_array( $key, $default_gateways ) ) {
 			return $icon;
 		}

@@ -89,6 +89,9 @@ class Woo_Stickers_By_Webline {
         if(version_compare(get_option(WS_OPTION_NAME), '1.1.0') == '-1') {
         	$this->upgradeTo110();
         }
+        if(version_compare(get_option(WS_OPTION_NAME), '1.1.1') == '-1') {
+        	$this->upgradeTo111();
+        }
         
 	}
 
@@ -193,7 +196,7 @@ class Woo_Stickers_By_Webline {
 		
 
 		//action to show new product badge on product listing page
-		$this->loader->add_action( 'woocommerce_before_shop_loop_item_title', $plugin_public, 'show_product_new_badge', 1 );
+		$this->loader->add_action( 'woocommerce_before_shop_loop_item', $plugin_public, 'show_product_new_badge', 1 );
 
 		//action to show new product badge on product detail page
 		$this->loader->add_action('woocommerce_before_single_product_summary', $plugin_public, 'show_product_new_badge', 1 );
@@ -202,10 +205,10 @@ class Woo_Stickers_By_Webline {
 		$this->loader->add_filter('woocommerce_sale_flash', $plugin_public, 'show_product_sale_badge', 11, 3 );
 		
 		
-		//action to show new product badge on product listing page
-		$this->loader->add_action( 'woocommerce_before_shop_loop_item_title', $plugin_public, 'show_product_soldout_badge', 1 );
+		//action to show sold out product badge on product listing page
+		$this->loader->add_action( 'woocommerce_before_shop_loop_item', $plugin_public, 'show_product_soldout_badge', 1 );
 
-		//action to show new product badge on product detail page
+		//action to show sold out product badge on product detail page
 		$this->loader->add_action('woocommerce_before_single_product_summary', $plugin_public, 'show_product_soldout_badge', 1 );
 		
 
@@ -331,6 +334,17 @@ class Woo_Stickers_By_Webline {
 	 */
     public function upgradeTo110() {	
     	$this->update_version('1.1.0');
+    	 
+    }
+
+    /**
+	 * Upgrade plugin to 1.1.1.
+	 *
+	 * @since    1.1.1
+	 * @access   private
+	 */
+    public function upgradeTo111() {	
+    	$this->update_version('1.1.1');
     	 
     }
 }

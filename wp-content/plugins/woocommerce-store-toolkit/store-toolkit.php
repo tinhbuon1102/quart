@@ -3,11 +3,16 @@
 Plugin Name: WooCommerce - Store Toolkit
 Plugin URI: http://www.visser.com.au/woocommerce/plugins/store-toolkit/
 Description: Store Toolkit includes a growing set of commonly-used WooCommerce administration tools aimed at web developers and store maintainers.
-Version: 1.7.5
+Version: 1.9.2
 Author: Visser Labs
 Author URI: http://www.visser.com.au/about/
-Text Domain: woocommerce-store-toolkit
 License: GPL2
+
+Text Domain: woocommerce-store-toolkit
+Domain Path: /languages/
+
+WC requires at least: 2.3
+WC tested up to: 3.4
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -19,6 +24,8 @@ define( 'WOO_ST_PREFIX', 'woo_st' );
 
 include_once( WOO_ST_PATH . 'common/common.php' );
 include_once( WOO_ST_PATH . 'includes/functions.php' );
+if( defined( 'WP_CLI' ) && WP_CLI )
+	include_once( WOO_ST_PATH . 'includes/wp-cli.php' );
 
 /**
  * For developers: Store Toolkit debugging mode.
@@ -80,8 +87,8 @@ if( is_admin() ) {
 				// WooCommerce
 				if( isset( $_POST['woo_st_products'] ) )
 					$response = woo_st_clear_dataset( 'product' );
-				if( isset( $_POST['woo_st_categories'] ) ) {
-					$categories = $_POST['woo_st_categories'];
+				if( isset( $_POST['woo_st_products_category'] ) ) {
+					$categories = $_POST['woo_st_products_category'];
 					$response = woo_st_clear_dataset( 'product_category', $categories );
 				} else if( isset( $_POST['woo_st_product_categories'] ) ) {
 					$response = woo_st_clear_dataset( 'product_category' );
@@ -98,13 +105,22 @@ if( is_admin() ) {
 					$response = woo_st_clear_dataset( 'coupon' );
 				if( isset( $_POST['woo_st_shipping_classes'] ) )
 					$response = woo_st_clear_dataset( 'shipping_class' );
+				if( isset( $_POST['woo_st_woocommerce_logs'] ) )
+					$response = woo_st_clear_dataset( 'woocommerce_log' );
 				if( isset( $_POST['woo_st_attributes'] ) )
 					$response = woo_st_clear_dataset( 'attribute' );
 				if( isset( $_POST['woo_st_orders'] ) ) {
-					$orders = $_POST['woo_st_orders'];
-					$response = woo_st_clear_dataset( 'order', $orders );
-				} else if( isset( $_POST['woo_st_sales_orders'] ) ) {
-					$response = woo_st_clear_dataset( 'order' );
+					$args = array();
+					if( isset( $_POST['woo_st_orders_status'] ) )
+						$args['status'] = array_map( 'absint', $_POST['woo_st_orders_status'] );
+					if( isset( $_POST['woo_st_orders_date'] ) ) {
+						$args['date'] = sanitize_text_field( $_POST['woo_st_orders_date'] );
+						if( $args['date'] == 'manual' ) {
+							$args['date_from'] = ( isset( $_POST['woo_st_orders_date_from'] ) ? sanitize_text_field( $_POST['woo_st_orders_date_from'] ) : false );
+							$args['date_to'] = ( isset( $_POST['woo_st_orders_date_to'] ) ? sanitize_text_field( $_POST['woo_st_orders_date_to'] ) : false );
+						}
+					}
+					$response = woo_st_clear_dataset( 'order', $args );
 				}
 				if( isset( $_POST['woo_st_tax_rates'] ) )
 					$response = woo_st_clear_dataset( 'tax_rate' );
@@ -148,6 +164,16 @@ if( is_admin() ) {
 				// We need to verify the nonce.
 				if( !empty( $_GET ) && check_admin_referer( 'woo_st_relink_rogue_simple_type' ) ) {
 					woo_st_relink_rogue_simple_type();
+					$url = add_query_arg( array( 'action' => null, '_wpnonce' => null ) );
+					wp_redirect( $url );
+					exit();
+				}
+				break;
+
+			case 'delete-corrupt-variations':
+				// We need to verify the nonce.
+				if( !empty( $_GET ) && check_admin_referer( 'woo_st_delete_corrupt_variations' ) ) {
+					woo_st_delete_corrupt_variations();
 					$url = add_query_arg( array( 'action' => null, '_wpnonce' => null ) );
 					wp_redirect( $url );
 					exit();

@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings Meta Box - Product Addons
  *
- * @version 2.8.0
+ * @version 3.7.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -49,21 +49,32 @@ for ( $i = 1; $i <= $total_number; $i++ ) {
 			'options'  => array(
 				'checkbox' => __( 'Checkbox', 'woocommerce-jetpack' ),
 				'radio'    => __( 'Radio Buttons', 'woocommerce-jetpack' ),
+				'select'   => __( 'Select Box', 'woocommerce-jetpack' ),
+				'text'     => __( 'Text', 'woocommerce-jetpack' ),
 			),
 		),
 		array(
+			'title'    => __( 'Title', 'woocommerce-jetpack' ),
+			'name'     => 'wcj_product_addons_per_product_title_' . $i,
+			'default'  => '',
+			'type'     => 'textarea',
+			'css'      => 'width:100%;',
+		),
+		array(
 			'title'    => __( 'Label(s)', 'woocommerce-jetpack' ),
-			'tooltip'  => __( 'For radio enter one value per line.', 'woocommerce-jetpack' ),
+			'tooltip'  => __( 'For radio and select enter one value per line.', 'woocommerce-jetpack' ),
 			'name'     => 'wcj_product_addons_per_product_label_' . $i,
 			'default'  => '',
 			'type'     => 'textarea',
+			'css'      => 'width:100%;height:100px;',
 		),
 		array(
 			'title'    => __( 'Price(s)', 'woocommerce-jetpack' ),
-			'tooltip'  => __( 'For radio enter one value per line.', 'woocommerce-jetpack' ),
+			'tooltip'  => __( 'For radio and select enter one value per line.', 'woocommerce-jetpack' ),
 			'name'     => 'wcj_product_addons_per_product_price_' . $i,
 			'default'  => 0,
 			'type'     => 'textarea',
+			'css'      => 'height:100px;',
 		),
 		array(
 			'title'    => __( 'Tooltip(s)', 'woocommerce-jetpack' ),
@@ -71,13 +82,30 @@ for ( $i = 1; $i <= $total_number; $i++ ) {
 			'name'     => 'wcj_product_addons_per_product_tooltip_' . $i,
 			'default'  => '',
 			'type'     => 'textarea',
+			'css'      => 'width:100%;height:100px;',
 		),
 		array(
 			'title'    => __( 'Default Value', 'woocommerce-jetpack' ),
-			'tooltip'  => __( 'For checkbox use \'checked\'; for radio enter default label. Leave blank for no default value.', 'woocommerce-jetpack' ),
+			'tooltip'  => __( 'For checkbox use \'checked\'; for radio and select enter default label. Leave blank for no default value.', 'woocommerce-jetpack' ),
 			'name'     => 'wcj_product_addons_per_product_default_' . $i,
 			'default'  => '',
 			'type'     => 'text',
+			'css'      => 'width:100%;',
+		),
+		array(
+			'title'    => __( 'Placeholder', 'woocommerce-jetpack' ),
+			'tooltip'  => __( 'For "Select Box" type only.', 'woocommerce-jetpack' ),
+			'name'     => 'wcj_product_addons_per_product_placeholder_' . $i,
+			'default'  => '',
+			'type'     => 'text',
+			'css'      => 'width:100%;',
+		),
+		array(
+			'title'    => __( 'HTML Class', 'woocommerce-jetpack' ),
+			'name'     => 'wcj_product_addons_per_product_class_' . $i,
+			'default'  => '',
+			'type'     => 'text',
+			'css'      => 'width:100%;',
 		),
 		array(
 			'title'    => __( 'Is required', 'woocommerce-jetpack' ),
@@ -88,6 +116,13 @@ for ( $i = 1; $i <= $total_number; $i++ ) {
 				'yes' => __( 'Yes', 'woocommerce-jetpack' ),
 				'no'  => __( 'No', 'woocommerce-jetpack' ),
 			),
+		),
+		array(
+			'title'    => __( 'Quantity', 'woocommerce-jetpack' ),
+			'tooltip'  => __( 'Leave empty to disable quantity calculation for the addon. When set to zero - addon will be disabled.', 'woocommerce-jetpack' ),
+			'name'     => 'wcj_product_addons_per_product_qty_' . $i,
+			'default'  => '',
+			'type'     => 'text',
 		),
 	) );
 }

@@ -1,7 +1,13 @@
-(function () { var require = undefined; var define = undefined; (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function () { var require = undefined; var define = undefined; (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
 'use strict';
 
 // dependencies
+
+var _tlite = require('tlite');
+
+var _tlite2 = _interopRequireDefault(_tlite);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var m = window.m = require('mithril');
 var EventEmitter = require('wolfy87-eventemitter');
@@ -12,6 +18,10 @@ var events = new EventEmitter();
 var tabs = require('./admin/tabs.js')(context);
 var helpers = require('./admin/helpers.js');
 var settings = require('./admin/settings.js')(context, helpers, events);
+
+(0, _tlite2.default)(function (el) {
+    return el.className.indexOf('mc4wp-tooltip') > -1;
+});
 
 // list fetcher
 var ListFetcher = require('./admin/list-fetcher.js');
@@ -29,7 +39,7 @@ window.mc4wp.events = events;
 window.mc4wp.settings = settings;
 window.mc4wp.tabs = tabs;
 
-},{"./admin/helpers.js":2,"./admin/list-fetcher.js":3,"./admin/settings.js":4,"./admin/tabs.js":5,"mithril":7,"wolfy87-eventemitter":8}],2:[function(require,module,exports){
+},{"./admin/helpers.js":2,"./admin/list-fetcher.js":3,"./admin/settings.js":4,"./admin/tabs.js":5,"mithril":7,"tlite":8,"wolfy87-eventemitter":9}],2:[function(require,module,exports){
 'use strict';
 
 var helpers = {};
@@ -497,7 +507,7 @@ function compileSelector(selector) {
 			var attrValue = match[6]
 			if (attrValue) attrValue = attrValue.replace(/\\(["'])/g, "$1").replace(/\\\\/g, "\\")
 			if (match[4] === "class") classes.push(attrValue)
-			else attrs[match[4]] = attrValue || true
+			else attrs[match[4]] = attrValue === "" ? attrValue : attrValue || true
 		}
 	}
 	if (classes.length > 0) attrs.className = classes.join(" ")
@@ -743,10 +753,10 @@ var _8 = function($window, Promise) {
 				_abort.call(xhr)
 			}
 			xhr.open(args.method, args.url, typeof args.async === "boolean" ? args.async : true, typeof args.user === "string" ? args.user : undefined, typeof args.password === "string" ? args.password : undefined)
-			if (args.serialize === JSON.stringify && useBody) {
+			if (args.serialize === JSON.stringify && useBody && !(args.headers && args.headers.hasOwnProperty("Content-Type"))) {
 				xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8")
 			}
-			if (args.deserialize === deserialize) {
+			if (args.deserialize === deserialize && !(args.headers && args.headers.hasOwnProperty("Accept"))) {
 				xhr.setRequestHeader("Accept", "application/json, text/*")
 			}
 			if (args.withCredentials) xhr.withCredentials = args.withCredentials
@@ -844,8 +854,15 @@ var requestService = _8(window, PromisePolyfill)
 var coreRenderer = function($window) {
 	var $doc = $window.document
 	var $emptyFragment = $doc.createDocumentFragment()
+	var nameSpace = {
+		svg: "http://www.w3.org/2000/svg",
+		math: "http://www.w3.org/1998/Math/MathML"
+	}
 	var onevent
 	function setEventCallback(callback) {return onevent = callback}
+	function getNameSpace(vnode) {
+		return vnode.attrs && vnode.attrs.xmlns || nameSpace[vnode.tag]
+	}
 	//create
 	function createNodes(parent, vnodes, start, end, hooks, nextSibling, ns) {
 		for (var i = start; i < end; i++) {
@@ -902,12 +919,9 @@ var coreRenderer = function($window) {
 	}
 	function createElement(parent, vnode, hooks, ns, nextSibling) {
 		var tag = vnode.tag
-		switch (vnode.tag) {
-			case "svg": ns = "http://www.w3.org/2000/svg"; break
-			case "math": ns = "http://www.w3.org/1998/Math/MathML"; break
-		}
 		var attrs2 = vnode.attrs
 		var is = attrs2 && attrs2.is
+		ns = getNameSpace(vnode) || ns
 		var element = ns ?
 			is ? $doc.createElementNS(ns, tag, {is: is}) : $doc.createElementNS(ns, tag) :
 			is ? $doc.createElement(tag, {is: is}) : $doc.createElement(tag)
@@ -970,7 +984,7 @@ var coreRenderer = function($window) {
 	//update
 	function updateNodes(parent, old, vnodes, recycling, hooks, nextSibling, ns) {
 		if (old === vnodes || old == null && vnodes == null) return
-		else if (old == null) createNodes(parent, vnodes, 0, vnodes.length, hooks, nextSibling, undefined)
+		else if (old == null) createNodes(parent, vnodes, 0, vnodes.length, hooks, nextSibling, ns)
 		else if (vnodes == null) removeNodes(old, 0, old.length, vnodes)
 		else {
 			if (old.length === vnodes.length) {
@@ -1047,7 +1061,7 @@ var coreRenderer = function($window) {
 							if (movable.dom != null) nextSibling = movable.dom
 						}
 						else {
-							var dom = createNode(parent, v, hooks, undefined, nextSibling)
+							var dom = createNode(parent, v, hooks, ns, nextSibling)
 							nextSibling = dom
 						}
 					}
@@ -1118,10 +1132,7 @@ var coreRenderer = function($window) {
 	}
 	function updateElement(old, vnode, recycling, hooks, ns) {
 		var element = vnode.dom = old.dom
-		switch (vnode.tag) {
-			case "svg": ns = "http://www.w3.org/2000/svg"; break
-			case "math": ns = "http://www.w3.org/1998/Math/MathML"; break
-		}
+		ns = getNameSpace(vnode) || ns
 		if (vnode.tag === "textarea") {
 			if (vnode.attrs == null) vnode.attrs = {}
 			if (vnode.text != null) {
@@ -1301,12 +1312,21 @@ var coreRenderer = function($window) {
 		else if (key2[0] === "o" && key2[1] === "n" && typeof value === "function") updateEvent(vnode, key2, value)
 		else if (key2 === "style") updateStyle(element, old, value)
 		else if (key2 in element && !isAttribute(key2) && ns === undefined && !isCustomElement(vnode)) {
-			//setting input[value] to same value by typing on focused element moves cursor to end in Chrome
-			if (vnode.tag === "input" && key2 === "value" && vnode.dom.value == value && vnode.dom === $doc.activeElement) return
-			//setting select[value] to same value while having select open blinks select dropdown in Chrome
-			if (vnode.tag === "select" && key2 === "value" && vnode.dom.value == value && vnode.dom === $doc.activeElement) return
-			//setting option[value] to same value while having select open blinks select dropdown in Chrome
-			if (vnode.tag === "option" && key2 === "value" && vnode.dom.value == value) return
+			if (key2 === "value") {
+				var normalized0 = "" + value // eslint-disable-line no-implicit-coercion
+				//setting input[value] to same value by typing on focused element moves cursor to end in Chrome
+				if ((vnode.tag === "input" || vnode.tag === "textarea") && vnode.dom.value === normalized0 && vnode.dom === $doc.activeElement) return
+				//setting select[value] to same value while having select open blinks select dropdown in Chrome
+				if (vnode.tag === "select") {
+					if (value === null) {
+						if (vnode.dom.selectedIndex === -1 && vnode.dom === $doc.activeElement) return
+					} else {
+						if (old !== null && vnode.dom.value === normalized0 && vnode.dom === $doc.activeElement) return
+					}
+				}
+				//setting option[value] to same value while having select open blinks select dropdown in Chrome
+				if (vnode.tag === "option" && old != null && vnode.dom.value === normalized0) return
+			}
 			// If you assign an input type1 that is not supported by IE 11 with an assignment expression, an error0 will occur.
 			if (vnode.tag === "input" && key2 === "type") {
 				element.setAttribute(key2, value)
@@ -1421,13 +1441,15 @@ var coreRenderer = function($window) {
 		if (!dom) throw new Error("Ensure the DOM element being passed to m.route/m.mount/m.render is not undefined.")
 		var hooks = []
 		var active = $doc.activeElement
+		var namespace = dom.namespaceURI
 		// First time0 rendering into a node clears it out
 		if (dom.vnodes == null) dom.textContent = ""
 		if (!Array.isArray(vnodes)) vnodes = [vnodes]
-		updateNodes(dom, dom.vnodes, Vnode.normalizeChildren(vnodes), false, hooks, null, undefined)
+		updateNodes(dom, dom.vnodes, Vnode.normalizeChildren(vnodes), false, hooks, null, namespace === "http://www.w3.org/1999/xhtml" ? undefined : namespace)
 		dom.vnodes = vnodes
 		for (var i = 0; i < hooks.length; i++) hooks[i]()
-		if ($doc.activeElement !== active) active.focus()
+		// document.activeElement can return null in IE https://developer.mozilla.org/en-US/docs/Web/API/Document/activeElement
+		if (active != null && $doc.activeElement !== active) active.focus()
 	}
 	return {render: render, setEventCallback: setEventCallback}
 }
@@ -1454,7 +1476,8 @@ function throttle(callback) {
 var _11 = function($window) {
 	var renderService = coreRenderer($window)
 	renderService.setEventCallback(function(e) {
-		if (e.redraw !== false) redraw()
+		if (e.redraw === false) e.redraw = undefined
+		else redraw()
 	})
 	var callbacks = []
 	function subscribe(key1, callback) {
@@ -1653,7 +1676,10 @@ var _20 = function($window, redrawService0) {
 		redrawService0.subscribe(root, run1)
 	}
 	route.set = function(path, data, options) {
-		if (lastUpdate != null) options = {replace: true}
+		if (lastUpdate != null) {
+			options = options || {}
+			options.replace = true
+		}
 		lastUpdate = null
 		routeService.setPath(path, data, options)
 	}
@@ -1689,15 +1715,151 @@ m.request = requestService.request
 m.jsonp = requestService.jsonp
 m.parseQueryString = parseQueryString
 m.buildQueryString = buildQueryString
-m.version = "1.1.1"
+m.version = "1.1.5"
 m.vnode = Vnode
 if (typeof module !== "undefined") module["exports"] = m
 else window.m = m
 }());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],8:[function(require,module,exports){
+function tlite(getTooltipOpts) {
+  document.addEventListener('mouseover', function (e) {
+    var el = e.target;
+    var opts = getTooltipOpts(el);
+
+    if (!opts) {
+      el = el.parentElement;
+      opts = el && getTooltipOpts(el);
+    }
+
+    opts && tlite.show(el, opts, true);
+  });
+}
+
+tlite.show = function (el, opts, isAuto) {
+  var fallbackAttrib = 'data-tlite';
+  opts = opts || {};
+
+  (el.tooltip || Tooltip(el, opts)).show();
+
+  function Tooltip(el, opts) {
+    var tooltipEl;
+    var showTimer;
+    var text;
+
+    el.addEventListener('mousedown', autoHide);
+    el.addEventListener('mouseleave', autoHide);
+
+    function show() {
+      text = el.title || el.getAttribute(fallbackAttrib) || text;
+      el.title = '';
+      el.setAttribute(fallbackAttrib, '');
+      text && !showTimer && (showTimer = setTimeout(fadeIn, isAuto ? 150 : 1))
+    }
+
+    function autoHide() {
+      tlite.hide(el, true);
+    }
+
+    function hide(isAutoHiding) {
+      if (isAuto === isAutoHiding) {
+        showTimer = clearTimeout(showTimer);
+        var parent = tooltipEl && tooltipEl.parentNode;
+        parent && parent.removeChild(tooltipEl);
+        tooltipEl = undefined;
+      }
+    }
+
+    function fadeIn() {
+      if (!tooltipEl) {
+        tooltipEl = createTooltip(el, text, opts);
+      }
+    }
+
+    return el.tooltip = {
+      show: show,
+      hide: hide
+    };
+  }
+
+  function createTooltip(el, text, opts) {
+    var tooltipEl = document.createElement('span');
+    var grav = opts.grav || el.getAttribute('data-tlite') || 'n';
+
+    tooltipEl.innerHTML = text;
+
+    el.appendChild(tooltipEl);
+
+    var vertGrav = grav[0] || '';
+    var horzGrav = grav[1] || '';
+
+    function positionTooltip() {
+      tooltipEl.className = 'tlite ' + 'tlite-' + vertGrav + horzGrav;
+
+      var arrowSize = 10;
+      var top = el.offsetTop;
+      var left = el.offsetLeft;
+
+      if (tooltipEl.offsetParent === el) {
+        top = left = 0;
+      }
+
+      var width = el.offsetWidth;
+      var height = el.offsetHeight;
+      var tooltipHeight = tooltipEl.offsetHeight;
+      var tooltipWidth = tooltipEl.offsetWidth;
+      var centerEl = left + (width / 2);
+
+      tooltipEl.style.top = (
+        vertGrav === 's' ? (top - tooltipHeight - arrowSize) :
+        vertGrav === 'n' ? (top + height + arrowSize) :
+        (top + (height / 2) - (tooltipHeight / 2))
+      ) + 'px';
+
+      tooltipEl.style.left = (
+        horzGrav === 'w' ? left :
+        horzGrav === 'e' ? left + width - tooltipWidth :
+        vertGrav === 'w' ? (left + width + arrowSize) :
+        vertGrav === 'e' ? (left - tooltipWidth - arrowSize) :
+        (centerEl - tooltipWidth / 2)
+      ) + 'px';
+    }
+
+    positionTooltip();
+
+    var rect = tooltipEl.getBoundingClientRect();
+
+    if (vertGrav === 's' && rect.top < 0) {
+      vertGrav = 'n';
+      positionTooltip();
+    } else if (vertGrav === 'n' && rect.bottom > window.innerHeight) {
+      vertGrav = 's';
+      positionTooltip();
+    } else if (vertGrav === 'e' && rect.left < 0) {
+      vertGrav = 'w';
+      positionTooltip();
+    } else if (vertGrav === 'w' && rect.right > window.innerWidth) {
+      vertGrav = 'e';
+      positionTooltip();
+    }
+
+    tooltipEl.className += ' tlite-visible';
+
+    return tooltipEl;
+  }
+};
+
+tlite.hide = function (el, isAuto) {
+  el.tooltip && el.tooltip.hide(isAuto);
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = tlite;
+}
+
+},{}],9:[function(require,module,exports){
 /*!
- * EventEmitter v5.1.0 - git.io/ee
+ * EventEmitter v5.2.4 - git.io/ee
  * Unlicense - http://unlicense.org/
  * Oliver Caldwell - http://oli.me.uk/
  * @preserve
@@ -1940,7 +2102,7 @@ else window.m = m
 
     /**
      * Adds listeners in bulk using the manipulateListeners method.
-     * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
+     * If you pass an object as the first argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
      * You can also pass it a regular expression to add the array of listeners to all events that match it.
      * Yeah, this function does quite a bit. That's probably a bad thing.
      *
@@ -1955,7 +2117,7 @@ else window.m = m
 
     /**
      * Removes listeners in bulk using the manipulateListeners method.
-     * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+     * If you pass an object as the first argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
      * You can also pass it an event name and an array of listeners to be removed.
      * You can also pass it a regular expression to remove the listeners from all events that match it.
      *

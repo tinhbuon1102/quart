@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Reports
  *
- * @version 2.8.0
+ * @version 3.6.0
  * @author  Algoritmika Ltd.
  */
 
@@ -24,13 +24,14 @@ class WCJ_Reports extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.6.0
+	 * @todo    "orders report by meta" abstract class (see `WCJ_Reports_Product_Sales_Gateways`): by referer (`_wcj_track_users_http_referer`); by shipping (stored as item); by country (`_billing_country` or `_shipping_country`) etc.
 	 */
 	function __construct() {
 
 		$this->id         = 'reports';
 		$this->short_desc = __( 'Reports', 'woocommerce-jetpack' );
-		$this->desc       = __( 'WooCommerce stock, sales, customers etc. reports.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Stock, sales, customers etc. reports.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-reports';
 		parent::__construct();
 
@@ -44,6 +45,8 @@ class WCJ_Reports extends WCJ_Module {
 
 				include_once( 'reports/wcj-class-reports-customers.php' );
 				include_once( 'reports/wcj-class-reports-stock.php' );
+				include_once( 'reports/wcj-class-reports-sales-daily.php' );
+				include_once( 'reports/wcj-class-reports-sales-gateways.php' );
 				include_once( 'reports/wcj-class-reports-sales.php' );
 				include_once( 'reports/wcj-class-reports-monthly-sales.php' );
 
@@ -56,7 +59,7 @@ class WCJ_Reports extends WCJ_Module {
 	/**
 	 * add_custom_order_reports_ranges_by_month_to_admin_bar.
 	 *
-	 * @version 2.7.0
+	 * @version 3.2.4
 	 * @since   2.2.4
 	 */
 	function add_custom_order_reports_ranges_by_month_to_admin_bar( $wp_admin_bar ) {
@@ -75,12 +78,13 @@ class WCJ_Reports extends WCJ_Module {
 			$wp_admin_bar->add_node( $args );
 
 			$custom_range_nonce = wp_create_nonce( 'custom_range' );
+			$current_time = (int) current_time( 'timestamp' );
 			for ( $i = 1; $i <= 12; $i++ ) {
-				$month_start_date = date( 'Y-m-01' ) . "-$i months";
-				$month_num  = date( 'm',      strtotime( $month_start_date ) );
-				$month_name = date( 'Y F',    strtotime( $month_start_date ) );
-				$start_date = date( 'Y-m-01', strtotime( $month_start_date ) );
-				$end_date   = date( 'Y-m-t',  strtotime( $month_start_date ) );
+				$month_start_date = strtotime( date( 'Y-m-01', $current_time ) . " -$i months" );
+				$month_num  = date( 'm',      $month_start_date );
+				$month_name = date( 'Y F',    $month_start_date );
+				$start_date = date( 'Y-m-01', $month_start_date );
+				$end_date   = date( 'Y-m-t',  $month_start_date );
 				$node = array(
 					'parent' => $parent,
 					'id'     => $parent . '_' . $month_num,
@@ -101,7 +105,7 @@ class WCJ_Reports extends WCJ_Module {
 	/**
 	 * add_custom_order_reports_ranges_to_admin_bar.
 	 *
-	 * @version 2.8.0
+	 * @version 2.9.0
 	 */
 	function add_custom_order_reports_ranges_to_admin_bar( $wp_admin_bar ) {
 		$is_reports        = ( isset( $_GET['page'] ) && 'wc-reports' === $_GET['page'] );
@@ -118,65 +122,8 @@ class WCJ_Reports extends WCJ_Module {
 			);
 			$wp_admin_bar->add_node( $args );
 
-			$custom_ranges = array(
-				'last_14_days' => array(
-					'title'      => __( 'Last 14 Days', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-14 days' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_30_days' => array(
-					'title'      => __( 'Last 30 Days', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-30 days' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_3_months' => array(
-					'title'      => __( 'Last 3 Months', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-3 months' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_6_months' => array(
-					'title'      => __( 'Last 6 Months', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-6 months' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_12_months' => array(
-					'title'      => __( 'Last 12 Months', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-12 months' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_24_months' => array(
-					'title'      => __( 'Last 24 Months', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-24 months' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'last_36_months' => array(
-					'title'      => __( 'Last 36 Months', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( '-36 months' ) ),
-					'end_date'   => date( 'Y-m-d' ),
-				),
-				'same_days_last_month' => array(
-					'title'      => __( 'Same Days Last Month', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-01', strtotime( '-1 month' ) ),
-					'end_date'   => date( 'Y-m-d', strtotime( '-1 month' ) ),
-				),
-				'same_days_last_year' => array(
-					'title'      => __( 'Same Days Last Year', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-01', strtotime( '-1 year' ) ),
-					'end_date'   => date( 'Y-m-d', strtotime( '-1 year' ) ),
-				),
-				'last_year' => array(
-					'title'      => __( 'Last Year', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-01-01', strtotime( '-1 year' ) ),
-					'end_date'   => date( 'Y-12-31', strtotime( '-1 year' ) ),
-				),
-				/* 'last_week' => array(
-					'title'      => __( 'Last Week', 'woocommerce-jetpack' ),
-					'start_date' => date( 'Y-m-d', strtotime( 'last monday' ) ),
-					'end_date'   => date( 'Y-m-d', strtotime( 'last sunday' ) ),
-				), */
-			);
 			$custom_range_nonce = wp_create_nonce( 'custom_range' );
-			foreach ( $custom_ranges as $custom_range_id => $custom_range ) {
+			foreach ( wcj_get_reports_custom_ranges() as $custom_range_id => $custom_range ) {
 				$node = array(
 					'parent' => $parent,
 					'id'     => $parent . '_' . $custom_range_id,
@@ -212,12 +159,35 @@ class WCJ_Reports extends WCJ_Module {
 	}
 
 	/**
+	 * get_report_products_sales_daily.
+	 *
+	 * @version 2.9.0
+	 * @since   2.9.0
+	 */
+	function get_report_products_sales_daily() {
+		$report = new WCJ_Reports_Product_Sales_Daily();
+		echo $report->get_report();
+	}
+
+	/**
 	 * get_report_monthly_sales.
+	 *
 	 * @version 2.4.7
 	 * @since   2.4.7
 	 */
 	function get_report_monthly_sales() {
 		$report = new WCJ_Reports_Monthly_Sales();
+		echo $report->get_report();
+	}
+
+	/**
+	 * get_report_orders_gateways.
+	 *
+	 * @version 3.6.0
+	 * @since   3.6.0
+	 */
+	function get_report_orders_gateways() {
+		$report = new WCJ_Reports_Product_Sales_Gateways();
 		echo $report->get_report();
 	}
 
@@ -243,23 +213,37 @@ class WCJ_Reports extends WCJ_Module {
 	/**
 	 * Add reports to WooCommerce > Reports > Sales
 	 *
-	 * @version 2.5.3
+	 * @version 3.6.0
 	 * @since   2.3.0
 	 */
 	function add_sales_reports( $reports ) {
 
+		$reports['orders']['reports']['booster_products_sales_daily'] = array(
+			'title'       => __( 'Booster: Product Sales (Daily)', 'woocommerce-jetpack' ),
+			'description' => '',
+			'hide_title'  => false,
+			'callback'    => array( $this, 'get_report_products_sales_daily' ),
+		);
+
 		$reports['orders']['reports']['booster_products_sales'] = array(
-			'title'       => __( 'Booster: Product Sales', 'woocommerce-jetpack' ),
+			'title'       => __( 'Booster: Product Sales (Monthly)', 'woocommerce-jetpack' ),
 			'description' => '',
 			'hide_title'  => false,
 			'callback'    => array( $this, 'get_report_sales' ),
 		);
 
 		$reports['orders']['reports']['booster_monthly_sales'] = array(
-			'title'       => __( 'Booster: Monthly Sales', 'woocommerce-jetpack' ),
+			'title'       => __( 'Booster: Monthly Sales (with Currency Conversion)', 'woocommerce-jetpack' ),
 			'description' => '',
 			'hide_title'  => false,
 			'callback'    => array( $this, 'get_report_monthly_sales' ),
+		);
+
+		$reports['orders']['reports']['booster_gateways'] = array(
+			'title'       => __( 'Booster: Payment Gateways', 'woocommerce-jetpack' ),
+			'description' => '',
+			'hide_title'  => false,
+			'callback'    => array( $this, 'get_report_orders_gateways' ),
 		);
 
 		return $reports;

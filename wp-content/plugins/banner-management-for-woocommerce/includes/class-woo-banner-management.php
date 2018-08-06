@@ -1,5 +1,8 @@
 <?php
-
+// If this file is called directly, abort.
+if ( !defined( 'ABSPATH' ) ) {
+    exit;
+}
 /**
  * The file that defines the core plugin class
  *
@@ -69,7 +72,7 @@ class Woo_Banner_Management {
     public function __construct() {
 
         $this->plugin_name = 'woo-banner-management';
-        $this->version = '1.0.0';
+        $this->version = '1.1.1';
 
         $this->load_dependencies();
         $this->set_locale();
@@ -150,33 +153,23 @@ class Woo_Banner_Management {
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-        $this->loader->add_action('admin_menu', $plugin_admin, 'wbm_crea_custom_menu');
-        //edit product cat 
+        $this->loader->add_action('admin_menu', $plugin_admin, 'dot_store_menu_banner_management');
+        //edit product cat
         $this->loader->add_action('product_cat_edit_form_fields', $plugin_admin, 'WBM_product_cat_taxonomy_custom_fields', 10, 2);
         $this->loader->add_action('edited_product_cat', $plugin_admin, 'WBM_product_cat_save_taxonomy_custom_fields', 10, 2);
         //add product cat 
         $this->loader->add_action('product_cat_add_form_fields', $plugin_admin, 'wbm_product_add_taxonomy_custom_fields', 10, 2);
         $this->loader->add_action('create_product_cat', $plugin_admin, 'WBM_product_cat_save_taxonomy_custom_fields', 10, 2);
 
-        $this->loader->add_action('woocommerce_before_shop_loop', $plugin_admin, 'WBM_show_category_banner', 30);
-        $this->loader->add_action('woocommerce_before_shop_loop', $plugin_admin, 'wbm_show_shop_page_banner', 30);
-        $this->loader->add_action('woocommerce_before_cart', $plugin_admin, 'wbm_show_cart_page_banner', 30);
-        $this->loader->add_action('woocommerce_before_checkout_form', $plugin_admin, 'wbm_show_checkout_page_banner', 30);
+        $this->loader->add_action('woocommerce_before_main_content', $plugin_admin, 'WBM_show_category_banner',10);
+        $this->loader->add_action('woocommerce_before_main_content', $plugin_admin, 'wbm_show_shop_page_banner', 10);
+        $this->loader->add_action('woocommerce_before_cart', $plugin_admin, 'wbm_show_cart_page_banner', 10);
+        $this->loader->add_action('woocommerce_before_checkout_form', $plugin_admin, 'wbm_show_checkout_page_banner', 10);
         $this->loader->add_action('wp_ajax_wbm_save_shop_page_banner_data', $plugin_admin, 'wbm_save_shop_page_banner_data');
-        $this->loader->add_action('wp_ajax_nopriv_wbm_save_shop_page_banner_data', $plugin_admin, 'wbm_save_shop_page_banner_data');
-
-        $this->loader->add_action('wp_ajax_add_plugin_user_wbm', $plugin_admin, 'wp_add_plugin_userfn_wbmfree');
-        $this->loader->add_action('wp_ajax_nopriv_add_plugin_user_wbm', $plugin_admin, 'wp_add_plugin_userfn_wbmfree');
 
         $this->loader->add_action('admin_init', $plugin_admin, 'welcome_benner_mamagement_for_woocommerce_screen_do_activation_redirect');
-        $this->loader->add_action('admin_menu', $plugin_admin, 'welcome_pages_screen_benner_mamagement_for_woocommerce');
 
-
-        $this->loader->add_action('benner_mamagement_for_woocommerce_other_plugins', $plugin_admin, 'benner_mamagement_for_woocommerce_other_plugins');
-        $this->loader->add_action('benner_mamagement_for_woocommerce_about', $plugin_admin, 'benner_mamagement_for_woocommerce_about');
-        $this->loader->add_action('benner_mamagement_for_woocommerce_premium_feauter', $plugin_admin, 'benner_mamagement_for_woocommerce_premium_feauter');
-        //$this->loader->add_action('admin_print_footer_scripts', $plugin_admin, 'benner_mamagement_for_woocommerce_pointers_footer');
-        $this->loader->add_action('admin_menu', $plugin_admin, 'welcome_screen_benner_mamagement_for_woocommerce_remove_menus', 999);
+        $this->loader->add_action('admin_head', $plugin_admin, 'welcome_screen_benner_mamagement_for_woocommerce_remove_menus', 999);
     }
 
     /**

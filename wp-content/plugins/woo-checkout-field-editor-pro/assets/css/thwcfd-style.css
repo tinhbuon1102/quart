@@ -145,6 +145,10 @@ h1.nav-tab-wrapper, h2.nav-tab-wrapper, h3.nav-tab-wrapper {
     padding-left: 10px;
 }
 
+.woocommerce_page_checkout_form_designer .ui-dialog .ui-dialog-title {
+  	line-height: 20px;
+}
+
 /*.select2-drop {
     z-index: 999999!important;
 }*/

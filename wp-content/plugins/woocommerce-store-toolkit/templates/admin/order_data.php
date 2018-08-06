@@ -28,7 +28,7 @@
 					<?php foreach( $inner_meta_value as $inner_meta_name => $inner_meta_value ) { ?>
 		<tr>
 			<th style="width:20%;">&raquo; <?php echo $inner_meta_name; ?></th>
-			<td><?php print_r( $inner_meta_value ); ?></td>
+			<td><?php echo ( is_array( $inner_meta_value ) ? print_r( $inner_meta_value, true ) : $inner_meta_value ); ?></td>
 			<td>&nbsp;</td>
 		</tr>
 					<?php } ?>
@@ -60,4 +60,6 @@
 <!-- </ul> -->
 	</tbody>
 </table>
+<?php } else { ?>
+<p>No custom Post meta is associated with this Order.</p>
 <?php } ?>

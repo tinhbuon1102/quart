@@ -1,4 +1,6 @@
 var wcfd_settings = (function($, window, document) {
+	var MSG_INVALID_NAME = 'NAME/ID must begin with a lowercase letter ([a-z]) and may be followed by any number of lowercase letters, digits ([0-9]) and underscores ("_")';
+	
     $( "#wcfd_new_field_form_pp" ).dialog({
 	  	modal: true,
 		width: 500,
@@ -106,6 +108,8 @@ var wcfd_settings = (function($, window, document) {
 		var err_msgs = '';
 		if(name == ''){
 			err_msgs = 'Name is required';
+		}else if(!isHtmlIdValid(name)){
+			err_msgs = MSG_INVALID_NAME;
 		}else if(type == ''){
 			err_msgs = 'Type is required';
 		}
@@ -215,6 +219,7 @@ var wcfd_settings = (function($, window, document) {
 		showinorder = is_custom == true ? showinorder : true;
 								
 		var form = $("#wcfd_edit_field_form_pp");
+		form.find('.err_msgs').html('');
 		form.find("input[name=rowId]").val(rowId);
 		form.find("input[name=fname]").val(name);
 		form.find("input[name=fnameNew]").val(name);
@@ -279,6 +284,8 @@ var wcfd_settings = (function($, window, document) {
 		var err_msgs = '';
 		if(name == ''){
 			err_msgs = 'Name is required';
+		}else if(!isHtmlIdValid(name)){
+			err_msgs = MSG_INVALID_NAME;
 		}else if(type == ''){
 			err_msgs = 'Type is required';
 		}
@@ -358,6 +365,7 @@ var wcfd_settings = (function($, window, document) {
 	}
 	
 	function wcfd_clear_form( form ){
+		form.find('.err_msgs').html('');
 		form.find("input[name=fname]").val('');
 		form.find("input[name=fnameNew]").val('');
 		form.find("select[name=ftype]").prop('selectedIndex',0);
@@ -388,7 +396,7 @@ var wcfd_settings = (function($, window, document) {
 		
 		showAllFields(form);
 		if(type === 'select'){			
-			form.find('.rowPlaceholder').hide();
+			//form.find('.rowPlaceholder').hide();
 			form.find('.rowValidate').hide();
 		}else{			
 			form.find('.rowOptions').hide();
@@ -404,6 +412,11 @@ var wcfd_settings = (function($, window, document) {
 	_selectAllCheckoutFields = function selectAllCheckoutFields(elm){
 		var checkAll = $(elm).prop('checked');
 		$('#wcfd_checkout_fields tbody input:checkbox[name=select_field]').prop('checked', checkAll);
+	}
+	
+	function isHtmlIdValid(id) {
+		var re = /^[a-z\_]+[a-z0-9\_]*$/;
+		return re.test(id.trim());
 	}
 	
 	return {
