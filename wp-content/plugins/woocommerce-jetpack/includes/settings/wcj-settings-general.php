@@ -2,10 +2,11 @@
 /**
  * Booster for WooCommerce - Settings - General
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  * @todo    add link to Booster's shortcodes list
+ * @todo    clean up
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -84,6 +85,16 @@ $settings = array(
 		'type'     => 'checkbox',
 	),
 	array(
+		'title'    => __( 'Session Type in Booster', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_general_advanced_session_type',
+		'default'  => 'standard',
+		'type'     => 'select',
+		'options'  => array(
+			'standard' => __( 'Standard PHP sessions', 'woocommerce-jetpack' ),
+			'wc'       => __( 'WC sessions', 'woocommerce-jetpack' ),
+		),
+	),
+	array(
 		'title'    => __( 'Disable Loading Datepicker/Weekpicker CSS', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Disable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_general_advanced_disable_datepicker_css',
@@ -115,13 +126,6 @@ $settings = array(
 		'title'    => __( 'Disable Loading Timepicker JavaScript', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Disable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_general_advanced_disable_timepicker_js',
-		'default'  => 'no',
-		'type'     => 'checkbox',
-	),
-	array(
-		'title'    => __( 'Disable Saving PDFs in PHP directory for temporary files', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Disable', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_general_advanced_disable_save_sys_temp_dir',
 		'default'  => 'no',
 		'type'     => 'checkbox',
 	),
@@ -179,30 +183,32 @@ $settings = array(
 		'id'       => 'wcj_session_expiration_options',
 	),
 	array(
-		'title'    => __( 'URL Coupons Options', 'woocommerce-jetpack' ),
-		'desc'     => sprintf( __( 'Additionally you can hide standard coupon field on cart page in Booster\'s <a href="%s">Cart Customization</a> module.', 'woocommerce-jetpack' ),
-			admin_url( 'admin.php?page=wc-settings&tab=jetpack&wcj-cat=cart_and_checkout&section=cart_customization' ) ),
+		'title'    => __( 'Booster User Roles Changer Options', 'woocommerce-jetpack' ),
+		'desc'     => __( 'This will add user roles changer tool to admin bar.', 'woocommerce-jetpack' )/*  . ' ' .
+			__( 'You will be able to change user roles for Booster modules (e.g. when creating orders manually by admin for "Price based on User Role" module).', 'woocommerce-jetpack' ) */,
 		'type'     => 'title',
-		'id'       => 'wcj_url_coupons_options',
+		'id'       => 'wcj_general_user_role_changer_options',
 	),
 	array(
-		'title'    => __( 'URL Coupons', 'woocommerce-jetpack' ),
+		'title'    => __( 'Booster User Roles Changer', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'When enabled, your users can apply shop\'s standard coupons, by visiting URL. E.g.: http://yoursite.com/?wcj_apply_coupon=couponcode.', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_url_coupons_enabled',
+		'id'       => 'wcj_general_user_role_changer_enabled',
 		'default'  => 'no',
 		'type'     => 'checkbox',
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
 	),
 	array(
-		'title'    => __( 'URL Coupons Key', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'URL key. If you change this, make sure it\'s unique and is not used anywhere on your site (e.g. by another plugin).', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_url_coupons_key',
-		'default'  => 'wcj_apply_coupon',
-		'type'     => 'text',
+		'title'    => __( 'Enabled for', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_general_user_role_changer_enabled_for',
+		'default'  => array( 'administrator', 'shop_manager' ),
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => wcj_get_user_roles_options(),
 	),
 	array(
 		'type'     => 'sectionend',
-		'id'       => 'wcj_url_coupons_options',
+		'id'       => 'wcj_general_user_role_changer_options',
 	),
 	/*
 	array(

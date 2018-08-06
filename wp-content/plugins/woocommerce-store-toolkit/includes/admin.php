@@ -86,8 +86,20 @@ function woo_st_enqueue_scripts( $hook ) {
 
 	}
 
+	if( $hook == 'woocommerce_page_woo_st' ) {
+		// Time Picker Addon
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui' );
+		wp_enqueue_script( 'jquery-ui-datepicker' );
+		wp_enqueue_style( 'jquery-ui-datepicker', plugins_url( '/templates/admin/jquery-ui-datepicker.css', WOO_ST_RELPATH ) );
+/*
+		wp_enqueue_script( 'jquery-ui-timepicker', plugins_url( '/js/jquery.timepicker.js', WOO_ST_RELPATH ) );
+		wp_enqueue_style( 'jquery-ui-timepicker', plugins_url( '/templates/admin/jquery-ui-timepicker.css', WOO_ST_RELPATH ) );
+*/
+	}
+
 	// Settings
-	$pages = array( 'woocommerce_page_woo_st', 'edit-tags.php', 'user-edit.php', 'profile.php', 'index.php' );
+	$pages = array( 'woocommerce_page_woo_st', 'edit-tags.php', 'user-edit.php', 'profile.php', 'index.php', 'post.php' );
 	if( in_array( $hook, $pages ) ) {
 		wp_enqueue_style( 'woo_st_styles', plugins_url( '/templates/admin/toolkit.css', WOO_ST_RELPATH ) );
 		wp_enqueue_script( 'woo_st_scripts', plugins_url( '/templates/admin/toolkit.js', WOO_ST_RELPATH ), array( 'jquery' ) );
@@ -161,7 +173,26 @@ function woo_st_dashboard_right_now() {
 		error_log( sprintf( '[store-toolkit] Warning: Deprecation warning in woo_st_dashboard_right_now(): %s', $order_statuses->get_error_message() ) );
 	}
 
-	include_once( WOO_ST_PATH . 'templates/admin/woo-admin_st-dashboard_right_now.php' );
+	$template = 'dashboard_right_now.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -236,7 +267,26 @@ AND posts.post_date < '" . date( "Y-m-d 23:59:59", current_time( 'timestamp' ) )
 		set_transient( WOO_ST_PREFIX . '_sales_today', $sales_today, HOUR_IN_SECONDS );
 	}
 
-	include_once( WOO_ST_PATH . 'templates/admin/woo-admin_st-dashboard_sales_summary.php' );
+	$template = 'dashboard_sales_summary.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -479,7 +529,7 @@ function woo_st_request_query( $vars ) {
 }
 add_filter( 'request', 'woo_st_request_query' );
 
-function woo_st_get_user_orders( $user_id = 0, $args = array() ) {
+function woo_st_get_user_orders( $user_id = 0, $args = array(), $return = 'ids' ) {
 
 	if( empty( $user_id ) )
 		return;
@@ -490,11 +540,39 @@ function woo_st_get_user_orders( $user_id = 0, $args = array() ) {
 		'meta_value'  => $user_id,
 		'post_type'   => ( function_exists( 'wc_get_order_types' ) ? wc_get_order_types() : false ),
 		'post_status' => ( function_exists( 'wc_get_order_statuses' ) ? array_keys( wc_get_order_statuses() ) : false ),
+		'fields' => 'ids'
+	);
+	$args = wp_parse_args( $args, $defaults );
+	$order_ids = new WP_Query( $args );
+	if( $return == 'found_posts' )
+		return $order_ids->found_posts;
+	$orders = ( !empty( $order_ids->posts ) ? $order_ids->posts : false );
+
+	return $orders;
+
+}
+
+function woo_st_get_order_refunds( $order_id = 0, $args = array() ) {
+
+	if( empty( $order_id ) )
+		return;
+
+	$post_type = 'shop_order_refund';
+	$defaults = array(
+		'numberposts' => -1,
+		'post_type'   => $post_type,
+		'post_status' => ( function_exists( 'wc_get_order_statuses' ) ? array_keys( wc_get_order_statuses() ) : false ),
+		'post_parent' => $order_id
 	);
 	$args = wp_parse_args( $args, $defaults );
 
-	$orders = get_posts( $args );
-	return $orders;
+	$refunds = get_posts( $args );
+	if( !empty( $refunds ) ) {
+		foreach( $refunds as $key => $refund ) {
+			$refunds[$key]->meta = get_post_custom( $refund->ID );
+		}
+	}
+	return $refunds;
 
 }
 
@@ -581,7 +659,7 @@ function woo_st_tab_template( $tab = '' ) {
 			$images = woo_st_return_count( 'product_image' );
 			$tags = woo_st_return_count( 'product_tag' );
 			$categories = woo_st_return_count( 'product_category' );
-			if( $categories ) {
+			if( !empty( $categories ) ) {
 				$term_taxonomy = 'product_cat';
 				$args = array(
 					'hide_empty' => 0
@@ -589,13 +667,18 @@ function woo_st_tab_template( $tab = '' ) {
 				$categories_data = get_terms( $term_taxonomy, $args );
 			}
 			$orders = woo_st_return_count( 'order' );
-			if( $orders ) {
+			if( !empty( $orders ) ) {
 				$order_statuses = woo_st_get_order_statuses();
+				$orders_date = false;
+				$date_format = 'd/m/Y';
+				$orders_date_from = woo_st_get_order_first_date( $date_format );
+				$orders_date_to = date( $date_format );
 			}
 			$tax_rates = woo_st_return_count( 'tax_rate' );
 			$download_permissions = woo_st_return_count( 'download_permission' );
 			$coupons = woo_st_return_count( 'coupon' );
 			$shipping_classes = woo_st_return_count( 'shipping_class' );
+			$woocommerce_logs = woo_st_return_count( 'woocommerce_log' );
 			$attributes = woo_st_return_count( 'attribute' );
 
 			$brands = woo_st_return_count( 'product_brand' );
@@ -660,59 +743,84 @@ function woo_st_add_data_meta_boxes( $post_type, $post = '' ) {
 
 		// Product
 		$post_type = 'product';
-		add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_product_data_meta_box', true ) )
+			add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
 		$post_type = 'product_variation';
-		add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_product_data_meta_box', true ) )
+			add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
 
 		// Order
 		$post_type = 'shop_order';
-		add_meta_box( 'woo-order-post_data', __( 'Order Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
-		add_meta_box( 'woo-order-post_item', __( 'Order Items Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_items_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_order_data_meta_box', true ) )
+			add_meta_box( 'woo-order-post_data', __( 'Order Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_order_items_data_meta_box', true ) )
+			add_meta_box( 'woo-order-post_item', __( 'Order Items Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_items_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_order_refunds_data_meta_box', true ) )
+			add_meta_box( 'woo-order-post_refund', __( 'Refunds Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_refunds_data_meta_box', $post_type, 'normal', 'default' );
+		
+		if( apply_filters( 'woo_st_order_related_orders_meta_box', false ) )
+			add_meta_box( 'woo-order-related_orders', __( 'Related Orders', 'woocommerce-store-toolkit' ), 'woo_st_order_related_orders_meta_box', $post_type, 'side', 'default' );
 
 		// Coupon
 		$post_type = 'shop_coupon';
-		add_meta_box( 'woo-coupon-post_data', __( 'Coupon Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_coupon_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_coupon_data_meta_box', true ) )
+			add_meta_box( 'woo-coupon-post_data', __( 'Coupon Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_coupon_data_meta_box', $post_type, 'normal', 'default' );
 
 		$post_type = 'export_template';
-		add_meta_box( 'woo-coupon-post_data', __( 'Export Template Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_export_template_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_export_template_data_meta_box', true ) )
+			add_meta_box( 'woo-coupon-post_data', __( 'Export Template Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_export_template_data_meta_box', $post_type, 'normal', 'default' );
 
 		// WooCommerce Subscriptions - http://www.woothemes.com/products/woocommerce-subscriptions/
 		$post_type = 'shop_subscription';
 		if( post_type_exists( $post_type ) ) {
-			add_meta_box( 'woo-order-post_data', __( 'Subscription Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
+			if( apply_filters( 'woo_st_order_data_meta_box', true ) )
+				add_meta_box( 'woo-order-post_data', __( 'Subscription Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
 		}
 
 		// WooCommerce - Store Exporter Deluxe - https://www.visser.com.au/plugins/store-exporter-deluxe/
 		$post_type = 'scheduled_export';
 		if( post_type_exists( $post_type ) ) {
-			add_meta_box( 'woo-scheduled_export-post_data', __( 'Scheduled Export Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_scheduled_export_data_meta_box', $post_type, 'normal', 'default' );
+			if( apply_filters( 'woo_st_scheduled_export_data_meta_box', true ) )
+				add_meta_box( 'woo-scheduled_export-post_data', __( 'Scheduled Export Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_scheduled_export_data_meta_box', $post_type, 'normal', 'default' );
 		}
 
 		// WooCommerce Events - http://www.woocommerceevents.com/
 		if( class_exists( 'WooCommerce_Events' ) ) {
 			$post_type = 'event_magic_tickets';
-			add_meta_box( 'woo-event-post_data', __( 'Event Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_event_data_meta_box', $post_type, 'normal', 'default' );
+			if( apply_filters( 'woo_st_event_data_meta_box', true ) )
+				add_meta_box( 'woo-event-post_data', __( 'Event Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_event_data_meta_box', $post_type, 'normal', 'default' );
 		}
 
 		// WooCommerce Bookings - http://www.woothemes.com/products/woocommerce-bookings/
 		if( class_exists( 'WC_Bookings' ) ) {
 			$post_type = 'wc_booking';
-			add_meta_box( 'woo-booking-post_data', __( 'Booking Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_booking_data_meta_box', $post_type, 'normal', 'default' );
+			if( apply_filters( 'woo_st_booking_data_meta_box', true ) )
+				add_meta_box( 'woo-booking-post_data', __( 'Booking Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_booking_data_meta_box', $post_type, 'normal', 'default' );
 		}
 
 		// WooCommerce Memberships - http://www.woothemes.com/products/woocommerce-memberships/
 		if( function_exists( 'init_woocommerce_memberships' ) ) {
 			$post_type = 'wc_user_membership';
-			add_meta_box( 'woo-user_membership-post_data', __( 'User Membership Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_user_membership_data_meta_box', $post_type, 'normal', 'low' );
+			if( apply_filters( 'woo_st_user_membership_data_meta_box', true ) )
+				add_meta_box( 'woo-user_membership-post_data', __( 'User Membership Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_user_membership_data_meta_box', $post_type, 'normal', 'low' );
 			$post_type = 'wc_membership_plan';
-			add_meta_box( 'woo-membership_plan-post_data', __( 'Membership Plan Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_membership_plan_data_meta_box', $post_type, 'normal', 'low' );
+			if( apply_filters( 'woo_st_membership_plan_data_meta_box', true ) )
+				add_meta_box( 'woo-membership_plan-post_data', __( 'Membership Plan Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_membership_plan_data_meta_box', $post_type, 'normal', 'low' );
 			// These guys think they are special...
 			add_filter( 'wc_memberships_allowed_meta_box_ids', 'woo_st_extend_wc_memberships_allowed_meta_box_ids' );
 		}
 
+		// WooCommerce Appointments - http://www.bizzthemes.com/plugins/woocommerce-appointments/
+		if( class_exists( 'WC_Appointments' ) ) {
+			$post_type = 'wc_appointment';
+			if( apply_filters( 'woo_st_appointment_data_meta_box', true ) )
+				add_meta_box( 'woo-appointment-post_data', __( 'Appointment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_appointment_data_meta_box', $post_type, 'normal', 'low' );
+		}
+
 		// Attachment
 		$post_type = 'attachment';
-		add_meta_box( 'attachment-post_data', __( 'Attachment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_attachment_data_meta_box', $post_type, 'normal', 'default' );
+		if( apply_filters( 'woo_st_attachment_data_meta_box', true ) )
+			add_meta_box( 'attachment-post_data', __( 'Attachment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_attachment_data_meta_box', $post_type, 'normal', 'default' );
 
 	}
 
@@ -733,7 +841,26 @@ function woo_st_product_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/product_data.php' );
+	$template = 'product_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -743,7 +870,26 @@ function woo_st_order_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/order_data.php' );
+	$template = 'order_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -759,7 +905,125 @@ function woo_st_order_items_data_meta_box() {
 		}
 	}
 
-	include_once( WOO_ST_PATH . 'templates/admin/order_item_data.php' );
+	$template = 'order_item_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
+
+}
+
+function woo_st_order_refunds_data_meta_box() {
+
+	global $post;
+
+	$refunds = woo_st_get_order_refunds( $post->ID );
+
+	$template = 'order_refund_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
+
+}
+
+function woo_st_order_related_orders_meta_box() {
+
+	global $post;
+
+	$post_id = ( $post->ID ? $post->ID : false );
+	$orders = array();
+	$user_id = get_post_meta( $post_id, '_customer_user', true );
+	$matching = false;
+	if( !empty( $user_id ) ) {
+		$matching = 'user_id';
+		// Check if a User has been linked to this Order
+		$args = array(
+			'fields' => 'ids'
+		);
+		$orders = woo_st_get_user_orders( $user_id, $args );
+	} else {
+		$matching = 'billing_email';
+		// Fallback to the Billing e-mail address
+		$billing_email = get_post_meta( $post_id, '_billing_email', true );
+		if( !empty( $billing_email ) ) {
+			$post_type = 'shop_order';
+			$args = array(
+				'post_type' => $post_type,
+				'fields' => 'ids'
+			);
+			$woocommerce_version = woo_get_woo_version();
+			// Check if this is a pre-WooCommerce 2.2 instance
+			if( version_compare( $woocommerce_version, '2.2' ) >= 0 )
+				$args['post_status'] = ( function_exists( 'wc_get_order_statuses' ) ? apply_filters( 'woo_st_order_post_status', array_keys( wc_get_order_statuses() ) ) : 'any' );
+			else
+				$args['post_status'] = apply_filters( 'woo_st_order_post_status', 'publish' );
+			$args['meta_query'][] = array(
+				'key' => '_billing_email',
+				'value' => $billing_email
+			);
+			$order_ids = new WP_Query( $args );
+			$orders = ( !empty( $order_ids->posts ) ? $order_ids->posts : false );
+		}
+	}
+
+	// Remove this Order from the list
+	if( !empty( $orders ) ) {
+		$needle = array_search( $post_id, $orders );
+		if( $needle !== false )
+			unset( $orders[$needle] );
+	}
+
+	$template = 'order_related_orders.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -769,7 +1033,26 @@ function woo_st_coupon_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/coupon_data.php' );
+	$template = 'coupon_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -779,7 +1062,26 @@ function woo_st_export_template_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/export_template_data.php' );
+	$template = 'export_template_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -788,7 +1090,57 @@ function woo_st_category_data_meta_box( $term = '', $taxonomy = '' ) {
 	$term_taxonomy = 'woocommerce_term';
 	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
 
-	include_once( WOO_ST_PATH . 'templates/admin/category_data.php' );
+	// We support up to 5 levels deep; can be extended further as needed
+
+	// Term
+	$category_heirachy = $term->name;
+	$category_depth = 1;
+	if( !empty( $term->parent ) ) {
+		// Term > Term
+		$parent = get_term( $term->parent );
+		if( !is_wp_error( $parent ) ) {
+			$category_depth++;
+			$category_heirachy = $parent->name . ' &raquo; ' . $category_heirachy;
+			// Term > Term > Term
+			$parent = get_term( $parent->parent );
+			if( !is_wp_error( $parent ) ) {
+				$category_depth++;
+				$category_heirachy = $parent->name . ' &raquo; ' . $category_heirachy;
+				// Term > Term > Term > Term
+				$parent = get_term( $parent->parent );
+				if( !is_wp_error( $parent ) ) {
+					$category_depth++;
+					$category_heirachy = $parent->name . ' &raquo; ' . $category_heirachy;
+					// Term > Term > Term > Term > Term
+					$parent = get_term( $parent->parent );
+					if( !is_wp_error( $parent ) ) {
+						$category_heirachy = $parent->name . ' &raquo; ' . $category_heirachy;
+					}
+				}
+			}
+		}
+	}
+
+	$template = 'category_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -797,7 +1149,26 @@ function woo_st_tag_data_meta_box( $term = '', $taxonomy = '' ) {
 	$term_taxonomy = 'woocommerce_term';
 	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
 
-	include_once( WOO_ST_PATH . 'templates/admin/tag_data.php' );
+	$template = 'tag_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -806,7 +1177,26 @@ function woo_st_brand_data_meta_box( $term = '', $taxonomy = '' ) {
 	$term_taxonomy = 'woocommerce_term';
 	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
 
-	include_once( WOO_ST_PATH . 'templates/admin/brand_data.php' );
+	$template = 'brand_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -815,7 +1205,26 @@ function woo_st_product_vendor_data_meta_box( $term = '', $taxonomy = '' ) {
 	$term_taxonomy = 'yith_shop_vendor';
 	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
 
-	include_once( WOO_ST_PATH . 'templates/admin/product_vendor_data.php' );
+	$template = 'product_vendor_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -825,9 +1234,37 @@ function woo_st_user_orders( $user ) {
 		return;
 
 	$user_id = $user->data->ID;
-	$customer_orders = woo_st_get_user_orders( $user_id );
+	$posts_per_page = apply_filters( 'woo_st_user_orders_posts_per_page', 10 );
+	$args = array(
+		'numberposts' => $posts_per_page
+	);
+	$total_orders = woo_st_get_user_orders( $user_id, $args, 'found_posts' );
+	$paged = ( isset( $_GET['paged'] ) ? $_GET['paged'] : 1 );
+	if( !empty( $paged ) )
+		$args['paged'] = $paged;
+	$max_page = absint( $total_orders / $posts_per_page );
+	$orders = ( !empty( $total_orders ) ? woo_st_get_user_orders( $user_id, $args ) : false );
 
-	include_once( WOO_ST_PATH . 'templates/admin/user_orders.php' );
+	$template = 'user_orders.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -837,7 +1274,26 @@ function woo_st_user_data_meta_box( $user = '' ) {
 	$user_id = $user->data->ID;
 	$user_meta = get_user_meta( $user_id );
 
-	include_once( WOO_ST_PATH . 'templates/admin/user_data.php' );
+	$template = 'user_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -847,7 +1303,26 @@ function woo_st_scheduled_export_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/scheduled_export_data.php' );
+	$template = 'scheduled_export_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -857,7 +1332,26 @@ function woo_st_event_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/event_data.php' );
+	$template = 'event_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -867,7 +1361,26 @@ function woo_st_booking_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/booking_data.php' );
+	$template = 'booking_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -877,7 +1390,55 @@ function woo_st_user_membership_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/user_membership_data.php' );
+	$template = 'user_membership_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
+
+}
+
+function woo_st_appointment_data_meta_box() {
+
+	global $post;
+
+	$post_meta = get_post_custom( $post->ID );
+
+	$template = 'appointment_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -887,7 +1448,26 @@ function woo_st_membership_plan_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/membership_plan_data.php' );
+	$template = 'membership_plan_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 
@@ -897,7 +1477,26 @@ function woo_st_attachment_data_meta_box() {
 
 	$post_meta = get_post_custom( $post->ID );
 
-	include_once( WOO_ST_PATH . 'templates/admin/attachment_data.php' );
+	$template = 'attachment_data.php';
+	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
+
+		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
+
+	} else {
+
+		$message = sprintf( __( 'We couldn\'t load the template file <code>%s</code> within <code>%s</code>, this file should be present.', 'woocommerce-store-toolkit' ), $template, WOO_ST_PATH . 'includes/admin/...' );
+?>
+<p><strong><?php echo $message; ?></strong></p>
+<p><?php _e( 'You can see this error for one of a few common reasons', 'woocommerce-store-toolkit' ); ?>:</p>
+<ul class="ul-disc">
+	<li><?php _e( 'WordPress was unable to create this file when the Plugin was installed or updated', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin files have been recently changed and there has been a file conflict', 'woocommerce-store-toolkit' ); ?></li>
+	<li><?php _e( 'The Plugin file has been locked and cannot be opened by WordPress', 'woocommerce-store-toolkit' ); ?></li>
+</ul>
+<p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
+<?php
+
+	}
 
 }
 

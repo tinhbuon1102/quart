@@ -2,12 +2,26 @@
 /**
  * Booster for WooCommerce - Settings - Bookings
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+$days_array = array();
+$_timestamp = strtotime( 'next Sunday' );
+for ( $i = 0; $i < 7; $i++ ) {
+	$index = ( 0 == $i ? 'S' : $i );
+	$days_array[ $index ] = date_i18n( 'l', $_timestamp );
+	$_timestamp = strtotime( '+1 day', $_timestamp );
+}
+$months_array = array();
+$_timestamp = 1; //  January 1 1970
+for ( $i = 1; $i <= 12; $i++ ) {
+	$months_array[ $i ] = date_i18n( 'F', $_timestamp );
+	$_timestamp = strtotime( '+1 month', $_timestamp );
+}
 
 return array(
 	array(
@@ -81,7 +95,61 @@ return array(
 		'type'     => 'checkbox',
 	),
 	array(
+		'title'    => __( 'Advanced: Check for Outputted Data', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Ensures that data outputted only once. Enable this if you see data outputted on frontend twice. Disable if you see no data outputted.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_bookings_check_for_outputted_data',
+		'default'  => 'yes',
+		'type'     => 'checkbox',
+	),
+	array(
 		'type'     => 'sectionend',
 		'id'       => 'wcj_product_bookings_options',
+	),
+	array(
+		'title'    => __( 'Datepicker Options', 'woocommerce-jetpack' ),
+		'desc'     => __( 'This settings will be applied to all your bookings products.', 'woocommerce-jetpack' ),
+		'type'     => 'title',
+		'id'       => 'wcj_product_bookings_datepicker_options',
+	),
+	array(
+		'title'    => __( 'Date from: Exclude Days', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Leave blank to include all days.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_bookings_datepicker_date_from_exclude_days',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $days_array,
+	),
+	array(
+		'title'    => __( 'Date to: Exclude Days', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Leave blank to include all days.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_bookings_datepicker_date_to_exclude_days',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $days_array,
+	),
+	array(
+		'title'    => __( 'Date from: Exclude Months', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Leave blank to include all months.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_bookings_datepicker_date_from_exclude_months',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $months_array,
+	),
+	array(
+		'title'    => __( 'Date to: Exclude Months', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Leave blank to include all months.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_bookings_datepicker_date_to_exclude_months',
+		'default'  => '',
+		'type'     => 'multiselect',
+		'class'    => 'chosen_select',
+		'options'  => $months_array,
+	),
+	array(
+		'type'     => 'sectionend',
+		'id'       => 'wcj_product_bookings_datepicker_options',
 	),
 );

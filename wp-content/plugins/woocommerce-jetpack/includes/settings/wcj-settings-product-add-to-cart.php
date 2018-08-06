@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Product Add To Cart
  *
- * @version 2.8.0
+ * @version 3.3.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -11,29 +11,38 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 return array(
 	array(
-		'title'    => __( 'Add to Cart Local Redirect Options', 'woocommerce-jetpack' ),
+		'title'    => __( 'Add to Cart Local Redirect', 'woocommerce-jetpack' ),
 		'type'     => 'title',
-		'desc'     => __( 'This section lets you set any local URL to redirect to after successfully adding product to cart. Leave empty to redirect to checkout page (skipping the cart page).', 'woocommerce-jetpack' ),
+		'desc'     => __( 'This section lets you set any local URL to redirect to after successfully adding product to cart.', 'woocommerce-jetpack' ) . ' ' .
+			sprintf(
+				__( 'For archives - "Enable AJAX add to cart buttons on archives" checkbox in <a href="%s">WooCommerce > Settings > Products > Display</a> must be disabled.', 'woocommerce-jetpack' ),
+				admin_url( 'admin.php?page=wc-settings&tab=products&section=display' )
+			),
 		'id'       => 'wcj_add_to_cart_redirect_options',
 	),
 	array(
-		'title'    => __( 'Local Redirect', 'woocommerce-jetpack' ),
+		'title'    => __( 'All Products', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_add_to_cart_redirect_enabled',
 		'default'  => 'no',
 		'type'     => 'checkbox',
 	),
 	array(
-		'title'    => __( 'Local Redirect URL', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'Local redirect URL. Leave empty to redirect to checkout.', 'woocommerce-jetpack' ),
-		'desc'     => sprintf(
-			__( 'For archives - "Enable AJAX add to cart buttons on archives" checkbox in <a href="%s">WooCommerce > Settings > Products > Display</a> must be disabled.', 'woocommerce-jetpack' ),
-			admin_url( 'admin.php?page=wc-settings&tab=products&section=display' )
-		),
+		'desc'     => __( 'URL - All Products', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Redirect URL. Leave empty to redirect to checkout page (skipping the cart page).', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_add_to_cart_redirect_url',
 		'default'  => '',
 		'type'     => 'text',
 		'css'      => 'width:50%;min-width:300px;',
+	),
+	array(
+		'title'    => __( 'Per Product', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'This will add meta boxes to each product\'s edit page.', 'woocommerce-jetpack' ) . ' ' . apply_filters( 'booster_message', '', 'desc' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_add_to_cart_redirect_per_product_enabled',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
 	),
 	array(
 		'type'     => 'sectionend',
@@ -72,8 +81,37 @@ return array(
 		'id'       => 'wcj_add_to_cart_variable_as_radio_enabled',
 		'default'  => 'no',
 		'type'     => 'checkbox',
-		'custom_attributes' => apply_filters( 'booster_get_message', '', 'disabled' ),
-		'desc_tip' => apply_filters( 'booster_get_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc' ),
+	),
+	array(
+		'title'    => __( 'Variation Label Template', 'woocommerce-jetpack' ),
+		'desc'     => wcj_message_replaced_values( array( '%variation_title%', '%variation_price%' ) ),
+		'id'       => 'wcj_add_to_cart_variable_as_radio_variation_label_template',
+		'default'  => '%variation_title% (%variation_price%)',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:99%;',
+		'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc_no_link' ),
+	),
+	array(
+		'title'    => __( 'Variation Description Template', 'woocommerce-jetpack' ),
+		'desc'     => wcj_message_replaced_values( array( '%variation_description%' ) ),
+		'id'       => 'wcj_add_to_cart_variable_as_radio_variation_desc_template',
+		'default'  => '<br><small>%variation_description%</small>',
+		'type'     => 'custom_textarea',
+		'css'      => 'width:99%;',
+		'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc_no_link' ),
+	),
+	array(
+		'title'    => __( 'Variation Radio Input td Style', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_add_to_cart_variable_as_radio_input_td_style',
+		'default'  => 'width:10%;',
+		'type'     => 'text',
+		'css'      => 'width:99%;',
+		'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc_no_link' ),
 	),
 	array(
 		'type'     => 'sectionend',
@@ -120,39 +158,15 @@ return array(
 		'checkboxgroup' => 'end',
 	),
 	array(
+		'title'    => __( 'Set All Products to "Sold individually"', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_add_to_cart_quantity_sold_individually_all',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
 		'type'     => 'sectionend',
 		'id'       => 'wcj_add_to_cart_quantity_options',
-	),
-	array(
-		'title'    => __( 'Add to Cart Button Disabling', 'woocommerce-jetpack' ),
-		'type'     => 'title',
-		'id'       => 'wcj_add_to_cart_button_options',
-	),
-	array(
-		'title'    => __( 'Disable Add to Cart Buttons on per Product Basis', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'This will add meta box to each product\'s edit page', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_add_to_cart_button_per_product_enabled',
-		'default'  => 'no',
-		'type'     => 'checkbox',
-	),
-	array(
-		'title'    => __( 'Disable Add to Cart Buttons on All Category/Archives Pages', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Disable Buttons', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_add_to_cart_button_disable_archives',
-		'default'  => 'no',
-		'type'     => 'checkbox',
-	),
-	array(
-		'title'    => __( 'Disable Add to Cart Buttons on All Single Product Pages', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Disable Buttons', 'woocommerce-jetpack' ),
-		'id'       => 'wcj_add_to_cart_button_disable_single',
-		'default'  => 'no',
-		'type'     => 'checkbox',
-	),
-	array(
-		'type'     => 'sectionend',
-		'id'       => 'wcj_add_to_cart_button_options',
 	),
 	array(
 		'title'    => __( 'Add to Cart Button Custom URL', 'woocommerce-jetpack' ),
@@ -223,8 +237,8 @@ return array(
 		'id'       => 'wcj_product_add_to_cart_message_continue_shopping_enabled',
 		'default'  => 'no',
 		'type'     => 'checkbox',
-		'custom_attributes' => apply_filters( 'booster_get_message', '', 'disabled' ),
-		'desc_tip' => apply_filters( 'booster_get_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc' ),
 	),
 	array(
 		'id'       => 'wcj_product_add_to_cart_message_continue_shopping_text',
@@ -237,8 +251,8 @@ return array(
 		'id'       => 'wcj_product_add_to_cart_message_view_cart_enabled',
 		'default'  => 'no',
 		'type'     => 'checkbox',
-		'custom_attributes' => apply_filters( 'booster_get_message', '', 'disabled' ),
-		'desc_tip' => apply_filters( 'booster_get_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
+		'desc_tip' => apply_filters( 'booster_message', '', 'desc' ),
 	),
 	array(
 		'id'       => 'wcj_product_add_to_cart_message_view_cart_text',
@@ -248,5 +262,81 @@ return array(
 	array(
 		'type'     => 'sectionend',
 		'id'       => 'wcj_product_add_to_cart_message_options',
+	),
+	array(
+		'title'    => __( 'Add to Cart Button Position Options', 'woocommerce-jetpack' ),
+		'type'     => 'title',
+		'id'       => 'wcj_product_add_to_cart_button_position_options',
+	),
+	array(
+		'title'    => __( 'Add to Cart Button Position', 'woocommerce-jetpack' ),
+		'desc'     => '<strong>' . __( 'Enable section', 'woocommerce-jetpack' ) . '</strong>',
+		'id'       => 'wcj_product_add_to_cart_button_position_enabled',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Reposition Button on Single Product Pages', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_add_to_cart_button_position_single_enabled',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Position', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_add_to_cart_button_position_hook_single',
+		'default'  => 'woocommerce_single_product_summary',
+		'type'     => 'select',
+		'options'  => array(
+			'woocommerce_before_single_product_summary' => __( 'Before single product summary', 'woocommerce-jetpack' ),
+			'woocommerce_single_product_summary'        => __( 'Inside single product summary', 'woocommerce-jetpack' ),
+			'woocommerce_after_single_product_summary'  => __( 'After single product summary', 'woocommerce-jetpack' ),
+		),
+	),
+	array(
+		'desc'     => __( 'Priority', 'woocommerce-jetpack' ),
+		'desc_tip' => sprintf( __( 'Here are the default WooCommerce priorities for "Inside single product summary" position: %s', 'woocommerce-jetpack' ),
+			implode( ', ', array(
+				'5 - '  . __( 'Title', 'woocommerce-jetpack' ),
+				'10 - ' . __( 'Rating', 'woocommerce-jetpack' ),
+				'10 - ' . __( 'Price', 'woocommerce-jetpack' ),
+				'20 - ' . __( 'Excerpt', 'woocommerce-jetpack' ),
+				'40 - ' . __( 'Meta', 'woocommerce-jetpack' ),
+				'50 - ' . __( 'Sharing', 'woocommerce-jetpack' ),
+				'30 - ' . __( 'Add to Cart', 'woocommerce-jetpack' ),
+			)
+		) ),
+		'id'       => 'wcj_product_add_to_cart_button_position_single',
+		'default'  => 30,
+		'type'     => 'number',
+	),
+	array(
+		'title'    => __( 'Reposition Button on Category/Archive Pages', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_add_to_cart_button_position_loop_enabled',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Position', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_add_to_cart_button_position_hook_loop',
+		'default'  => 'woocommerce_after_shop_loop_item',
+		'type'     => 'select',
+		'options'  => array(
+			'woocommerce_before_shop_loop_item'       => __( 'Before product', 'woocommerce-jetpack' ),
+			'woocommerce_before_shop_loop_item_title' => __( 'Before product title', 'woocommerce-jetpack' ),
+			'woocommerce_after_shop_loop_item'        => __( 'After product', 'woocommerce-jetpack' ),
+			'woocommerce_after_shop_loop_item_title'  => __( 'After product title', 'woocommerce-jetpack' ),
+		),
+	),
+	array(
+		'desc'     => __( 'Priority', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_add_to_cart_button_position_loop',
+		'default'  => 10,
+		'type'     => 'number',
+	),
+	array(
+		'type'     => 'sectionend',
+		'id'       => 'wcj_product_add_to_cart_button_position_options',
 	),
 );

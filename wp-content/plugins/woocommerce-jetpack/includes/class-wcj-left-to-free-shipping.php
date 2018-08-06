@@ -23,7 +23,7 @@ class WCJ_Left_To_Free_Shipping extends WCJ_Module {
 
 		$this->id         = 'left_to_free_shipping';
 		$this->short_desc = __( 'Left to Free Shipping', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Display "left to free shipping" info in WooCommerce.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Display "left to free shipping" info.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-left-to-free-shipping';
 		parent::__construct();
 
@@ -35,14 +35,14 @@ class WCJ_Left_To_Free_Shipping extends WCJ_Module {
 					get_option( 'wcj_shipping_left_to_free_info_priority_cart', 10 )
 				);
 			}
-			if ( 'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_shipping_left_to_free_info_enabled_mini_cart', 'no' ) ) ) {
+			if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_shipping_left_to_free_info_enabled_mini_cart', 'no' ) ) ) {
 				add_action(
 					get_option( 'wcj_shipping_left_to_free_info_position_mini_cart', 'woocommerce_after_mini_cart' ),
 					array( $this, 'show_left_to_free_shipping_info_mini_cart' ),
 					get_option( 'wcj_shipping_left_to_free_info_priority_mini_cart', 10 )
 				);
 			}
-			if ( 'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_shipping_left_to_free_info_enabled_checkout', 'no' ) ) ) {
+			if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_shipping_left_to_free_info_enabled_checkout', 'no' ) ) ) {
 				add_action(
 					get_option( 'wcj_shipping_left_to_free_info_position_checkout', 'woocommerce_checkout_after_order_review' ),
 					array( $this, 'show_left_to_free_shipping_info_checkout' ),

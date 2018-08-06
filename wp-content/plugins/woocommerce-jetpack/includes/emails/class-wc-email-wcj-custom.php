@@ -1,4 +1,14 @@
 <?php
+/**
+ * Booster for WooCommerce - Custom Email
+ *
+ * An email sent to recipient list when selected triggers are called.
+ *
+ * @version 3.2.4
+ * @since   2.3.9
+ * @author  Algoritmika Ltd.
+ * @extends WC_Email
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -6,35 +16,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( ! class_exists( 'WC_Email_WCJ_Custom' ) ) :
 
-/**
- * Custom Email
- *
- * An email sent to recipient list when selected triggers are called.
- *
- * @version 2.5.6
- * @since   2.3.9
- * @author  Algoritmika Ltd.
- * @extends WC_Email
- */
 class WC_Email_WCJ_Custom extends WC_Email {
 
 	/**
 	 * Constructor
 	 *
-	 * @version 2.5.5
+	 * @version 3.2.4
 	 */
 	function __construct( $id = 1 ) {
 
 		$this->id               = 'wcj_custom' . '_' . $id;
-		$this->customer_email   = ( '%customer%' === $this->get_option( 'recipient' ) ) ? true : false;
+		$this->customer_email   = ( '%customer%' === $this->get_option( 'recipient' ) );
 		$this->title            = get_option( 'wcj_emails_custom_emails_admin_title_' . $id, __( 'Custom', 'woocommerce-jetpack' ) . ' #' . $id );
 		$this->description      = __( 'Custom emails are sent to the recipient list when selected triggers are called.', 'woocommerce-jetpack' );
 
 		$this->heading          = __( 'Custom Heading', 'woocommerce' );
 		$this->subject          = __( '[{site_title}] Custom Subject - Order ({order_number}) - {order_date}', 'woocommerce-jetpack' );
-
-		/* $this->template_html    = 'emails/admin-new-order.php';
-		$this->template_plain   = 'emails/plain/admin-new-order.php'; */
 
 		// Triggers for this email
 		$trigger_hooks = $this->get_option( 'trigger' );
@@ -57,8 +54,9 @@ class WC_Email_WCJ_Custom extends WC_Email {
 		if ( ! $this->customer_email ) {
 			$this->recipient = $this->get_option( 'recipient' );
 
-			if ( ! $this->recipient )
+			if ( ! $this->recipient ) {
 				$this->recipient = get_option( 'admin_email' );
+			}
 		}
 	}
 
@@ -71,16 +69,8 @@ class WC_Email_WCJ_Custom extends WC_Email {
 	 * @since   2.5.6
 	 * @return  string
 	 */
-	public function validate_custom_textarea_field( $key, $value ) {
+	function validate_custom_textarea_field( $key, $value ) {
 		$value = is_null( $value ) ? '' : $value;
-		/* return wp_kses( trim( stripslashes( $value ) ),
-			array_merge(
-				array(
-					'iframe' => array( 'src' => true, 'style' => true, 'id' => true, 'class' => true )
-				),
-				wp_kses_allowed_html( 'post' )
-			)
-		); */
 		return stripslashes( $value );
 	}
 
@@ -93,7 +83,7 @@ class WC_Email_WCJ_Custom extends WC_Email {
 	 * @since   2.5.6
 	 * @return  string
 	 */
-	public function generate_custom_textarea_html( $key, $data ) {
+	function generate_custom_textarea_html( $key, $data ) {
 		return $this->generate_textarea_html( $key, $data );
 	}
 
@@ -106,39 +96,40 @@ class WC_Email_WCJ_Custom extends WC_Email {
 	 * @param   mixed  $empty_value
 	 * @return  mixed
 	 */
-	public function get_option( $key, $empty_value = null ) {
+	function get_option( $key, $empty_value = null ) {
 		$grandparent = get_parent_class( 'WC_Email' );
 		$value = $grandparent::get_option( $key, $empty_value );
 		return ( is_array( $value ) ) ? $value : apply_filters( 'woocommerce_email_get_option', __( $value ), $this, $value, $key, $empty_value );
 	}
 
 	/**
-	 * Trigger.
+	 * trigger.
 	 *
-	 * @version 2.5.6
+	 * @version 3.2.4
 	 */
 	function trigger( $order_id ) {
 
-		if ( ! $this->is_enabled() /* || ! $this->get_recipient() */ ) {
+		if ( ! $this->is_enabled() ) {
 			return;
 		}
 
 		if ( $order_id ) {
 
-			$this->object = wc_get_order( $order_id );
+			$this->object = wc_get_order( $order_id ); // must be `object` as it's named so in parent class (`WC_Email`). E.g. for attachments.
 
 			if ( $this->customer_email ) {
-				$this->recipient = $this->object->billing_email;
+				$this->recipient = wcj_get_order_billing_email( $this->object );
+			} elseif ( false !== strpos( $this->recipient, '%customer%' ) ) {
+				$this->recipient = str_replace( '%customer%', wcj_get_order_billing_email( $this->object ), $this->recipient );
 			}
 
 			$this->find['order-date']      = '{order_date}';
 			$this->find['order-number']    = '{order_number}';
 
-			$this->replace['order-date']   = date_i18n( wc_date_format(), strtotime( $this->object->order_date ) );
+			$this->replace['order-date']   = date_i18n( wc_date_format(), strtotime( wcj_get_order_date( $this->object ) ) );
 			$this->replace['order-number'] = $this->object->get_order_number();
 
 			global $post;
-			$order = wc_get_order( $order_id );
 			if ( 'woocommerce_checkout_order_processed_notification' === current_filter() ) {
 				// Check status
 				$is_status_found = false;
@@ -146,7 +137,7 @@ class WC_Email_WCJ_Custom extends WC_Email {
 				foreach ( $trigger_hooks as $trigger_hook ) {
 					if ( false !== ( $pos = strpos( $trigger_hook, 'woocommerce_new_order_notification' ) ) ) {
 						$the_status = 'wc-' . substr( $trigger_hook, 35 );
-						if ( 'wc-wcj_any_status' === $the_status || $order->post_status === $the_status ) {
+						if ( 'wc-wcj_any_status' === $the_status || wcj_get_order_status( $this->object ) === $the_status ) {
 							$is_status_found = true;
 							break;
 						}
@@ -156,7 +147,7 @@ class WC_Email_WCJ_Custom extends WC_Email {
 					return;
 				}
 			}
-			$post = $order->post;
+			$post = ( WCJ_IS_WC_VERSION_BELOW_3 ? $this->object->post : get_post( $order_id ) );
 			setup_postdata( $post );
 		}
 
@@ -177,62 +168,37 @@ class WC_Email_WCJ_Custom extends WC_Email {
 	}
 
 	/**
-	 * get_content_html function.
+	 * get_content_html.
 	 *
-	 * @version 2.4.8
+	 * @version 3.1.0
 	 * @access  public
 	 * @return  string
+	 * @todo    (maybe) use `wc_get_template` for custom templates (same for `get_content_plain()`)
 	 */
 	function get_content_html() {
-		/* ob_start();
-		wc_get_template( $this->template_html, array(
-			'order'         => $this->object,
-			'email_heading' => $this->get_heading(),
-			'sent_to_admin' => true,
-			'plain_text'    => false
-		), '', wcj_plugin_path() . '/templates' );
-		return ob_get_clean(); */
-		return do_shortcode( $this->get_option( 'content_html_template' ) );
+		$content = $this->get_option( 'content_html_template' );
+		if ( 'yes' === $this->get_option( 'wrap_in_wc_template' ) ) {
+			$content = wcj_wrap_in_wc_email_template( $content, $this->get_heading() );
+		}
+		return do_shortcode( $content );
 	}
 
 	/**
-	 * get_content_plain function.
+	 * get_content_plain.
 	 *
 	 * @version 2.4.8
 	 * @access  public
 	 * @return  string
 	 */
 	function get_content_plain() {
-		/* ob_start();
-		wc_get_template( $this->template_plain, array(
-			'order'         => $this->object,
-			'email_heading' => $this->get_heading(),
-			'sent_to_admin' => true,
-			'plain_text'    => true
-		), '', wcj_plugin_path() . '/templates' );
-		return ob_get_clean(); */
 		return do_shortcode( $this->get_option( 'content_plain_template' ) );
 	}
 
 	/**
-	 * get_order_statuses.
+	 * Initialise settings form fields.
 	 *
-	 * @version 2.4.0
-	 * @since   2.4.0
-	 */
-	function get_order_statuses() {
-		$result = array();
-		$statuses = function_exists( 'wc_get_order_statuses' ) ? wc_get_order_statuses() : array();
-		foreach( $statuses as $status => $status_name ) {
-			$result[ substr( $status, 3 ) ] = $statuses[ $status ];
-		}
-		return $result;
-	}
-
-	/**
-	 * Initialise settings form fields
-	 *
-	 * @version 2.5.6
+	 * @version 3.1.0
+	 * @todo    (maybe) `chosen_select` class in `trigger`
 	 */
 	function init_form_fields() {
 
@@ -244,9 +210,9 @@ class WC_Email_WCJ_Custom extends WC_Email {
 		$default_plain_template = ob_get_clean();
 
 		$status_change_triggers = array();
-		$new_order_triggers = array();
-		$status_triggers = array();
-		$order_statuses = $this->get_order_statuses();
+		$new_order_triggers     = array();
+		$status_triggers        = array();
+		$order_statuses         = wcj_get_order_statuses();
 		foreach ( $order_statuses as $slug => $name ) {
 			$new_order_triggers[ 'woocommerce_new_order_notification_' . $slug ] = sprintf( __( 'New order (%s)', 'woocommerce-jetpack' ), $name );
 			$status_triggers[ 'woocommerce_order_status_' . $slug . '_notification' ] = sprintf( __( 'Order status updated to %s', 'woocommerce-jetpack' ), $name );
@@ -289,14 +255,15 @@ class WC_Email_WCJ_Custom extends WC_Email {
 					$status_change_triggers
 				),
 				'css'           => 'height:300px;',
-//				'class'         => 'chosen_select',
 			),
 			'recipient' => array(
 				'title'         => __( 'Recipient(s)', 'woocommerce' ),
 				'type'          => 'text',
-				'description'   => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to <code>%s</code>.', 'woocommerce' ), esc_attr( get_option('admin_email') ) ) . ' ' . __( 'Or enter <code>%customer%</code> to send to customer billing email.', 'woocommerce-jetpack' ),
+				'description'   => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to <code>%s</code>.', 'woocommerce' ), esc_attr( get_option( 'admin_email' ) ) ) . ' ' .
+					__( 'Or enter <code>%customer%</code> to send to customer billing email.', 'woocommerce-jetpack' ),
 				'placeholder'   => '',
 				'default'       => '',
+				'css'           => 'width:99%;min-width:300px;',
 			),
 			'subject' => array(
 				'title'         => __( 'Subject', 'woocommerce' ),
@@ -304,13 +271,7 @@ class WC_Email_WCJ_Custom extends WC_Email {
 				'description'   => sprintf( __( 'This controls the email subject line. Leave blank to use the default subject: <code>%s</code>.', 'woocommerce' ), $this->subject ),
 				'placeholder'   => '',
 				'default'       => '',
-			),
-			'heading' => array(
-				'title'         => __( 'Email Heading', 'woocommerce' ),
-				'type'          => 'text',
-				'description'   => sprintf( __( 'This controls the main heading contained within the email notification. Leave blank to use the default heading: <code>%s</code>.', 'woocommerce' ), $this->heading ),
-				'placeholder'   => '',
-				'default'       => '',
+				'css'           => 'width:99%;min-width:300px;',
 			),
 			'email_type' => array(
 				'title'         => __( 'Email type', 'woocommerce' ),
@@ -320,6 +281,19 @@ class WC_Email_WCJ_Custom extends WC_Email {
 				'class'         => 'email_type wc-enhanced-select',
 				'options'       => $this->get_email_type_options(),
 			),
+			'wrap_in_wc_template' => array(
+				'title'         => __( 'Wrap in WC Email Template', 'woocommerce' ),
+				'type'          => 'checkbox',
+				'default'       => 'no',
+			),
+			'heading' => array(
+				'type'          => 'text',
+				'desc_tip'      =>__( 'WC Email Heading. Used only if "Wrap in WC Email Template" is enabled and only for HTML templates.', 'woocommerce-jetpack' ),
+				'description'   => sprintf( __( 'This controls the main heading contained within the email notification. Leave blank to use the default heading: <code>%s</code>.', 'woocommerce' ), $this->heading ),
+				'placeholder'   => '',
+				'default'       => '',
+				'css'           => 'width:99%;min-width:300px;',
+			),
 			'content_html_template' => array(
 				'title'         => __( 'HTML template', 'woocommerce' ),
 				'type'          => 'custom_textarea',
@@ -327,7 +301,7 @@ class WC_Email_WCJ_Custom extends WC_Email {
 				'description'   => '',
 				'placeholder'   => '',
 				'default'       => $default_html_template,
-				'css'           => 'width:66%;min-width:300px;height:500px;',
+				'css'           => 'width:99%;min-width:300px;height:500px;',
 			),
 			'content_plain_template' => array(
 				'title'         => __( 'Plain text template', 'woocommerce' ),
@@ -336,12 +310,10 @@ class WC_Email_WCJ_Custom extends WC_Email {
 				'description'   => '',
 				'placeholder'   => '',
 				'default'       => $default_plain_template,
-				'css'           => 'width:66%;min-width:300px;height:500px;',
+				'css'           => 'width:99%;min-width:300px;height:500px;',
 			),
 		);
 	}
 }
 
 endif;
-
-//return new WC_Email_WCJ_Custom();

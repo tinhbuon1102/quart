@@ -2,32 +2,56 @@
 /**
  * Booster for WooCommerce - Settings - Price Formats
  *
- * @version 2.8.0
+ * @version 3.5.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
+ * @todo    (maybe) add `desc_tip` to `wcj_price_formats_general_trim_zeros`
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 $settings = array(
 	array(
-		'title'    => __( 'Formats', 'woocommerce-jetpack' ),
+		'title'    => __( 'General Options', 'woocommerce-jetpack' ),
+		'type'     => 'title',
+		'id'       => 'wcj_price_formats_general_options',
+	),
+	array(
+		'title'    => __( 'Trim Zeros in Prices', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'type'     => 'checkbox',
+		'id'       => 'wcj_price_formats_general_trim_zeros',
+		'default'  => 'no',
+	),
+	array(
+		'type'     => 'sectionend',
+		'id'       => 'wcj_price_formats_general_options',
+	),
+	array(
+		'title'    => __( 'Price Formats by Currency (or WPML)', 'woocommerce-jetpack' ),
 		'type'     => 'title',
 		'id'       => 'wcj_price_formats_options',
+	),
+	array(
+		'title'    => __( 'Price Formats by Currency (or WPML)', 'woocommerce-jetpack' ),
+		'desc'     => '<strong>' . __( 'Enable section', 'woocommerce-jetpack' ) . '</strong>',
+		'type'     => 'checkbox',
+		'id'       => 'wcj_price_formats_by_currency_enabled',
+		'default'  => 'yes',
 	),
 	array(
 		'title'    => __( 'Total Number', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_price_formats_total_number',
 		'default'  => 1,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array( 'step' => '1', 'min'  => '0', )
 		),
 	),
 );
-for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_price_formats_total_number', 1 ) ); $i++ ) {
+for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_price_formats_total_number', 1 ) ); $i++ ) {
 	$currency_symbol = wcj_get_currency_symbol( get_option( 'wcj_price_formats_currency_' . $i, get_woocommerce_currency() ) );
 	$settings = array_merge( $settings, array(
 		array(
@@ -53,11 +77,25 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_pri
 			'css'      => 'width:300px;',
 		),
 		array(
+			'desc'     => __( 'Additional Currency Code Position', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_price_formats_currency_code_position_' . $i,
+			'default'  => 'none',
+			'type'     => 'select',
+			'options'  => array(
+				'none'        => __( 'Do not add currency code', 'woocommerce-jetpack' ),
+				'left'        => __( 'Left', 'woocommerce' ),
+				'right'       => __( 'Right', 'woocommerce' ),
+				'left_space'  => __( 'Left with space', 'woocommerce' ),
+				'right_space' => __( 'Right with space', 'woocommerce' ),
+			),
+		),
+		array(
 			'desc'     => __( 'Thousand Separator', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_price_formats_thousand_separator_' . $i,
 			'default'  => wc_get_price_thousand_separator(),
 			'type'     => 'text',
 			'css'      => 'width:300px;',
+			'wcj_raw'  => true,
 		),
 		array(
 			'desc'     => __( 'Decimal Separator', 'woocommerce-jetpack' ),
@@ -65,11 +103,12 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_pri
 			'default'  => wc_get_price_decimal_separator(),
 			'type'     => 'text',
 			'css'      => 'width:300px;',
+			'wcj_raw'  => true,
 		),
 		array(
 			'desc'     => __( 'Number of Decimals', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_price_formats_number_of_decimals_' . $i,
-			'default'  => wc_get_price_decimals(),
+			'default'  => get_option( 'woocommerce_price_num_decimals', 2 ),
 			'type'     => 'number',
 			'custom_attributes' => array( 'min'  => 0, 'step' => 1 ),
 			'css'      => 'width:300px;',

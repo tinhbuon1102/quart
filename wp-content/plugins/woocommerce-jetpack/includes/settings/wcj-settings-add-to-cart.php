@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Add to Cart
  *
- * @version 2.8.0
+ * @version 3.7.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -30,9 +30,9 @@ $settings = array(
 		'id'       => 'wcj_add_to_cart_per_category_total_groups_number',
 		'default'  => 1,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array( 'step' => '1', 'min'  => '1' )
 		),
 		'css'      => 'width:100px;',
@@ -45,7 +45,7 @@ if ( ! empty( $product_categories ) && ! is_wp_error( $product_categories ) ){
 		$product_cats[ $product_category->term_id ] = $product_category->name;
 	}
 }
-for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_add_to_cart_per_category_total_groups_number', 1 ) ); $i++ ) {
+for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_add_to_cart_per_category_total_groups_number', 1 ) ); $i++ ) {
 	$settings = array_merge( $settings, array(
 		array(
 			'title'    => __( 'Group', 'woocommerce-jetpack' ) . ' #' . $i,
@@ -55,7 +55,6 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_add
 			'type'     => 'checkbox',
 		),
 		array(
-			'title'    => '',
 			'desc'     => __( 'categories', 'woocommerce-jetpack' ),
 			'desc_tip' => __( '', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_add_to_cart_per_category_ids_group_' . $i,
@@ -66,7 +65,6 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_add
 			'options'  => $product_cats,
 		),
 		array(
-			'title'    => '',
 			'desc'     => __( 'Button text - single product view', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_add_to_cart_per_category_text_single_group_' . $i,
 			'default'  => '',
@@ -74,7 +72,6 @@ for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_add
 			'css'      => 'width:20%;min-width:200px;',
 		),
 		array(
-			'title'    => '',
 			'desc'     => __( 'Button text - product archive (category) view', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_add_to_cart_per_category_text_archive_group_' . $i,
 			'default'  => '',
@@ -113,7 +110,7 @@ $settings = array_merge( $settings, array(
 		'id'       => 'wcj_add_to_cart_text_options',
 	),
 	array(
-		'title'    => __( 'Per Product Labels', 'woocommerce-jetpack' ),
+		'title'    => __( 'Per Product Type Labels', 'woocommerce-jetpack' ),
 		'desc'     => '<strong>' . __( 'Enable Section', 'woocommerce-jetpack' ) . '</strong>',
 		'id'       => 'wcj_add_to_cart_text_enabled',
 		'default'  => 'no',
@@ -124,27 +121,27 @@ $groups_by_product_type = array(
 	array(
 		'id'       => 'simple',
 		'title'    => __( 'Simple product', 'woocommerce-jetpack' ),
-		'default'  => 'Add to cart',
+		'default'  => __( 'Add to cart', 'woocommerce' ),
 	),
 	array(
 		'id'       => 'variable',
 		'title'    => __( 'Variable product', 'woocommerce-jetpack' ),
-		'default'  => 'Select options',
+		'default'  => __( 'Select options', 'woocommerce' ),
 	),
 	array(
 		'id'       => 'external',
 		'title'    => __( 'External product', 'woocommerce-jetpack' ),
-		'default'  => 'Buy product',
+		'default'  => __( 'Buy product', 'woocommerce' ),
 	),
 	array(
 		'id'       => 'grouped',
 		'title'    => __( 'Grouped product', 'woocommerce-jetpack' ),
-		'default'  => 'View products',
+		'default'  => __( 'View products', 'woocommerce' ),
 	),
 	array(
 		'id'       => 'other',
 		'title'    => __( 'Other product', 'woocommerce-jetpack' ),
-		'default'  => 'Read more',
+		'default'  => __( 'Read more', 'woocommerce' ),
 	),
 );
 foreach ( $groups_by_product_type as $group_by_product_type ) {
@@ -159,7 +156,6 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 			'css'      => 'width:30%;min-width:300px;',
 		),
 		array(
-			'title'    => '',
 			'id'       => 'wcj_add_to_cart_text_on_archives_' . $group_by_product_type['id'],
 			'desc'     => __( 'Product category (archive) view.', 'woocommerce-jetpack' ),
 			'desc_tip' => __( 'Leave blank to disable.', 'woocommerce-jetpack' ) . ' ' . __( 'Default: ', 'woocommerce-jetpack' ) . $group_by_product_type['default'],
@@ -171,7 +167,22 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 	if ( 'variable' !== $group_by_product_type['id'] )
 		$settings = array_merge( $settings, array(
 			array(
-				'title'    => '',
+				'desc'     => __( 'Products on sale. Single product view.', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Leave blank to disable. Default: Add to cart', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_add_to_cart_text_on_single_sale_' . $group_by_product_type['id'],
+				'default'  => __( 'Add to cart', 'woocommerce-jetpack' ),
+				'type'     => 'text',
+				'css'      => 'width:30%;min-width:300px;',
+			),
+			array(
+				'desc'     => __( 'Products on sale. Product category (archive) view.', 'woocommerce-jetpack' ),
+				'desc_tip' => __( 'Leave blank to disable. Default: Add to cart', 'woocommerce-jetpack' ),
+				'id'       => 'wcj_add_to_cart_text_on_archives_sale_' . $group_by_product_type['id'],
+				'default'  => __( 'Add to cart', 'woocommerce-jetpack' ),
+				'type'     => 'text',
+				'css'      => 'width:30%;min-width:300px;',
+			),
+			array(
 				'desc'     => __( 'Products with price set to 0 (i.e. free). Single product view.', 'woocommerce-jetpack' ),
 				'desc_tip' => __( 'Leave blank to disable. Default: Add to cart', 'woocommerce-jetpack' ),
 				'id'       => 'wcj_add_to_cart_text_on_single_zero_price_' . $group_by_product_type['id'],
@@ -180,7 +191,6 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 				'css'      => 'width:30%;min-width:300px;',
 			),
 			array(
-				'title'    => '',
 				'desc'     => __( 'Products with price set to 0 (i.e. free). Product category (archive) view.', 'woocommerce-jetpack' ),
 				'desc_tip' => __( 'Leave blank to disable. Default: Add to cart', 'woocommerce-jetpack' ),
 				'id'       => 'wcj_add_to_cart_text_on_archives_zero_price_' . $group_by_product_type['id'],
@@ -189,7 +199,6 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 				'css'      => 'width:30%;min-width:300px;',
 			),
 			array(
-				'title'    => '',
 				'desc'     => __( 'Products with empty price. Product category (archive) view.', 'woocommerce-jetpack' ),
 				'desc_tip' => __( 'Leave blank to disable. Default: Read More', 'woocommerce-jetpack' ),
 				'id'       => 'wcj_add_to_cart_text_on_archives_no_price_' . $group_by_product_type['id'],
@@ -203,7 +212,6 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 	}
 	$settings = array_merge( $settings, array(
 		array(
-			'title'    => '',
 			'id'       => 'wcj_add_to_cart_text_on_single_in_cart_' . $group_by_product_type['id'],
 			'desc'     => __( 'Already in cart. Single product view.', 'woocommerce-jetpack' ),
 			'desc_tip' => __( 'Leave blank to disable.', 'woocommerce-jetpack' ) . ' ' .
@@ -214,7 +222,6 @@ foreach ( $groups_by_product_type as $group_by_product_type ) {
 			'css'      => 'width:30%;min-width:300px;',
 		),
 		array(
-			'title'    => '',
 			'id'       => 'wcj_add_to_cart_text_on_archives_in_cart_' . $group_by_product_type['id'],
 			'desc'     => __( 'Already in cart. Product category (archive) view.', 'woocommerce-jetpack' ),
 			'desc_tip' => __( 'Leave blank to disable.', 'woocommerce-jetpack' ) . ' ' .

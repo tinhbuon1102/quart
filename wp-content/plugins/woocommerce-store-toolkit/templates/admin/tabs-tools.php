@@ -4,6 +4,10 @@
 <p class="description"><?php _e( 'Scan the WooCommerce Products catalogue for Products that do not have any Product Type assigned to them and assign them to the default Simple Product Type.', 'woocommerce-store-toolkit' ); ?></p>
 <hr />
 
+<h4><a href="<?php echo esc_url( add_query_arg( array( 'action' => 'delete-corrupt-variations', '_wpnonce' => wp_create_nonce( 'woo_st_delete_corrupt_variations' ) ) ) ); ?>"><?php _e( 'Delete corrupt Product Variations', 'woocommerce-store-toolkit' ); ?></a></h4>
+<p class="description"><?php _e( 'Scan the WooCommerce Products catalogue for Variations that are obviously corrupt. Corrupt Variations are identified as having no Post Title and an invalid array of duplicate values set for the Stock Status detail.', 'woocommerce-store-toolkit' ); ?></p>
+<hr />
+
 <h4><a href="<?php echo esc_url( add_query_arg( array( 'action' => 'refresh-product-transients', '_wpnonce' => wp_create_nonce( 'woo_st_refresh_product_transients' ) ) ) ); ?>"><?php _e( 'Refresh Product Transients', 'woocommerce-store-toolkit' ); ?></a></h4>
 <p class="description"><?php _e( 'Clear the Product transients for all WooCommerce Products.', 'woocommerce-store-toolkit' ); ?></p>
 <hr />

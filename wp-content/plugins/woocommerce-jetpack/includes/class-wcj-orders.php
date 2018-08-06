@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Orders
  *
- * @version 2.8.0
+ * @version 3.7.0
  * @author  Algoritmika Ltd.
  */
 
@@ -15,13 +15,16 @@ class WCJ_Orders extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.4.0
+	 * @todo    Bulk Regenerate Download Permissions - copy "cron" to plugin
+	 * @todo    Bulk Regenerate Download Permissions - maybe move "bulk actions" to free
+	 * @todo    Bulk Regenerate Download Permissions - maybe as new module
 	 */
 	function __construct() {
 
 		$this->id         = 'orders';
 		$this->short_desc = __( 'Orders', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Orders auto-complete. Custom admin order list columns. Admin order currency. Admin order list multiple status filtering.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Orders auto-complete; admin order currency; admin order navigation; bulk regenerate download permissions for orders.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-orders';
 		parent::__construct();
 
@@ -31,15 +34,6 @@ class WCJ_Orders extends WCJ_Module {
 			if ( 'yes' === get_option( 'wcj_order_auto_complete_enabled', 'no' ) ) {
 				add_action( 'woocommerce_thankyou',         array( $this, 'auto_complete_order' ), PHP_INT_MAX );
 				add_action( 'woocommerce_payment_complete', array( $this, 'auto_complete_order' ), PHP_INT_MAX );
-			}
-
-			// Custom columns
-			add_filter( 'manage_edit-shop_order_columns',        array( $this, 'add_order_columns' ),   PHP_INT_MAX - 1 );
-			add_action( 'manage_shop_order_posts_custom_column', array( $this, 'render_order_column' ), PHP_INT_MAX );
-			if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_country', 'no' ) || 'yes' === get_option( 'wcj_orders_list_custom_columns_currency', 'no' ) ) {
-				// Billing country or Currency filtering
-				add_action( 'restrict_manage_posts', array( $this, 'restrict_manage_posts' ) );
-				add_filter( 'parse_query',           array( $this, 'parse_query' ) );
 			}
 
 			// Order currency
@@ -53,153 +47,234 @@ class WCJ_Orders extends WCJ_Module {
 				}
 			}
 
-			// Multiple status
-			if ( 'yes' === get_option( 'wcj_order_admin_list_multiple_status_not_completed_link', 'no' ) ) {
-				add_filter( 'views_edit-shop_order', array( $this, 'add_shop_order_multiple_statuses_not_completed_link' ) );
-				add_action( 'pre_get_posts',         array( $this, 'filter_shop_order_multiple_statuses_not_completed_link' ), PHP_INT_MAX, 1 );
-			}
-			if ( 'no' != get_option( 'wcj_order_admin_list_multiple_status_filter', 'no' ) ) {
-				add_action( 'restrict_manage_posts', array( $this, 'add_shop_order_multiple_statuses' ), PHP_INT_MAX, 2 );
-				add_action( 'pre_get_posts',         array( $this, 'filter_shop_order_multiple_statuses' ), PHP_INT_MAX, 1 );
-			}
-			if ( 'yes' === get_option( 'wcj_order_admin_list_hide_default_statuses_menu', 'no' ) ) {
-				add_action( 'admin_head', array( $this, 'hide_default_statuses_menu' ), PHP_INT_MAX );
+			// Bulk Regenerate Download Permissions
+			if ( 'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_order_bulk_regenerate_download_permissions_enabled', 'no' ) ) ) {
+				// Actions
+				if ( 'yes' === get_option( 'wcj_order_bulk_regenerate_download_permissions_actions', 'no' ) ) {
+					add_filter( 'bulk_actions-edit-shop_order',        array( $this, 'register_bulk_actions_regenerate_download_permissions' ), PHP_INT_MAX );
+					add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_bulk_actions_regenerate_download_permissions' ), 10, 3 );
+				}
+				// All orders
+				add_action( 'woojetpack_after_settings_save', array( $this, 'maybe_bulk_regenerate_download_permissions_all_orders' ) );
+				// Admin notices
+				add_filter( 'admin_notices', array( $this, 'admin_notice_regenerate_download_permissions' ) );
+				// All orders - Cron
+				if ( 'disabled' != apply_filters( 'booster_option', 'disabled', get_option( 'wcj_order_bulk_regenerate_download_permissions_all_orders_cron', 'disabled' ) ) ) {
+					add_action( 'init',       array( $this, 'schedule_bulk_regenerate_download_permissions_all_orders_cron' ) );
+					add_action( 'admin_init', array( $this, 'schedule_bulk_regenerate_download_permissions_all_orders_cron' ) );
+					add_filter( 'cron_schedules', 'wcj_crons_add_custom_intervals' );
+					add_action( 'wcj_bulk_regenerate_download_permissions_all_orders_cron', array( $this, 'bulk_regenerate_download_permissions_all_orders' ) );
+				}
 			}
 
-			// Columns Order
-			if ( 'yes' === get_option( 'wcj_order_admin_list_columns_order_enabled', 'no' ) ) {
-				add_filter( 'manage_edit-shop_order_columns', array( $this, 'rearange_order_columns' ), PHP_INT_MAX - 1 );
+			// Country by IP
+			if ( 'yes' === get_option( 'wcj_orders_country_by_ip_enabled', 'no' ) ) {
+				add_action( 'add_meta_boxes', array( $this, 'add_country_by_ip_meta_box' ) );
 			}
+
+			// Orders navigation
+			if ( 'yes' === get_option( 'wcj_orders_navigation_enabled', 'no' ) ) {
+				add_action( 'add_meta_boxes', array( $this, 'add_orders_navigation_meta_box' ) );
+				add_action( 'admin_init',     array( $this, 'handle_orders_navigation' ) );
+			}
+
 		}
 	}
 
 	/**
-	 * hide_default_statuses_menu.
+	 * handle_orders_navigation.
 	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
+	 * @version 3.4.0
+	 * @since   3.4.0
 	 */
-	function hide_default_statuses_menu() {
-		echo '<style>body.post-type-shop_order ul.subsubsub {display: none !important;}</style>';
+	function handle_orders_navigation() {
+		if ( isset( $_GET['wcj_orders_navigation'] ) ) {
+			$url = ( ! isset( $_GET['post'] ) || false === ( $adjacent_order_id = wcj_get_adjacent_order_id( $_GET['post'], $_GET['wcj_orders_navigation'] ) ) ?
+				remove_query_arg( 'wcj_orders_navigation' ) :
+				admin_url( 'post.php?post=' . $adjacent_order_id . '&action=edit' ) );
+			wp_safe_redirect( $url );
+			exit;
+		}
 	}
 
 	/**
-	 * get_orders_default_columns_in_order.
+	 * add_orders_navigation_meta_box.
 	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
+	 * @version 3.4.0
+	 * @since   3.4.0
 	 */
-	function get_orders_default_columns_in_order() {
-		$columns = array(
-			'cb',
-			'order_status',
-			'order_title',
-			'order_items',
-			'billing_address',
-			'shipping_address',
-			'customer_message',
-			'order_notes',
-			'order_date',
-			'order_total',
-			'order_actions',
+	function add_orders_navigation_meta_box() {
+		add_meta_box(
+			'wc-jetpack-' . $this->id . '-navigation',
+			__( 'Booster', 'woocommerce-jetpack' ) . ': ' . __( 'Order Navigation', 'woocommerce-jetpack' ),
+			array( $this, 'create_orders_navigation_meta_box' ),
+			'shop_order',
+			'side',
+			'high'
 		);
-		return implode( PHP_EOL, $columns );
 	}
 
 	/**
-	 * add_shop_order_multiple_statuses_not_completed_link.
+	 * create_orders_navigation_meta_box.
 	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
+	 * @version 3.4.0
+	 * @since   3.4.0
+	 * @todo    this will output the link, even if there no prev/next orders available
 	 */
-	function add_shop_order_multiple_statuses_not_completed_link( $views ) {
-		global $wp_query;
-		if ( ! current_user_can( 'edit_others_pages' ) ) {
-			return $views;
+	function create_orders_navigation_meta_box() {
+		echo '<a href="' . add_query_arg( 'wcj_orders_navigation', 'prev' ) . '">' . '&lt;&lt; ' . __( 'Previous order', 'woocommerce-jetpack' ) . '</a>' .
+			 '<a href="' . add_query_arg( 'wcj_orders_navigation', 'next' ) . '" style="float:right;">' . __( 'Next order', 'woocommerce-jetpack' ) . ' &gt;&gt;' . '</a>';
+	}
+
+	/**
+	 * add_country_by_ip_meta_box.
+	 *
+	 * @version 3.3.0
+	 * @since   3.3.0
+	 */
+	function add_country_by_ip_meta_box() {
+		add_meta_box(
+			'wc-jetpack-' . $this->id . '-country-by-ip',
+			__( 'Booster', 'woocommerce-jetpack' ) . ': ' . __( 'Country by IP', 'woocommerce-jetpack' ),
+			array( $this, 'create_country_by_ip_meta_box' ),
+			'shop_order',
+			'side',
+			'low'
+		);
+	}
+
+	/**
+	 * create_country_by_ip_meta_box.
+	 *
+	 * @version 3.3.0
+	 * @since   3.3.0
+	 */
+	function create_country_by_ip_meta_box() {
+		if (
+			class_exists( 'WC_Geolocation' ) &&
+			( $order = wc_get_order() ) &&
+			( $customer_ip = $order->get_customer_ip_address() ) &&
+			( $location = WC_Geolocation::geolocate_ip( $customer_ip ) ) &&
+			isset( $location['country'] ) && '' != $location['country']
+		) {
+			echo wcj_get_country_flag_by_code( $location['country'] ) . ' ' .
+				wcj_get_country_name_by_code( $location['country'] ) .
+				' (' . $location['country'] . ')' .
+				' [' . $customer_ip . ']';
+		} else {
+			echo '<em>' . __( 'No data.', 'woocommerce-jetpack' ) . '</em>';
 		}
-		$all_not_completed_statuses          = wc_get_order_statuses();
-		unset( $all_not_completed_statuses['wc-completed'] );
-		$all_not_completed_statuses          = array_keys( $all_not_completed_statuses );
-		$all_not_completed_statuses_param    = urlencode( implode( ',', $all_not_completed_statuses ) );
-		$class                               = ( isset( $wp_query->query['post_status'] ) && is_array( $wp_query->query['post_status'] ) && $all_not_completed_statuses === $wp_query->query['post_status'] ) ? 'current' : '';
-		$query_string                        = remove_query_arg( array( 'post_status', 'wcj_admin_filter_statuses' ) );
-		$query_string                        = add_query_arg( 'post_status', $all_not_completed_statuses_param, $query_string );
-		$views['wcj_statuses_not_completed'] = '<a href="' . esc_url( $query_string ) . '" class="' . esc_attr( $class ) . '">' . __( 'Not Completed', 'woocommerce-jetpack' ) . '</a>';
-		return $views;
 	}
 
 	/**
-	 * filter_shop_order_multiple_statuses_not_completed_link.
+	 * schedule_bulk_regenerate_download_permissions_all_orders_cron.
 	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
+	 * @version 3.2.4
+	 * @since   3.2.4
 	 */
-	function filter_shop_order_multiple_statuses_not_completed_link( $query ) {
-		if ( false !== strpos( $_SERVER['REQUEST_URI'], '/wp-admin/edit.php' ) && isset( $_GET['post_type'] ) && 'shop_order' === $_GET['post_type'] ) {
-			if ( current_user_can( 'edit_others_pages' ) ) {
-				if ( isset( $_GET['post_status'] ) && false !== strpos( $_GET['post_status'], ',' ) ) {
-					$post_statuses = explode( ',', $_GET['post_status'] );
-					$query->query['post_status']      = $post_statuses;
-					$query->query_vars['post_status'] = $post_statuses;
-				}
+	function schedule_bulk_regenerate_download_permissions_all_orders_cron() {
+		wcj_crons_schedule_the_events(
+			'wcj_bulk_regenerate_download_permissions_all_orders_cron',
+			apply_filters( 'booster_option', 'disabled', get_option( 'wcj_order_bulk_regenerate_download_permissions_all_orders_cron', 'disabled' ) )
+		);
+	}
+
+	/**
+	 * handle_bulk_actions_regenerate_download_permissions.
+	 *
+	 * @version 3.2.0
+	 * @since   3.2.0
+	 * @see     https://make.wordpress.org/core/2016/10/04/custom-bulk-actions/
+	 * @todo    (maybe) "bulk actions" for for WP < 4.7
+	 */
+	function handle_bulk_actions_regenerate_download_permissions( $redirect_to, $doaction, $post_ids ) {
+		if ( $doaction !== 'wcj_regenerate_download_permissions' ) {
+			return $redirect_to;
+		}
+		$data_store = WC_Data_Store::load( 'customer-download' );
+		foreach ( $post_ids as $post_id ) {
+			$data_store->delete_by_order_id( $post_id );
+			wc_downloadable_product_permissions( $post_id, true );
+		}
+		$redirect_to = add_query_arg( 'wcj_bulk_regenerated_download_permissions', count( $post_ids ), $redirect_to );
+		return $redirect_to;
+	}
+
+	/**
+	 * register_bulk_actions_regenerate_download_permissions.
+	 *
+	 * @version 3.2.0
+	 * @since   3.2.0
+	 */
+	function register_bulk_actions_regenerate_download_permissions( $bulk_actions ) {
+		$bulk_actions['wcj_regenerate_download_permissions'] = __( 'Regenerate download permissions', 'woocommerce-jetpack' );
+		return $bulk_actions;
+	}
+
+	/**
+	 * admin_notice_regenerate_download_permissions.
+	 *
+	 * @version 3.2.0
+	 * @since   3.2.0
+	 */
+	function admin_notice_regenerate_download_permissions() {
+		if ( ! empty( $_REQUEST['wcj_bulk_regenerated_download_permissions'] ) ) {
+			$orders_count = intval( $_REQUEST['wcj_bulk_regenerated_download_permissions'] );
+			$message = sprintf(
+				_n( 'Download permissions regenerated for %s order.', 'Download permissions regenerated for %s orders.', $orders_count, 'woocommerce-jetpack' ),
+				'<strong>' . $orders_count . '</strong>'
+			);
+			echo '<div class="notice notice-success is-dismissible"><p>' . $message . '</p></div>';
+		}
+	}
+
+	/**
+	 * bulk_regenerate_download_permissions_all_orders.
+	 *
+	 * @version 3.2.0
+	 * @since   3.2.0
+	 */
+	function bulk_regenerate_download_permissions_all_orders() {
+		$data_store   = WC_Data_Store::load( 'customer-download' );
+		$block_size   = 512;
+		$offset       = 0;
+		$total_orders = 0;
+		while( true ) {
+			$args = array(
+				'post_type'      => 'shop_order',
+				'post_status'    => 'any',
+				'posts_per_page' => $block_size,
+				'offset'         => $offset,
+				'orderby'        => 'ID',
+				'order'          => 'DESC',
+				'fields'         => 'ids',
+			);
+			$loop = new WP_Query( $args );
+			if ( ! $loop->have_posts() ) {
+				break;
 			}
-		}
-	}
-
-	/**
-	 * multiple_shop_order_statuses.
-	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
-	 */
-	function multiple_shop_order_statuses( $type ) {
-		$checked_post_statuses = isset( $_GET['wcj_admin_filter_statuses'] ) ? $_GET['wcj_admin_filter_statuses'] : array();
-		$html = '';
-		$html .= ( 'checkboxes' === $type ) ?
-			'<span id="wcj_admin_filter_shop_order_statuses">' :
-			'<select multiple name="wcj_admin_filter_statuses[]" id="wcj_admin_filter_shop_order_statuses">';
-		$num_posts = wp_count_posts( 'shop_order', 'readable' );
-		foreach ( wc_get_order_statuses() as $status_id => $status_title ) {
-			$total_number = ( isset( $num_posts->{$status_id} ) ) ? $num_posts->{$status_id} : 0;
-			if ( $total_number > 0 ) {
-				$html .= ( 'checkboxes' === $type ) ?
-					'<input type="checkbox" name="wcj_admin_filter_statuses[]" value="' . $status_id . '"' . checked( in_array( $status_id, $checked_post_statuses ), true, false ) . '>' . $status_title . ' (' . $total_number . ') ' :
-					'<option value="' . $status_id . '"' . selected( in_array( $status_id, $checked_post_statuses ), true, false ) . '>' . $status_title . ' (' . $total_number . ') ' . '</option>';
+			foreach ( $loop->posts as $post_id ) {
+				$data_store->delete_by_order_id( $post_id );
+				wc_downloadable_product_permissions( $post_id, true );
+				$total_orders++;
 			}
+			$offset += $block_size;
 		}
-		$html .= ( 'checkboxes' === $type ) ?
-			'</span>' :
-			'</select>';
-		return $html;
+		return $total_orders;
 	}
 
 	/**
-	 * add_shop_order_multiple_statuses.
+	 * maybe_bulk_regenerate_download_permissions_all_orders.
 	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
+	 * @version 3.2.0
+	 * @since   3.2.0
 	 */
-	function add_shop_order_multiple_statuses( $post_type, $which ) {
-		if ( 'shop_order' === $post_type ) {
-			echo $this->multiple_shop_order_statuses( get_option( 'wcj_order_admin_list_multiple_status_filter', 'no' ) );
-		}
-	}
-
-	/**
-	 * filter_shop_order_multiple_statuses.
-	 *
-	 * @version 2.5.7
-	 * @since   2.5.7
-	 */
-	function filter_shop_order_multiple_statuses( $query ) {
-		if ( false !== strpos( $_SERVER['REQUEST_URI'], '/wp-admin/edit.php' ) && isset( $_GET['post_type'] ) && 'shop_order' === $_GET['post_type'] ) {
-			if ( current_user_can( 'edit_others_pages' ) ) {
-				if ( isset( $_GET['wcj_admin_filter_statuses'] ) ) {
-					$post_statuses = $_GET['wcj_admin_filter_statuses'];
-					$query->query['post_status']      = $post_statuses;
-					$query->query_vars['post_status'] = $post_statuses;
-				}
-			}
+	function maybe_bulk_regenerate_download_permissions_all_orders() {
+		if ( 'yes' === get_option( 'wcj_order_bulk_regenerate_download_permissions_all_orders', 'no' ) ) {
+			update_option( 'wcj_order_bulk_regenerate_download_permissions_all_orders', 'no' );
+			$total_orders = $this->bulk_regenerate_download_permissions_all_orders();
+			wp_safe_redirect( add_query_arg( 'wcj_bulk_regenerated_download_permissions', $total_orders ) );
+			exit;
 		}
 	}
 
@@ -208,147 +283,27 @@ class WCJ_Orders extends WCJ_Module {
 	 *
 	 * @version 2.7.0
 	 * @since   2.5.6
+	 * @todo    (maybe) move meta box to `side`
 	 */
 	function change_order_currency( $order_currency, $_order ) {
 		return ( '' != ( $wcj_order_currency = get_post_meta( wcj_get_order_id( $_order ), '_' . 'wcj_order_currency', true ) ) ) ? $wcj_order_currency : $order_currency;
 	}
 
 	/**
-	 * Filter the orders in admin based on options.
-	 *
-	 * @version 2.8.0
-	 * @access  public
-	 * @param   mixed $query
-	 * @return  void
-	 */
-	function parse_query( $query ) {
-		global $typenow, $wp_query;
-		if ( $typenow != 'shop_order' ) {
-			return;
-		}
-		if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_country', 'no' ) && isset( $_GET['country'] ) && 'all' != $_GET['country'] ) {
-			$query->query_vars['meta_query'][] = array(
-				'key'   => '_billing_country',
-				'value' => $_GET['country'],
-			);
-		}
-		if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_currency', 'no' ) && isset( $_GET['currency'] ) && 'all' != $_GET['currency'] ) {
-			$query->query_vars['meta_query'][] = array(
-				'key'   => '_order_currency',
-				'value' => $_GET['currency'],
-			);
-		}
-	}
-
-	/**
-	 * Filters for post types.
-	 *
-	 * @version 2.8.0
-	 */
-	function restrict_manage_posts() {
-		global $typenow, $wp_query;
-		if ( in_array( $typenow, wc_get_order_types( 'order-meta-boxes' ) ) ) {
-			if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_country', 'no' ) ) {
-				$selected_coutry = isset( $_GET['country'] ) ? $_GET['country'] : 'all';
-				$countries = array_merge( array( 'all' => __( 'All countries', 'woocommerce-jetpack' ) ), wcj_get_countries() );
-				echo '<select id="country" name="country">';
-				foreach ( $countries as $code => $name ) {
-					echo '<option value="' . $code . '" ' . selected( $code, $selected_coutry, false ) . '>' . $name . '</option>';
-				}
-				echo '</select>';
-			}
-			if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_currency', 'no' ) ) {
-				$selected_currency = isset( $_GET['currency'] ) ? $_GET['currency'] : 'all';
-				$currencies = array_merge( array( 'all' => __( 'All currencies', 'woocommerce-jetpack' ) ), wcj_get_currencies_names_and_symbols() );
-				echo '<select id="currency" name="currency">';
-				foreach ( $currencies as $code => $name ) {
-					echo '<option value="' . $code . '" ' . selected( $code, $selected_currency, false ) . '>' . $name . '</option>';
-				}
-				echo '</select>';
-			}
-		}
-	}
-
-	/**
-	 * rearange_order_columns.
-	 *
-	 * @version 2.5.7
-	 * @version 2.5.7
-	 */
-	function rearange_order_columns( $columns ) {
-		$reordered_columns = get_option( 'wcj_order_admin_list_columns_order', $this->get_orders_default_columns_in_order() );
-		$reordered_columns = explode( PHP_EOL, $reordered_columns );
-		$reordered_columns_result = array();
-		if ( ! empty( $reordered_columns ) ) {
-			foreach ( $reordered_columns as $column_id ) {
-				$column_id = str_replace( "\n", '', $column_id );
-				$column_id = str_replace( "\r", '', $column_id );
-				if ( '' != $column_id && isset( $columns[ $column_id ] ) ) {
-					$reordered_columns_result[ $column_id ] = $columns[ $column_id ];
-					unset( $columns[ $column_id ] );
-				}
-			}
-		}
-		return array_merge( $reordered_columns_result, $columns );
-	}
-
-	/**
-	 * add_order_columns.
-	 *
-	 * @version 2.8.0
-	 */
-	function add_order_columns( $columns ) {
-		if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_country', 'no' ) ) {
-			$columns['country'] = __( 'Billing Country', 'woocommerce-jetpack' );
-		}
-		if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_currency', 'no' ) ) {
-			$columns['currency'] = __( 'Currency Code', 'woocommerce-jetpack' );
-		}
-		$total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_orders_list_custom_columns_total_number', 1 ) );
-		for ( $i = 1; $i <= $total_number; $i++ ) {
-			if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_enabled_' . $i, 'no' ) ) {
-				$columns[ 'wcj_orders_custom_column_' . $i ] = get_option( 'wcj_orders_list_custom_columns_label_' . $i, '' );
-			}
-		}
-		return $columns;
-	}
-
-	/**
-	 * Output custom columns for orders
-	 *
-	 * @version 2.8.0
-	 * @param   string $column
-	 */
-	function render_order_column( $column ) {
-		if ( 'country' === $column && 'yes' === get_option( 'wcj_orders_list_custom_columns_country', 'no' ) ) {
-			$country_code = do_shortcode( '[wcj_order_checkout_field field_id="billing_country"]' );
-			echo ( 2 == strlen( $country_code ) )
-				? wcj_get_country_flag_by_code( $country_code ) . ' ' . wcj_get_country_name_by_code( $country_code )
-				: wcj_get_country_name_by_code( $country_code );
-		} elseif ( 'currency' === $column && 'yes' === get_option( 'wcj_orders_list_custom_columns_currency', 'no' ) ) {
-			echo do_shortcode( '[wcj_order_currency]' );
-		} else {
-			$total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_orders_list_custom_columns_total_number', 1 ) );
-			for ( $i = 1; $i <= $total_number; $i++ ) {
-				if ( 'yes' === get_option( 'wcj_orders_list_custom_columns_enabled_' . $i, 'no' ) ) {
-					if ( 'wcj_orders_custom_column_' . $i === $column ) {
-						echo do_shortcode( get_option( 'wcj_orders_list_custom_columns_value_' . $i, '' ) );
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	* Auto Complete all WooCommerce orders.
 	*
-	* @version 2.7.0
+	* @version 3.7.0
+	* @todo    (maybe) at first check if status is not `completed` already (however `WC_Order::set_status()` checks that anyway)
 	*/
 	function auto_complete_order( $order_id ) {
 		if ( ! $order_id ) {
 			return;
 		}
 		$order = wc_get_order( $order_id );
+		$payment_methods = apply_filters( 'booster_option', '', get_option( 'wcj_order_auto_complete_payment_methods', array() ) );
+		if ( ! empty( $payment_methods ) && ! in_array( $order->get_payment_method(), $payment_methods ) ) {
+			return;
+		}
 		$order->update_status( 'completed' );
 	}
 

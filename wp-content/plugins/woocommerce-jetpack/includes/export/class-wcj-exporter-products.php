@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce Exporter Products
  *
- * @version 2.7.0
+ * @version 3.0.0
  * @since   2.5.9
  * @author  Algoritmika Ltd.
  */
@@ -57,7 +57,7 @@ class WCJ_Exporter_Products {
 	/**
 	 * export_products.
 	 *
-	 * @version 2.7.0
+	 * @version 3.0.0
 	 * @since   2.5.3
 	 * @todo    product attributes
 	 */
@@ -72,7 +72,7 @@ class WCJ_Exporter_Products {
 		}
 
 		// Additional Fields
-		$total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_export_products_fields_additional_total_number', 1 ) );
+		$total_number = apply_filters( 'booster_option', 1, get_option( 'wcj_export_products_fields_additional_total_number', 1 ) );
 		for ( $i = 1; $i <= $total_number; $i++ ) {
 			if ( 'yes' === get_option( 'wcj_export_products_fields_additional_enabled_' . $i, 'no' ) ) {
 				$titles[] = get_option( 'wcj_export_products_fields_additional_title_' . $i, '' );
@@ -93,6 +93,7 @@ class WCJ_Exporter_Products {
 				'offset'         => $offset,
 				'fields'         => 'ids',
 			);
+			$args = wcj_maybe_add_date_query( $args );
 			$loop = new WP_Query( $args );
 			if ( ! $loop->have_posts() ) {
 				break;
@@ -260,7 +261,7 @@ class WCJ_Exporter_Products {
 					}
 
 					// Additional Fields
-					$total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_export_products_fields_additional_total_number', 1 ) );
+					$total_number = apply_filters( 'booster_option', 1, get_option( 'wcj_export_products_fields_additional_total_number', 1 ) );
 					for ( $i = 1; $i <= $total_number; $i++ ) {
 						if ( 'yes' === get_option( 'wcj_export_products_fields_additional_enabled_' . $i, 'no' ) ) {
 							if ( '' != ( $additional_field_value = get_option( 'wcj_export_products_fields_additional_value_' . $i, '' ) ) ) {

@@ -54,8 +54,14 @@
 }
 .elementor-panel #elementor-panel-page-editor .elementor-control-content .siteorigin-widget-form .siteorigin-widget-field.siteorigin-widget-field-type-measurement .sow-measurement-select-unit {
   min-width: inherit;
-  width: 33%;
+  width: 32%;
   margin-left: 1px;
+}
+.elementor-panel #elementor-panel-page-editor .elementor-control-content .siteorigin-widget-form .siteorigin-widget-field.siteorigin-widget-field-type-posts select[multiple] {
+  height: inherit;
+}
+.elementor-panel #elementor-panel-page-editor .elementor-control-content .siteorigin-widget-form .siteorigin-widget-field.siteorigin-widget-field-type-posts .siteorigin-widget-field-type-date-range > div input[type="text"].datepicker {
+  width: 100%;
 }
 .elementor-panel #elementor-panel-page-editor .elementor-control-content .siteorigin-widget-form .siteorigin-widget-field .siteorigin-widget-field-type-slider input[type="number"] {
   display: none !important;

@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Prices and Currencies by Country
  *
- * @version 2.8.0
+ * @version 3.7.0
  * @author  Algoritmika Ltd.
  */
 
@@ -15,13 +15,13 @@ class WCJ_Price_By_Country extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.7.0
 	 */
 	function __construct() {
 
 		$this->id         = 'price_by_country';
 		$this->short_desc = __( 'Prices and Currencies by Country', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Change WooCommerce product price and currency automatically by customer\'s country.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Change product price and currency automatically by customer\'s country.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-prices-and-currencies-by-country';
 		parent::__construct();
 
@@ -30,14 +30,8 @@ class WCJ_Price_By_Country extends WCJ_Module {
 
 		if ( $this->is_enabled() ) {
 
-			if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			if ( wcj_is_frontend() ) {
 				$do_load_core = true;
-				/* if ( is_admin() ) {
-					global $pagenow;
-					if ( 'admin-ajax.php' === $pagenow ) {
-						$do_load_core = false;
-					}
-				} */
 				if ( ! defined( 'DOING_AJAX' ) && '/wc-api/WC_Gateway_Paypal/' == $_SERVER['REQUEST_URI'] ) {
 					// "Wrong currency in emails" bug fix
 					$do_load_core = false;
@@ -51,7 +45,15 @@ class WCJ_Price_By_Country extends WCJ_Module {
 				// Backend
 				include_once( 'reports/class-wcj-currency-reports.php' );
 				if ( 'yes' === get_option( 'wcj_price_by_country_local_enabled', 'yes' ) ) {
-					include_once( 'price-by-country/class-wcj-price-by-country-local.php' );
+					$backend_user_roles = get_option( 'wcj_price_by_country_backend_user_roles', '' );
+					if ( empty( $backend_user_roles ) || wcj_is_user_role( $backend_user_roles ) ) {
+						if ( 'inline' === get_option( 'wcj_price_by_country_local_options_style', 'inline' ) ) {
+							include_once( 'price-by-country/class-wcj-price-by-country-local.php' );
+						} else {
+							add_action( 'add_meta_boxes',    array( $this, 'add_meta_box' ) );
+							add_action( 'save_post_product', array( $this, 'save_meta_box' ), PHP_INT_MAX, 2 );
+						}
+					}
 				}
 
 				// Reset Price Filter

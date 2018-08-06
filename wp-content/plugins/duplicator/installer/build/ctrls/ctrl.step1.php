@@ -4,7 +4,8 @@
 $_POST['archive_name']		 = isset($_POST['archive_name']) ? $_POST['archive_name'] : null;
 $_POST['archive_engine']	 = isset($_POST['archive_engine']) ? $_POST['archive_engine']  : 'manual';
 $_POST['archive_filetime']	 = (isset($_POST['archive_filetime'])) ? $_POST['archive_filetime'] : 'current';
-
+$_POST['retain_config']		 = (isset($_POST['retain_config']) && $_POST['retain_config'] == '1') ? true : false;
+$_POST['exe_safe_mode']          = (isset($_POST['exe_safe_mode'])) ? $_POST['exe_safe_mode'] : 0;
 //LOGGING
 $POST_LOG = $_POST;
 unset($POST_LOG['dbpass']);
@@ -65,6 +66,7 @@ DUPX_Log::info("DOC ROOT:\t{$root_path}");
 DUPX_Log::info("DOC ROOT 755:\t".var_export($GLOBALS['CHOWN_ROOT_PATH'], true));
 DUPX_Log::info("LOG FILE 644:\t".var_export($GLOBALS['CHOWN_LOG_PATH'], true));
 DUPX_Log::info("REQUEST URL:\t{$GLOBALS['URL_PATH']}");
+DUPX_Log::info("SAFE MODE :\t{$_POST['exe_safe_mode']}");
 
 $log = "--------------------------------------\n";
 $log .= "POST DATA\n";
@@ -127,8 +129,19 @@ if ($_POST['archive_engine'] == 'manual') {
 	}
 }
 
-//CONFIG FILE RESETS
-DUPX_ServerConfig::reset();
+//===============================
+//RESET SERVER CONFIG FILES
+//===============================
+if ($_POST['retain_config']) {
+	DUPX_Log::info("\nNOTICE: Manual update of permalinks required see:  Admin > Settings > Permalinks > Click Save Changes");
+	DUPX_Log::info("Retaining the original htaccess, user.ini or web.config files may cause issues with the setup of this site.");
+	DUPX_Log::info("If you run into issues during or after the install process please uncheck the 'Config Files' checkbox labeled:");
+	DUPX_Log::info("'Retain original .htaccess, .user.ini and web.config' from Step 1 and re-run the installer. Backups of the");
+	DUPX_Log::info("orginal config files will be made and can be merged per required directive.");
+} else {
+	DUPX_ServerConfig::reset();
+}
+
 
 //FINAL RESULTS
 $ajax1_end	 = DUPX_U::getMicrotime();

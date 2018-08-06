@@ -211,6 +211,12 @@ class SiteOrigin_Widget_Features_Widget extends SiteOrigin_Widget {
 				'default' => '24px',
 			),
 
+			'icon_size_custom' => array(
+				'type' => 'checkbox',
+				'label' => __( 'Use icon size for custom icon', 'so-widgets-bundle' ),
+				'default' => false,
+			),
+
 			'per_row' => array(
 				'type' => 'number',
 				'label' => __('Features per row', 'so-widgets-bundle'),
@@ -270,9 +276,29 @@ class SiteOrigin_Widget_Features_Widget extends SiteOrigin_Widget {
 			}
 		}
 
-        $less_vars['container_size'] = $instance['container_size'];
+		$less_vars['container_size'] = $instance['container_size'];
+		$less_vars['icon_size'] = $instance['icon_size'];
+		$less_vars['per_row'] = $instance['per_row'];
+		$less_vars['use_icon_size'] = empty( $instance['icon_size_custom'] ) ? 'false' : 'true';
+
+		$global_settings = $this->get_global_settings();
+
+		if ( ! empty( $global_settings['responsive_breakpoint'] ) ) {
+			$less_vars['responsive_breakpoint'] = $global_settings['responsive_breakpoint'];
+		}
 
 		return $less_vars;
+	}
+
+	function get_settings_form() {
+		return array(
+			'responsive_breakpoint' => array(
+				'type'        => 'measurement',
+				'label'       => __( 'Responsive Breakpoint', 'so-widgets-bundle' ),
+				'default'     => '520px',
+				'description' => __( 'This setting controls when the features widget will collapse for mobile devices. The default value is 520px', 'so-widgets-bundle' )
+			)
+		);
 	}
 
 	function get_google_font_fields( $instance ) {

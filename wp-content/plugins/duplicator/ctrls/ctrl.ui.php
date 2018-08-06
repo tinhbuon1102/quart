@@ -21,7 +21,7 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 	/** 
      * Calls the SaveViewState and returns a JSON result
 	 * 
-	 * @param string $_POST['key']		A unique key that idetifies the state of the UI element
+	 * @param string $_POST['key']		A unique key that identifies the state of the UI element
 	 * @param bool   $_POST['value']	The value to store for the state of the UI element
 	 * 
 	 * @notes: Testing: See Testing Interface
@@ -86,7 +86,7 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 			$payload = DUP_UI_ViewState::getArray();
 			
 			//RETURN RESULT
-			$test = (count($payload)) 
+			$test = (is_array($payload) && count($payload))
 					? DUP_CTRL_Status::SUCCESS
 					: DUP_CTRL_Status::FAILED;
 			return $result->process($payload, $test);
@@ -95,6 +95,7 @@ class DUP_CTRL_UI extends DUP_CTRL_Base
 		{
 			$result->processError($exc);
 		}
-    }	
+    }
+	
 	
 }

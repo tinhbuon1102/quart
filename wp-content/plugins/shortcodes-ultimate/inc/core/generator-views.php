@@ -27,6 +27,7 @@ class Su_Generator_Views {
 	}
 
 	public static function select( $id, $field ) {
+
 		// Multiple selects
 		$multiple = ( isset( $field['multiple'] ) ) ? ' multiple' : '';
 		$return = '<select name="' . $id . '" id="su-generator-attr-' . $id . '" class="su-generator-attr"' . $multiple . '>';
@@ -39,6 +40,53 @@ class Su_Generator_Views {
 		}
 		$return .= '</select>';
 		return $return;
+
+	}
+
+	public static function post_type( $id, $field ) {
+
+		// Get post types
+		$types = get_post_types( array(), 'objects', 'or' );
+
+		// Prepare empty array for values
+		$field['values'] = array();
+
+		// Fill the array
+		foreach( $types as $type ) {
+			$field['values'][$type->name] = $type->label;
+		}
+
+		// Create select
+		return self::select( $id, $field );
+
+	}
+
+	public static function taxonomy( $id, $field ) {
+
+		// Get taxonomies
+		$taxonomies = get_taxonomies( array(), 'objects', 'or' );
+
+		// Prepare empty array for values
+		$field['values'] = array();
+
+		// Fill the array
+		foreach( $taxonomies as $taxonomy ) {
+			$field['values'][$taxonomy->name] = $taxonomy->label;
+		}
+
+		// Create select
+		return self::select( $id, $field );
+
+	}
+
+	public static function term( $id, $field ) {
+
+		// Get categories
+		$field['values'] = Su_Tools::get_terms( 'category' );
+
+		// Create select
+		return self::select( $id, $field );
+
 	}
 
 	public static function bool( $id, $field ) {
@@ -58,29 +106,6 @@ class Su_Generator_Views {
 
 	public static function color( $id, $field ) {
 		$return = '<span class="su-generator-select-color"><span class="su-generator-select-color-wheel"></span><input type="text" name="' . $id . '" value="' . $field['default'] . '" id="su-generator-attr-' . $id . '" class="su-generator-attr su-generator-select-color-value" /></span>';
-		return $return;
-	}
-
-	public static function gallery( $id, $field ) {
-		$shult = shortcodes_ultimate();
-		// Prepare galleries list
-		$galleries = $shult->get_option( 'galleries' );
-		$created = ( is_array( $galleries ) && count( $galleries ) ) ? true : false;
-		$return = '<select name="' . $id . '" id="su-generator-attr-' . $id . '" class="su-generator-attr" data-loading="' . __( 'Please wait', 'shortcodes-ultimate' ) . '">';
-		// Check that galleries is set
-		if ( $created ) // Create options
-			foreach ( $galleries as $g_id => $gallery ) {
-				// Is this option selected
-				$selected = ( $g_id == 0 ) ? ' selected="selected"' : '';
-				// Prepare title
-				$gallery['name'] = ( $gallery['name'] == '' ) ? __( 'Untitled gallery', 'shortcodes-ultimate' ) : stripslashes( $gallery['name'] );
-				// Create option
-				$return .= '<option value="' . ( $g_id + 1 ) . '"' . $selected . '>' . $gallery['name'] . '</option>';
-			}
-		// Galleries not created
-		else
-			$return .= '<option value="0" selected>' . __( 'Galleries not found', 'shortcodes-ultimate' ) . '</option>';
-		$return .= '</select><small class="description"><a href="' . $shult->admin_url . '#tab-3" target="_blank">' . __( 'Manage galleries', 'shortcodes-ultimate' ) . '</a>&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="su-generator-reload-galleries">' . __( 'Reload galleries', 'shortcodes-ultimate' ) . '</a></small>';
 		return $return;
 	}
 
@@ -146,6 +171,14 @@ class Su_Generator_Views {
 				'style'    => 'display:none'
 			) );
 		$return = '<div class="su-generator-isp">' . $sources . '<div class="su-generator-isp-source su-generator-isp-source-media"><div class="su-generator-clearfix"><a href="javascript:;" class="button button-primary su-generator-isp-add-media"><i class="fa fa-plus"></i>&nbsp;&nbsp;' . __( 'Add images', 'shortcodes-ultimate' ) . '</a></div><div class="su-generator-isp-images su-generator-clearfix"><em class="description">' . __( 'Click the button above and select images.<br>You can select multimple images with Ctrl (Cmd) key', 'shortcodes-ultimate' ) . '</em></div></div><div class="su-generator-isp-source su-generator-isp-source-category"><em class="description">' . __( 'Select categories to retrieve posts from.<br>You can select multiple categories with Ctrl (Cmd) key', 'shortcodes-ultimate' ) . '</em>' . $categories . '</div><div class="su-generator-isp-source su-generator-isp-source-taxonomy"><em class="description">' . __( 'Select taxonomy and it\'s terms.<br>You can select multiple terms with Ctrl (Cmd) key', 'shortcodes-ultimate' ) . '</em>' . $taxonomies . $terms . '</div><input type="hidden" name="' . $id . '" value="' . $field['default'] . '" id="su-generator-attr-' . $id . '" class="su-generator-attr" /></div>';
+		return $return;
+	}
+
+	public static function extra_css_class( $id, $field ) {
+		$field = wp_parse_args( $field, array(
+			'default' => ''
+		) );
+		$return = '<input type="text" name="' . $id . '" value="' . esc_attr( $field['default'] ) . '" id="su-generator-attr-' . $id . '" class="su-generator-attr" />';
 		return $return;
 	}
 

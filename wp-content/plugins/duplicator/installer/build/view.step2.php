@@ -1,5 +1,6 @@
 <?php
-    $_POST['logging'] = isset($_POST['logging']) ? trim($_POST['logging']) : 1;
+    $_POST['logging'] = isset($_POST['logging']) ? trim(DUPX_U::sanitize($_POST['logging'])) : 1;
+    $_POST['exe_safe_mode'] = (isset($_POST['exe_safe_mode'])) ? DUPX_U::sanitize($_POST['exe_safe_mode']) : 0;
 ?>
 
 
@@ -80,23 +81,35 @@ VIEW: STEP 2- INPUT -->
 	<div id="s2-cpnl-pane">
 		<div class="s2-gopro">
 			<h2>cPanel Connectivity</h2>
-			<div style="text-align: center">
-				<a target="_blank" href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_install_step2&utm_campaign=duplicator_pro">Duplicator Pro</a>
-				takes advantage of your hosts <br/>
-				cPanel interface directly <b>from this installer!</b>
+
+			<?php if( DUPX_U::isURLActive($_SERVER['SERVER_NAME'], 2083) ): ?>
+				<div class='s2-cpanel-login'>
+					<b>Login to this server's cPanel</b><br/>
+					<a href="https://<?php echo $_SERVER['SERVER_NAME'] ?>:2083" target="cpanel" style="color:#fff">[<?php echo $_SERVER['SERVER_NAME'] ?>:2083]</a>
+				</div>
+			<?php else : ?>
+				<div class='s2-cpanel-off'>
+					<b>This server does not appear to support cPanel!</b><br/>
+					Consider <a href="https://snapcreek.com/wordpress-hosting/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_install_no_cpanel&utm_campaign=duplicator_pro" target="cpanel" style="color:#fff;font-weight:bold">upgrading</a> to a host that does.<br/>
+				</div>
+			<?php endif; ?>
+
+
+			<div style="text-align: center; font-size: 14px">
+                                Want <span style="font-style: italic;">even easier</span> installs?  
+				<a target="_blank" href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&amp;utm_medium=wordpress_plugin&amp;utm_content=free_install_step2&amp;utm_campaign=duplicator_pro"><b>Duplicator Pro</b></a>
+                                 allows the following <b>right from the installer:</b>
 			</div>
-			<b>Features Include:</b>
 			<ul>
-				<li>Fast cPanel Login</li>
-				<li>Create New Databases</li>
-				<li>Create New Database Users</li>
-				<li>Preview and Select Existing Databases and Users</li>
+				<li>Directly login to cPanel</li>
+				<li>Instantly create new databases &amp; users</li>
+				<li>Preview and select existing databases  &amp; users</li>
 			</ul>
 			<small>
-				Note: Most hosting providers do not allow applications to create new databases or database users directly from PHP.  However with the cPanel API these restrictions
-				are removed opening up a robust interface for direct access to existing database resources.  You can take advantage of these great features and improve your work-flow with
-				<a target="_blank" href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_install_step2&utm_campaign=duplicator_pro">Duplicator Pro!</a>
-			</small>
+				Note: Hosts that support cPanel provide remote access to server resources, allowing operations such as direct database and user creation.
+				Since the <a target="_blank" href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_install_cpanel_note&utm_campaign=duplicator_pro">Duplicator Pro</a>
+			        installer can directly access cPanel, it dramatically speeds up your workflow.
+				</small>
 		</div>
 	</div>
 
@@ -124,6 +137,10 @@ VIEW: STEP 2- INPUT -->
 		<div class="help-target"><a href="?help#help-s2" target="_blank">[help]</a></div>
 		
 		<table class="dupx-opts dupx-advopts">
+			<tr>
+				<td>Legacy:</td>
+				<td><input type="checkbox" name="dbcollatefb" id="dbcollatefb" value="1" /> <label for="dbcollatefb">Apply legacy collation fallback support for unknown collations types</label></td>
+			</tr>
 			<tr>
 				<td>Spacing:</td>
 				<td colspan="2">
@@ -175,6 +192,8 @@ Auto Posts to view.step3.php
 		<input type="hidden" name="action_step" value="3" />
 		<input type="hidden" name="archive_name" value="<?php echo $GLOBALS['FW_PACKAGE_NAME'] ?>" />
 		<input type="hidden" name="logging" id="ajax-logging"  />
+		<input type="hidden" name="retain_config" value="<?php echo $_POST['retain_config']; ?>" />
+        <input type="hidden" name="exe_safe_mode" id="exe-safe-mode"  value="<?php echo $_POST['exe_safe_mode']; ?>"/>
 		<input type="hidden" name="dbhost" id="ajax-dbhost" />
 		<input type="hidden" name="dbport" id="ajax-dbport" />
 		<input type="hidden" name="dbuser" id="ajax-dbuser" />
@@ -200,10 +219,10 @@ Auto Posts to view.step3.php
 	<div id="ajaxerr-area" style="display:none">
 	    <p>Please try again an issue has occurred.</p>
 	    <div style="padding: 0px 10px 10px 0px;">
-			<div id="ajaxerr-data">An unknown issue has occurred with the file and database setup process.  Please see the installer-log.txt file for more details.</div>
+			<div id="ajaxerr-data">An unknown issue has occurred with the file and database set up process.  Please see the installer-log.txt file for more details.</div>
 			<div style="text-align:center; margin:10px auto 0px auto">
 				<input type="button" class="default-btn" onclick='DUPX.hideErrorResult()' value="&laquo; Try Again" /><br/><br/>
-				<i style='font-size:11px'>See online help for more details at <a href='https://snapcreek.com/ticket' target='_blank'>snapcreek.com</a></i>
+				<i style='font-size:11px'>See online help for more details at <a href='https://snapcreek.com/ticket?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_campaign=problem_resolution&utm_content=inst_ajaxstep2_ticket' target='_blank'>snapcreek.com</a></i>
 			</div>
 	    </div>
 	</div>
@@ -313,7 +332,7 @@ DUPX.runDeployment = function()
 			status += "<hr/><b>Additional Troubleshooting Tips:</b><br/>";
 			status += "- Check the <a href='installer-log.txt' target='install_log'>installer-log.txt</a> file for warnings or errors.<br/>";
 			status += "- Check the web server and PHP error logs. <br/>";
-			status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
+			status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_campaign=problem_resolution&utm_content=inst_step2deploy_timout#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
 			$('#ajaxerr-data').html(status);
 			DUPX.hideProgressBar();
 		}

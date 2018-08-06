@@ -2,9 +2,10 @@
 /**
  * Booster for WooCommerce - Settings - Currencies
  *
- * @version 2.8.0
+ * @version 2.9.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
+ * @todo    add virtual currencies to "All Currencies for WC" plugin
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -26,15 +27,21 @@ $settings = array(
 );
 $currency_names   = wcj_get_currencies_names_and_symbols( 'names',   'no_custom' );
 $currency_symbols = wcj_get_currencies_names_and_symbols( 'symbols', 'no_custom' );
+$countries        = wcj_get_currency_countries();
 foreach ( $currency_names as $currency_code => $currency_name ) {
+	$country_flag = ( 'EUR' === $currency_code ?
+		wcj_get_country_flag_by_code( 'EU' ) :
+		( isset( $countries[ $currency_code ] ) ? wcj_get_country_flag_by_code( $countries[ $currency_code ][0] ) : '' )
+	);
 	$settings = array_merge( $settings, array(
 		array(
-			'title'    => $currency_name,
-			'desc_tip' => apply_filters( 'booster_get_message', '', 'desc_no_link' ),
+			'title'    => $currency_name . ' [' . $currency_code . ']',
+			'desc'     => $country_flag,
+			'desc_tip' => apply_filters( 'booster_message', '', 'desc_no_link' ),
 			'id'       => 'wcj_currency_' . $currency_code,
 			'default'  => $currency_symbols[ $currency_code ],
 			'type'     => 'text',
-			'custom_attributes' => apply_filters( 'booster_get_message', '', 'readonly' ),
+			'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
 		),
 	) );
 }
@@ -53,11 +60,11 @@ $settings = array_merge( $settings, array(
 			'id'       => 'wcj_currency_custom_currency_total_number',
 			'default'  => 1,
 			'type'     => 'custom_number',
-			'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
-			'custom_attributes' => apply_filters( 'booster_get_message', '', 'readonly' ),
+			'desc'     => apply_filters( 'booster_message', '', 'desc' ),
+			'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
 	),
 ) );
-$custom_currency_total_number = apply_filters( 'booster_get_option', 1, get_option( 'wcj_currency_custom_currency_total_number', 1 ) );
+$custom_currency_total_number = apply_filters( 'booster_option', 1, get_option( 'wcj_currency_custom_currency_total_number', 1 ) );
 for ( $i = 1; $i <= $custom_currency_total_number; $i++ ) {
 	$settings = array_merge( $settings, array(
 		array(

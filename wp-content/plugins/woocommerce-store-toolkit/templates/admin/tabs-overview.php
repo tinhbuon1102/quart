@@ -3,6 +3,8 @@
 <ul class="ul-disc">
 	<li><a href="<?php echo esc_url( add_query_arg( 'tab', 'nuke' ) ); ?>#empty-woocommerce-tables"><?php _e( 'Empty WooCommerce Tables', 'woocommerce-store-toolkit' ); ?></a></li>
 	<li><a href="<?php echo esc_url( add_query_arg( 'tab', 'nuke' ) ); ?>#empty-product-by-category"><?php _e( 'Delete Products by Product Category', 'woocommerce-store-toolkit' ); ?></a></li>
+	<li><a href="<?php echo esc_url( add_query_arg( 'tab', 'nuke' ) ); ?>#delete-sales-by-sale-status"><?php _e( 'Delete Orders by Order Status', 'woocommerce-store-toolkit' ); ?></a></li>
+	<li><a href="<?php echo esc_url( add_query_arg( 'tab', 'nuke' ) ); ?>#delete-sales-by-date"><?php _e( 'Delete Orders by Order Date', 'woocommerce-store-toolkit' ); ?></a></li>
 	<li><a href="<?php echo esc_url( add_query_arg( 'tab', 'nuke' ) ); ?>#empty-wordpress-tables"><?php _e( 'Empty WordPress Tables', 'woocommerce-store-toolkit' ); ?></a></li>
 </ul>
 

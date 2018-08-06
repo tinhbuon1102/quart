@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - Multicurrency (Currency Switcher)
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  * @todo    "pretty prices"
@@ -10,16 +10,17 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-$currency_from = get_woocommerce_currency();
+$currency_from  = get_woocommerce_currency();
 $all_currencies = wcj_get_currencies_names_and_symbols();
 $settings = array(
 	array(
-		'title'    => __( 'Options', 'woocommerce-jetpack' ),
+		'title'    => __( 'General Options', 'woocommerce-jetpack' ),
 		'type'     => 'title',
 		'id'       => 'wcj_multicurrency_options',
 	),
 	array(
 		'title'    => __( 'Exchange Rates Updates', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Select how you want currency exchange rates to be updated. Possible options are: manually or automatically via Currency Exchange Rates module.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_exchange_rate_update_auto',
 		'default'  => 'manual',
 		'type'     => 'select',
@@ -27,22 +28,36 @@ $settings = array(
 			'manual' => __( 'Enter Rates Manually', 'woocommerce-jetpack' ),
 			'auto'   => __( 'Automatically via Currency Exchange Rates module', 'woocommerce-jetpack' ),
 		),
-		'desc'     => ( '' == apply_filters( 'booster_get_message', '', 'desc' ) ) ?
+		'desc'     => ( '' == apply_filters( 'booster_message', '', 'desc' ) ) ?
 			__( 'Visit', 'woocommerce-jetpack' ) . ' <a href="' . admin_url( 'admin.php?page=wc-settings&tab=jetpack&wcj-cat=prices_and_currencies&section=currency_exchange_rates' ) . '">' . __( 'Currency Exchange Rates module', 'woocommerce-jetpack' ) . '</a>'
 			:
-			apply_filters( 'booster_get_message', '', 'desc' ),
-		'custom_attributes' => apply_filters( 'booster_get_message', '', 'disabled' ),
+			apply_filters( 'booster_message', '', 'desc' ),
+		'custom_attributes' => apply_filters( 'booster_message', '', 'disabled' ),
 	),
 	array(
 		'title'    => __( 'Multicurrency on per Product Basis', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
-		'desc_tip' => __( 'This will add meta boxes in product edit.', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'If you enable this option, you will be able to enter prices for products in different currencies directly (i.e. without exchange rates). This will add meta boxes in product edit.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_per_product_enabled',
 		'default'  => 'yes',
 		'type'     => 'checkbox',
 	),
 	array(
+		'desc'     => __( 'Variable products: list available/active variations only', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Defines which variations are listed on admin product edit page in Multicurrency meta box. Ignored if "Multicurrency on per Product Basis" option is disabled.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_multicurrency_per_product_list_available_variations_only',
+		'default'  => 'yes',
+		'type'     => 'checkbox',
+	),
+	array(
+		'desc'     => __( 'Add option to make empty price', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_multicurrency_per_product_make_empty',
+		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
 		'title'    => __( 'Revert Currency to Default on Checkout', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Enable this if you want prices to revert back to your shop\'s default currency, when customer reaches the checkout page.', 'woocommerce-jetpack' ),
 		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_revert',
 		'default'  => 'no',
@@ -50,7 +65,7 @@ $settings = array(
 	),
 	array(
 		'title'    => __( 'Rounding', 'woocommerce-jetpack' ),
-		'desc'     => __( 'If using exchange rates, choose rounding here.', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'If using exchange rates, choose rounding here.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_rounding',
 		'default'  => 'no_round',
 		'type'     => 'select',
@@ -63,7 +78,7 @@ $settings = array(
 	),
 	array(
 		'title'    => __( 'Rounding Precision', 'woocommerce-jetpack' ),
-		'desc'     => __( 'If rounding enabled, set precision here.', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'If rounding is enabled, set rounding precision here.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_rounding_precision',
 		'default'  => absint( get_option( 'woocommerce_price_num_decimals', 2 ) ),
 		'type'     => 'number',
@@ -71,11 +86,28 @@ $settings = array(
 	),
 	array(
 		'title'    => __( 'Currency Switcher Template', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Replaced values:', 'woocommerce-jetpack' ) . ' ' . '%currency_name%, %currency_symbol%, %currency_code%.',
+		'desc_tip' => __( 'Set how you want currency switcher to be displayed on frontend.', 'woocommerce-jetpack' ),
+		'desc'     => wcj_message_replaced_values( array( '%currency_name%', '%currency_symbol%', '%currency_code%' ) ),
 		'id'       => 'wcj_multicurrency_switcher_template',
 		'default'  => '%currency_name% (%currency_symbol%)',
 		'type'     => 'text',
-		'css'      => 'min-width:300px;width:66%;',
+		'class'    => 'widefat',
+	),
+	array(
+		'title'    => __( 'Advanced: Additional Price Filters', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Add additional price filters here. One per line. Leave blank if not sure.' ),
+		'desc'     => sprintf( __( 'E.g.: %s' ), '<code>' . 'woocommerce_subscriptions_product_price' . '</code>' . ', ' .'<code>' . 'woocommerce_get_price' . '</code>' . '.' ),
+		'id'       => 'wcj_multicurrency_switcher_additional_price_filters',
+		'default'  => '',
+		'type'     => 'textarea',
+		'css'      => 'min-width:300px;height:150px;',
+	),
+	array(
+		'title'    => __( 'Advanced: Price Filters Priority', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Priority for all module\'s price filters. Set to zero to use default priority.' ),
+		'id'       => 'wcj_multicurrency_advanced_price_hooks_priority',
+		'default'  => 0,
+		'type'     => 'number',
 	),
 	array(
 		'type'     => 'sectionend',
@@ -89,17 +121,18 @@ $settings = array(
 	),
 	array(
 		'title'    => __( 'Total Currencies', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Press Save changes after setting this option, so new settings fields will be added.', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_multicurrency_total_number',
 		'default'  => 2,
 		'type'     => 'custom_number',
-		'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
+		'desc'     => apply_filters( 'booster_message', '', 'desc' ),
 		'custom_attributes' => array_merge(
-			is_array( apply_filters( 'booster_get_message', '', 'readonly' ) ) ? apply_filters( 'booster_get_message', '', 'readonly' ) : array(),
+			is_array( apply_filters( 'booster_message', '', 'readonly' ) ) ? apply_filters( 'booster_message', '', 'readonly' ) : array(),
 			array( 'step' => '1', 'min'  => '2', )
 		),
 	),
 );
-$total_number = apply_filters( 'booster_get_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) );
+$total_number = apply_filters( 'booster_option', 2, get_option( 'wcj_multicurrency_total_number', 2 ) );
 for ( $i = 1; $i <= $total_number; $i++ ) {
 	$currency_to = get_option( 'wcj_multicurrency_currency_' . $i, $currency_from );
 	$custom_attributes = array(
@@ -124,9 +157,7 @@ for ( $i = 1; $i <= $total_number; $i++ ) {
 			'id'                       => 'wcj_multicurrency_exchange_rate_' . $i,
 			'default'                  => 1,
 			'type'                     => 'exchange_rate',
-			'custom_attributes'        => array( 'step' => '0.000001', 'min'  => '0', ),
 			'custom_attributes_button' => $custom_attributes,
-			'css'                      => 'width:100px;',
 			'value'                    => $currency_from . '/' . $currency_to,
 		),
 	) );
@@ -147,7 +178,7 @@ $settings = array_merge( $settings, array(
 	),
 	array(
 		'title'    => __( 'Roles', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Save settings after you change this option. Leave blank to disable.', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Save settings after you change this option. Leave blank to disable.', 'woocommerce-jetpack' ),
 		'type'     => 'multiselect',
 		'id'       => 'wcj_multicurrency_role_defaults_roles',
 		'default'  => '',

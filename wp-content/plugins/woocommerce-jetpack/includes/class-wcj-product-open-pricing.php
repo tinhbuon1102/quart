@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Product Open Pricing
  *
- * @version 2.8.2
+ * @version 3.8.0
  * @since   2.4.8
  * @author  Algoritmika Ltd.
  */
@@ -16,14 +16,14 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.5.1
 	 * @since   2.4.8
 	 */
 	function __construct() {
 
 		$this->id         = 'product_open_pricing';
 		$this->short_desc = __( 'Product Open Pricing (Name Your Price)', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Let your WooCommerce store customers enter price for the product manually.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Let your store customers enter price for the product manually.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-product-open-pricing-name-your-price';
 		parent::__construct();
 
@@ -34,12 +34,15 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 			add_filter( 'woocommerce_product_variation_get_price',array( $this, 'get_open_price' ), PHP_INT_MAX, 2 );
 			add_filter( 'woocommerce_get_price_html',             array( $this, 'hide_original_price' ), PHP_INT_MAX, 2 );
 			add_filter( 'woocommerce_get_variation_price_html',   array( $this, 'hide_original_price' ), PHP_INT_MAX, 2 );
-			add_filter( 'woocommerce_is_sold_individually',       array( $this, 'hide_quantity_input_field' ), PHP_INT_MAX, 2 );
+			if ( 'yes' === get_option( 'wcj_product_open_price_disable_quantity', 'yes' ) ) {
+				add_filter( 'woocommerce_is_sold_individually',   array( $this, 'hide_quantity_input_field' ), PHP_INT_MAX, 2 );
+			}
 			add_filter( 'woocommerce_is_purchasable',             array( $this, 'is_purchasable' ), PHP_INT_MAX, 2 );
 			add_filter( 'woocommerce_product_supports',           array( $this, 'disable_add_to_cart_ajax' ), PHP_INT_MAX, 3 );
 			add_filter( 'woocommerce_product_add_to_cart_url',    array( $this, 'add_to_cart_url' ), PHP_INT_MAX, 2 );
 			add_filter( 'woocommerce_product_add_to_cart_text',   array( $this, 'add_to_cart_text' ), PHP_INT_MAX, 2 );
-			add_action( 'woocommerce_before_add_to_cart_button',  array( $this, 'add_open_price_input_field_to_frontend' ), PHP_INT_MAX );
+			$position = get_option( 'wcj_product_open_price_position', 'woocommerce_before_add_to_cart_button' );
+			add_action( $position,                                array( $this, 'add_open_price_input_field_to_frontend' ), PHP_INT_MAX );
 			add_filter( 'woocommerce_add_to_cart_validation',     array( $this, 'validate_open_price_on_add_to_cart' ), PHP_INT_MAX, 2 );
 			add_filter( 'woocommerce_add_cart_item_data',         array( $this, 'add_open_price_to_cart_item_data' ), PHP_INT_MAX, 3 );
 			add_filter( 'woocommerce_add_cart_item',              array( $this, 'add_open_price_to_cart_item' ), PHP_INT_MAX, 2 );
@@ -132,7 +135,7 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 	 * @since   2.4.8
 	 */
 	function save_meta_box_value( $option_value, $option_name, $module_id ) {
-		if ( true === apply_filters( 'booster_get_option', false, true ) ) {
+		if ( true === apply_filters( 'booster_option', false, true ) ) {
 			return $option_value;
 		}
 		if ( 'no' === $option_value ) {
@@ -180,7 +183,7 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 		}
 		?><div class="error"><p><?php
 			echo '<div class="message">'
-				. __( 'Booster: Free plugin\'s version is limited to only one open pricing product enabled at a time. You will need to get <a href="http://booster.io/plus/" target="_blank">Booster Plus</a> to add unlimited number of open pricing products.', 'woocommerce-jetpack' )
+				. __( 'Booster: Free plugin\'s version is limited to only one open pricing product enabled at a time. You will need to get <a href="https://booster.io/plus/" target="_blank">Booster Plus</a> to add unlimited number of open pricing products.', 'woocommerce-jetpack' )
 				. '</div>';
 		?></p></div><?php
 	}
@@ -335,16 +338,19 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 	/**
 	 * add_open_price_input_field_to_frontend.
 	 *
-	 * @version 2.7.0
+	 * @version 3.8.0
 	 * @since   2.4.8
 	 */
 	function add_open_price_input_field_to_frontend() {
+		if ( isset( $this->is_open_price_input_field_displayed ) && 'yes' === get_option( 'wcj_product_open_price_check_for_outputted_data', 'yes' ) ) {
+			return;
+		}
 		$the_product = wc_get_product();
 		if ( $this->is_open_price_product( $the_product ) ) {
 			// Title
 			$title = get_option( 'wcj_product_open_price_label_frontend', __( 'Name Your Price', 'woocommerce-jetpack' ) );
 			// Prices
-			$_product_id = wcj_get_product_id_or_variation_parent_id( $the_product );
+			$_product_id   = wcj_get_product_id_or_variation_parent_id( $the_product );
 			$min_price     = get_post_meta( $_product_id, '_' . 'wcj_product_open_price_min_price', true );
 			$max_price     = get_post_meta( $_product_id, '_' . 'wcj_product_open_price_max_price', true );
 			$default_price = get_post_meta( $_product_id, '_' . 'wcj_product_open_price_default_price', true );
@@ -383,6 +389,7 @@ class WCJ_Product_Open_Pricing extends WCJ_Module {
 				array_values( $replacement_values ),
 				get_option( 'wcj_product_open_price_frontend_template', '<label for="wcj_open_price">%frontend_label%</label> %open_price_input% %currency_symbol%' )
 			);
+			$this->is_open_price_input_field_displayed = true;
 		}
 	}
 

@@ -1,4 +1,5 @@
 (function($) {
+    'use strict';
     $(window).load(function() {
         $('body').on('click', '#wbm_shop_setting_enable', function() {
             var ele = $(this).find(':checkbox');
@@ -220,10 +221,11 @@
                     thankyou_page_banner_image_results: thankyou_page_banner_image_results,
                     thankyou_page_banner_link_results: thankyou_page_banner_link_results,
                     thankyou_page_banner_enable_or_not_results: thankyou_page_banner_enable_or_not_results,
-                    thankyou_page_benner_open_new_tab_results: thankyou_page_benner_open_new_tab_results
-
+                    thankyou_page_benner_open_new_tab_results: thankyou_page_benner_open_new_tab_results,
+                    security: $( '#category-ajax-nonce_field' ).val()
                 }),
                 success: function(response) {
+                    setTimeout(function() { alert("Setting saved."); }, 500);
                     $('#succesful_message_wbm').css('display', 'block');
                     $('#succesful_message_wbm').delay(2000).fadeOut('slow');
                 }
@@ -288,43 +290,6 @@
 
             e.preventDefault();
         });
-        //subscription add script 
-        $("#wbm_dialog").dialog({
-            modal: true, title: 'Subscribe To Our Newsletter', zIndex: 10000, autoOpen: true,
-            width: '400', resizable: false,
-            position: {my: "center", at: "center", of: window},
-            dialogClass: 'dialogButtons',
-            buttons: [
-                {
-                    id: "Delete",
-                    text: "Subscribe Me",
-                    click: function() {
-                        // $(obj).removeAttr('onclick');
-                        // $(obj).parents('.Parent').remove();
-                        var email_id = jQuery('#txt_user_sub_wbm').val();
-                        var data = {
-                            'action': 'add_plugin_user_wbm',
-                            'email_id': email_id
-                        };
-                        // since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-                        jQuery.post(ajaxurl, data, function(response) {
-                            jQuery('#wbm_dialog').html('<h2>You have been successfully subscribed');
-                            jQuery(".ui-dialog-buttonpane").remove();
-                        });
-                    }
-                },
-                {
-                    id: "No",
-                    text: "No, Remind Me Later",
-                    click: function() {
-
-                        jQuery(this).dialog("close");
-                    }
-                },
-            ]
-        });
-        jQuery("div.dialogButtons .ui-dialog-buttonset button").removeClass('ui-state-default');
-        jQuery("div.dialogButtons .ui-dialog-buttonset button").addClass("button-primary woocommerce-save-button");
 
     });
 

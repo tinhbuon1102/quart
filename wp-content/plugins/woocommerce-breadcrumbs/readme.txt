@@ -3,8 +3,8 @@ Contributors: ahortin
 Donate Link: http://maddisondesigns.com/woocommerce-breadcrumbs
 Tags: ecommerce, e-commerce, commerce, woothemes, wordpress ecommerce, woocommerce, breadcrumbs
 Requires at least: 3.8
-Tested up to: 4.2.2
-Stable tag: 1.0.2
+Tested up to: 4.9
+Stable tag: 1.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ WooCommerce Breadcrumbs is a simple WordPress plugin that allows you to restyle 
 
 By changing the HTML surrounding your breadcrumbs, you’re able to provide better options for styling your breadcrumbs in different ways. For example, the default breadcrumbs simply display links with a separator character. Using WooCommerce Breadcrumbs, you can change them to display as an unsorted list of links instead.
 
-NOTE: This plugin wont actually style your breadcrumbs for you. It simply gives you the tools to change the HTML that wraps around your breadcrumbs. 
+NOTE: This plugin wont actually style your breadcrumbs for you. It simply gives you the tools to change the HTML that wraps around your breadcrumbs.
 
 = WooCommerce Breadcrumbs gives you the following settings =
 
@@ -50,6 +50,9 @@ You're most likely using a WooThemes theme. WooTheme themes disable the WooComme
 = Can I disable the WooCommerce breadcrumbs? =
 Certainly! On the settings page, simply untick the 'Enable breadcrumbs' checkbox and save your settings.
 
+= How do I get my breadcrumbs back after disabling them? =
+The easiest method is just to deactivate the plugin. Alternatively, simply tick the 'Enable breadcrumbs' checkbox and save your settings.
+
 
 == Screenshots ==
 
@@ -59,6 +62,13 @@ Certainly! On the settings page, simply untick the 'Enable breadcrumbs' checkbox
 
 
 == Changelog ==
+
+= 1.0.4 =
+- Removed call to screen_icon() function as it's now deprecated
+- Added WC Tested tags to plugin header for compatibility check
+
+= 1.0.3 =
+- Updated version number as the .org directory doesn't currently update the Last Updated date by simply updating the Tested up to value
 
 = 1.0.2 =
 - Fixed undefined index error due to checkbox sanitization

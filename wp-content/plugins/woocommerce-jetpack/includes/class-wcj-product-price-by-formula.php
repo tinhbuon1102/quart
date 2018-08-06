@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Product Price by Formula
  *
- * @version 2.8.0
+ * @version 3.6.0
  * @since   2.5.0
  * @author  Algoritmika Ltd.
  */
@@ -16,14 +16,15 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.6.0
 	 * @since   2.5.0
+	 * @todo    use WC math library instead of `PHPMathParser`
 	 */
 	function __construct() {
 
 		$this->id         = 'product_price_by_formula';
 		$this->short_desc = __( 'Product Price by Formula', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Set formula for automatic WooCommerce product price calculation.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Set formula for automatic product price calculation.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-product-price-formula';
 		parent::__construct();
 
@@ -33,12 +34,15 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 			add_action( 'add_meta_boxes',    array( $this, 'add_meta_box' ) );
 			add_action( 'save_post_product', array( $this, 'save_meta_box' ), PHP_INT_MAX, 2 );
 
-			if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_GET['wcj_create_products_xml'] ) ) {
 				wcj_add_change_price_hooks( $this, PHP_INT_MAX - 100, false );
 			}
 
 			add_filter( 'wcj_save_meta_box_value', array( $this, 'save_meta_box_value' ), PHP_INT_MAX, 3 );
 			add_action( 'admin_notices',           array( $this, 'admin_notices' ) );
+
+			$this->rounding           = get_option( 'wcj_product_price_by_formula_rounding', 'no_rounding' );
+			$this->rounding_precision = get_option( 'wcj_product_price_by_formula_rounding_precision', 0 );
 		}
 	}
 
@@ -65,7 +69,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 	/**
 	 * change_price.
 	 *
-	 * @version 2.7.0
+	 * @version 3.6.0
 	 * @since   2.5.0
 	 */
 	function change_price( $price, $_product, $output_errors = false ) {
@@ -85,7 +89,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 					if ( 'woocommerce_get_price_including_tax' == $the_current_filter || 'woocommerce_get_price_excluding_tax' == $the_current_filter ) {
 						return wcj_get_product_display_price( $_product );
 					}
-					$math = new /* PHPMathParser\ */Alg_Math();
+					$math = new WCJ_Math();
 					$math->registerVariable( 'x', $price );
 					for ( $i = 1; $i <= $total_params; $i++ ) {
 						$the_param = ( $is_per_product )
@@ -105,6 +109,9 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 							echo '<p style="color:red;">' . __( 'Error in formula', 'woocommerce-jetpack' ) . ': ' . $e->getMessage() . '</p>';
 						}
 					}
+					if ( 'no_rounding' != $this->rounding ) {
+						$price = wcj_round( $price, $this->rounding_precision, $this->rounding );
+					}
 				}
 			}
 		}
@@ -114,7 +121,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 	/**
 	 * get_variation_prices_hash.
 	 *
-	 * @version 2.7.0
+	 * @version 3.6.0
 	 * @since   2.5.0
 	 */
 	function get_variation_prices_hash( $price_hash, $_product, $display ) {
@@ -126,9 +133,11 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 				$the_params[] = get_option( 'wcj_product_price_by_formula_param_' . $i, '' );
 			}
 			$price_hash['wcj_price_by_formula'] = array(
-				$the_formula,
-				$total_params,
-				$the_params,
+				'formula'            => $the_formula,
+				'total_params'       => $total_params,
+				'params'             => $the_params,
+				'rounding'           => $this->rounding,
+				'rounding_precision' => $this->rounding_precision,
 			);
 		}
 		return $price_hash;
@@ -141,7 +150,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 	 * @since   2.5.0
 	 */
 	function save_meta_box_value( $option_value, $option_name, $module_id ) {
-		if ( true === apply_filters( 'booster_get_option', false, true ) ) {
+		if ( true === apply_filters( 'booster_option', false, true ) ) {
 			return $option_value;
 		}
 		if ( 'no' === $option_value ) {
@@ -189,7 +198,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 		}
 		?><div class="error"><p><?php
 			echo '<div class="message">'
-				. __( 'Booster: Free plugin\'s version is limited to only one price by formula product enabled at a time. You will need to get <a href="http://booster.io/plus/" target="_blank">Booster Plus</a> to add unlimited number of price by formula products.', 'woocommerce-jetpack' )
+				. __( 'Booster: Free plugin\'s version is limited to only one price by formula product enabled at a time. You will need to get <a href="https://booster.io/plus/" target="_blank">Booster Plus</a> to add unlimited number of price by formula products.', 'woocommerce-jetpack' )
 				. '</div>';
 		?></p></div><?php
 	}
@@ -202,7 +211,7 @@ class WCJ_Product_Price_by_Formula extends WCJ_Module {
 	 */
 	function is_price_by_formula_product( $_product ) {
 		return (
-			'yes' === apply_filters( 'booster_get_option', 'no', get_option( 'wcj_product_price_by_formula_enable_for_all_products', 'no' ) ) ||
+			'yes' === apply_filters( 'booster_option', 'no', get_option( 'wcj_product_price_by_formula_enable_for_all_products', 'no' ) ) ||
 			'yes' === get_post_meta( wcj_get_product_id_or_variation_parent_id( $_product ), '_' . 'wcj_product_price_by_formula_enabled', true )
 		);
 	}

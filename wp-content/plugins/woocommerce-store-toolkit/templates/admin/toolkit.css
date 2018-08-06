@@ -35,6 +35,10 @@ body.user-edit-php table.order_data td,
 body.profile-php table.order_data td {
 	vertical-align:top;
 }
+/* Override for WooCommerce Appointments */
+#woocommerce-appointment-data #woo-appointment-post_data h2.hndle {
+	display:block;
+}
 
 /* Support - Donate / Rate */
 

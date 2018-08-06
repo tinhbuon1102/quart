@@ -4,10 +4,10 @@ Plugin URI: http://multidots.com/
 Author: Multidots
 Author URI: http://multidots.com/
 Contributors: dots, thedotstore
-Stable tag: 1.0.7
+Stable tag: 1.1.2
 Tags: banner, banner management woocommerce banner management, banner in cart, banner in shop, banner in checkout, banner in thank you, banner in category
 Requires at least: 2.1
-Tested up to: 4.7
+Tested up to: 4.9.6
 Donate link: 
 Copyright: (c) 2015-2016 Multidots Solutions PVT LTD (info@multidots.com) 
 License: GPLv3 or later
@@ -60,6 +60,9 @@ We provide a limited support for the free version in the plugin Support Forum. P
 
 = Explore our other plugins and theme to supercharge your WordPress website: =
 <ol>
+
+<li> <a href ="http://bit.ly/2FrC4id">Emporos - Responsive WooCommerce Theme</a></li>
+<li> <a href ="http://bit.ly/2kq5Tqt">Onepage Studio - Multipurpose Landing Page with Page Builder</a></li>
 <li> <a href ="https://store.multidots.com/go/flat-rate">Advance Flat Rate Shipping Method For WooCommerce</a></li>
 <li> <a href ="https://store.multidots.com/go/dotstore-woocommerce-blocker">WooCommerce Blocker – Prevent Fake Orders And Blacklist Fraud Customers</a></li>
 <li> <a href ="https://store.multidots.com/go/dotstore-enhanced-ecommerce-tracking">WooCommerce Enhanced Ecommerce Analytics Integration With Conversion Tracking</a></li>
@@ -105,6 +108,24 @@ Automatic updates should work great for you.  As always, though, we recommend ba
  
 
 == Changelog ==
+
+= 1.1.2 - 19.06.2018 =
+* Normal Bug Fix
+
+= 1.1.1 - 29.05.2018 =
+* Normal Bug Fix
+
+= 1.1.0 - 23.02.2018 =
+* Subscription form added
+
+= 1.0.9 - 10.10.2017 =
+* Change Plugin UI.
+* Normal Bug Fix
+
+= 1.0.8 - 10.07.2017 =
+* Change banner position priority.
+* Normal Bug Fix
+* New: Plugin setting panel added
 
 = 1.0.7 - 18.04.2017 =
 * Change WooCommerce Hook

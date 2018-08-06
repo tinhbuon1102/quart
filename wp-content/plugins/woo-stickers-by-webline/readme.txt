@@ -2,8 +2,8 @@
 Contributors: weblineindia
 Tags: woocommerce stickers, woocommerce products stickers, product stickers, product badge, woocommerce product badge, custom product badge 
 Requires at least: 3.5
-Tested up to: 4.7.4
-Stable tag: 1.1.0
+Tested up to: 4.9.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 
 Product sticker plugin to improve customer experience while shopping by providing stickers for New, On Sale and Soldout Products.
@@ -64,11 +64,19 @@ We have a standard image dimension is 54 X 54 for custom sticker image. if dimen
 
 == Changelog ==
 
+= 1.1.1 =
+
+Release Date: Dec 30, 2017
+
+* Fix: Sold out sticker issue for variable product.
+* Fix: Minor bug fixes.
+* Fix: Checked compatibility with WooCommerce version 3.2.6 and WordPress version 4.9.1 
+
 = 1.1.0 =
 
 Release Date: May 06, 2017
 
-* Fix: WooCommerce 3.x compitability fixes.
+* Fix: WooCommerce 3.x compatibility fixes.
 * Fix: Resolved Sticker shows above title issue.
 * Fix: Minor other bug fixes.
 

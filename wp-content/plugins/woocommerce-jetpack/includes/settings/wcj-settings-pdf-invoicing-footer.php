@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - PDF Invoicing - Footer
  *
- * @version 2.8.0
+ * @version 3.2.1
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -14,12 +14,13 @@ $invoice_types = ( 'yes' === get_option( 'wcj_invoicing_hide_disabled_docs_setti
 foreach ( $invoice_types as $invoice_type ) {
 	$settings = array_merge( $settings, array(
 		array(
-			'title'    => strtoupper( $invoice_type['desc'] ),
+			'title'    => $invoice_type['title'],
 			'type'     => 'title',
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_footer_options',
 		),
 		array(
 			'title'    => __( 'Enable Footer', 'woocommerce-jetpack' ),
+			'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_footer_enabled',
 			'default'  => 'yes',
 			'type'     => 'checkbox',
@@ -27,13 +28,11 @@ foreach ( $invoice_types as $invoice_type ) {
 		array(
 			'title'    => __( 'Footer Text', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_footer_text',
-//			'default'  => __( 'Page %page_number% / %total_pages%', 'woocommerce-jetpack' ),
-			'default'  => 'Page %page_number% / %total_pages%',
+			'default'  => __( 'Page %page_number% / %total_pages%', 'woocommerce-jetpack' ),
 			'type'     => 'textarea',
-			'css'      => 'width:66%;min-width:300px;height:165px;',
-			'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
-			'desc_tip' => __( 'You can use HTML here, as well as any WordPress shortcodes. There is two more predefined values you can use: %page_number% and %total_pages%.', 'woocommerce-jetpack' ),
-			'custom_attributes' => apply_filters( 'booster_get_message', '', 'readonly' ),
+			'css'      => 'width:100%;height:165px;',
+			'desc'     => __( 'You can use HTML here, as well as any WordPress shortcodes.', 'woocommerce-jetpack' ) . ' ' .
+				wcj_message_replaced_values( array( '%page_number%', '%total_pages%' ) ),
 		),
 		array(
 			'title'    => __( 'Footer Text Color', 'woocommerce-jetpack' ),

@@ -123,6 +123,36 @@ if( is_admin() ) {
 
 	}
 
+	function woo_st_delete_corrupt_variations() {
+
+		$post_type = 'product_variation';
+		$args = array(
+			'post_type' => $post_type,
+			'fields' => 'ids',
+			'posts_per_page' => -1,
+			'post_status' => 'any'
+		);
+		$product_ids = new WP_Query( $args );
+		if( $product_ids->posts ) {
+			foreach( $product_ids->posts as $post_id ) {
+
+				// Check if the Post Title is empty
+				$post_title = get_the_title( $post_id );
+				if( !empty( $post_title ) )
+					continue;
+
+				// Check if the Stock Status meta contains an invalid array
+				$stock_status = get_post_meta( $post_id, '_stock_status', false );
+				if( count( $stock_status ) == 1 )
+					continue;
+
+				wp_delete_post( $post_id, true );
+
+			}
+		}
+
+	}
+
 	function woo_st_refresh_product_transients() {
 
 		$post_type = 'product';
@@ -367,9 +397,8 @@ if( is_admin() ) {
 		if( !empty( $order_id ) ) {
 			if( class_exists( 'WC_Order' ) ) {
 				$order = new WC_Order( $order_id );
-				if( $order->get_total() == 0 ) {
+				if( $order->get_total() == 0 )
 					$order->update_status( 'completed', __( 'Auto-complete Order Status', 'woocommerce-store-toolkit' ) );
-				}
 			}
 		}
 		return false;
@@ -385,6 +414,57 @@ function woo_st_admin_unlock_variations_screen( $args ) {
 
 	$args['show_ui'] = true;
 	return $args;
+
+}
+
+// Returns date of first Order received, any status
+function woo_st_get_order_first_date( $date_format = 'd/m/Y' ) {
+
+	$output = date( $date_format, mktime( 0, 0, 0, date( 'n' ), 1 ) );
+
+	$post_type = 'shop_order';
+	$args = array(
+		'post_type' => $post_type,
+		'orderby' => 'post_date',
+		'order' => 'ASC',
+		'numberposts' => 1,
+		'post_status' => 'any'
+	);
+	$orders = get_posts( $args );
+	if( !empty( $orders ) ) {
+		$output = date( $date_format, strtotime( $orders[0]->post_date ) );
+		unset( $orders );
+	}
+	return $output;
+
+}
+
+function woo_st_get_order_date_filter( $filter = '', $format = '' ) {
+
+	$date_format = 'd-m-Y';
+	$output = false;
+	if( !empty( $filter ) && !empty( $format ) ) {
+		switch( $filter ) {
+
+			// Today
+			case 'today':
+				if( $format == 'from' )
+					$output = date( $date_format, strtotime( 'today' ) );
+				else
+					$output = date( $date_format, strtotime( 'tomorrow' ) );
+				break;
+
+			// This month
+			case 'current_month':
+				if( $format == 'from' )
+					$output = date( $date_format, mktime( 0, 0, 0, date( 'n' ), 1 ) );
+				else
+					$output = date( $date_format, mktime( 0, 0, 0, ( date( 'n' ) + 1 ), 0 ) );
+				break;
+
+		}
+	}
+	return $output;
 
 }
 
@@ -749,9 +829,19 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 			$post_type = 'shop_order';
 			$term_taxonomy = 'shop_order_status';
 			$woocommerce_version = woo_get_woo_version();
+
 			// Let's check if we're doing a filtered nuke...
+			$order_status = false;
+			$order_date = false;
+			$order_date_from = false;
+			$order_date_to = false;
 			if( !empty( $data ) ) {
-				foreach( $data as $single_order ) {
+				$order_status = ( isset( $data['status'] ) ? $data['status'] : false );
+				$order_date = ( isset( $data['date'] ) ? $data['date'] : false );
+			}
+			
+			if( !empty( $order_status ) ) {
+				foreach( $order_status as $single_order ) {
 					$args = array(
 						'post_type' => $post_type,
 						'fields' => 'ids',
@@ -796,6 +886,64 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					'post_status' => 'any',
 					'posts_per_page' => 100
 				);
+
+				// Date
+				if( !empty( $order_date ) ) {
+					switch( $order_date ) {
+
+						// Today
+						case 'today':
+							$order_date_from = woo_st_get_order_date_filter( 'today', 'from' );
+							$order_date_to = woo_st_get_order_date_filter( 'today', 'to' );
+							break;
+
+						// Today
+						case 'current_month':
+							$order_date_from = woo_st_get_order_date_filter( 'current_month', 'from' );
+							$order_date_to = woo_st_get_order_date_filter( 'current_month', 'to' );
+							break;
+
+						// Fixed date
+						case 'manual':
+							$order_date_from = ( isset( $data['date_from'] ) ? $data['date_from'] : false );
+							$order_date_to = ( isset( $data['date_to'] ) ? $data['date_to'] : false );
+							break;
+
+					}
+					$order_date_from = str_replace( '/', '-', $order_date_from );
+					$order_date_to = str_replace( '/', '-', $order_date_to );
+
+					$order_date_from = date( 'd-m-Y', strtotime( $order_date_from, current_time( 'timestamp', 0 ) ) );
+					$order_date_to = date( 'd-m-Y', strtotime( $order_date_to, current_time( 'timestamp', 0 ) ) );
+
+					$order_date_from = explode( '-', $order_date_from );
+					$order_date_to = explode( '-', $order_date_to );
+
+					$order_date_from = array(
+						'year' => absint( $order_date_from[2] ),
+						'month' => absint( $order_date_from[1] ),
+						'day' => absint( $order_date_from[0] ),
+						'hour' => 0,
+						'minute' => 0,
+						'second' => 0
+					);
+
+					$order_date_to = array(
+						'year' => absint( $order_date_to[2] ),
+						'month' => absint( $order_date_to[1] ),
+						'day' => absint( $order_date_to[0] ),
+						'hour' => 23,
+						'minute' => 23,
+						'second' => 59
+					);
+
+					$args['date_query'] = array(
+						'column' => 'post_date',
+						'before' => $order_date_to,
+						'after' => $order_date_from,
+						'inclusive' => true
+					);
+				}
 
 				// Allow Plugin/Theme authors to add support for tactical nukes
 				$args = apply_filters( 'woo_st_clear_dataset_order', $args );
@@ -930,6 +1078,31 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 				$output = true;
 			break;
 
+		case 'woocommerce_log':
+			if( class_exists( 'WC_REST_System_Status_Controller' ) ) {
+				$system_status = new WC_REST_System_Status_Controller;
+				if( method_exists( $system_status, 'get_environment_info' ) ) {
+					$environment = $system_status->get_environment_info();
+					$log_directory = $environment['log_directory'];
+					if( !empty( $log_directory ) ) {
+						if( file_exists( $log_directory ) ) {
+							$files = glob( $log_directory . '*.log' );
+							if( $files !== false ) {
+								foreach( $files as $file ) {
+									if( !WOO_ST_DEBUG ) {
+										unlink( $file );
+									} else {
+										error_log( sprintf( '[store-toolkit] Delete WooCommerce Log #%d', $file ) );
+									}
+								}
+							}
+							unset( $files, $file );
+						}
+					}
+				}
+			}
+			break;
+
 		case 'attribute':
 			if( isset( $_POST['woo_st_attributes'] ) ) {
 				$attributes_sql = "SELECT `attribute_id` as ID, `attribute_name` as name, `attribute_label` as label, `attribute_type` as type FROM `" . $wpdb->prefix . "woocommerce_attribute_taxonomies`";
@@ -940,11 +1113,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 						$terms = $wpdb->get_results( $terms_sql );
 						if( !empty( $terms ) ) {
 							foreach( $terms as $term ) {
-								if( !WOO_ST_DEBUG ) {
+								if( !WOO_ST_DEBUG )
 									wp_delete_term( $term->term_id, 'pa_' . $attribute->name );
-								} else {
+								else
 									error_log( sprintf( '[store-toolkit] Delete Attribute #%d', $term->term_id ) );
-								}
 							}
 						}
 						if( !WOO_ST_DEBUG ) {
@@ -1523,7 +1695,8 @@ function woo_st_return_count( $export_type = '' ) {
 			break;
 
 		case 'product_image':
-			$count_sql = "SELECT COUNT(`post_id`) FROM `" . $wpdb->postmeta . "` WHERE `meta_key` = '_woocommerce_exclude_image'";
+			$meta_key = '_woocommerce_exclude_image';
+			$count_sql = sprintf( "SELECT COUNT(`post_id`) FROM `" . $wpdb->postmeta . "` WHERE `meta_key` = '%s'", $meta_key );
 			break;
 
 		case 'product_category':
@@ -1574,6 +1747,24 @@ function woo_st_return_count( $export_type = '' ) {
 			$term_taxonomy = apply_filters( 'woo_st_shipping_class_term_taxonomy', 'product_shipping_class' );
 			if( taxonomy_exists( $term_taxonomy ) )
 				$count = wp_count_terms( $term_taxonomy );
+			break;
+
+		case 'woocommerce_log':
+			$count = 0;
+			if( class_exists( 'WC_REST_System_Status_Controller' ) ) {
+				$system_status = new WC_REST_System_Status_Controller;
+				if( method_exists( $system_status, 'get_environment_info' ) ) {
+					$environment = $system_status->get_environment_info();
+					$log_directory = $environment['log_directory'];
+					if( !empty( $log_directory ) ) {
+						if( file_exists( $log_directory ) ) {
+							$files = glob( $log_directory . '*.log' );
+							if( $files !== false )
+								$count = count( $files );
+						}
+					}
+				}
+			}
 			break;
 
 		case 'attribute':
@@ -1719,11 +1910,13 @@ function woo_st_get_dataset_types() {
 		'product_brand',
 		'product_vendor',
 		'product_image',
-		'coupon',
-		'attribute',
 		'order',
 		'tax_rate',
 		'download_permission',
+		'coupon',
+		'shipping_class',
+		'woocommerce_log',
+		'attribute',
 		'credit_card',
 		'store_export_csv',
 		'store_export_tsv',

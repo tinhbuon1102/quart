@@ -2,10 +2,11 @@
 /**
  * Booster for WooCommerce - Module - Wholesale Price
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.2.0
  * @author  Algoritmika Ltd.
  * @todo    per variation
+ * @todo    sort discounts table by quantity (asc) before using
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -18,12 +19,13 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 	 * Constructor.
 	 *
 	 * @version 2.8.0
+	 * @todo    (maybe) `woocommerce_get_variation_prices_hash`
 	 */
 	function __construct() {
 
 		$this->id         = 'wholesale_price';
 		$this->short_desc = __( 'Wholesale Price', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Set WooCommerce wholesale pricing depending on product quantity in cart (buy more pay less).', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Set wholesale pricing depending on product quantity in cart (buy more pay less).', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-wholesale-price';
 		parent::__construct();
 
@@ -48,37 +50,85 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 	}
 
 	/**
+	 * get_price_for_cart.
+	 *
+	 * @version 3.4.0
+	 * @since   3.4.0
+	 */
+	function get_price_for_cart( $price, $_product ) {
+		$product_prices_include_tax = ( 'yes'  === get_option( 'woocommerce_prices_include_tax' ) );
+		$cart_prices_include_tax    = ( 'incl' === get_option( 'woocommerce_tax_display_cart' ) );
+		if ( $product_prices_include_tax != $cart_prices_include_tax ) {
+			return ( $cart_prices_include_tax ?
+				wc_get_price_including_tax( $_product, array( 'price' => $price, 'qty' => 1 ) ) :
+				wc_get_price_excluding_tax( $_product, array( 'price' => $price, 'qty' => 1 ) ) );
+		} else {
+			return $price;
+		}
+	}
+
+	/**
+	 * get_quantity.
+	 *
+	 * @version 3.6.0
+	 * @since   3.6.0
+	 */
+	function get_quantity( $cart, $cart_item ) {
+		switch ( get_option( 'wcj_wholesale_price_use_total_cart_quantity', 'no' ) ) {
+			case 'total_wholesale': // Total cart quantity (wholesale products only)
+				$qty = $cart->cart_contents_count;
+				foreach ( $cart->cart_contents as $item_key => $item ) {
+					if ( ! wcj_is_product_wholesale_enabled( $item['product_id'] ) ) {
+						$qty -= $item['quantity'];
+					}
+				}
+				return $qty;
+			case 'yes':             // Total cart quantity
+				return $cart->cart_contents_count;
+			default: // 'no'        // Product quantity
+				return $cart_item['quantity'];
+		}
+	}
+
+	/**
 	 * add_discount_info_to_cart_page.
 	 *
-	 * @version 2.5.7
+	 * @version 3.6.0
 	 */
 	function add_discount_info_to_cart_page( $price_html, $cart_item, $cart_item_key ) {
 
 		if ( isset( $cart_item['wcj_wholesale_price'] ) ) {
-			$the_quantity = ( 'yes' === get_option( 'wcj_wholesale_price_use_total_cart_quantity', 'no' ) )
-				? WC()->cart->cart_contents_count
-				: $cart_item['quantity'];
-			$discount = $this->get_discount_by_quantity( $the_quantity, $cart_item['product_id'] );
+			$the_quantity = $this->get_quantity( WC()->cart, $cart_item );
+			$discount     = $this->get_discount_by_quantity( $the_quantity, $cart_item['product_id'] );
 			if ( 0 != $discount ) {
 				$discount_type = ( wcj_is_product_wholesale_enabled_per_product( $cart_item['product_id'] ) )
 					? get_post_meta( $cart_item['product_id'], '_' . 'wcj_wholesale_price_discount_type', true )
 					: get_option( 'wcj_wholesale_price_discount_type', 'percent' );
 				if ( 'price_directly' === $discount_type ) {
-					$_product = wc_get_product( $cart_item['product_id'] );
-					$discount = wc_price( $_product->get_price() - $discount );
-				}
-				elseif ( 'fixed' === $discount_type ) {
-					$discount = wc_price( $discount );
+					$_product = $cart_item['data'];
+					$saved_wcj_wholesale_price = false;
+					if ( isset( $_product->wcj_wholesale_price ) ) {
+						$saved_wcj_wholesale_price = $_product->wcj_wholesale_price;
+						unset( $_product->wcj_wholesale_price );
+					}
+					$discount = wc_price( $this->get_price_for_cart( ( $_product->get_price() - $discount ), $_product ) );
+					if ( false !== $saved_wcj_wholesale_price ) {
+						$_product->wcj_wholesale_price = $saved_wcj_wholesale_price;
+					}
+				} elseif ( 'fixed' === $discount_type ) {
+					$discount = wc_price( $this->get_price_for_cart( $discount, $cart_item['data'] ) );
 				} else {
 					$discount = $discount . '%';
 				}
 				$old_price_html = wc_price( $cart_item['wcj_wholesale_price_old'] );
 				$wholesale_price_html = get_option( 'wcj_wholesale_price_show_info_on_cart_format' );
-				$wholesale_price_html = str_replace(
-					array( '%old_price%',   '%price%',   '%discount_value%', '%discount_percent%' ), // '%discount_percent%' is deprecated
-					array( $old_price_html, $price_html, $discount,          $discount ),
-					$wholesale_price_html
+				$replaced_values = array(
+					'%old_price%'        => $old_price_html,
+					'%price%'            => $price_html,
+					'%discount_value%'   => $discount,
+					'%discount_percent%' => $discount, // deprecated (replaced with %discount_value%)
 				);
+				$wholesale_price_html = str_replace( array_keys( $replaced_values ), array_values( $replaced_values ), $wholesale_price_html );
 				return $wholesale_price_html;
 			}
 		}
@@ -110,7 +160,7 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 		$max_qty_level = 1;
 		$discount      = 0;
 		if ( wcj_is_product_wholesale_enabled_per_product( $product_id ) ) {
-			for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_post_meta( $product_id, '_' . 'wcj_wholesale_price_levels_number' . $role_option_name_addon, true ) ); $i++ ) {
+			for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_post_meta( $product_id, '_' . 'wcj_wholesale_price_levels_number' . $role_option_name_addon, true ) ); $i++ ) {
 				$level_qty = get_post_meta( $product_id, '_' . 'wcj_wholesale_price_level_min_qty' . $role_option_name_addon . '_' . $i, true );
 				if ( $quantity >= $level_qty && $level_qty >= $max_qty_level ) {
 					$max_qty_level = $level_qty;
@@ -118,7 +168,7 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 				}
 			}
 		} else {
-			for ( $i = 1; $i <= apply_filters( 'booster_get_option', 1, get_option( 'wcj_wholesale_price_levels_number' . $role_option_name_addon, 1 ) ); $i++ ) {
+			for ( $i = 1; $i <= apply_filters( 'booster_option', 1, get_option( 'wcj_wholesale_price_levels_number' . $role_option_name_addon, 1 ) ); $i++ ) {
 				$level_qty = get_option( 'wcj_wholesale_price_level_min_qty' . $role_option_name_addon . '_' . $i, PHP_INT_MAX );
 				if ( $quantity >= $level_qty && $level_qty >= $max_qty_level ) {
 					$max_qty_level = $level_qty;
@@ -167,7 +217,7 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 	/**
 	 * calculate_totals.
 	 *
-	 * @version 2.7.0
+	 * @version 3.8.0
 	 * @since   2.5.0
 	 */
 	function calculate_totals( $cart ) {
@@ -184,20 +234,21 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 				unset( WC()->cart->cart_contents[ $item_key ]['wcj_wholesale_price_old'] );
 			}
 
-			$_product = wc_get_product( $item['product_id'] );
+			$_product = $item['data'];
 			if ( ! wcj_is_product_wholesale_enabled( wcj_get_product_id_or_variation_parent_id( $_product ) ) ) {
 				continue;
 			}
 
-			// Prices
-			if ( 0 != ( $variation_id = WC()->cart->cart_contents[ $item_key ]['variation_id'] ) ) {
-				$variation = wc_get_product( $variation_id );
-				$price     = $variation->get_price();
-				$price_old = wcj_get_product_display_price( $variation ); // used for display only
-			} else {
-				$price     = $_product->get_price();
-				$price_old = wcj_get_product_display_price( $_product ); // used for display only
+			if ( 'yes' === get_option( 'wcj_wholesale_price_check_for_product_changes_price', 'no' ) && $_product ) {
+				$product_changes = $_product->get_changes();
+				if ( ! empty( $product_changes ) && isset( $product_changes['price'] ) ) {
+					continue;
+				}
 			}
+
+			// Prices
+			$price     = $_product->get_price();
+			$price_old = wcj_get_product_display_price( $_product, '', 1, 'cart' ); // used for display only
 
 			// If other discount was applied in cart...
 			if ( 'yes' === get_option( 'wcj_wholesale_price_apply_only_if_no_other_discounts', 'no' ) ) {
@@ -207,17 +258,16 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 			}
 
 			// Maybe set wholesale price
-			$the_quantity = ( 'yes' === get_option( 'wcj_wholesale_price_use_total_cart_quantity', 'no' ) )
-				? $cart->cart_contents_count
-				: $item['quantity'];
-			if ( $the_quantity > 1 ) {
+			$the_quantity = $this->get_quantity( $cart, $item );
+			if ( $the_quantity > 0 ) {
 				$wholesale_price = $this->get_wholesale_price( $price, $the_quantity, wcj_get_product_id_or_variation_parent_id( $_product ) );
+				if ( 'yes' === get_option( 'wcj_wholesale_price_rounding_enabled', 'yes' ) ) {
+					$wholesale_price = round( $wholesale_price, get_option( 'woocommerce_price_num_decimals', 2 ) );
+				}
 				if ( $wholesale_price != $price ) {
 					// Setting wholesale price
-					$precision = get_option( 'woocommerce_price_num_decimals', 2 );
-					$wcj_wholesale_price = round( $wholesale_price, $precision );
-					WC()->cart->cart_contents[ $item_key ]['data']->wcj_wholesale_price = $wcj_wholesale_price;
-					WC()->cart->cart_contents[ $item_key ]['wcj_wholesale_price']       = $wcj_wholesale_price;
+					WC()->cart->cart_contents[ $item_key ]['data']->wcj_wholesale_price = $wholesale_price;
+					WC()->cart->cart_contents[ $item_key ]['wcj_wholesale_price']       = $wholesale_price;
 					WC()->cart->cart_contents[ $item_key ]['wcj_wholesale_price_old']   = $price_old;
 				}
 			}
@@ -231,7 +281,8 @@ class WCJ_Wholesale_Price extends WCJ_Module {
 	 * @version 2.7.0
 	 */
 	function wholesale_price( $price, $_product ) {
-		return ( wcj_is_product_wholesale_enabled( wcj_get_product_id_or_variation_parent_id( $_product ) ) && isset( $_product->wcj_wholesale_price ) ) ? $_product->wcj_wholesale_price : $price;
+		return ( wcj_is_product_wholesale_enabled( wcj_get_product_id_or_variation_parent_id( $_product ) ) && isset( $_product->wcj_wholesale_price ) ) ?
+			$_product->wcj_wholesale_price : $price;
 	}
 
 }

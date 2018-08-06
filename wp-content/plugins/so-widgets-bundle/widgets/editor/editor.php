@@ -33,12 +33,13 @@ class SiteOrigin_Widget_Editor_Widget extends SiteOrigin_Widget {
 			),
 			'text' => array(
 				'type' => 'tinymce',
-				'rows' => 20
+				'rows' => 20,
+				'wpautop_toggle_field' => '.siteorigin-widget-field-autop input[type="checkbox"]',
 			),
 			'autop' => array(
 				'type' => 'checkbox',
 				'default' => $global_settings['autop_default'],
-				'label' => __('Automatically add paragraphs', 'so-widgets-bundle'),
+				'label' => __( 'Automatically add paragraphs', 'so-widgets-bundle' ),
 			),
 		);
 	}
@@ -48,36 +49,26 @@ class SiteOrigin_Widget_Editor_Widget extends SiteOrigin_Widget {
 			'autop_default' => array(
 				'type'    => 'checkbox',
 				'default' => true,
-				'label'   => __( 'Enable the <em>Automatically add paragraphs</em> setting by default.', 'so-widgets-bundle' ),
+				'label'   => __( 'Enable the "Automatically add paragraphs" setting by default.', 'so-widgets-bundle' ),
 			),
 		);
-	}
-
-	function unwpautop($string) {
-		$string = str_replace("<p>", "", $string);
-		$string = str_replace(array("<br />", "<br>", "<br/>"), "\n", $string);
-		$string = str_replace("</p>", "\n\n", $string);
-
-		return $string;
 	}
 
 	public function get_template_variables( $instance, $args ) {
 		$instance = wp_parse_args(
 			$instance,
 			array(  'text' => '' )
-		);
-
-		$instance['text'] = $this->unwpautop( $instance['text'] );
-
-		if (function_exists('wp_make_content_images_responsive')) {
-			$instance['text'] = wp_make_content_images_responsive( $instance['text'] );
-		}
-
+	);
+		
 		if (
 			// Only run these parts if we're rendering for the frontend
 			empty( $GLOBALS[ 'SITEORIGIN_PANELS_CACHE_RENDER' ] ) &&
 			empty( $GLOBALS[ 'SITEORIGIN_PANELS_POST_CONTENT_RENDER' ] )
 		) {
+			if (function_exists('wp_make_content_images_responsive')) {
+				$instance['text'] = wp_make_content_images_responsive( $instance['text'] );
+			}
+			
 			// Manual support for Jetpack Markdown module.
 			if ( class_exists( 'WPCom_Markdown' ) &&
 			     Jetpack::is_module_active( 'markdown' ) &&
@@ -92,14 +83,27 @@ class SiteOrigin_Widget_Editor_Widget extends SiteOrigin_Widget {
 				$instance['text'] = $GLOBALS['wp_embed']->run_shortcode( $instance['text'] );
 				$instance['text'] = $GLOBALS['wp_embed']->autoembed( $instance['text'] );
 			}
-
+			
+			// As in the Text Widget, we need to prevent plugins and themes from running `do_shortcode` in the `widget_text`
+			// filter to avoid running it twice and to prevent `wpautop` from interfering with shortcodes' output.
+			$widget_text_do_shortcode_priority = has_filter( 'widget_text', 'do_shortcode' );
+			if ( $widget_text_do_shortcode_priority !== false ) {
+				remove_filter( 'widget_text', 'do_shortcode', $widget_text_do_shortcode_priority );
+			}
+			
 			$instance['text'] = apply_filters( 'widget_text', $instance['text'] );
+			
+			if ( $widget_text_do_shortcode_priority !== false ) {
+				add_filter( 'widget_text', 'do_shortcode', $widget_text_do_shortcode_priority );
+			}
+			
+			if( $instance['autop'] ) {
+				$instance['text'] = wpautop( $instance['text'] );
+			}
+			
 			$instance['text'] = do_shortcode( shortcode_unautop( $instance['text'] ) );
 		}
 
-		if( $instance['autop'] ) {
-			$instance['text'] = wpautop( $instance['text'] );
-		}
 
 		return array(
 			'text' => $instance['text'],

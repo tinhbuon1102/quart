@@ -1,12 +1,3 @@
-<script type="text/javascript">
-	function showProgress() {
-		window.scrollTo(0,0);
-		document.getElementById('progress').style.display = 'block';
-		document.getElementById('content').style.display = 'none';
-		document.getElementById('support-donate_rate').style.display = 'none';
-	}
-</script>
-
 <div id="content">
 
 	<h2 class="nav-tab-wrapper">

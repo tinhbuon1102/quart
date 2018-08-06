@@ -27,7 +27,7 @@ if ( ! $post->post_excerpt ) {
 if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
     ?>                       
 <div class="pre-note">
-<ul class="pre-list"><li>10月からの発送開始となります。</li>
+<ul class="pre-list"><li>10月中旬以降からの発送開始となります。</li>
 <li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
@@ -37,7 +37,7 @@ if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
     ?>                       
 <div class="pre-note">
 <ul class="pre-list">
-<li>9月初旬からの発送開始となります。</li>
+<li>10月中旬以降からの発送開始となります。</li>
 <li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
@@ -47,5 +47,65 @@ else {
 	
 }?>
 
+
+<?php
+$table = get_field( 'product_size' );
+
+if ( $table ) { ?>
+<?php
+echo do_shortcode('[su_tabs class="my-custom-tabs"]');
+echo do_shortcode('[su_tab title="アイテム説明"]');
+echo apply_filters( 'woocommerce_short_description', $post->post_excerpt );
+echo do_shortcode('[/su_tab]');
+?>
+<?php echo do_shortcode('[su_tab title="サイズ詳細"]');
+
+    echo '<table border="0">';
+
+        if ( $table['header'] ) {
+
+            echo '<thead>';
+
+                echo '<tr>';
+
+                    foreach ( $table['header'] as $th ) {
+
+                        echo '<th>';
+                            echo $th['c'];
+                        echo '</th>';
+                    }
+
+                echo '</tr>';
+
+            echo '</thead>';
+        }
+
+        echo '<tbody>';
+
+            foreach ( $table['body'] as $tr ) {
+
+                echo '<tr>';
+
+                    foreach ( $tr as $td ) {
+
+                        echo '<td>';
+                            echo $td['c'];
+                        echo '</td>';
+                    }
+
+                echo '</tr>';
+            }
+
+        echo '</tbody>';
+
+    echo '</table>';
+	
+echo do_shortcode('[/su_tab]');
+echo do_shortcode('[/su_tabs]'); ?>
+<?php } else { ?>
 	<?php echo apply_filters( 'woocommerce_short_description', $post->post_excerpt ) ?>
+	<?php }
+	?>
+
+
 </div>

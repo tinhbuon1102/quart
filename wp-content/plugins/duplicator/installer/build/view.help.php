@@ -58,6 +58,9 @@ STEP 1
 			<th>Details</th>
 		</tr>
 		<tr>
+			<td colspan="2" class="section">General Options</td>
+		</tr>
+		<tr>
 			<td>Extraction</td>
 			<td>
 				<b>Manual Archive Extraction</b><br/>
@@ -86,6 +89,23 @@ STEP 1
 
 				<b>All Directories:</b> Check the 'All Directories' check-box and enter in the desired <a href="http://php.net/manual/en/function.chmod.php" target="_blank">chmod command</a>
 				to recursively set octal value on all the directories being extracted.  Typically this value is 755 on most servers and hosts.
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="section">Advanced Options</td>
+		</tr>
+		<tr>
+			<td>Safe Mode</td>
+			<td>
+				Safe mode is designed to configure the site with specific options at install time to help over come issues that may happen during the install were the site
+				is having issues.  These options should only be used if you run into issues after you have tried to run an install.
+				<br/><br/>
+				<b>Basic:</b> This safe mode option will disable all the plugins at install time.  When this option is set you will need to re-enable all plugins after the
+				install has full ran.
+				<br/><br/>
+
+				<b>Advanced:</b> This option applies all settings used in basic and will also de-activate and reactivate your theme when logging in for the first time.  This
+				options should be used only if the Basic option did not work.
 			</td>
 		</tr>
 		<tr>
@@ -124,6 +144,7 @@ STEP 1
 	<br/><br/>
 
 </div>
+<br/>
 
 
 <!-- ============================================
@@ -240,11 +261,25 @@ STEP 2
 			<th>Details</th>
 		</tr>
 		<tr>
-			<td>Prefix:<sup>pro*</sup></td>
+			<td>Prefix<sup>pro*</sup></td>
 			<td>By default, databases are prefixed with the cPanel account's username (for example, myusername_databasename).  However you can ignore this option if
 			your host does not use the default cPanel username prefix schema.  Check the 'Ignore cPanel Prefix' and the username prefixes will be ignored.
 			This will still require you to enter in the cPanels required setup prefix if they require one.  The checkbox will be set to read-only if your host has
 			disabled prefix settings.  Please see your host full requirements when using the cPanel options.</td>
+		</tr>
+		<tr>
+			<td>Legacy</td>
+			<td>When creating a database table, the Mysql version being used may not support the collation type of the Mysql version where the table was created.
+			In this scenario, the installer will fallback to a legacy collation type to try and create the table. This value should only be checked if you receive an error when
+			testing the database.
+			<br/><br/>
+			For example, if the database was created on MySQL 5.7 and the tables collation type was 'utf8mb4_unicode_520_ci', however your trying to run the installer
+			on an older MySQL 5.5 engine that does not support that type then an error will be thrown.  If this option is checked  then the legacy setting will try to
+			use 'utf8mb4_unicode_520', then 'utf8mb4', then 'utf8' and so on until it runs out of options.
+			<br/><br/>
+			For more information about this feature see the online FAQ question titled
+			<a href="https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-110-q" target="_blank">"What is compatibility mode & 'unknown collation' errors"</a>
+			</td>
 		</tr>
 		<tr>
 			<td>Spacing</td>
@@ -259,12 +294,12 @@ STEP 2
 		<tr>
 			<td>Charset</td>
 			<td>When the database is populated from the SQL script it will use this value as part of its connection.  Only change this value if you know what your
-			databases character  set should be.</td>
+			databases character set should be.</td>
 		</tr>
 		<tr>
 			<td>Collation</td>
 			<td>When the database is populated from the SQL script it will use this value as part of its connection.  Only change this value if you know what your
-			databases character  set should be.</td>
+			databases collation set should be.</td>
 		</tr>
 	</table>
 	<sup>*cPanel Only Option</sup>
@@ -300,10 +335,7 @@ STEP 2
 		</tr>
 	</table>
 	<br/><br/>
-
-
-
-</div>
+</div><br/>
 
 
 <!-- ============================================
@@ -333,7 +365,7 @@ STEP 3
 		</tr>
 		<tr>
 			<td colspan="2" class="section">New Admin Account</td>
-		</td>
+		</tr>
 		<tr>
 			<td>Username</td>
 			<td>A new WordPress username to create.  This will create a new WordPress administrator account.  Please note that usernames are not changeable from the within the UI.</td>
@@ -344,7 +376,7 @@ STEP 3
 		</tr>
 		<tr>
 			<td colspan="2" class="section">Scan Options</td>
-		</td>
+		</tr>
 		<tr>
 			<td>Cleanup <sup>pro</sup></td>
 			<td>The checkbox labeled Remove schedules &amp; storage endpoints will empty the Duplicator schedule and storage settings.  This is recommended to keep enabled so that you do not have unwanted schedules and storage options enabled.</td>
@@ -370,32 +402,21 @@ STEP 3
 			<td>These plug-ins are the plug-ins that were activated when the package was created and represent the plug-ins that will be activated after the install.</td>
 		</tr>
 		<tr>
-			<td>Extended URL<br/>Replace</td>
-			<td>
-				As part of the search and replace process, Step 3 will look at every cell in the database and replace the 'Old URL' with the 'New URL'.  This process is an <u>exact</u>
-				match replace routine.  So if you have URLs in your site that consist of a mix of 'http', 'https' or '//' protocol relative URLs the search will only pick up the one.
-				To enable the search across all protocol types check this checkbox.
-				<br/><br/>
-				In most cases this check is not needed.  However if you find that some links did not get updated or you know your site is inter-mixed with multiple URL types then this
-				option should be checked.
-			</td>
+			<td>Full Search</td>
+			<td>Full search forces a scan of every single cell in the database. If it is not checked then only text based columns are searched which makes the update process much faster.
+			Use this option if you have issues with data not updating correctly.</td>
 		</tr>
 		<tr>
 			<td>Post GUID</td>
 			<td>If your moving a site keep this value checked. For more details see the <a href="http://codex.wordpress.org/Changing_The_Site_URL#Important_GUID_Note" target="_blank">notes on GUIDS</a>.	Changing values in the posts table GUID column can change RSS readers to evaluate that the posts are new and may show them in feeds again.</td>
 		</tr>
 		<tr>
-			<td>Full Search</td>
-			<td>Full search forces a scan of every single cell in the database. If it is not checked then only text based columns are searched which makes the update process much faster.
-			Use this option if you have issues with data not updating correctly.</td>
-		</tr>
-		<tr>
 			<td colspan="2" class="section">WP-Config File</td>
-		</td>
+		</tr>
 		<tr>
 			<td>Config SSL</td>
 			<td>Turn off SSL support for WordPress. This sets FORCE_SSL_ADMIN in your wp-config file to false if true, otherwise it will create the setting if not set.  The "Enforce on Login"
-				will turn off SSL support for WordPress Logins. This sets FORCE_SSL_LOGIN in your wp-config file to false if true, otherwise it will create the setting if not set.</td>
+				will turn off SSL support for WordPress Logins.</td>
 		</tr>
 		<tr>
 			<td>Config Cache</td>
@@ -404,7 +425,7 @@ STEP 3
 		</tr>
 	</table>
 	<br/><br/>
-</div>
+</div><br/>
 
 
 <!-- ============================================

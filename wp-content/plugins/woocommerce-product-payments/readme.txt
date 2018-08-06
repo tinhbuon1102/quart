@@ -1,49 +1,86 @@
 === Woocommerce Payment Gateway per Product ===
 Contributors: dreamfox
+Tags: woocommerce, payments, payment gateway, per product, product, gateway, shopping, paypal, stripe, ideal, shop, online, online sell, plugin, free, adaptive payment 
 Donate link: http://www.dreamfoxmedia.com
-Tags: woocommerce,payments,plugin,free
-Requires at least: 3.0.1
-Tested up to: 4.7.2
-Stable tag: 1.2.8
+Requires at least: 4.0
+Tested up to: 4.9.4
+Stable tag: 2.5.2
+WC requires at least: 3.0.0
+WC tested up to: 3.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
+
+Woocommerce Payment Gateway per Product is a WooCommerce plugin for Wordpress websites and lets you select the available payment method for each individual product.
+
 == Description ==
+This plugin for woocommerce lets you select the available payment gateways for each individual product. You can select for eacht individual product the payment gateway that will be used by checkout. If no selection is made, then the default payment gateways are displayed. If you for example only select paypal then only paypal will available for that product by checking out. This plugin allows you to improve your customer service by giving the best payment service for your customers.
 
-This plugin for WooCommerce Payment Gateway per Product lets you select the available payment method for each individual product
+[youtube https://www.youtube.com/watch?v=ypuXOhS_j90]
 
-#### Infomation ####
-This plugin for woocommerce lets you select the available payment gateways for each individual product.<br>
-You can select for eacht individual product the payment gateway that will be used by checkout.<br>
-If no selection is made, then the default payment gateways are displayed.<br>
-If you for example only select paypal then only paypal will available for that product by checking out.<br>
-This plugin allows you to improve your customer service by giving the best payment service for your customers.
+Please read the documentation.
+[Documentation](https://www.dreamfoxmedia.com/kb-woocommerce-payment-gateway-per-product/)
 
-#### 5 STARS Rating ####
-Our customers rate this great plugin with the highest score of 5 stars. Please check:<br> 
-<a href="https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium#utm_source=readmefile&utm_medium=5star&utm_campaign=wcpgpp-f" target="_blank">https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium/</a>.
+> Try WooCommece Payment Gateway Per Product Premium version
+> [http://demo.dreamfoxmedia.com/woocommerce/available-demos/](http://demo.dreamfoxmedia.com/woocommerce/available-demos/)
 
-#### Premium Version ####
-This version is limited in features.
-For a just really small fee of 19,95 you can get the premium version with no limitation of this wonderfull plugin at:<br>
-<a href="https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium#utm_source=readmefile&utm_medium=premium_link&utm_campaign=wcpgpp-f" target="_blank">https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium/</a>.
 
-#### other WooCommerce plugins from Dreamfox Media: ####
-- WC Shipping Gateway per Category:  <a href="https://wordpress.org/plugins/wc-payment-gateway-per-category" target="_blank">Information</a> - <a href="https://wordpress.org/plugins/wc-payment-gateway-per-category" target="_blank">Free version</a> - <a href="https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-category-premium#utm_source=readmefile&utm_medium=other_plugins&utm_campaign=wcpgpp-f" target="_blank">PREMIUM Version</a>
-- WC Shipping Gateway per Product:  <a href="http://wordpress.org/plugins/woocommerce-shipping-gateway-per-product" target="_blank">Information</a> - <a href="http://wordpress.org/plugins/woocommerce-shipping-gateway-per-product" target="_blank">Free version</a> - <a href="http://www.dreamfoxmedia.com/shop/woocommerce-shipping-gateway-per-product-premium#utm_source=readmefile&utm_medium=other_plugins&utm_campaign=wcpgpp-f" target="_blank">PREMIUM Version</a>
-- WC Payment Gateway per product:  <a href="http://wordpress.org/plugins/woocommerce-product-payments" target="_blank">Information</a> - <a href="http://wordpress.org/plugins/woocommerce-product-payments" target="_blank">Free version</a> - <a href="http://www.dreamfoxmedia.com/shop/woocommerce-payment-gateway-per-product-premium#utm_source=readmefile&utm_medium=other_plugins&utm_campaign=wcpgpp-f" target="_blank">PREMIUM Version</a>
-- WooCommerce Delivery date: <a href="http://wordpress.org/plugins/woocommerce-delivery-date" target="_blank">Information</a> - <a href="http://wordpress.org/plugins/woocommerce-delivery-date" target="_blank">Free version</a> - <a href="https://www.dreamfoxmedia.com/shop/plugins/woocommerce-delivery-date-premium#utm_source=readmefile&utm_medium=other_plugins&utm_campaign=wcpgpp-f" target="_blank">PREMIUM Version</a>
-- WooCommerce MailChimp Plugin: <a href="http://wordpress.org/plugins/woocommerce-mailchimp-plugin" target="_blank">Information</a> - <a href="http://wordpress.org/plugins/woocommerce-mailchimp-plugin" target="_blank">Free version</a> - <a href="http://www.dreamfoxmedia.com/shop/woocommerce-categories-to-mailchimp-groups-plugin-premium#utm_source=readmefile&utm_medium=other_plugins&utm_campaign=wcpgpp-f" target="_blank">PREMIUM Version</a> 
+= Features =
 
-### Feedback ###
-Feedback is welcome!
-If you need help, have problems, want to leave feedback or want to provide constructive criticism, please use our contactform at [Dreamfox Media](http://www.dreamfoxmedia.com).
+Here are the most notable features of WooCommerce Payment Gateway per Product plugin. If you need any further information, please feel free to contact us. Below are the best offerings of WooCommerce Payment Gateway per Product.
 
-#### Twitter ####
-[Follow @dreamfoxmedia on Twitter](http://twitter.com/dreamfoxmedia) for updates on this and other plugins.
+= Setting Payment gateway =
+  * You can choose 2 different categories to set different gateways per product
+  * Set payment gateway per product (must be in selected category set in settings)
+  
+We also have a free plugin where you can set the payment gateway for a complete category instead of single products.
+[WooCommerce Payment Gateway per Category](https://wordpress.org/plugins/wc-payment-gateway-per-category/)
 
-#### Facebook ####
-[Follow Dreamfox Media on Facebook](https://www.facebook.com/dreamfoxmedia) for updates on this and other plugins.
+= Default payment option =
+  * Set default payment gateway 
+
+= Translation Support: =
+  * i18n ready with included plugin.pot file
+  * WPML support via wpml-config.xml
+
+= Included Translations =
+  * English (default)
+  * Dutch
+  * No other translations yet.
+ 
+= Multisite =
+  * All features should work for each blog in multisite installations
+
+= Exclusive Features in the Premium Version =
+  * Unlimited categories
+  * Quick edit possible
+  * Many more feature coming soon
+
+
+Please let us know your feedback, if you think something can be more awesome this plugin, we will added it.
+[Please use our contactform at dreamfoxmedia.com](https://www.dreamfoxmedia.com/contact-us/)
+
+
+= Other great plugins =
+Below you will see some of our awesome plugins that are available for free:
+
+  * [WooCommerce Payment Gateway per Category](https://wordpress.org/plugins/wc-payment-gateway-per-category/)
+  * [WooCommerce Payment Gateway per Product](https://wordpress.org/plugins/woocommerce-product-payments/)
+  * [Woocommerce categories Mailchimp groups](https://wordpress.org/plugins/woocommerce-mailchimp-plugin/)
+  * [Woocommerce Delivery Date](https://wordpress.org/plugins/woocommerce-delivery-date/)
+  * [Woocommerce Shipping Gateway per Product](https://wordpress.org/plugins/woocommerce-shipping-gateway-per-product/)
+
+
+= Premium Version =
+> [Woocommerce Payment Gateway per Product Premium ](https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium/)
+
+= Follow us on social media =
+> [Facebook ](https://www.facebook.com/dreamfoxmedia)
+> [Twitter ](http://twitter.com/dreamfoxmedia)
+
+
+= Author =
+Developed by [Dreamfox Media](https://www.dreamfoxmedia.com)
 
 == Installation ==
 
@@ -70,29 +107,58 @@ The simplest way to install is to click on 'Plugins' then 'Add' and type 'Woocom
 6. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 7. Activate the plugin through the 'Plugins' menu in WordPress
 
-== Frequently asked questions ==
+== Frequently Asked Questions ==
 
-= What happens if i add more then one product in the shoppingcard with different selected payment gateways? =
-
-Allowed payment gateways goes before denied payment gateways. so if for example you set:
+= Q. What happens if i add more then one product in the shoppingcard with different selected payment gateways? =
+A. Allowed payment gateways goes before denied payment gateways. so if for example you set:
 - product 1 to paypal
 - product 2 to paypal & credit card
 common payment gateway will shown by checkout
 
-= More Information =
+= Q. Where can I get support? =
+A. You can get support by posting an support request on <a href="https://www.dreamfoxmedia.com/support-request-free-plugins/" target="_blank">Dreamfoxmedia.com
 
-For more information, feel free to visit the official website for this plugin: <a href="http://www.dreamfox.nl" target="_blank">Dreamfox</a>.
+= Q. Can I use my existing WordPress theme? =
+A. Sure, you can use your existing WordPress theme with WooCommerce Payment Gateway Per Product.
 
+= Q. Where can I report a bug? =
+A. Found a bug? Please let us know by posting an support request on <a href="https://www.dreamfoxmedia.com/support-request-free-plugins/" target="_blank">Dreamfoxmedia.com
+
+= Q. Is WooCommerce Payment Gateway Per Product free? =
+A. There are two versions of WooCommerce Payment Gateway Per Product. One is free and another is paid. The paid version has some more advanced features which are not accessible in the free version.
+
+= Q. More Information =
+A. For more information, feel free to visit the official website for this plugin: <a href="http://www.dreamfoxmedia.com" target="_blank">Dreamfox</a>.
 
 == Screenshots ==
-
-1. screenshot1.png
-2. screenshot2.png
-3. screenshot3.png
+1. screenshot1
+2. screenshot2
+3. screenshot3
 
 == Changelog ==
+= 2.5.2 =
+* bugfix network installations
+
+= 2.5.1 =
+* Make it work with latest woocommerce and wordpress and fixed some bugs
+
+= 2.5 =
+* Make it work with latest woocommerce and wordpress
+
+= 2.3 =
+* Make it work with latest woocommerce and wordpress
+
+= 2.2 =
+* Make it work with latest woocommerce and wordpress
+
+= 2.1 =
+* Make it work with latest woocommerce and wordpress
+
+= 2.0 =
+* Make it work with latest woocommerce and wordpress
+
 = 1.2.8 =
-* Remove limited access
+* Bugfixes
 
 = 1.2.7 =
 * Remove limited access
@@ -174,11 +240,3 @@ For more information, feel free to visit the official website for this plugin: <
 
 = 1.0.1 =
 * added author
-
-== Upgrade notice ==
-
-= 1.0 =
-Upgrade for new version
-
-= 0.5 =
-This version fixes a bug.  Upgrade immediately.

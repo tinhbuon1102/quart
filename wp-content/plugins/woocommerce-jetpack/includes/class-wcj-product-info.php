@@ -1,9 +1,10 @@
 <?php
 /**
- * Booster for WooCommerce - Module - Product Info V1
+ * Booster for WooCommerce - Module - Product Info V1 (Deprecated)
  *
  * @version 2.8.0
  * @author  Algoritmika Ltd.
+ * @deprecated
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -44,7 +45,6 @@ class WCJ_Product_Info extends WCJ_Module {
 			'wcj_categories'                           => 'wcj_product_categories',
 			'%list_attributes%'                        => '[wcj_product_list_attributes]',
 			'wcj_list_attributes'                      => 'wcj_product_list_attributes',
-//			'%list_attribute%'                         => '[wcj_product_list_attribute]',
 			'wcj_list_attribute options='              => 'wcj_product_list_attribute name=',
 			'wcjp_list_attribute attribute_name='      => 'wcj_product_list_attribute name=',
 			'%stock_quantity%'                         => '[wcj_product_stock_quantity]',
@@ -99,7 +99,7 @@ class WCJ_Product_Info extends WCJ_Module {
 
 		$this->id         = 'product_info';
 		$this->short_desc = __( 'Product Info V1', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Add additional info to WooCommerce category and single product pages.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Add additional info to category and single product pages.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-product-info';
 		parent::__construct();
 
@@ -193,8 +193,7 @@ class WCJ_Product_Info extends WCJ_Module {
 	 * @version 2.4.0
 	 */
 	function add_more_product_info( $single_or_archive ) {
-		//$single_or_archive = 'archive';
-		for ( $i = 1; $i <= apply_filters( 'booster_get_option', 4, get_option( 'wcj_more_product_info_on_' . $single_or_archive . '_fields_total', 4 ) ); $i++ ) {
+		for ( $i = 1; $i <= apply_filters( 'booster_option', 4, get_option( 'wcj_more_product_info_on_' . $single_or_archive . '_fields_total', 4 ) ); $i++ ) {
 			$field_id = 'wcj_more_product_info_on_' . $single_or_archive . '_' . $i ;
 			$the_product_info = get_option( $field_id );
 			$the_product_info = $this->search_and_replace_deprecated_shortcodes( $the_product_info );
@@ -223,24 +222,6 @@ class WCJ_Product_Info extends WCJ_Module {
 			return;
 		}
 
-		/* foreach ( $this->product_info_shortcodes_array as $product_info_short_code ) {
-			if ( false !== strpos( $the_product_info, $product_info_short_code ) ) {
-				// We found short code in the text
-				$replace_with_phrase = $this->get_product_info_short_code( $product_info_short_code );
-				if ( false === $replace_with_phrase && true === $remove_on_empty ) {
-					// No phrase to replace exists, then empty the text and continue with next field
-					$the_product_info = '';
-					return;
-				}
-				else {
-					if ( false === $replace_with_phrase ) $replace_with_phrase = '';
-					// Replacing the short code
-					$the_product_info = str_replace( $product_info_short_code, $replace_with_phrase, $the_product_info );
-				}
-			}
-		} */
-
-		//echo apply_filters( 'the_content', $the_product_info );
 		echo do_shortcode( $the_product_info );
 	}
 
@@ -264,7 +245,7 @@ class WCJ_Product_Info extends WCJ_Module {
 				'class'    => 'chosen_select',
 				'default'  => 'woocommerce_after_shop_loop_item_title',
 				'type'     => 'select',
-				'options'  => $filters_array, //$this->product_info_on_archive_filters_array,
+				'options'  => $filters_array,
 				'desc_tip' => true,
 			),
 			array(
@@ -280,8 +261,8 @@ class WCJ_Product_Info extends WCJ_Module {
 				'id'       => 'wcj_more_product_info_on_' . $single_or_archive . '_fields_total',
 				'default'  => 4,
 				'type'     => 'number',
-				'desc'     => apply_filters( 'booster_get_message', '', 'desc' ),
-				'custom_attributes' => apply_filters( 'booster_get_message', '', 'readonly' ),
+				'desc'     => apply_filters( 'booster_message', '', 'desc' ),
+				'custom_attributes' => apply_filters( 'booster_message', '', 'readonly' ),
 			),
 		) );
 		$this->admin_add_product_info_fields( $settings, $single_or_archive );
@@ -293,7 +274,7 @@ class WCJ_Product_Info extends WCJ_Module {
 	 * @version 2.4.0
 	 */
 	function admin_add_product_info_fields( &$settings, $single_or_archive ) {
-		for ( $i = 1; $i <= apply_filters( 'booster_get_option', 4, get_option( 'wcj_more_product_info_on_' . $single_or_archive . '_fields_total', 4 ) ); $i++ ) {
+		for ( $i = 1; $i <= apply_filters( 'booster_option', 4, get_option( 'wcj_more_product_info_on_' . $single_or_archive . '_fields_total', 4 ) ); $i++ ) {
 			$field_id = 'wcj_more_product_info_on_' . $single_or_archive . '_' . $i ;
 			$default_value = '';
 			switch ( $i ) {
@@ -302,13 +283,8 @@ class WCJ_Product_Info extends WCJ_Module {
 				case 3: $default_value = '<li>' . __( '[wcj_product_total_sales before="Total sales: "]', 'woocommerce-jetpack' ) . '</li>'; break;
 				case 4: $default_value = '</ul>'; break;
 			}
-//			$desc = ( '' != $default_value ) ? __( 'Default', 'woocommerce-jetpack' ) . ': ' . esc_html( $default_value ) : '';
-//			$short_codes_list = '%you_save%, %total_sales%';
-//			$desc_tip = __( 'Field Nr. ', 'woocommerce-jetpack' ) . $i . '<br>' . __( 'Available short codes: ', 'woocommerce-jetpack' ) . $short_codes_list;
 			$settings[] = array(
 				'title'    => '',
-//				'desc_tip' => $desc_tip,
-//				'desc'     => $desc,
 				'id'       => $field_id,
 				'default'  => $default_value,
 				'type'     => 'textarea',

@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Module - Product Input Fields
  *
- * @version 2.8.0
+ * @version 3.1.0
  * @author  Algoritmika Ltd.
  */
 
@@ -15,17 +15,18 @@ class WCJ_Product_Input_Fields extends WCJ_Module {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.8.0
+	 * @version 3.1.0
+	 * @todo    (maybe) option to change local and global fields order (i.e. output local fields before the global)
 	 */
 	function __construct() {
 
 		$this->id         = 'product_input_fields';
 		$this->short_desc = __( 'Product Input Fields', 'woocommerce-jetpack' );
-		$this->desc       = __( 'WooCommerce product input fields.', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Add input fields to the products.', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-product-input-fields';
 		parent::__construct();
 
-		include_once( 'input-fields/class-wcj-product-input-fields-abstract.php' );
+		require_once( 'input-fields/class-wcj-product-input-fields-core.php' );
 
 		if ( $this->is_enabled() ) {
 
@@ -33,14 +34,27 @@ class WCJ_Product_Input_Fields extends WCJ_Module {
 
 			add_action( 'init', array( $this, 'handle_downloads' ) );
 
-			include_once( 'input-fields/class-wcj-product-input-fields-global.php' );
-			include_once( 'input-fields/class-wcj-product-input-fields-per-product.php' );
+			$this->global_product_fields = new WCJ_Product_Input_Fields_Core( 'global' );
+			$this->local_product_fields  = new WCJ_Product_Input_Fields_Core( 'local' );
 
-			if ( 'yes' === get_option( 'wcj_product_input_fields_global_enabled' ) || 'yes' === get_option( 'wcj_product_input_fields_local_enabled' ) ) {
+			if ( 'yes' === get_option( 'wcj_product_input_fields_global_enabled', 'no' ) || 'yes' === get_option( 'wcj_product_input_fields_local_enabled', 'no' ) ) {
 				add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'init',               array( $this, 'register_scripts' ) );
 			}
 		}
+	}
+
+	/**
+	 * get_global_product_fields_options.
+	 *
+	 * @version 3.1.0
+	 * @since   3.1.0
+	 */
+	function get_global_product_fields_options() {
+		$this->scope = 'global';
+		$return = require( 'input-fields/wcj-product-input-fields-options.php' );
+		unset( $this->scope );
+		return $return;
 	}
 
 	/**
@@ -88,26 +102,21 @@ class WCJ_Product_Input_Fields extends WCJ_Module {
 
 	/**
 	 * register_script.
+	 *
+	 * @version 2.9.0
 	 */
 	function register_scripts() {
-		wp_register_script( 'wcj-product-input-fields', WCJ()->plugin_url() . '/includes/js/product-input-fields.js', array( 'jquery' ), false, true );
+		wp_register_script( 'wcj-product-input-fields', wcj_plugin_url() . '/includes/js/wcj-product-input-fields.js', array( 'jquery' ), WCJ()->version, true );
 	}
 
 	/**
 	 * enqueue_checkout_script.
 	 */
 	function enqueue_scripts() {
-		if( ! is_product() ) return;
+		if( ! is_product() ) {
+			return;
+		}
 		wp_enqueue_script( 'wcj-product-input-fields' );
-	}
-
-	/**
-	 * get_options.
-	 */
-	function get_options() {
-		$product_input_fields_abstract = new WCJ_Product_Input_Fields_Abstract();
-		$product_input_fields_abstract->scope = 'global';
-		return $product_input_fields_abstract->get_options();
 	}
 
 }

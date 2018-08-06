@@ -2,15 +2,21 @@
 /**
  * Booster for WooCommerce - Settings - Product Open Pricing
  *
- * @version 2.8.0
+ * @version 3.8.0
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  * @todo    set default for "wcj_product_open_price_enable_js_validation" to "yes"
+ * @todo    (maybe) `$positions` - add `woocommerce_before_add_to_cart_quantity` and `woocommerce_after_add_to_cart_quantity` (on `! WCJ_IS_WC_VERSION_BELOW_3` and also recheck "Grouped product add to cart" template)
+ * @todo    (maybe) `$positions` - add "Frontend Position Priority" option
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 $default_price_step = 1 / pow( 10, absint( get_option( 'woocommerce_price_num_decimals', 2 ) ) );
+$positions = array(
+	'woocommerce_before_add_to_cart_button' => __( 'Before add to cart button', 'woocommerce-jetpack' ), // since WC v2.1.0
+	'woocommerce_after_add_to_cart_button'  => __( 'After add to cart button', 'woocommerce-jetpack' ),  // since WC v2.1.0
+);
 return array(
 	array(
 		'title'    => __( 'Options', 'woocommerce-jetpack' ),
@@ -22,7 +28,7 @@ return array(
 		'id'       => 'wcj_product_open_price_label_frontend',
 		'default'  => __( 'Name Your Price', 'woocommerce-jetpack' ),
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Frontend Template', 'woocommerce-jetpack' ),
@@ -31,21 +37,21 @@ return array(
 		'id'       => 'wcj_product_open_price_frontend_template',
 		'default'  => '<label for="wcj_open_price">%frontend_label%</label> %open_price_input% %currency_symbol%',
 		'type'     => 'textarea',
-		'css'      => 'min-width:300px;width:50%;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Frontend Input Style', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_input_style',
 		'default'  => 'width:75px;text-align:center;',
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Frontend Input Placeholder', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_input_placeholder',
 		'default'  => '',
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Frontend Input Price Step', 'woocommerce-jetpack' ),
@@ -55,25 +61,39 @@ return array(
 		'custom_attributes' => array( 'step' => '0.0001', 'min' => '0.0001' ),
 	),
 	array(
+		'title'    => __( 'Frontend Position', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_open_price_position',
+		'default'  => 'woocommerce_before_add_to_cart_button',
+		'type'     => 'select',
+		'options'  => $positions,
+	),
+	array(
 		'title'    => __( 'Message on Empty Price', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_messages_required',
 		'default'  => __( 'Price is required!', 'woocommerce-jetpack' ),
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Message on Price too Small', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_messages_to_small',
 		'default'  => __( 'Entered price is too small!', 'woocommerce-jetpack' ),
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Message on Price too Big', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_messages_to_big',
 		'default'  => __( 'Entered price is too big!', 'woocommerce-jetpack' ),
 		'type'     => 'text',
-		'css'      => 'width:250px;',
+		'css'      => 'width:100%;',
+	),
+	array(
+		'title'    => __( 'Disable Quantity Input', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Disable', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_open_price_disable_quantity',
+		'default'  => 'yes',
+		'type'     => 'checkbox',
 	),
 	array(
 		'title'    => __( 'Enable JS Min/Max Validation', 'woocommerce-jetpack' ),
@@ -94,13 +114,21 @@ return array(
 		'id'       => 'wcj_product_open_price_loop_price_info_template',
 		'default'  => '<span class="price">%default_price%</span>',
 		'type'     => 'custom_textarea',
-		'css'      => 'min-width:300px;width:50%;',
+		'css'      => 'width:100%;',
 	),
 	array(
 		'title'    => __( 'Add "Open Pricing" Column to Admin Product List', 'woocommerce-jetpack' ),
-		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Add', 'woocommerce-jetpack' ),
 		'id'       => 'wcj_product_open_price_enable_admin_product_list_column',
 		'default'  => 'no',
+		'type'     => 'checkbox',
+	),
+	array(
+		'title'    => __( 'Advanced: Check for Outputted Data', 'woocommerce-jetpack' ),
+		'desc'     => __( 'Enable', 'woocommerce-jetpack' ),
+		'desc_tip' => __( 'Ensures that data outputted only once. Enable this if you see data outputted on frontend twice. Disable if you see no data outputted.', 'woocommerce-jetpack' ),
+		'id'       => 'wcj_product_open_price_check_for_outputted_data',
+		'default'  => 'yes',
 		'type'     => 'checkbox',
 	),
 	array(

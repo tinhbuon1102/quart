@@ -2,7 +2,7 @@
 /**
  * Booster for WooCommerce - Settings - PDF Invoicing - Page Settings
  *
- * @version 2.8.0
+ * @version 3.4.3
  * @since   2.8.0
  * @author  Algoritmika Ltd.
  */
@@ -14,7 +14,7 @@ $invoice_types = ( 'yes' === get_option( 'wcj_invoicing_hide_disabled_docs_setti
 foreach ( $invoice_types as $invoice_type ) {
 	$settings = array_merge( $settings, array(
 		array(
-			'title'    => strtoupper( $invoice_type['desc'] ),
+			'title'    => $invoice_type['title'],
 			'type'     => 'title',
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_page_options',
 		),
@@ -31,9 +31,23 @@ foreach ( $invoice_types as $invoice_type ) {
 		array(
 			'title'    => __( 'Page Format', 'woocommerce-jetpack' ),
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_page_format',
-			'default'  => 'A4',
+			'default'  => 'A4', // PDF_PAGE_FORMAT
 			'type'     => 'select',
-			'options'  => $this->get_page_formats(),
+			'options'  => array_replace( array( 'custom' => __( 'Custom', 'woocommerce-jetpack' ) ), $this->get_page_formats() ),
+		),
+		array(
+			'desc'     => __( 'Custom: width (millimeters)', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_page_format_custom_width',
+			'default'  => '0',
+			'type'     => 'number',
+			'custom_attributes' => array( 'min' => 0 ),
+		),
+		array(
+			'desc'     => __( 'Custom: height (millimeters)', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_page_format_custom_height',
+			'default'  => '0',
+			'type'     => 'number',
+			'custom_attributes' => array( 'min' => 0 ),
 		),
 		array(
 			'title'    => __( 'Margin Left', 'woocommerce-jetpack' ),
@@ -58,6 +72,21 @@ foreach ( $invoice_types as $invoice_type ) {
 			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_margin_bottom',
 			'default'  => 0, // PDF_MARGIN_BOTTOM,
 			'type'     => 'number',
+		),
+		array(
+			'title'    => __( 'Background Image', 'woocommerce-jetpack' ),
+			'id'       => 'wcj_invoicing_' . $invoice_type['id'] . '_background_image',
+			'default'  => '',
+			'type'     => 'text',
+			'desc'     => sprintf( __( 'Enter a local URL to an image. Upload your image using the <a href="%s">media uploader</a>.', 'woocommerce-jetpack' ),
+					admin_url( 'media-new.php' ) ) .
+				wcj_get_invoicing_current_image_path_desc( 'wcj_invoicing_' . $invoice_type['id'] . '_background_image' ) . '<br>' .
+				sprintf( __( 'If you are experiencing issues with displaying background image, please try setting different values for the "Advanced: Default Images Directory" option in %s.', 'woocommerce-jetpack' ),
+					'<a target="_blank" href="' . admin_url( 'admin.php?page=wc-settings&tab=jetpack&wcj-cat=pdf_invoicing&section=pdf_invoicing_advanced' ) . '">' .
+						__( 'PDF Invoicing & Packing Slips > Advanced', 'woocommerce-jetpack' ) .
+					'</a>' ),
+			'desc_tip' => __( 'Leave blank to disable', 'woocommerce-jetpack' ),
+			'class'    => 'widefat',
 		),
 		array(
 			'type'     => 'sectionend',

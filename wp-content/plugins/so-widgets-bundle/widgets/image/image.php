@@ -50,6 +50,18 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 				),
 			),
 
+			'title_align' => array(
+				'type' => 'select',
+				'label' => __( 'Title alignment', 'so-widgets-bundle' ),
+				'default' => 'default',
+				'options' => array(
+					'default' => __( 'Default', 'so-widgets-bundle' ),
+					'left' =>    __( 'Left', 'so-widgets-bundle' ),
+					'right' =>   __( 'Right', 'so-widgets-bundle' ),
+					'center' =>  __( 'Center', 'so-widgets-bundle' ),
+				),
+			),
+
 			'title' => array(
 				'type' => 'text',
 				'label' => __('Title text', 'so-widgets-bundle'),
@@ -152,12 +164,19 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 		} else {
 			$attr['alt'] = get_post_meta( $instance['image'], '_wp_attachment_image_alt', true );
 		}
+		
+		$link_atts = array();
+		if ( ! empty( $instance['new_window'] ) ) {
+			$link_atts['target'] = '_blank';
+			$link_atts['rel'] = 'noopener noreferrer';
+		}
 
 		return array(
 			'title' => $title,
 			'title_position' => $instance['title_position'],
 			'url' => $instance['url'],
 			'new_window' => $instance['new_window'],
+			'link_attributes' => $link_atts,
 			'attributes' => $attr,
 			'classes' => array( 'so-widget-image' ),
 		);
@@ -166,11 +185,22 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 
 	function get_less_variables($instance){
 		return array(
+			'title_alignment' => ! empty( $instance['title_align'] ) ? $instance['title_align'] : '',
 			'image_alignment' => $instance['align'],
 			'image_display' => $instance['align'] == 'default' ? 'block' : 'inline-block',
 			'image_max_width' => ! empty( $instance['bound'] ) ? '100%' : '',
 			'image_height' => ! empty( $instance['bound'] ) ? 'auto' : '',
 			'image_width' => ! empty( $instance['full_width'] ) ? '100%' : ( ! empty( $instance['bound'] ) ? 'inherit' : '' ),
+		);
+	}
+
+	function get_form_teaser(){
+		if( class_exists( 'SiteOrigin_Premium' ) ) return false;
+
+		return sprintf(
+			__( 'Add a Lightbox to your images with %sSiteOrigin Premium%s', 'so-widgets-bundle' ),
+			'<a href="https://siteorigin.com/downloads/premium/?featured_addon=plugin/lightbox" target="_blank" rel="noopener noreferrer">',
+			'</a>'
 		);
 	}
 }

@@ -2,9 +2,10 @@
 /**
  * Booster for WooCommerce - Module - Order Minimum Amount
  *
- * @version 2.8.0
+ * @version 3.2.4
  * @since   2.5.7
  * @author  Algoritmika Ltd.
+ * @todo    order max amount
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -23,7 +24,7 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 
 		$this->id         = 'order_min_amount';
 		$this->short_desc = __( 'Order Minimum Amount', 'woocommerce-jetpack' );
-		$this->desc       = __( 'Minimum WooCommerce order amount (optionally by user role).', 'woocommerce-jetpack' );
+		$this->desc       = __( 'Minimum order amount (optionally by user role).', 'woocommerce-jetpack' );
 		$this->link_slug  = 'woocommerce-order-minimum-amount';
 		parent::__construct();
 
@@ -55,7 +56,7 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 			add_action( 'woocommerce_checkout_process', array( $this, 'order_minimum_amount' ) );
 			add_action( 'woocommerce_before_cart',      array( $this, 'order_minimum_amount' ) );
 			if ( 'yes' === get_option( 'wcj_order_minimum_amount_stop_from_seeing_checkout', 'no' ) ) {
-				add_action( 'wp',                array( $this, 'stop_from_seeing_checkout' ), 100 );
+				add_action( 'wp', array( $this, 'stop_from_seeing_checkout' ), 100 );
 			}
 		}
 	}
@@ -88,10 +89,13 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 	/**
 	 * get_cart_total_for_minimal_order_amount.
 	 *
-	 * @version 2.6.0
+	 * @version 3.2.4
 	 * @since   2.5.5
 	 */
 	function get_cart_total_for_minimal_order_amount() {
+		if ( ! isset( WC()->cart ) ) {
+			return 0;
+		}
 		WC()->cart->calculate_totals();
 		$cart_total = WC()->cart->total;
 		if ( 'yes' === get_option( 'wcj_order_minimum_amount_exclude_shipping', 'no' ) ) {
@@ -99,14 +103,17 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 			$shipping_tax_total = isset( WC()->cart->shipping_tax_total ) ? WC()->cart->shipping_tax_total : 0;
 			$cart_total -= ( $shipping_total + $shipping_tax_total );
 		}
+		if ( 'yes' === get_option( 'wcj_order_minimum_amount_exclude_discounts', 'no' ) ) {
+			$cart_total += ( WC()->cart->get_cart_discount_total() + WC()->cart->get_cart_discount_tax_total() );
+		}
 		return $cart_total;
 	}
 
 	/**
 	 * order_minimum_amount.
 	 *
-	 * @version 2.7.0
-	 * @todo    wc_print_notice or wc_add_notice?
+	 * @version 2.9.0
+	 * @todo    `wcj_order_minimum_amount_checkout_notice_type`
 	 */
 	function order_minimum_amount() {
 		$minimum = $this->get_order_minimum_amount_with_user_roles();
@@ -115,19 +122,20 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 		}
 		$cart_total = $this->get_cart_total_for_minimal_order_amount();
 		if ( $cart_total < $minimum ) {
-			if( is_cart() ) {
+			if ( is_cart() ) {
 				if ( 'yes' === get_option( 'wcj_order_minimum_amount_cart_notice_enabled', 'no' ) ) {
-					wc_print_notice(
-						sprintf( apply_filters( 'booster_get_option', 'You must have an order with a minimum of %s to place your order, your current order total is %s.', get_option( 'wcj_order_minimum_amount_cart_notice_message' ) ),
+					$notice_function = get_option( 'wcj_order_minimum_amount_cart_notice_function', 'wc_print_notice' );
+					$notice_function(
+						sprintf( apply_filters( 'booster_option', 'You must have an order with a minimum of %s to place your order, your current order total is %s.', get_option( 'wcj_order_minimum_amount_cart_notice_message' ) ),
 							wc_price( $minimum ),
 							wc_price( $cart_total )
 						),
-						'notice'
+						get_option( 'wcj_order_minimum_amount_cart_notice_type', 'notice' )
 					);
 				}
 			} else {
 				wc_add_notice(
-					sprintf( apply_filters( 'booster_get_option', 'You must have an order with a minimum of %s to place your order, your current order total is %s.', get_option( 'wcj_order_minimum_amount_error_message' ) ),
+					sprintf( apply_filters( 'booster_option', 'You must have an order with a minimum of %s to place your order, your current order total is %s.', get_option( 'wcj_order_minimum_amount_error_message' ) ),
 						wc_price( $minimum ),
 						wc_price( $cart_total )
 					),
@@ -140,7 +148,7 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 	/**
 	 * stop_from_seeing_checkout.
 	 *
-	 * @version 2.7.0
+	 * @version 3.2.3
 	 * @todo    (maybe) `if ( is_admin() ) return;`
 	 */
 	function stop_from_seeing_checkout( $wp ) {
@@ -163,7 +171,7 @@ class WCJ_Order_Min_Amount extends WCJ_Module {
 			return;
 		}
 		if ( $the_cart_total < $minimum ) {
-			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
+			wp_safe_redirect( wc_get_cart_url() );
 			exit;
 		}
 	}
