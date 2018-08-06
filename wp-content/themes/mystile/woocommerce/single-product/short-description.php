@@ -37,7 +37,7 @@ if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
     ?>                       
 <div class="pre-note">
 <ul class="pre-list">
-<li>9月初旬からの発送開始となります。</li>
+<li>10月中旬以降からの発送開始となります。</li>
 <li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
