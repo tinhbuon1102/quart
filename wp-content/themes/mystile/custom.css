@@ -31,7 +31,9 @@ li.cat-item.cat-item-82 {
     text-align: center;
 	margin-bottom: 60px;
 }
-
+ul.products > li.outofstock > .woosticker.soldout_round_right {
+    display: none !important;
+}
 @media only screen and (min-width: 768px) {
 	.wbm_banner_image img, .wbm_category_banner_image {
     float: left;
