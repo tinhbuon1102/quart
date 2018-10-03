@@ -888,3 +888,153 @@ function mystile_modify_edit_products_per_page( $per_page, $post_type ) {
 	return $per_page;
 }
 
+
+add_action('wp_loaded', 'init_action_wp_loaded');
+function init_action_wp_loaded()
+{
+	if (isset($_REQUEST['private_schedule']))
+	{
+		every_one_minutes_event_func();
+	}
+}
+
+add_filter( 'cron_schedules', 'isa_add_every_one_minutes' );
+function isa_add_every_one_minutes( $schedules ) {
+	$schedules['every_one_minutes'] = array(
+		'interval'  => 60,
+		'display'   => __( 'Every 1 Minute', 'mystile' )
+	);
+	return $schedules;
+}
+
+// Schedule an action if it's not already scheduled
+if ( ! wp_next_scheduled( 'isa_add_every_one_minutes' ) ) {
+	wp_schedule_event( time(), 'every_one_minutes', 'isa_add_every_one_minutes' );
+}
+
+// Hook into that action that'll fire every one minutes
+add_action( 'isa_add_every_one_minutes', 'every_one_minutes_event_func' );
+function every_one_minutes_event_func() {
+	global $wpdb;
+	$schedule_privates = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM ".$wpdb->postmeta." WHERE meta_key=%s AND meta_value <= NOW()", 'private_schedule' ) );
+	if (!empty($schedule_privates))
+	{
+		foreach ($schedule_privates as $schedule_private)
+		{
+			wp_update_post(array(
+				'ID'    =>  $schedule_private->post_id,
+				'post_status'   =>  'private'
+			));
+			delete_post_meta($schedule_private->post_id, 'private_schedule');
+		}
+	}
+}
+
+add_action( 'save_post', 'save_post_meta_schedule_private', 10, 2 );
+function save_post_meta_schedule_private($post_id, $post)
+{
+	if ( isset( $_POST['private_time'] ))
+	{
+		$private_date = $_POST['private_time']['aa'] . '-' . $_POST['private_time']['mm'] . '-' . $_POST['private_time']['jj'];
+		$private_date .=  ' ' . $_POST['private_time']['hh'] . ':' . $_POST['private_time']['mn'];
+		update_post_meta($post->ID, 'private_schedule', $private_date);
+	}
+}
+
+
+add_action( 'post_submitbox_misc_actions', 'add_schedule_private_product', 10, 1 );
+function add_schedule_private_product($post)
+{
+	global $action;
+	
+	if ($post->post_type != 'product')
+		return '';
+	
+	/* translators: Publish box date format, see https://secure.php.net/date */
+	$datef = __( 'M j, Y @ H:i' );
+	if ( 0 != $post->ID ) {
+		$private_schedule = get_post_meta($post->ID, 'private_schedule', true);
+		if ('private' == $post->post_status ) {
+			/* translators: Post date information. 1: Date on which the post was published */
+			$stamp = __('Already Privated', 'mystile');
+		}
+		elseif ( !$private_schedule) {
+			$stamp = __('No private schedule');
+		}
+		elseif ( $private_schedule) {
+			$stamp = __('Schedule for Private: <b>%1$s</b>');
+		}
+		$date = date_i18n( $datef, strtotime( $private_schedule) );
+	} 
+?>
+<div class="misc-pub-section curtime misc-pub-curtime">
+	<span id="private_time">
+	<?php printf($stamp, $date); ?></span>
+	<a href="#edit_private_time" id="private_time_edit" class="edit-private_time hide-if-no-js" role="button"><span aria-hidden="true"><?php _e( 'Edit' ); ?></span> <span class="screen-reader-text"><?php _e( 'Edit date and time' ); ?></span></a>
+	<fieldset id="private_timediv" class="hide-if-js">
+	<legend class="screen-reader-text"><?php _e( 'Date and time' ); ?></legend>
+	<?php touch_private_time( ( $action === 'edit'), 1, 1, 1  ); ?>
+	</fieldset>
+	<script>
+		jQuery('body').on('click', '#private_time_edit', function(){
+			jQuery('#private_timediv').slideToggle('slow', function(){
+				if (jQuery('#private_timediv').is(':hidden'))
+				{
+					jQuery('#private_timediv').find('input, select').attr('disabled', true);
+				}
+				else {
+					jQuery('#private_timediv').find('input, select').removeAttr('disabled');
+				}
+			});
+		});
+	</script>
+</div><?php // /misc-pub-section ?>
+<?php
+}
+
+function touch_private_time( $edit = 1, $for_post = 1, $tab_index = 0, $multi = 0 ) {
+	global $wp_locale;
+	$post = get_post();
+	
+	$tab_index_attribute = '';
+	if ( (int) $tab_index > 0 ) $tab_index_attribute = " tabindex=\"$tab_index\"";
+	
+	$time_adj = current_time('timestamp');
+	$post_date = get_post_meta($post->ID, 'private_schedule', true);
+	$post_date = $post_date ? $post_date : date('Y-m-d H:i:s');
+	
+	$jj = ($edit) ? mysql2date('d', $post_date, false) : gmdate('d', $time_adj);
+	$mm = ($edit) ? mysql2date('m', $post_date, false) : gmdate('m', $time_adj);
+	$aa = ($edit) ? mysql2date('Y', $post_date, false) : gmdate('Y', $time_adj);
+	$hh = ($edit) ? mysql2date('H', $post_date, false) : gmdate('H', $time_adj);
+	$mn = ($edit) ? mysql2date('i', $post_date, false) : gmdate('i', $time_adj);
+	$ss = ($edit) ? mysql2date('s', $post_date, false) : gmdate('s', $time_adj);
+	
+	$cur_jj = gmdate('d', $time_adj);
+	$cur_mm = gmdate('m', $time_adj);
+	$cur_aa = gmdate('Y', $time_adj);
+	$cur_hh = gmdate('H', $time_adj);
+	$cur_mn = gmdate('i', $time_adj);
+	
+	$month = '<label><span class="screen-reader-text">' . __('Month') . '</span><select ' . ($multi ? '' : 'id="mm_private" ') . 'name="private_time[mm]"' . $tab_index_attribute . " disabled>\n";
+	for ( $i = 1; $i < 13; $i = $i + 1 )
+	{
+		$monthnum = zeroise($i, 2);
+		$monthtext = $wp_locale->get_month_abbrev($wp_locale->get_month($i));
+		$month .= "\t\t\t" . '<option value="' . $monthnum . '" data-text="' . $monthtext . '" ' . selected($monthnum, $mm, false) . '>';
+		/* translators: 1: month number (01, 02, etc.), 2: month abbreviation */
+		$month .= sprintf(__('%1$s-%2$s'), $monthnum, $monthtext) . "</option>\n";
+	}
+	$month .= '</select></label>';
+	
+	$day = '<label><span class="screen-reader-text">' . __('Day') . '</span><input type="text" ' . ($multi ? '' : 'id="jj_private" ') . 'name="private_time[jj]" value="' . $jj . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" disabled/></label>';
+	$year = '<label><span class="screen-reader-text">' . __('Year') . '</span><input type="text" ' . ($multi ? '' : 'id="aa_private" ') . 'name="private_time[aa]" value="' . $aa . '" size="4" maxlength="4"' . $tab_index_attribute . ' autocomplete="off" disabled/></label>';
+	$hour = '<label><span class="screen-reader-text">' . __('Hour') . '</span><input type="text" ' . ($multi ? '' : 'id="hh_private" ') . 'name="private_time[hh]" value="' . $hh . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" disabled/></label>';
+	$minute = '<label><span class="screen-reader-text">' . __('Minute') . '</span><input type="text" ' . ($multi ? '' : 'id="mn_private" ') . 'name="private_time[mn]" value="' . $mn . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" disabled/></label>';
+	
+	echo '<div class="timestamp-wrap">';
+	/* translators: 1: month, 2: day, 3: year, 4: hour, 5: minute */
+	printf(__('%1$s %2$s, %3$s @ %4$s:%5$s'), $month, $day, $year, $hour, $minute);
+	
+	echo '</div><input type="hidden" id="ss_private" name="private_time[ss]" value="' . $ss . '" disabled/>';
+}
