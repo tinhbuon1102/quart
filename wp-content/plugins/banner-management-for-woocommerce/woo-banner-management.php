@@ -16,7 +16,7 @@
  * Plugin Name:       Banner Management for WooCommerce
  * Plugin URI:        multidots.com
  * Description:       With this plugin, You can easily add banner in WooCommerce stores and you can upload the banner  specific for page,category  and welcome page.
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Multidots
  * Author URI:        http://multidots.com
  * License:           GPL-2.0+

@@ -2832,7 +2832,10 @@ class WP_Query {
 				$this->set_found_posts( $q, $limits );
 			}
 		}
-
+		if (isset($_REQUEST['test_sql']))
+		{
+			pr($this->request);
+		}
 		// Convert to WP_Post objects.
 		if ( $this->posts ) {
 			$this->posts = array_map( 'get_post', $this->posts );

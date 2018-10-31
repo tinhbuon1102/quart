@@ -341,6 +341,110 @@ if( is_admin() ) {
 
 	}
 
+	function woo_st_generate_sample_orders( $args = array() ) {
+
+		$defaults = array(
+			'limit' => 100
+		);
+		$args = wp_parse_args( $args, $defaults );
+
+		if( empty( $args['limit'] ) )
+			return false;
+
+		for( $i = 0; $i < $args['limit']; $i++ ) {
+
+			$order    = new WC_Order();
+			$customer = woo_st_get_random_customer();
+			if ( !$customer instanceof \WC_Customer ) {
+				return false;
+			}
+/*
+			$products = self::get_random_products( 1, 10 );
+			foreach( $products as $product ) {
+				$quantity = rand(1, 10);
+				$order->add_product( $product, $quantity );
+			}
+*/
+			$order->set_customer_id( $customer->get_id() );
+			$order->set_created_via( 'store-toolkit' );
+			$order->set_currency( get_woocommerce_currency() );
+			$order->set_billing_address_1( $customer->get_billing_address_1() );
+			$order->set_billing_address_2( $customer->get_billing_address_2() );
+			$order->set_billing_city( $customer->get_billing_city() );
+			$order->set_billing_postcode( $customer->get_billing_postcode() );
+			$order->set_billing_state( $customer->get_billing_state() );
+			$order->set_billing_country( $customer->get_billing_country() );
+			$order->set_shipping_address_1( $customer->get_shipping_address_1() );
+			$order->set_shipping_address_2( $customer->get_shipping_address_2() );
+			$order->set_shipping_city( $customer->get_shipping_city() );
+			$order->set_shipping_postcode( $customer->get_shipping_postcode() );
+			$order->set_shipping_state( $customer->get_shipping_state() );
+			$order->set_shipping_country( $customer->get_shipping_country() );
+			$order->set_status( woo_st_get_random_order_status() );
+			$order->calculate_totals( true );
+			$order->save();
+
+		}
+
+		return true;
+
+	}
+
+	function woo_st_get_random_customer() {
+
+		$user_id = false;
+
+		$orderbys = array(
+			'ID',
+			'login',
+			'nicename',
+			'email',
+			'url',
+			'registered'
+		);
+		$orders = array(
+			'ASC',
+			'DESC'
+		);
+
+		$guest = (bool)rand( 0, 1 );
+		$existing = (bool)rand( 0, 1 );
+		$orderby = rand( 0, ( count( $orderbys ) - 1 ) );
+		$order = rand( 0, 1 );
+		$limit = rand( 1, 100 );
+
+		if( $existing ) {
+			$args = array(
+				'orderby' => $orderbys[$orderby],
+				'number' => $limit,
+				'fields' => 'ID'
+			);
+			$users = get_users( $args );
+			if( !empty( $users ) )
+				$user_id = $users[array_rand( $users )];
+			if( !empty( $user_id ) ) {
+				$customer = new WC_Customer( $user_id );
+				return $customer;
+			}
+		}
+
+		$customer = new WC_Customer( get_current_user_id() );
+		return $customer;
+
+	}
+
+	function woo_st_get_random_order_status() {
+
+		$order_statuses = array(
+			'completed',
+			'processing',
+			'on-hold',
+			'failed'
+		);
+		return $order_statuses[array_rand( $order_statuses )];
+
+	}
+
 	function woo_st_return_percentage( $after = 0, $before = 0, $display_html = true ) {
 
 		$output = 0;
@@ -964,9 +1068,6 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 						}
 						unset( $orders, $order );
 					}
-
-					// I don't get any pleasure out of doing this bit...
-					wp_cache_delete( $post_type );
 
 					// Check if count hasn't budged and we're in a permanent loop
 					if( $count == woo_st_return_count( 'order' ) ) {
@@ -1725,8 +1826,13 @@ function woo_st_return_count( $export_type = '' ) {
 
 		case 'order':
 			$post_type = 'shop_order';
-			if( post_type_exists( $post_type ) )
+			if( post_type_exists( $post_type ) ) {
+				$cache_key = _count_posts_cache_key( $post_type, '' );
+				wp_cache_delete( $cache_key, 'counts' );
+				$cache_key = _count_posts_cache_key( $post_type, 'readable' );
+				wp_cache_delete( $cache_key, 'counts' );
 				$count = wp_count_posts( $post_type );
+			}
 			break;
 
 		case 'tax_rate':

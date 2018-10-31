@@ -74,5 +74,5 @@ msgstr ""
 #: ../meta-slider-schedule-slides.php:268
 msgid ""
 "Meta Slider Schedule Slides could not be loaded because the plugin "
-"<strong>MetaSlider</strong> wasn't fount."
+"<strong>MetaSlider</strong> wasn't found."
 msgstr ""

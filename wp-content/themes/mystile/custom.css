@@ -34,6 +34,21 @@ li.cat-item.cat-item-82 {
 ul.products > li.outofstock > .woosticker.soldout_round_right {
     display: none !important;
 }
+header#header #logo {
+    float: none;
+}
+#logo .svg-wrapper {
+	display: block;
+	position: relative;
+	padding-top: 22.8125%;/* SVG高さ / SVG幅 * 100 */
+}
+#header #logo svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 @media only screen and (min-width: 768px) {
 	.wbm_banner_image img, .wbm_category_banner_image {
     float: left;

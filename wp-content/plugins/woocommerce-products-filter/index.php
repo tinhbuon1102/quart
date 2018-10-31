@@ -1845,7 +1845,7 @@ final class WOOF {
 	//+++
 	$args = array(
 	    'post_type' => array('product'/* ,'product_variation' */),
-	    'post_status' => 'publish',
+	    'post_status' => array('publish', 'private'),
 	    'orderby' => $orderby,
 	    'order' => $order,
 	    'meta_query' => $this->get_meta_query(),

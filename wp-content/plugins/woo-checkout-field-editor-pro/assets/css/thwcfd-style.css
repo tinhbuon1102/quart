@@ -90,6 +90,25 @@ tr.strikeout1 td:before {
 	opacity: 1;
 }
 
+table.thpladmin_fields_table td.sort{
+    cursor: move;
+    font-size: 15px;
+    text-align: center;
+}
+
+table.thpladmin_fields_table td.sort::before{
+    content: '\f333';
+    font-family: Dashicons;
+    text-align: center;
+    line-height: 1;
+    color: #999;
+    display: block;
+    width: 17px;
+    float: left;
+    height: 100%;
+    line-height: 24px;
+}
+
 .err_msgs{
 	color: #FF0000;
 }

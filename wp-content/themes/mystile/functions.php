@@ -167,6 +167,10 @@ foreach ($terms as $term)
     margin-left: -23px;
 }
 li.subitem a{color:#c9b8b5;}
+
+
+
+
 	</style>
 <script type="text/javascript">
 
@@ -888,3 +892,84 @@ function mystile_modify_edit_products_per_page( $per_page, $post_type ) {
 	return $per_page;
 }
 
+function custom_styles() {
+	wp_enqueue_style( 'flex-grid', get_template_directory_uri(). '/css/flexgrid.css', array(), '' );
+}
+add_action( 'wp_enqueue_scripts', 'custom_styles' );
+/*function create_posttype() {
+ 
+    register_post_type( 'collect',
+    // CPT Options
+        array(
+            'labels' => array(
+                'name' => __( 'Collects' ),
+                'singular_name' => __( 'Collect' )
+            ),
+            'public' => true,
+            'has_archive' => true,
+            'rewrite' => array('slug' => 'collect'),
+        )
+    );
+}
+// Hooking up our function to theme setup
+add_action( 'init', 'create_posttype' );*/
+function add_scripts(){
+	wp_register_script( 'lookbook-js', get_template_directory_uri() . '/js/lookbook.js', array(), false, true);
+	$tmp_path_arr = array(
+	'temp_uri' => get_template_directory_uri(),
+	'home_url' => home_url()
+	);
+	wp_localize_script( 'lookbook-js', 'home_path', 'tmp_path', $tmp_path_arr );
+    if( is_single() && get_post_type()=='lookbook' ){
+        wp_enqueue_script('lookbook-js');
+    }
+}
+add_action('wp_enqueue_scripts', 'add_scripts');
+
+function lookbook(){
+	
+	$args = array(
+	 'posts_per_page'   => -1,
+	 'offset'           => 0,
+	 'orderby'          => 'date',
+	 'order'            => 'DESC',
+	 'post_type'        => 'lookbook',
+	 'post_status'      => 'publish', 
+	 'suppress_filters' => true 
+	);
+	$posts_array = get_posts( $args ); 
+	
+	$html='';
+	
+	if(count($posts_array)>0){
+		
+		$html.='<div class="all-lookbook post_grid">';	
+		
+		foreach ( $posts_array as $post ) : setup_postdata( $post );
+			
+			$image=get_the_post_thumbnail_url($post->ID,'full');
+			
+			$html.='<div class="grid_post">
+						<div class="look_thum">
+							<a href="'.get_permalink($post->ID).'">
+							    <span class="overlay"></span>
+							    <img class="grid__item__img" src="'.$image.'">
+								<div class="arch_title">
+								<h3 class="heading look_title">'.$post->post_title.' </h3>
+								<a href="'.get_permalink($post->ID).'" class="cta icon--angle-right icon--outside">Check now</a>
+								</div>
+							</a>
+						</div>
+					</div>';	
+			
+		endforeach; 
+		wp_reset_postdata(); 
+		
+		$html.='</div>';
+		
+	}
+	
+	return $html;
+}
+
+add_shortcode('lookbook','lookbook');

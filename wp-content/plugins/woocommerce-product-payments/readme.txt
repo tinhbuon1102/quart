@@ -3,10 +3,10 @@ Contributors: dreamfox
 Tags: woocommerce, payments, payment gateway, per product, product, gateway, shopping, paypal, stripe, ideal, shop, online, online sell, plugin, free, adaptive payment 
 Donate link: http://www.dreamfoxmedia.com
 Requires at least: 4.0
-Tested up to: 4.9.4
-Stable tag: 2.5.2
+Tested up to: 4.9.8
+Stable tag: 2.5.5
 WC requires at least: 3.0.0
-WC tested up to: 3.3.1
+WC tested up to: 3.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,16 @@ A. For more information, feel free to visit the official website for this plugin
 3. screenshot3
 
 == Changelog ==
+= 2.5.5
+* fixed major issue
+
+= 2.5.4
+* fixed php 7.2 ,Warning: count(): Parameter must be an array or an object 
+
+= 2.5.3 =
+* Test with latest woocommerce and wordpress
+* Test and make compatible with PHP 7+
+
 = 2.5.2 =
 * bugfix network installations
 

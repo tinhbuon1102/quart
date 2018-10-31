@@ -237,6 +237,11 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		echo '</div>';
 		echo $args['after_widget'];
 		do_action( 'siteorigin_widgets_after_widget_' . $this->id_base, $instance, $this );
+		
+		if ( $this->is_preview( $instance ) ) {
+			// print inline styles if we're preview the widget.
+			siteorigin_widget_print_styles();
+		}
 	}
 
 	private function get_wrapper_data( $instance ) {
@@ -703,7 +708,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		}
 
 		// Remove the old CSS, it'll be regenerated on page load.
-		$this->delete_css( $this->modify_instance( $new_instance ) );
+		$this->delete_css( $this->modify_instance( $old_instance ) );
 		return $new_instance;
 	}
 
@@ -722,23 +727,30 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 
 		$css = $this->get_instance_css($instance);
 
-		if( !empty($css) ) {
-
+		if ( ! empty( $css ) ) {
 			if ( WP_Filesystem() ) {
 				global $wp_filesystem;
 				$upload_dir = wp_upload_dir();
-
-				if ( ! $wp_filesystem->is_dir( $upload_dir['basedir'] . '/siteorigin-widgets/' ) ) {
-					$wp_filesystem->mkdir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
+				
+				$dir_exists = $wp_filesystem->is_dir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
+				
+				if ( empty( $dir_exists ) ) {
+					// The 'siteorigin-widgets' directory doesn't exist, so try to create it.
+					$dir_exists = $wp_filesystem->mkdir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
 				}
+				
+				if ( ! empty( $dir_exists ) ) {
+					// The 'siteorigin-widgets' directory exists, so we can try to write the CSS to a file.
+					$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $name );
+					$file_put_success = $wp_filesystem->put_contents(
+						$upload_dir['basedir'] . '/siteorigin-widgets/' . $name,
+						$css
+					);
+				}
+			}
 
-				$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $name );
-				$wp_filesystem->put_contents(
-					$upload_dir['basedir'] . '/siteorigin-widgets/' . $name,
-					$css
-				);
-
-			} else {
+			// We couldn't write to file, so let's use cache instead.
+			if ( empty( $file_put_success ) ) {
 				wp_cache_add( $name, $css, 'siteorigin_widgets' );
 			}
 
@@ -1314,10 +1326,11 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 
 		// Check if the general request is a preview
 		$is_preview =
-			is_preview() ||  // is this a standard preview
-			$this->is_customize_preview() ||    // Is this a customizer preview
-			!empty( $_GET['siteorigin_panels_live_editor'] ) ||     // Is this a Page Builder live editor request
-			( !empty( $_REQUEST['action'] ) && $_REQUEST['action'] == 'so_panels_builder_content' );    // Is this a Page Builder content ajax request
+			is_preview() || // Is this a standard preview
+			$this->is_customize_preview() || // Is this a customizer preview
+			!empty( $_GET['siteorigin_panels_live_editor'] ) || // Is this a Page Builder live editor request
+			( !empty( $_REQUEST['action'] ) && $_REQUEST['action'] == 'so_panels_builder_content' ) || // Is this a Page Builder content ajax request
+			! empty( $GLOBALS[ 'SITEORIGIN_PANELS_PREVIEW_RENDER' ] ); // Is this a Page Builder preview render.
 
 		return apply_filters( 'siteorigin_widgets_is_preview', $is_preview, $this );
 	}

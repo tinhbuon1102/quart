@@ -1,11 +1,11 @@
 === Flat Rate per State/Country/Region for WooCommerce ===
 Contributors: webdados, wonderm00n
-Tags: woocommerce, shipping, delivery, ecommerce, e-commerce, country, countries, region, continent, continents, world, states, state, districts
-Author URI: http://www.webdados.pt
-Plugin URI: http://www.webdados.pt/produtos-e-servicos/internet/desenvolvimento-wordpress/flat-rate-per-countryregion-woocommerce-wordpress/
-Requires at least: 4.4
+Tags: woocommerce, shipping, delivery, ecommerce, e-commerce, country, countries, region, continent, continents, world, states, state, districts, webdados
+Author URI: https://www.webdados.pt
+Plugin URI: https://www.webdados.pt/produtos-e-servicos/internet/desenvolvimento-wordpress/flat-rate-per-countryregion-woocommerce-wordpress/
+Requires at least: 4.7
 Tested up to: 5.0-alpha-42610
-Stable tag: 2.5
+Stable tag: 2.5.2
 
 This plugin allows you to set a flat delivery rate per States, Countries or World Regions on WooCommerce.
 
@@ -60,6 +60,14 @@ Because of the way the WooCommerce Multilingual plugin registers the Shipping Me
 No other question is frequent. Ask us something ;-)
 
 == Changelog ==
+
+= 2.5.2 =
+* Bumped `WC tested up to` tag
+
+= 2.5.1 =
+* Fix: In some server configurations (suhosin), some settings were not being saved (for WPML users: you will have to recheck your rule names translations)
+* Bumped `WC tested up to` tag
+* Bumped `Requires at least` tag
 
 = 2.5 =
 * It's now possible to exclude some shipping classes from group/rule (this may be useful for disabling shipping of certain products to certain destinations, if this plugin is the only one being used for shipping cost calculations)

@@ -1,9 +1,4 @@
 <?php
-// File Security Check
-if ( ! function_exists( 'wp' ) && ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename( $_SERVER['SCRIPT_FILENAME'] ) ) {
-    die ( 'You do not have sufficient permissions to access this page!' );
-}
-?><?php
 /**
  * Index Template
  *
@@ -34,7 +29,7 @@ if ( ! function_exists( 'wp' ) && ! empty( $_SERVER['SCRIPT_FILENAME'] ) && base
     
     <div id="content" class="col-full <?php if ( $woo_options[ 'woo_homepage_banner' ] == "true" ) echo 'with-banner'; ?> <?php if ( $woo_options[ 'woo_homepage_sidebar' ] == "false" ) echo 'no-sidebar'; ?>">
     <div id="homepage-slider-container" class="pc">
-<?php// wowslider(10); ?>
+
 <?php 
     echo do_shortcode("[metaslider id=1733]"); 
 ?>

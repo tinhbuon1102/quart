@@ -32,12 +32,27 @@
 	<p class="description"><?php _e( 'Tags can be used on this field. Supported Tags include:', 'woocommerce-store-toolkit' ); ?> <code>%count%</code>.</p>
 
 	<p><input type="submit" value="<?php _e( 'Generate Products', 'woocommerce-store-toolkit' ); ?>" class="button-primary" /></p>
+
 	<input type="hidden" name="action" value="woo_st-generate_products" />
 	<?php wp_nonce_field( 'generate_products', 'woo_st-generate_products' ); ?>
 
 </form>
 <hr />
 -->
+
+<form method="post">
+
+	<h4><?php _e( 'Generate Sample Orders', 'woocommerce-store-toolkit' ); ?></h4>
+
+	<p><?php _e( 'Number of Orders to generate', 'woocommerce-store-toolkit' ); ?>: <input type="text" name="limit" value="100" /></p>
+
+	<p><input type="submit" value="<?php _e( 'Generate Orders', 'woocommerce-store-toolkit' ); ?>" class="button-primary" /></p>
+
+	<input type="hidden" name="action" value="woo_st-generate_orders" />
+	<?php wp_nonce_field( 'generate_orders', 'woo_st-generate_orders' ); ?>
+
+</form>
+<hr />
 
 <form method="post">
 

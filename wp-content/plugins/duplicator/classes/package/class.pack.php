@@ -320,30 +320,33 @@ class DUP_Package
             $this->VersionOS  = defined('PHP_OS') ? PHP_OS : 'unknown';
             $this->VersionWP  = $wp_version;
             $this->VersionPHP = phpversion();
-            $this->VersionDB  = esc_html($dbversion);
+            $this->VersionDB  = sanitize_text_field($dbversion);
             $this->Name       = sanitize_text_field($name);
             $this->Hash       = $this->makeHash();
             $this->NameHash   = "{$this->Name}_{$this->Hash}";
 
-            $this->Notes                    = DUP_Util::escSanitizeTextAreaField($post['package-notes']);
+            $this->Notes                    = sanitize_textarea_field($post['package-notes']);
             //ARCHIVE
             $this->Archive->PackDir         = rtrim(DUPLICATOR_WPROOTPATH, '/');
             $this->Archive->Format          = 'ZIP';
             $this->Archive->FilterOn        = isset($post['filter-on']) ? 1 : 0;
 			$this->Archive->ExportOnlyDB    = isset($post['export-onlydb']) ? 1 : 0;
-            $this->Archive->FilterDirs      = DUP_Util::escSanitizeTextAreaField($filter_dirs);
-			 $this->Archive->FilterFiles    = DUP_Util::escSanitizeTextAreaField($filter_files);
-            $this->Archive->FilterExts      = str_replace(array('.', ' '), '', DUP_Util::escSanitizeTextAreaField($filter_exts));
+            $this->Archive->FilterDirs      = sanitize_textarea_field($filter_dirs);
+			 $this->Archive->FilterFiles    = sanitize_textarea_field($filter_files);
+            $this->Archive->FilterExts      = str_replace(array('.', ' '), '', sanitize_textarea_field($filter_exts));
             //INSTALLER
-            $this->Installer->OptsDBHost    = DUP_Util::escSanitizeTextField($post['dbhost']);
-            $this->Installer->OptsDBPort    = DUP_Util::escSanitizeTextField($post['dbport']);
-            $this->Installer->OptsDBName    = DUP_Util::escSanitizeTextField($post['dbname']);
-            $this->Installer->OptsDBUser    = DUP_Util::escSanitizeTextField($post['dbuser']);
+            $this->Installer->OptsDBHost		= sanitize_text_field($post['dbhost']);
+            $this->Installer->OptsDBPort		= sanitize_text_field($post['dbport']);
+            $this->Installer->OptsDBName		= sanitize_text_field($post['dbname']);
+            $this->Installer->OptsDBUser		= sanitize_text_field($post['dbuser']);
+            $this->Installer->OptsSecureOn		= isset($post['secure-on']) ? 1 : 0;
+            $post_secure_pass = sanitize_text_field($post['secure-pass']);
+			$this->Installer->OptsSecurePass    = DUP_Util::installerScramble($post_secure_pass);
             //DATABASE
             $this->Database->FilterOn       = isset($post['dbfilter-on']) ? 1 : 0;
-            $this->Database->FilterTables   = esc_html($tablelist);
+            $this->Database->FilterTables   = sanitize_text_field($tablelist);
             $this->Database->Compatible     = $compatlist;
-            $this->Database->Comments       = esc_html($dbcomments);
+            $this->Database->Comments       = sanitize_text_field($dbcomments);
 
             update_option(self::OPT_ACTIVE, $this);
         }
@@ -389,7 +392,7 @@ class DUP_Package
 
         $wpdb->flush();
         $table = $wpdb->prefix."duplicator_packages";
-        $sql   = "UPDATE `{$table}` SET  status = {$status}, package = '{$packageObj}'	WHERE ID = {$this->ID}";
+        $sql   = "UPDATE `{$table}` SET  status = ".intval($status).", package = '".esc_sql($packageObj)."'	WHERE ID = ".intval($this->ID);
         $wpdb->query($sql);
     }
 
@@ -421,15 +424,16 @@ class DUP_Package
      */
     public function makeHash()
     {
-		try {
-			if (function_exists('random_bytes') && DUP_Util::$on_php_53_plus) {
-				return bin2hex(random_bytes(8)).mt_rand(1000, 9999).date("ymdHis");
-			} else {
-				return DUP_Util::GUIDv4();
-			}
-		} catch (Exception $exc) {
-			return DUP_Util::GUIDv4();
-		}
+        // IMPORTANT!  Be VERY careful in changing this format - the FTP delete logic requires 3 segments with the last segment to be the date in YmdHis format.
+        try {
+            if (function_exists('random_bytes') && DUP_Util::PHP53()) {
+                return bin2hex(random_bytes(8)) . mt_rand(1000, 9999) . '_' . date("YmdHis");
+            } else {
+                return strtolower(md5(uniqid(rand(), true))) . '_' . date("YmdHis");
+            }
+        } catch (Exception $exc) {
+            return strtolower(md5(uniqid(rand(), true))) . '_' . date("YmdHis");
+        }
     }
 
     /**
@@ -593,8 +597,29 @@ class DUP_Package
         }
     }
 
+    /**
+     * Get package hash
+     * 
+     * @return string package hash
+     */
+    public function getPackageHash() {
+        $hashParts = explode('_', $this->Hash);
+        $firstPart = substr($hashParts[0], 0, 7);
+        $secondPart = substr($hashParts[1], -8);
+        $packageHash = $firstPart.'-'.$secondPart;
+        return $packageHash;
+    }
 
-
-
+    /**
+     *  Provides the full sql file path in archive
+     *
+     *  @return the full sql file path in archive
+     */
+    public function getSqlArkFilePath()
+    {
+        $packageHash = $this->getPackageHash();
+        $sqlArkFilePath = 'dup-database__'.$packageHash.'.sql';
+        return $sqlArkFilePath;
+    }
 }
 ?>

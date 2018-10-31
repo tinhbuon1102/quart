@@ -29,9 +29,9 @@ jQuery(function($) {
                     notice.fire(2000);
                 }
             } catch (err) {
-                console.log('MetaSlider: Couldn\'t copy the text');
+                console.warn('MetaSlider: Couldn\'t copy the text');
             }
-        };
+        }
 
         // Select the shortcode on click
         $('.ms-shortcode').on('click', function () {
@@ -39,10 +39,33 @@ jQuery(function($) {
         });
 
         // Select the entire codeblock when the button is clicked
-        $('.ms-copy-all').on('click', function (event) {
-            event.preventDefault();
-            metaslider_select_text(document.getElementById('ms-entire-code'));
-        });
+		document.getElementById('ms-copy-all') && 
+			document.getElementById('ms-copy-all').addEventListener('click', function (event) {
+				event.preventDefault()
+				metaslider_select_text(document.getElementById('ms-entire-code'))
+        })
+
+		// Update the shortcode when the button is clicked (id, title)
+		document.getElementById('ms-copy-type') && 
+			document.getElementById('ms-copy-type').addEventListener('click', function (event) {
+				event.preventDefault()
+				
+				// Hide the current shortcode text
+				$('#ms-shortcode-' + $(this).data('type')).css('display', 'none')
+
+				// update the button name
+				$(this).prop('title', 'Show ' + $(this).data('type'))
+
+				// Set the expected shortcode text
+				if ('title' === $(this).data('type')) {
+					$(this).data('type', 'id')
+				} else {
+					$(this).data('type', 'title')
+				}
+
+				// Show the shortcode text
+				$('#ms-shortcode-' + $(this).data('type')).css('display', 'inline')
+        })
 
         /**
          * Filter out spaces when copying the shortcode.
@@ -52,11 +75,11 @@ jQuery(function($) {
 				var text = window.getSelection()
 					.toString().split("'")
 					.map(function(string, index) {
-						return (index === 1) ? string.replace(/\s/g, '').replace('ri', 'r i') : string;
-					}).join("'");
-            event.clipboardData.setData('text/plain', text);
+						return string.trim()
+					}).join("'")
+            event.clipboardData.setData('text/plain', text)
             event.preventDefault()
-        });
+        })
 
         /**
          * Event listening to media library edits
@@ -131,15 +154,15 @@ jQuery(function($) {
                 },
                 success: function(response) {
     
-                    /**
-                     * Echo Slide on success
-                     * TODO: instead have it return data and use JS to render it
-                     */
-                    $(".metaslider .left table").append(response);
-                    MetaSlider_Helpers.loading(false);
-                    $(".metaslider .left table").trigger('resizeSlides');
-                    $(document).trigger('metaslider/slides-added');
-                }
+					/**
+					 * Echo Slide on success
+					 * TODO: instead have it return data and use JS to render it
+					 */
+					$('.metaslider table#metaslider-slides-list').append(response)
+					MetaSlider_Helpers.loading(false)
+					$('.metaslider table#metaslider-slides-list').trigger('resizeSlides')
+					$(document).trigger('metaslider/slides-added')
+				}
             });
         });
 
@@ -249,11 +272,15 @@ jQuery(function($) {
                         * Updates the image on success
                         */
                         $('#slide-' + $this.data('slideId') + ' .thumb')
-                            .css('background-image', 'url(' + response.data.img_url + ')');
+                            .css('background-image', 'url(' + response.data.thumbnail_url + ')');
                         // set new attachment ID
                         var $edited_slide_elms = $('#slide-' + $this.data('slideId') + ', #slide-' + $this.data('slideId') + ' .update-image');
                         $edited_slide_elms.data('attachment-id', selected_item.id);
                         
+                        if (response.data.thumbnail_url) {
+                            $('#slide-' + $this.data('slideId')).trigger('metaslider/attachment/updated', response.data);
+                        }
+
                         // update default infos to new image
                         media_library_events.update_slide_infos({
                             id: selected_item.id,
@@ -261,7 +288,7 @@ jQuery(function($) {
                             title: selected_item.title,
                             alt: selected_item.alt,
                         });
-                        $(".metaslider .left table").trigger('resizeSlides');
+                        $(".metaslider table#metaslider-slides-list").trigger('resizeSlides');
                     }
                 });
             });
@@ -496,24 +523,31 @@ jQuery(function($) {
         };
     
         // drag and drop slides, update the slide order on drop
-        $(".metaslider .left table tbody").sortable({
+        $(".metaslider table#metaslider-slides-list > tbody").sortable({
             helper: metaslider_sortable_helper,
             handle: "td.col-1",
             stop: function() {
-                $(".metaslider .left table").trigger("updateSlideOrder");
+                $(".metaslider table#metaslider-slides-list").trigger("updateSlideOrder");
                 $("#ms-save").click();
             }
         });
     
         // bind an event to the slides table to update the menu order of each slide
-        $(".metaslider .left table").live("updateSlideOrder", function(event) {
+        $(".metaslider table#metaslider-slides-list").live("updateSlideOrder", function(event) {
             $("tr", this).each(function() {
                 $("input.menu_order", $(this)).val($(this).index());
             });
         });
-    
+
+        $("input.width, input.height").on('change', function(e) {
+            $(".metaslider table#metaslider-slides-list").trigger('metaslider/size-has-changed', {
+                width: $("input.width").val(),
+                height: $("input.height").val()
+            });
+        });
+
         // bind an event to the slides table to update the menu order of each slide
-        $(".metaslider .left table").live("resizeSlides", function(event) {
+        $(".metaslider table#metaslider-slides-list").live("resizeSlides", function(event) {
             var slideshow_width = $("input.width").val();
             var slideshow_height = $("input.height").val();
     
@@ -525,7 +559,7 @@ jQuery(function($) {
                 var slide_row = $(this).closest('tr');
                 var crop_changed = slide_row.data('crop_changed');
     
-                if (thumb_width != slideshow_width || thumb_height != slideshow_height || crop_changed === true) {
+                if (thumb_width != slideshow_width || thumb_height != slideshow_height || crop_changed) {
                     $this.attr("data-width", slideshow_width);
                     $this.attr("data-height", slideshow_height);
     
@@ -542,13 +576,12 @@ jQuery(function($) {
                         async: false,
                         cache: false,
                         url: metaslider.ajaxurl,
-                        success: function(data) {
-                            if (crop_changed === true) {
+                        success: function(response) {
+                            if (crop_changed) {
                                 slide_row.data('crop_changed', false);
                             }
-
-                            if (console && console.log) {
-                                console.log(data);
+                            if (response.data.thumbnail_url) {
+                                $this.closest('tr.slide').trigger('metaslider/attachment/updated', response.data);
                             }
                         }
                     });
@@ -568,8 +601,9 @@ jQuery(function($) {
         });
     
         // helptext tooltips
-        $(".tipsy-tooltip").tipsy({className: 'msTipsy', live: true, delayIn: 500, html: true, gravity: 'e'});
-        $(".tipsy-tooltip-top").tipsy({live: true, delayIn: 500, html: true, gravity: 's'});
+        $('.tipsy-tooltip').tipsy({className: 'msTipsy', live: true, delayIn: 500, html: true, gravity: 'e'})
+		$('.tipsy-tooltip-top').tipsy({live: true, delayIn: 500, html: true, gravity: 's'})
+		$('.tipsy-tooltip-bottom').tipsy({ live: true, delayIn: 500, html: true, gravity: 'n' })
     
         // Select input field contents when clicked
         $(".metaslider .shortcode input, .metaslider .shortcode textarea").on('click', function() {
@@ -591,17 +625,15 @@ jQuery(function($) {
         var getLightboxHeight = function() {
             var height = parseInt($('input.height').val(), 10);
             var thumb_height = parseInt($('input.thumb_height').val(), 10);
-    
             if (isNaN(height)) {
                 height = '70%';
             } else {
                 height = height + 50;
-    
-                if (!isNaN(thumb_height)) {
+                
+                if (!isNaN(thumb_height) && 'thumbs' == $('input[name="settings[navigation]"]:checked').val()) {
                     height = height + thumb_height;
                 }
             }
-    
             return height;
         };
     
@@ -668,7 +700,7 @@ jQuery(function($) {
 		$(".metaslider input[type=submit]").attr("disabled", "disabled")
 
 		// update slide order
-		$(".metaslider .left table").trigger('updateSlideOrder')
+		$(".metaslider table#metaslider-slides-list").trigger('updateSlideOrder')
 		fixIE10PlaceholderText();
 
 		// get some values from elements on the page:
@@ -690,7 +722,7 @@ jQuery(function($) {
 			url: url,
 			success: function(data) {
 				var response = $(data)
-				$.when($(".metaslider .left table").trigger("resizeSlides")).done(function() {
+				$.when($(".metaslider table#metaslider-slides-list").trigger("resizeSlides")).done(function() {
 
 					$("button[data-thumb]", response).each(function() {
 						var $this = $(this)
@@ -702,16 +734,10 @@ jQuery(function($) {
 					});
 					fixIE10PlaceholderText()
 
-					if ("ms-preview" === button.prop("id")) {
-						$.colorbox({
-							iframe: true,
-							href: metaslider.iframeurl + "&slider_id=" + button.data("slider_id"),
-							transition: "elastic",
-							innerHeight: getLightboxHeight(),
-							innerWidth: getLightboxWidth(),
-							scrolling: true,
-							fastIframe: false
-						})
+					// Send a message that vuejs can use to fire the preview
+					// .prop and .data return undefined, so using attr
+					if (button.attr('preview-id')) {
+						$(window).trigger('metaslider/show-preview-' + button.attr('preview-id'))
 					}
 				})
 			}
@@ -740,12 +766,21 @@ jQuery(function($) {
     });
 
 
-    // Bind the slider title to the input.
+    // Bind the slider title & dropdown to the input.
     $('.metaslider input[name="title"]').on('input', function(event) {
         event.preventDefault();
 
         var title = new MS_Binder(".slider-title > h3");
         title.bind($(this).val());
+		
+		var shortcode_title = new MS_Binder("#ms-shortcode-title");
+		shortcode_title.bind('title="' + $(this).val() + '"')
+
+        var dropdown = document.querySelector('select[name="select-slideshow"]');
+        if (dropdown) {
+            var dropdownselectedoption = dropdown.options[dropdown.selectedIndex];
+            dropdownselectedoption.text = $(this).val();
+        }
     });
 });
 

@@ -4,8 +4,8 @@ Contributors: visser, visser.labs
 Donate link: https://www.visser.com.au/donations/
 Tags: woocommerce, mod, delete store, clean store, nuke, store toolkit
 Requires at least: 2.9.2
-Tested up to: 4.9.6
-Stable tag: 1.9.2
+Tested up to: 4.9.8
+Stable tag: 2.0
 License: GPLv2 or later
 
 == Description ==
@@ -120,6 +120,15 @@ If you have any problems, questions or suggestions please join the members discu
 http://www.visser.com.au/woocommerce/forums/
 
 == Changelog ==
+
+= 2.0 =
+* Added: Post Types screen to Store Toolkit (thanks Rob)
+* Added: Custom Post meta to the Advanced Custom Fields Group Field screen (thanks Rob)
+* Fixed: Custom Term meta not showing on Edit Category, Edit Tag, Edit Brand screens (thanks Xavier)
+* Added: Actions column to Edit Category, Edit Tag and Edit Brand Term meta tables
+* Added: User ID column to Orders screen
+* Added: Generate sample Orders
+* Fixed: Nuking Orders would result in only 100 removed
 
 = 1.9.2 =
 * Fixed: Delete Products by Category ignoring filter (thanks Rene)

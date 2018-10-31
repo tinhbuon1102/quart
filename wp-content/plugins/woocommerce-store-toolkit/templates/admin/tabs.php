@@ -3,6 +3,7 @@
 	<h2 class="nav-tab-wrapper">
 		<a data-tab-id="overview" class="nav-tab<?php woo_st_admin_active_tab( 'overview' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'page' => 'woo_st', 'tab' => 'overview' ), 'admin.php' ) ); ?>"><?php _e( 'Overview', 'woocommerce-store-toolkit' ); ?></a>
 		<a data-tab-id="nuke" class="nav-tab<?php woo_st_admin_active_tab( 'nuke' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'page' => 'woo_st', 'tab' => 'nuke' ), 'admin.php' ) ); ?>"><?php _e( 'Nuke', 'woocommerce-store-toolkit' ); ?></a>
+		<a data-tab-id="post_types" class="nav-tab<?php woo_st_admin_active_tab( 'post_types' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'page' => 'woo_st', 'tab' => 'post_types' ), 'admin.php' ) ); ?>"><?php _e( 'Post Types', 'woocommerce-store-toolkit' ); ?></a>
 		<a data-tab-id="tools" class="nav-tab<?php woo_st_admin_active_tab( 'tools' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'page' => 'woo_st', 'tab' => 'tools' ), 'admin.php' ) ); ?>"><?php _e( 'Tools', 'woocommerce-store-toolkit' ); ?></a>
 		<a data-tab-id="settings" class="nav-tab<?php woo_st_admin_active_tab( 'settings' ); ?>" href="<?php echo esc_url( add_query_arg( array( 'page' => 'woo_st', 'tab' => 'settings' ), 'admin.php' ) ); ?>"><?php _e( 'Settings', 'woocommerce-store-toolkit' ); ?></a>
 	</h2>
