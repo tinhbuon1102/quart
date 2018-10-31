@@ -892,7 +892,6 @@ function mystile_modify_edit_products_per_page( $per_page, $post_type ) {
 	return $per_page;
 }
 
-<<<<<<< HEAD
 function custom_styles() {
 	wp_enqueue_style( 'flex-grid', get_template_directory_uri(). '/css/flexgrid.css', array(), '' );
 }
@@ -974,8 +973,6 @@ function lookbook(){
 }
 
 add_shortcode('lookbook','lookbook');
-=======
->>>>>>> d55e741f3b038a35dd32b1f28f3a3d404ec231c6
 
 add_action('wp_loaded', 'init_action_wp_loaded');
 function init_action_wp_loaded()
@@ -1125,8 +1122,5 @@ function touch_private_time( $edit = 1, $for_post = 1, $tab_index = 0, $multi = 
 	printf(__('%1$s %2$s, %3$s @ %4$s:%5$s'), $month, $day, $year, $hour, $minute);
 	
 	echo '</div><input type="hidden" id="ss_private" name="private_time[ss]" value="' . $ss . '" disabled/>';
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> d55e741f3b038a35dd32b1f28f3a3d404ec231c6
