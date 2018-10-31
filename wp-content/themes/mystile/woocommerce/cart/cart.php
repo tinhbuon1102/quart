@@ -14,8 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 wc_print_notices();
 
 do_action( 'woocommerce_before_cart' ); ?>
+<div class="u-full-width">
 <div id="cart">
-<div id="cart-wrapper">
+	<div class="row flex-justify-between">
+		<div id="cart-wrapper" class="col-12 col-lg-8">
 <form action="<?php echo esc_url( WC()->cart->get_cart_url() ); ?>" method="post">
 
 <?php do_action( 'woocommerce_before_cart_table' ); ?>
@@ -139,14 +141,17 @@ do_action( 'woocommerce_before_cart' ); ?>
 <?php do_action( 'woocommerce_after_cart_table' ); ?>
 
 </form>
-	<?php woocommerce_cart_totals(); ?>
+<div class="go_backshop"><a class="cart-go-back" href="<?php echo apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ); ?>"><i class="fa fa-chevron-left" aria-hidden="true"></i><?php _e( '買い物を続ける', 'woocommerce' ) ?></a></div>
 </div>
 
-<div class="cart-collaterals">
-
+<div class="cart-collaterals col-12 col-lg-4 sidebar-col">
+<?php woocommerce_cart_totals(); ?>
 	<?php do_action( 'woocommerce_cart_collaterals' ); ?>
 
 </div>
+	</div>
+
 </div>
 
 <?php do_action( 'woocommerce_after_cart' ); ?>
+</div>

@@ -96,7 +96,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php endif; ?>
 
 	<div class="cart-action-inner clearfix">
-		<a class="button wc-backward" href="<?php echo apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ); ?>"><i class="fa fa-chevron-left" aria-hidden="true"></i><?php _e( '買い物を続ける', 'woocommerce' ) ?></a>
+		
 
 		<?php do_action( 'woocommerce_proceed_to_checkout' ); ?>
 
