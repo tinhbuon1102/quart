@@ -66,11 +66,12 @@ class DUP_Zip extends DUP_Archive
             DUP_Log::Info("STATS:\tDirs ".self::$scanReport->ARC->DirCount." | Files ".self::$scanReport->ARC->FileCount);
 
             //ADD SQL
-            $isSQLInZip = self::$zipArchive->addFile(self::$sqlPath, "database.sql");
+            $sqlArkFilePath = $archive->Package->getSqlArkFilePath();
+            $isSQLInZip = self::$zipArchive->addFile(self::$sqlPath, $sqlArkFilePath);
             if ($isSQLInZip) {
                 DUP_Log::Info("SQL ADDED: ".basename(self::$sqlPath));
             } else {
-                DUP_Log::Error("Unable to add database.sql to archive.", "SQL File Path [".self::$sqlath."]");
+                DUP_Log::Error("Unable to add ".$sqlArkFilePath." to archive.", "SQL File Path [".self::$sqlath."]");
             }
             self::$zipArchive->close();
             self::$zipArchive->open(self::$zipPath, ZipArchive::CREATE);
@@ -84,7 +85,7 @@ class DUP_Zip extends DUP_Archive
                 } else {
                     //Don't warn when dirtory is the root path
                     if (strcmp($dir, rtrim(self::$compressDir, '/')) != 0) {
-                        $dir_path = strlen($dir) ? "[{$dir}]" : "[Read Error] - last successful read was: [{$lastDirSuccess}]";
+                        $dir_path = strlen($dir) ? "[".esc_html($dir)."]" : "[Read Error] - last successful read was: [{$lastDirSuccess}]";
                         $info .= "DIR: {$dir_path}\n";
                     }
                 }
@@ -152,8 +153,8 @@ class DUP_Zip extends DUP_Archive
 
             self::$zipFileSize = @filesize(self::$zipPath);
             DUP_Log::Info("COMPRESSED SIZE: ".DUP_Util::byteSize(self::$zipFileSize));
-            DUP_Log::Info("ARCHIVE RUNTIME: {$timerAllSum}");
-            DUP_Log::Info("MEMORY STACK: ".DUP_Server::getPHPMemory());
+            DUP_Log::Info("ARCHIVE RUNTIME: ".esc_html($timerAllSum));
+            DUP_Log::Info("MEMORY STACK: ".esc_html(DUP_Server::getPHPMemory()));
         } catch (Exception $e) {
             DUP_Log::Error("Runtime error in class.pack.archive.zip.php constructor.", "Exception: {$e}");
         }

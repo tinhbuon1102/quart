@@ -529,6 +529,26 @@ function woo_st_request_query( $vars ) {
 }
 add_filter( 'request', 'woo_st_request_query' );
 
+function woo_st_get_custom_post_type_ids( $post_type = false ) {
+	
+	if( empty( $post_type ) )
+		return;
+
+	$posts_per_page = apply_filters( 'woo_st_get_custom_post_type_ids_posts_per_page', 10 );
+	$args = array(
+		'post_type' => $post_type,
+		'post_status' => 'any',
+		'posts_per_page' => $posts_per_page,
+		'fields' => 'ids',
+		'orderby' => 'rand'
+	);
+	$post_ids = new WP_Query( $args );
+	if( !empty( $post_ids->posts ) ) {
+		return $post_ids->posts;
+	}
+
+}
+
 function woo_st_get_user_orders( $user_id = 0, $args = array(), $return = 'ids' ) {
 
 	if( empty( $user_id ) )
@@ -704,6 +724,21 @@ function woo_st_tab_template( $tab = '' ) {
 				$show_table = true;
 			break;
 
+		case 'post_types':
+			$args = array();
+			$output = 'objects';
+			$post_types = get_post_types( $args, $output );
+			$post_counts = array();
+			$post_ids = array();
+			if( !empty( $post_types ) ) {
+				foreach( $post_types as $key => $post_type ) {
+					$count_posts = wp_count_posts( $key );
+					$post_counts[$key] = array_sum( (array)$count_posts );
+					$post_ids[$key] = woo_st_get_custom_post_type_ids( $key );
+				}
+			}
+			break;
+
 		case 'tools':
 			$autocomplete_order = get_option( WOO_ST_PREFIX . '_autocomplete_order', 0 );
 			$unlock_variations = get_option( WOO_ST_PREFIX . '_unlock_variations', 0 );
@@ -739,89 +774,102 @@ function woo_st_tab_template( $tab = '' ) {
 
 function woo_st_add_data_meta_boxes( $post_type, $post = '' ) {
 
-	if( $post->post_status <> 'auto-draft' ) {
+	if( $post->post_status == 'auto-draft' )
+		return;
 
-		// Product
-		$post_type = 'product';
-		if( apply_filters( 'woo_st_product_data_meta_box', true ) )
-			add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
-		$post_type = 'product_variation';
-		if( apply_filters( 'woo_st_product_data_meta_box', true ) )
-			add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
+	// Product
+	$post_type = 'product';
+	if( apply_filters( 'woo_st_product_data_meta_box', true ) )
+		add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
+	$post_type = 'product_variation';
+	if( apply_filters( 'woo_st_product_data_meta_box', true ) )
+		add_meta_box( 'woo-product-post_data', __( 'Product Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_product_data_meta_box', $post_type, 'normal', 'default' );
 
-		// Order
-		$post_type = 'shop_order';
+	// Order
+	$post_type = 'shop_order';
+	if( apply_filters( 'woo_st_order_data_meta_box', true ) )
+		add_meta_box( 'woo-order-post_data', __( 'Order Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
+	if( apply_filters( 'woo_st_order_items_data_meta_box', true ) )
+		add_meta_box( 'woo-order-post_item', __( 'Order Items Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_items_data_meta_box', $post_type, 'normal', 'default' );
+	if( apply_filters( 'woo_st_order_refunds_data_meta_box', true ) )
+		add_meta_box( 'woo-order-post_refund', __( 'Refunds Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_refunds_data_meta_box', $post_type, 'normal', 'default' );
+	
+	if( apply_filters( 'woo_st_order_related_orders_meta_box', false ) )
+		add_meta_box( 'woo-order-related_orders', __( 'Related Orders', 'woocommerce-store-toolkit' ), 'woo_st_order_related_orders_meta_box', $post_type, 'side', 'default' );
+
+	// Coupon
+	$post_type = 'shop_coupon';
+	if( apply_filters( 'woo_st_coupon_data_meta_box', true ) )
+		add_meta_box( 'woo-coupon-post_data', __( 'Coupon Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_coupon_data_meta_box', $post_type, 'normal', 'default' );
+
+	// Attachment
+	$post_type = 'attachment';
+	if( apply_filters( 'woo_st_attachment_data_meta_box', true ) )
+		add_meta_box( 'attachment-post_data', __( 'Attachment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_attachment_data_meta_box', $post_type, 'normal', 'default' );
+
+	// 3rd party
+
+	// WooCommerce Subscriptions - http://www.woothemes.com/products/woocommerce-subscriptions/
+	$post_type = 'shop_subscription';
+	if( post_type_exists( $post_type ) ) {
 		if( apply_filters( 'woo_st_order_data_meta_box', true ) )
-			add_meta_box( 'woo-order-post_data', __( 'Order Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
-		if( apply_filters( 'woo_st_order_items_data_meta_box', true ) )
-			add_meta_box( 'woo-order-post_item', __( 'Order Items Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_items_data_meta_box', $post_type, 'normal', 'default' );
-		if( apply_filters( 'woo_st_order_refunds_data_meta_box', true ) )
-			add_meta_box( 'woo-order-post_refund', __( 'Refunds Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_refunds_data_meta_box', $post_type, 'normal', 'default' );
-		
-		if( apply_filters( 'woo_st_order_related_orders_meta_box', false ) )
-			add_meta_box( 'woo-order-related_orders', __( 'Related Orders', 'woocommerce-store-toolkit' ), 'woo_st_order_related_orders_meta_box', $post_type, 'side', 'default' );
+			add_meta_box( 'woo-order-post_data', __( 'Subscription Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
+	}
 
-		// Coupon
-		$post_type = 'shop_coupon';
-		if( apply_filters( 'woo_st_coupon_data_meta_box', true ) )
-			add_meta_box( 'woo-coupon-post_data', __( 'Coupon Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_coupon_data_meta_box', $post_type, 'normal', 'default' );
+	// WooCommerce - Store Exporter Deluxe - https://www.visser.com.au/plugins/store-exporter-deluxe/
+	$post_type = 'scheduled_export';
+	if( post_type_exists( $post_type ) ) {
+		if( apply_filters( 'woo_st_scheduled_export_data_meta_box', true ) )
+			add_meta_box( 'woo-scheduled_export-post_data', __( 'Scheduled Export Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_scheduled_export_data_meta_box', $post_type, 'normal', 'default' );
+	}
 
-		$post_type = 'export_template';
-		if( apply_filters( 'woo_st_export_template_data_meta_box', true ) )
-			add_meta_box( 'woo-coupon-post_data', __( 'Export Template Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_export_template_data_meta_box', $post_type, 'normal', 'default' );
+	// WooCommerce - Store Exporter Deluxe - https://www.visser.com.au/plugins/store-exporter-deluxe/
+	$post_type = 'export_template';
+	if( apply_filters( 'woo_st_export_template_data_meta_box', true ) )
+		add_meta_box( 'woo-coupon-post_data', __( 'Export Template Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_export_template_data_meta_box', $post_type, 'normal', 'default' );
 
-		// WooCommerce Subscriptions - http://www.woothemes.com/products/woocommerce-subscriptions/
-		$post_type = 'shop_subscription';
-		if( post_type_exists( $post_type ) ) {
-			if( apply_filters( 'woo_st_order_data_meta_box', true ) )
-				add_meta_box( 'woo-order-post_data', __( 'Subscription Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_order_data_meta_box', $post_type, 'normal', 'default' );
-		}
+	// WooCommerce Events - http://www.woocommerceevents.com/
+	if( class_exists( 'WooCommerce_Events' ) ) {
+		$post_type = 'event_magic_tickets';
+		if( apply_filters( 'woo_st_event_data_meta_box', true ) )
+			add_meta_box( 'woo-event-post_data', __( 'Event Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_event_data_meta_box', $post_type, 'normal', 'default' );
+	}
 
-		// WooCommerce - Store Exporter Deluxe - https://www.visser.com.au/plugins/store-exporter-deluxe/
-		$post_type = 'scheduled_export';
-		if( post_type_exists( $post_type ) ) {
-			if( apply_filters( 'woo_st_scheduled_export_data_meta_box', true ) )
-				add_meta_box( 'woo-scheduled_export-post_data', __( 'Scheduled Export Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_scheduled_export_data_meta_box', $post_type, 'normal', 'default' );
-		}
+	// WooCommerce Bookings - http://www.woothemes.com/products/woocommerce-bookings/
+	if( class_exists( 'WC_Bookings' ) ) {
+		$post_type = 'wc_booking';
+		if( apply_filters( 'woo_st_booking_data_meta_box', true ) )
+			add_meta_box( 'woo-booking-post_data', __( 'Booking Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_booking_data_meta_box', $post_type, 'normal', 'default' );
+	}
 
-		// WooCommerce Events - http://www.woocommerceevents.com/
-		if( class_exists( 'WooCommerce_Events' ) ) {
-			$post_type = 'event_magic_tickets';
-			if( apply_filters( 'woo_st_event_data_meta_box', true ) )
-				add_meta_box( 'woo-event-post_data', __( 'Event Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_event_data_meta_box', $post_type, 'normal', 'default' );
-		}
+	// WooCommerce Memberships - http://www.woothemes.com/products/woocommerce-memberships/
+	if( function_exists( 'init_woocommerce_memberships' ) ) {
+		$post_type = 'wc_user_membership';
+		if( apply_filters( 'woo_st_user_membership_data_meta_box', true ) )
+			add_meta_box( 'woo-user_membership-post_data', __( 'User Membership Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_user_membership_data_meta_box', $post_type, 'normal', 'low' );
+		$post_type = 'wc_membership_plan';
+		if( apply_filters( 'woo_st_membership_plan_data_meta_box', true ) )
+			add_meta_box( 'woo-membership_plan-post_data', __( 'Membership Plan Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_membership_plan_data_meta_box', $post_type, 'normal', 'low' );
+		// These guys think they are special...
+		add_filter( 'wc_memberships_allowed_meta_box_ids', 'woo_st_extend_wc_memberships_allowed_meta_box_ids' );
+	}
 
-		// WooCommerce Bookings - http://www.woothemes.com/products/woocommerce-bookings/
-		if( class_exists( 'WC_Bookings' ) ) {
-			$post_type = 'wc_booking';
-			if( apply_filters( 'woo_st_booking_data_meta_box', true ) )
-				add_meta_box( 'woo-booking-post_data', __( 'Booking Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_booking_data_meta_box', $post_type, 'normal', 'default' );
-		}
+	// WooCommerce Appointments - http://www.bizzthemes.com/plugins/woocommerce-appointments/
+	if( class_exists( 'WC_Appointments' ) ) {
+		$post_type = 'wc_appointment';
+		if( apply_filters( 'woo_st_appointment_data_meta_box', true ) )
+			add_meta_box( 'woo-appointment-post_data', __( 'Appointment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_generic_data_meta_box', $post_type, 'normal', 'low' );
+	}
 
-		// WooCommerce Memberships - http://www.woothemes.com/products/woocommerce-memberships/
-		if( function_exists( 'init_woocommerce_memberships' ) ) {
-			$post_type = 'wc_user_membership';
-			if( apply_filters( 'woo_st_user_membership_data_meta_box', true ) )
-				add_meta_box( 'woo-user_membership-post_data', __( 'User Membership Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_user_membership_data_meta_box', $post_type, 'normal', 'low' );
-			$post_type = 'wc_membership_plan';
-			if( apply_filters( 'woo_st_membership_plan_data_meta_box', true ) )
-				add_meta_box( 'woo-membership_plan-post_data', __( 'Membership Plan Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_membership_plan_data_meta_box', $post_type, 'normal', 'low' );
-			// These guys think they are special...
-			add_filter( 'wc_memberships_allowed_meta_box_ids', 'woo_st_extend_wc_memberships_allowed_meta_box_ids' );
-		}
-
-		// WooCommerce Appointments - http://www.bizzthemes.com/plugins/woocommerce-appointments/
-		if( class_exists( 'WC_Appointments' ) ) {
-			$post_type = 'wc_appointment';
-			if( apply_filters( 'woo_st_appointment_data_meta_box', true ) )
-				add_meta_box( 'woo-appointment-post_data', __( 'Appointment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_appointment_data_meta_box', $post_type, 'normal', 'low' );
-		}
-
-		// Attachment
-		$post_type = 'attachment';
-		if( apply_filters( 'woo_st_attachment_data_meta_box', true ) )
-			add_meta_box( 'attachment-post_data', __( 'Attachment Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_attachment_data_meta_box', $post_type, 'normal', 'default' );
-
+	// Advanced Custom Fields - http://www.advancedcustomfields.com
+	if( class_exists( 'acf' ) ) {
+		$acf_version = ( defined( 'ACF_VERSION' ) ? ACF_VERSION : false );
+		if( version_compare( $acf_version, '5.6', '>=' ) )
+			$post_type = 'acf-field-group';
+		else
+			$post_type = 'acf';
+		if( apply_filters( 'woo_st_acf_data_meta_box', true ) )
+			add_meta_box( 'woo-acf-post_data', __( 'ACF Post Meta', 'woocommerce-store-toolkit' ), 'woo_st_generic_data_meta_box', $post_type, 'normal', 'low' );
 	}
 
 }
@@ -1087,8 +1135,8 @@ function woo_st_export_template_data_meta_box() {
 
 function woo_st_category_data_meta_box( $term = '', $taxonomy = '' ) {
 
-	$term_taxonomy = 'woocommerce_term';
-	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
+	$term_taxonomy = 'product_cat';
+	$term_meta = get_term_meta( $term->term_id );
 
 	// We support up to 5 levels deep; can be extended further as needed
 
@@ -1146,8 +1194,8 @@ function woo_st_category_data_meta_box( $term = '', $taxonomy = '' ) {
 
 function woo_st_tag_data_meta_box( $term = '', $taxonomy = '' ) {
 
-	$term_taxonomy = 'woocommerce_term';
-	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
+	$term_taxonomy = 'product_tag';
+	$term_meta = get_term_meta( $term->term_id );
 
 	$template = 'tag_data.php';
 	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
@@ -1174,8 +1222,8 @@ function woo_st_tag_data_meta_box( $term = '', $taxonomy = '' ) {
 
 function woo_st_brand_data_meta_box( $term = '', $taxonomy = '' ) {
 
-	$term_taxonomy = 'woocommerce_term';
-	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
+	$term_taxonomy = 'product_brand';
+	$term_meta = get_term_meta( $term->term_id );
 
 	$template = 'brand_data.php';
 	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
@@ -1203,7 +1251,7 @@ function woo_st_brand_data_meta_box( $term = '', $taxonomy = '' ) {
 function woo_st_product_vendor_data_meta_box( $term = '', $taxonomy = '' ) {
 
 	$term_taxonomy = 'yith_shop_vendor';
-	$term_meta = get_metadata( $term_taxonomy, $term->term_id );
+	$term_meta = get_term_meta( $term->term_id );
 
 	$template = 'product_vendor_data.php';
 	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
@@ -1413,13 +1461,13 @@ function woo_st_user_membership_data_meta_box() {
 
 }
 
-function woo_st_appointment_data_meta_box() {
+function woo_st_generic_data_meta_box() {
 
 	global $post;
 
 	$post_meta = get_post_custom( $post->ID );
 
-	$template = 'appointment_data.php';
+	$template = 'order_data.php';
 	if( file_exists( WOO_ST_PATH . 'templates/admin/' . $template ) ) {
 
 		include_once( WOO_ST_PATH . 'templates/admin/' . $template );
@@ -1495,6 +1543,42 @@ function woo_st_attachment_data_meta_box() {
 </ul>
 <p><?php _e( 'Jump onto our website and download a fresh copy of this Plugin as it might be enough to fix this issue. If this persists get in touch with us.', 'woocommerce-store-toolkit' ); ?></p>
 <?php
+
+	}
+
+}
+
+function woo_st_admin_order_column_headers( $columns ) {
+
+	// Check if another Plugin has registered this column
+	if( !isset( $columns['user'] ) ) {
+		$pos = array_search( 'order_total', array_keys( $columns ) );
+		$columns = array_merge(
+			array_slice( $columns, 0, $pos ),
+			array( 'user' => __( 'User ID', 'woocommerce-store-toolkit' ) ),
+			array_slice( $columns, $pos )
+		);
+	}
+	return $columns;
+
+}
+
+function woo_st_admin_order_column_content( $column ) {
+
+	global $post;
+
+	if( $column == 'user' ) {
+		$user_id = get_post_meta( $post->ID, '_customer_user', true );
+		if( !empty( $user_id ) ) {
+			echo '<a href="' . get_edit_user_link( $user_id ) . '">';
+			echo sprintf( '#%d', $user_id );
+			echo '</a>';
+		} else {
+			echo '-';
+		}
+
+		// Allow Plugin/Theme authors to add their own content within this column
+		do_action( 'woo_st_admin_order_user_column_content', $post->ID );
 
 	}
 

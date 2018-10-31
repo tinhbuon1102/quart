@@ -4,10 +4,10 @@ Plugin URI: http://multidots.com/
 Author: Multidots
 Author URI: http://multidots.com/
 Contributors: dots, thedotstore
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 Tags: banner, banner management woocommerce banner management, banner in cart, banner in shop, banner in checkout, banner in thank you, banner in category
 Requires at least: 2.1
-Tested up to: 4.9.6
+Tested up to: 4.9.8
 Donate link: 
 Copyright: (c) 2015-2016 Multidots Solutions PVT LTD (info@multidots.com) 
 License: GPLv3 or later
@@ -108,6 +108,8 @@ Automatic updates should work great for you.  As always, though, we recommend ba
  
 
 == Changelog ==
+= 1.1.3 - 27.08.2018 =
+* Normal Bug Fix
 
 = 1.1.2 - 19.06.2018 =
 * Normal Bug Fix

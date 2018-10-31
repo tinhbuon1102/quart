@@ -160,17 +160,12 @@ var wcfd_settings = (function($, window, document) {
 		newRow += '<td>'+placeholder+'</td>';
 		newRow += '<td>'+validations+'</td>';
 		if(required == true){
-			newRow += '<td class="status"><span class="status-enabled tips">Yes</span></td>';
-		}else{
-			newRow += '<td class="status">-</td>';
-		}
-		if(clearRow == true){
-			newRow += '<td class="status"><span class="status-enabled tips">Yes</span></td>';
+			newRow += '<td class="status"><span class="dashicons dashicons-yes tips" data-tip="Yes"></span></td>';
 		}else{
 			newRow += '<td class="status">-</td>';
 		}
 		if(enabled == true){
-			newRow += '<td class="status"><span class="status-enabled tips">Yes</span></td>';
+			newRow += '<td class="status"><span class="dashicons dashicons-yes tips" data-tip="Yes"></span></td>';
 		}else{
 			newRow += '<td class="status">-</td>';
 		}

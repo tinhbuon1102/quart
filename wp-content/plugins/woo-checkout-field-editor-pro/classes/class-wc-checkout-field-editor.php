@@ -67,9 +67,10 @@ class WC_Checkout_Field_Editor {
                     	<td width="70%">
                         	<p><strong><i>WooCommerce Checkout Field Editor Pro</i></strong> premium version provides more features to design your checkout page.</p>
                             <ul>
-                            	<li>12 field types available,<br/>(<i>Text, Hidden, Password, Textarea, Radio, Checkbox, Select, Multi-select, Date Picker, Time Picker, Heading, Label</i>).</li>
+                            	<li>17 field types available,  (<i>Text, Hidden, Password, Telephone, Email, Number, Textarea, Radio, Checkbox, Checkbox Group, Select, Multi-select, Date Picker, Time Picker, File Upload, Heading, Label</i>).</li>
                                 <li>Conditionally display fields based on cart items and other field(s) values.</li>
                                 <li>Add an extra cost to the cart total based on field selection.</li>
+                                <li>Custom validation rules using RegEx.</li>
                                 <li>Option to add more sections in addition to the core sections (billing, shipping and additional) in checkout page.</li>
                             </ul>
                         </td>
@@ -411,14 +412,13 @@ class WC_Checkout_Field_Editor {
 	public function render_checkout_fields_heading_row(){
 		?>
 		<th class="sort"></th>
-		<th class="check-column" style="padding-left:0px !important;"><input type="checkbox" style="margin-left:7px;" onclick="thwcfdSelectAllCheckoutFields(this)"/></th>
+		<th class="check-column"><input type="checkbox" style="margin:0px 4px -1px -1px;" onclick="thwcfdSelectAllCheckoutFields(this)"/></th>
 		<th class="name">Name</th>
 		<th class="id">Type</th>
 		<th>Label</th>
 		<th>Placeholder</th>
 		<th>Validation Rules</th>
         <th class="status">Required</th>
-		<th class="status">Clear Row</th>
 		<th class="status">Enabled</th>	
         <th class="status">Edit</th>	
         <?php
@@ -426,7 +426,7 @@ class WC_Checkout_Field_Editor {
 	
 	public function render_actions_row($section){
 		?>
-        <th colspan="7">
+        <th colspan="6">
             <button type="button" class="button button-primary" onclick="openNewFieldForm('<?php echo $section; ?>')"><?php _e( '+ Add field', 'thwcfd' ); ?></button>
             <button type="button" class="button" onclick="removeSelectedFields()"><?php _e( 'Remove', 'thwcfd' ); ?></button>
             <button type="button" class="button" onclick="enableSelectedFields()"><?php _e( 'Enable', 'thwcfd' ); ?></button>
@@ -464,7 +464,7 @@ class WC_Checkout_Field_Editor {
 			?>            
                         
 			<form method="post" id="wcfd_checkout_fields_form" action="">
-            	<table id="wcfd_checkout_fields" class="wc_gateways widefat" cellspacing="0">
+            	<table id="wcfd_checkout_fields" class="wc_gateways widefat thpladmin_fields_table" cellspacing="0">
 					<thead>
                     	<tr><?php $this->render_actions_row($section); ?></tr>
                     	<tr><?php $this->render_checkout_fields_heading_row(); ?></tr>						
@@ -581,9 +581,8 @@ class WC_Checkout_Field_Editor {
                             <td class="td_label"><?php echo $options['label']; ?></td>
                             <td class="td_placeholder"><?php echo $options['placeholder']; ?></td>
                             <td class="td_validate"><?php echo $options['validate']; ?></td>
-                            <td class="td_required status"><?php echo($options['required'] == 1 ? '<span class="status-enabled tips">Yes</span>' : '-' ) ?></td>
-                            <td class="td_clear status"><?php echo($options['clear'] == 1 ? '<span class="status-enabled tips">Yes</span>' : '-' ) ?></td>
-                            <td class="td_enabled status"><?php echo($options['enabled'] == 1 ? '<span class="status-enabled tips">Yes</span>' : '-' ) ?></td>
+                            <td class="td_required status"><?php echo($options['required'] == 1 ? '<span class="dashicons dashicons-yes tips" data-tip="Yes"></span>' : '-' ) ?></td>
+                            <td class="td_enabled status"><?php echo($options['enabled'] == 1 ? '<span class="dashicons dashicons-yes tips" data-tip="Yes"></span>' : '-' ) ?></td>
                             <td class="td_edit">
                             	<button type="button" class="f_edit_btn" <?php echo($options['enabled'] == 1 ? '' : 'disabled') ?> 
                                 onclick="openEditFieldForm(this,<?php echo $i; ?>)"><?php _e( 'Edit', 'thwcfd' ); ?></button>

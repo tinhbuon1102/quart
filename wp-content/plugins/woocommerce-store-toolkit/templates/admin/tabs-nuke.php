@@ -304,6 +304,7 @@
 		<div id="delete-sales-by-date" class="postbox">
 			<h3 class="hndle"><?php _e( 'Delete Orders by Order Date', 'woocommerce-store-toolkit' ); ?></h3>
 			<div class="inside">
+<?php if( $orders ) { ?>
 				<p class="description"><?php _e( 'Remove Orders based on the Order Date by selecting the required date filter, then click Remove to permanently remove those Orders.', 'woocommerce-store-toolkit' ); ?></p>
 				<ul>
 					<li>
@@ -327,6 +328,9 @@
 				<p class="submit">
 					<input type="button" id="delete-sales-by-date-remove" value="<?php _e( 'Remove', 'woocommerce-store-toolkit' ); ?>" class="button-primary confirm-button" data-confirm="<?php _e( 'This will permanently remove Orders within the selected Order date range. Are you sure you want to proceed?', 'woocommerce-store-toolkit' ); ?>" />
 				</p>
+<?php } else { ?>
+				<p><?php _e( 'No Orders were found.', 'woocommerce-store-toolkit' ); ?></p>
+<?php } ?>
 			</div>
 		</div>
 		<!-- .postbox -->

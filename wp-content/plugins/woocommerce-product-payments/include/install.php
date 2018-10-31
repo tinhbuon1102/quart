@@ -16,7 +16,7 @@ class Woocommerce_Product_Payment_Install {
 		}
 		$this->softsdev_pd_payments_file = $softsdev_pd_payments_file;
 		$this->plugin_slug = 'woocommerce-product-payment-slug';
-		$this->version = '2.5';
+		$this->version = '2.5.5';
 
 		$this->load_dependencies();
 

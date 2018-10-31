@@ -1,26 +1,31 @@
 === Advanced Custom Fields: Table Field ===
-Contributors: Johann Heyne
+Contributors: jonua
 Tags: acf table
 Requires at least: 4.9
-Tested up to: 4.9.6
-Stable tag: trunk
+Tested up to: 4.9.8
+Stable tag: 1.2.6
 License: GPLv2 or later
 
-A Table Field Add-on for the Advanced Custom Fields Plugin
+A Table Field Add-on for the Advanced Custom Fields Plugin.
 
 == Description ==
 
-The Table field plugin enables easily editing a table.
-The plugin is compatible with ACF4 and ACF5.
+The Table Field Plugin enhances the functionality of the ["Advanced Custom Fields" plugin](https://de.wordpress.org/plugins/advanced-custom-fields/) with easy-to-edit tables.
+
+This plugin requires the ["Advanced Custom Fields" plugin](https://de.wordpress.org/plugins/advanced-custom-fields/) or the [Pro version](https://www.advancedcustomfields.com/pro/)!
+
 The table field works also with the repeater and flexible field types.
 
-* table header (option)
-* add and remove table columns and rows
-* change order of columns and rows by dragging
-* to move to the next cells editor press key: tab
-* to move to the previous cells editor press key: shift + tab
+= Features =
+* Table Header (Option)
+* Add and remove table columns and rows
+* Change order of columns and rows by dragging
+* To move to the next cells editor press key: tab
+* To move to the previous cells editor press key: shift + tab
 
-=== Output Table HTML ===
+== Frequently Asked Questions ==
+
+= How to output the table html? =
 
 To render the table fields data as an html table in one of your template files you can start with the following basic code example:
 
@@ -70,11 +75,12 @@ if ( $table ) {
 	echo '</table>';
 }
 `
-=== Line Breaks ===
+
+= How to handle line breaks? =
 
 This is about displaying line breaks in the admin tables and getting line breaks as `<br>` when outputting the tables HTML.
 
-= Converting Line Breaks for HTML Output =
+**Converting Line Breaks for HTML Output**
 
 To convert line breaks to `<br>` in tables HTML output the PHP function `nl2br()` can be used:
 
@@ -96,7 +102,7 @@ with…
 echo nl2br( $td['c'] );
 `
 
-= Displaying Line Breaks in Editing Tables =
+**Displaying Line Breaks in Editing Tables**
 
 To display natural line breaks in the editing tables in the admin area, add the following styles to the admin area.
 
@@ -142,6 +148,16 @@ However, only when activated as a plugin will updates be available.
 
 
 == Changelog ==
+
+= 1.2.6 =
+* Replaces jQuery.noConflict methode
+* Prevents PHP error if table fields value is from a previous fieldtype
+
+= 1.2.5 =
+* Adds danish translation, thanks to Jeppe Skovsgaard
+
+= 1.2.4 =
+* Fixes backslashes on using update_field();
 
 = 1.2.3 =
 * Adds support for the ACF update_field() function. If you get the table fields data array by get_field(), you can change the table data array and using update_field() to save the changes to the field.

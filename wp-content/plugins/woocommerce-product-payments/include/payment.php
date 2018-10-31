@@ -96,7 +96,7 @@ function wpppayment_gateway_disable_country($available_gateways) {
     /**
      * checking all cart products
      */
-    if (count($woocommerce->cart)) {
+    if (is_object($woocommerce->cart)) {
         $items = $woocommerce->cart->cart_contents;
         $itemsPays = '';
         if (is_array($items)) {

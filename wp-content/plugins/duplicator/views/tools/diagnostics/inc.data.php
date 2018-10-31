@@ -2,9 +2,6 @@
 
 	$sql = "SELECT * FROM `{$wpdb->prefix}options` WHERE  `option_name` LIKE  '%duplicator_%' AND  `option_name` NOT LIKE '%duplicator_pro%' ORDER BY option_name";
 
-	$txt_archive_msg = __("<b>Archive File:</b> The archive file has a unique hashed name when downloaded.  Leaving the archive file on your server does not impose a security"
-						. " risk if the file was not renamed.  It is still recommended to remove the archive file after install,"
-						. " especially if it was renamed.", 'duplicator');
 ?>
 
 <!-- ==============================
@@ -15,7 +12,7 @@ OPTIONS DATA -->
 		<?php _e("Stored Data", 'duplicator'); ?>
 		<div class="dup-box-arrow"></div>
 	</div>
-	<div class="dup-box-panel" id="dup-settings-diag-opts-panel" style="<?php echo $ui_css_opts_panel?>">
+	<div class="dup-box-panel" id="dup-settings-diag-opts-panel" style="<?php echo esc_attr($ui_css_opts_panel); ?>">
 		<div style="padding-left:10px">
 			<h3 class="title"><?php _e('Data Cleanup', 'duplicator') ?></h3>
 				<table class="dup-reset-opts">
@@ -31,15 +28,14 @@ OPTIONS DATA -->
 
 							<div id="dup-tools-delete-moreinfo">
 								<?php
-								_e("Clicking on the 'Remove Installation Files' button will remove the files used by Duplicator to install this site.  "
-									."These files should not be left on production systems for security reasons.", 'duplicator');
+								_e("Clicking on the 'Remove Installation Files' button will attempt to remove the installer files used by Duplicator.  These files should not "
+									. "be left on production systems for security reasons. Below are the files that should be removed.", 'duplicator');
 								echo "<br/><br/>";
-
-								foreach ($installer_files as $file => $path) {
-									echo (file_exists($path)) ? "<div class='failed'><i class='fa fa-exclamation-triangle'></i> {$txt_found} - {$file}</div>" : "<div class='success'><i class='fa fa-check'></i> {$txt_removed} - {$file}</div>";
-								}
-								echo "<br/>";
-								echo $txt_archive_msg;
+								$installer_files = array_keys($installer_files);
+								$installer_files = array_map('esc_html', $installer_files);
+								array_push($installer_files, '[HASH]_archive.zip');
+								echo '<i>' . implode('<br/>', $installer_files) . '</i>';
+								echo "<br/><br/>";
 								?>
 							</div>
 						</td>
@@ -70,11 +66,11 @@ OPTIONS DATA -->
 						<td>
 							<?php 
 								 echo (in_array($row->option_name, $GLOBALS['DUPLICATOR_OPTS_DELETE']))
-									? "<a href='javascript:void(0)' onclick='Duplicator.Settings.ConfirmDeleteOption(this)'>{$row->option_name}</a>"
-									: $row->option_name;
+									? "<a href='javascript:void(0)' onclick='Duplicator.Settings.ConfirmDeleteOption(this)'>".esc_js($row->option_name)."</a>"
+									: esc_textarea($row->option_name);
 							?>
 						</td>
-						<td><textarea class="dup-opts-read" readonly="readonly"><?php echo $row->option_value?></textarea></td>
+						<td><textarea class="dup-opts-read" readonly="readonly"><?php echo esc_textarea($row->option_value); ?></textarea></td>
 					</tr>
 				<?php } ?>
 				</tbody>
@@ -108,7 +104,7 @@ jQuery(document).ready(function($)
 	Duplicator.Settings.ConfirmDeleteOption = function (anchor) 
 	{
 		var key = $(anchor).text();
-		var msg_id = '<?php echo $confirm1->getMessageID() ?>';
+		var msg_id = '<?php echo esc_js($confirm1->getMessageID()); ?>';
 		var msg    = '<?php _e('Delete the option value', 'duplicator');?>' + ' [' + key + '] ?';
 		jQuery('#dup-settings-form-action').val(key);
 		jQuery('#' + msg_id).html(msg)
@@ -128,32 +124,16 @@ jQuery(document).ready(function($)
 
 	Duplicator.Tools.ClearBuildCache = function ()
 	{
-		window.location = '?page=duplicator-tools&tab=diagnostics&action=tmp-cache&_wpnonce=<?php echo $nonce; ?>';
+		window.location = "<?php echo esc_js(esc_url('?page=duplicator-tools&tab=diagnostics&action=tmp-cache&_wpnonce='.$nonce));?>";
 	}
 });
 
 
 Duplicator.Tools.deleteInstallerFiles = function()
 {
-	var data = {
-		action: 'DUP_CTRL_Tools_deleteInstallerFiles',
-		nonce: '<?php echo $ajax_nonce; ?>',
-		'archive-name':  '<?php echo $package_name; ?>'
-	};
-
-	jQuery.ajax({
-		type: "POST",
-		url: ajaxurl,
-		dataType: "json",
-		data: data,
-		complete: function() {
-		<?php
-			$url = "?page=duplicator-tools&tab=diagnostics&action=installer&_wpnonce={$nonce}&package={$package_name}";
-			echo "window.location = '{$url}';";
-		?>
-		},
-		error: function(data) {console.log(data)},
-		done: function(data) {console.log(data)}
-	});
+	<?php
+	$url = "?page=duplicator-tools&tab=diagnostics&action=installer&_wpnonce={$nonce}&package=".esc_js($package_name);
+	echo "window.location = '".$url."';";
+	?>
 }
 </script>

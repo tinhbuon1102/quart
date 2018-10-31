@@ -8,6 +8,7 @@
 				<tr>
 					<th class="manage-column"><?php _e( 'Meta key', 'woocommerce-store-toolkit' ); ?></th>
 					<th class="manage-column"><?php _e( 'Meta value', 'woocommerce-store-toolkit' ); ?></th>
+					<th class="manage-column">&nbsp;</th>
 				</tr>
 			</thead>
 
@@ -22,7 +23,8 @@
 				<tr>
 		<?php if( is_array( $meta_value ) ) { ?>
 				<tr>
-					<th colspan="2"><?php echo $meta_name; ?></th> 
+					<th colspan="2"><?php echo $meta_name; ?></th>
+					<td class="actions"><?php do_action( 'woo_st_category_data_actions', $term->term_id, $meta_name ); ?></td>
 				</tr>
 			<?php foreach( $meta_value as $inner_meta_name => $inner_meta_value ) { ?>
 				<tr>
@@ -31,8 +33,9 @@
 				</tr>
 			<?php } ?>
 	<?php } else { ?>
-					<td><?php echo $meta_name; ?></td>
+					<td style="width:20%;"><?php echo $meta_name; ?></td>
 					<td><?php echo $meta_value; ?></td>
+					<td class="actions"><?php do_action( 'woo_st_category_data_actions', $term->term_id, $meta_name ); ?></td>
 	<?php } ?>
 				</tr>
 	<?php } ?>

@@ -67,13 +67,11 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
 	        	echo stripslashes( $woo_options['woo_footer_right_text'] );
 	
 			} else { ?>
-				<ul id="utility">
-           <li class="utility-social-icons">
-<a href="https://instagram.com/L_QUARTET/" target="_blank"><i class="icon-instagram"></i></a>
-<a href="https://www.facebook.com/profile.php?id=100009309119528&fref=ts" target="_blank"><i class="icon-facebook"></i></a>
-<a href="https://twitter.com/l_quartet" target="_blank"><i class="icon-twitter"></i></a>
-</li>
-                                </ul>
+			<ul class="social-links">
+           <li class="social-link"><a href="https://instagram.com/L_QUARTET/" target="_blank"><i class="fa fa-instagram"></i></a></li>
+				<li class="social-link"><a href="https://www.facebook.com/profile.php?id=100009309119528&fref=ts" target="_blank"><i class="fa fa-facebook"></i></a></li>
+				<li class="social-link"><a href="https://twitter.com/l_quartet" target="_blank"><i class="fa fa-twitter"></i></a></li>
+				</ul>
 			<?php } ?>
 			</div>
 	
@@ -195,7 +193,7 @@ jQuery(function(){
 	position:inherit!important
 }
 </style
-<?php woo_foot(); ?>
+><?php woo_foot(); ?>
   
 
 </body>

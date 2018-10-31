@@ -4,6 +4,7 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
     die ( 'You do not have sufficient permissions to access this page!' );
 }
 ?>
+hhhh
 <?php
 /**
  * The default template for displaying content

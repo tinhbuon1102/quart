@@ -712,7 +712,7 @@ class Woo_Banner_Management_Admin {
         ?>
         <tr class="form-field mdwbm_banner_url_form_field">
             <th scope="row" valign="top">
-                <label for="banner_url"><?php esc_html_e('Banner Image', 'woo-banner-management'); ?> ?></label>
+                <label for="banner_url"><?php esc_html_e('Banner Image', 'woo-banner-management'); ?></label>
             </th>
             <td>
                 <fieldset>
@@ -747,7 +747,7 @@ class Woo_Banner_Management_Admin {
         </tr>
         <tr class="form-field auto_display_banner">
             <th scope="row" valign="top">
-                <label for="auto_display_banner"><?php esc_html_e('Automatically insert banner above main content', 'woo-banner-management'); ?>); ?></label>
+                <label for="auto_display_banner"><?php esc_html_e('Automatically insert banner above main content', 'woo-banner-management'); ?></label>
             </th>
             <td>
                 <fieldset>

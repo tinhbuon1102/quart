@@ -1,0 +1,684 @@
+0000.000 (0) Opened log file at time: Wed, 31 Oct 2018 07:23:47 +0900 on http://lquartet.xsrv.jp
+0000.002 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.15.3 WP: 4.9.8 PHP: 7.0.30 (cgi-fcgi, Linux sv963.xserver.jp 4.4.0-137-generic #163-Ubuntu SMP Mon Sep 24 13:14:43 UTC 2018 x86_64) MySQL: 5.5.56-MariaDB WPLANG: ja Server: Apache safe_mode: 0 max_execution_time: 900 memory_limit: 512M (used: 30.7M | 4M) multisite: N openssl: OpenSSL 1.0.2k-fips  26 Jan 2017 mcrypt: Y LANG:  ZipArchive::addFile: Y
+0000.002 (0) Free space on disk containing Updraft's temporary directory: 2051029.4 MB
+0000.005 (0) Tasks: Backup files: 1 (schedule: unset) Backup DB: 1 (schedule: unset)
+0000.007 (0) Semaphore (fd, wp_options) being initialised
+0000.009 (0) Requesting semaphore lock (fd) (apparently not via scheduler)
+0000.011 (0) Set semaphore last lock (fd) time to 2018-10-30 22:23:47
+0000.012 (0) Semaphore lock (fd) complete
+0000.016 (0) Backup run: resumption=0, nonce=188d901be862, begun at=1540938227 (0s ago), job type=backup
+0000.017 (0) Scheduling a resumption (1) after 300 seconds (1540938527) in case this run gets aborted
+0000.040 (0) Checking if we have a zip executable available
+0000.041 (0) Testing: /usr/bin/zip
+0000.050 (0) Output: zip warning: binziptest/test.zip not found or empty
+0000.052 (0) Output: adding: binziptest/subdir1/	(in=0) (out=0) (stored 0%)
+0000.052 (0) Output: adding: binziptest/subdir1/subdir2/	(in=0) (out=0) (stored 0%)
+0000.053 (0) Output: adding: binziptest/subdir1/subdir2/test.html	(in=131) (out=107) (deflated 18%)
+0000.053 (0) Output: total bytes=131, compressed=107 -> 18% savings
+0000.060 (0) Output: adding: binziptest/subdir1/subdir2/test2.html	(in=138) (out=113) (deflated 18%)
+0000.062 (0) Output: total bytes=269, compressed=220 -> 18% savings
+0000.079 (0) Working binary zip found: /usr/bin/zip
+0000.081 (0) Zip engine: found/will use a binary zip: /usr/bin/zip
+0000.082 (0) Creation of backups of directories: beginning
+0000.084 (0) Beginning creation of dump of plugins (split every: 400 MB)
+0000.355 (0) Total entities for the zip file: 2273 directories, 14022 files (0 skipped as non-modified), 196.4 MB
+0000.358 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+0000.361 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+0000.363 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+0000.365 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+0000.367 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+0000.367 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.4 MB, 14022 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0001.102 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: size is now: 5.70 MB
+0001.106 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 600 files added (on-disk size: 5848.4 KB)
+0001.108 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 700 files added (on-disk size: 5848.4 KB)
+0001.110 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 800 files added (on-disk size: 5848.4 KB)
+0001.113 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 900 files added (on-disk size: 5848.4 KB)
+0001.115 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1000 files added (on-disk size: 5848.4 KB)
+0001.116 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (1.8 MB, 14022 files batched, 501 (1002) added so far); re-opening (prior size: 5848.4 KB)
+0001.249 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1100 files added (on-disk size: 6578.2 KB)
+0001.251 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1200 files added (on-disk size: 6578.2 KB)
+0001.253 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1300 files added (on-disk size: 6578.2 KB)
+0001.255 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1400 files added (on-disk size: 6578.2 KB)
+0001.257 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1500 files added (on-disk size: 6578.2 KB)
+0001.258 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.9 MB, 14022 files batched, 501 (1503) added so far); re-opening (prior size: 6578.2 KB)
+0001.476 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: size is now: 7.90 MB
+0001.481 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1600 files added (on-disk size: 8124.2 KB)
+0001.484 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1700 files added (on-disk size: 8124.2 KB)
+0001.487 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1800 files added (on-disk size: 8124.2 KB)
+0001.490 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 1900 files added (on-disk size: 8124.2 KB)
+0001.492 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2000 files added (on-disk size: 8124.2 KB)
+0001.493 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.3 MB, 14022 files batched, 501 (2004) added so far); re-opening (prior size: 8124.2 KB)
+0001.760 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: size is now: 11.60 MB
+0001.763 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2100 files added (on-disk size: 11878.6 KB)
+0001.765 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2200 files added (on-disk size: 11878.6 KB)
+0001.767 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2300 files added (on-disk size: 11878.6 KB)
+0001.769 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2400 files added (on-disk size: 11878.6 KB)
+0001.771 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2500 files added (on-disk size: 11878.6 KB)
+0001.772 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.4 MB, 14022 files batched, 501 (2505) added so far); re-opening (prior size: 11878.6 KB)
+0002.142 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2600 files added (on-disk size: 13546.1 KB)
+0002.144 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2700 files added (on-disk size: 13546.1 KB)
+0002.146 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2800 files added (on-disk size: 13546.1 KB)
+0002.148 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 2900 files added (on-disk size: 13546.1 KB)
+0002.150 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3000 files added (on-disk size: 13546.1 KB)
+0002.151 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (1.4 MB, 14022 files batched, 501 (3006) added so far); re-opening (prior size: 13546.1 KB)
+0002.377 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3100 files added (on-disk size: 14369.8 KB)
+0002.379 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3200 files added (on-disk size: 14369.8 KB)
+0002.381 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3300 files added (on-disk size: 14369.8 KB)
+0002.383 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3400 files added (on-disk size: 14369.8 KB)
+0002.385 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3500 files added (on-disk size: 14369.8 KB)
+0002.386 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (2.6 MB, 14022 files batched, 501 (3507) added so far); re-opening (prior size: 14369.8 KB)
+0002.705 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3600 files added (on-disk size: 15667.1 KB)
+0002.707 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3700 files added (on-disk size: 15667.1 KB)
+0002.710 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3800 files added (on-disk size: 15667.1 KB)
+0002.712 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 3900 files added (on-disk size: 15667.1 KB)
+0002.714 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4000 files added (on-disk size: 15667.1 KB)
+0002.714 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.4 MB, 14022 files batched, 501 (4008) added so far); re-opening (prior size: 15667.1 KB)
+0003.166 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4100 files added (on-disk size: 17911.3 KB)
+0003.168 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4200 files added (on-disk size: 17911.3 KB)
+0003.170 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4300 files added (on-disk size: 17911.3 KB)
+0003.171 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4400 files added (on-disk size: 17911.3 KB)
+0003.173 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4500 files added (on-disk size: 17911.3 KB)
+0003.174 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (10.2 MB, 14022 files batched, 501 (4509) added so far); re-opening (prior size: 17911.3 KB)
+0003.818 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4600 files added (on-disk size: 21403.2 KB)
+0003.820 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4700 files added (on-disk size: 21403.2 KB)
+0003.822 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4800 files added (on-disk size: 21403.2 KB)
+0003.824 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 4900 files added (on-disk size: 21403.2 KB)
+0003.826 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5000 files added (on-disk size: 21403.2 KB)
+0003.827 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.3 MB, 14022 files batched, 501 (5010) added so far); re-opening (prior size: 21403.2 KB)
+0004.100 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5100 files added (on-disk size: 22514.6 KB)
+0004.103 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5200 files added (on-disk size: 22514.6 KB)
+0004.104 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5300 files added (on-disk size: 22514.6 KB)
+0004.106 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5400 files added (on-disk size: 22514.6 KB)
+0004.108 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5500 files added (on-disk size: 22514.6 KB)
+0004.109 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.5 MB, 14022 files batched, 501 (5511) added so far); re-opening (prior size: 22514.6 KB)
+0004.588 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5600 files added (on-disk size: 24696 KB)
+0004.590 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5700 files added (on-disk size: 24696 KB)
+0004.592 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5800 files added (on-disk size: 24696 KB)
+0004.594 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 5900 files added (on-disk size: 24696 KB)
+0004.596 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6000 files added (on-disk size: 24696 KB)
+0004.597 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3.7 MB, 14022 files batched, 501 (6012) added so far); re-opening (prior size: 24696 KB)
+0004.865 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6100 files added (on-disk size: 26072.4 KB)
+0004.869 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6200 files added (on-disk size: 26072.4 KB)
+0004.871 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6300 files added (on-disk size: 26072.4 KB)
+0004.874 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6400 files added (on-disk size: 26072.4 KB)
+0004.877 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6500 files added (on-disk size: 26072.4 KB)
+0004.878 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6 MB, 14022 files batched, 501 (6513) added so far); re-opening (prior size: 26072.4 KB)
+0005.202 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6600 files added (on-disk size: 27966.2 KB)
+0005.206 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6700 files added (on-disk size: 27966.2 KB)
+0005.210 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6800 files added (on-disk size: 27966.2 KB)
+0005.213 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 6900 files added (on-disk size: 27966.2 KB)
+0005.216 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7000 files added (on-disk size: 27966.2 KB)
+0005.217 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (10.5 MB, 14022 files batched, 501 (7014) added so far); re-opening (prior size: 27966.2 KB)
+0005.625 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7100 files added (on-disk size: 29704.7 KB)
+0005.628 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7200 files added (on-disk size: 29704.7 KB)
+0005.630 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7300 files added (on-disk size: 29704.7 KB)
+0005.632 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7400 files added (on-disk size: 29704.7 KB)
+0005.634 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7500 files added (on-disk size: 29704.7 KB)
+0005.635 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (7 MB, 14022 files batched, 501 (7515) added so far); re-opening (prior size: 29704.7 KB)
+0005.932 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7600 files added (on-disk size: 32170.1 KB)
+0005.936 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7700 files added (on-disk size: 32170.1 KB)
+0005.940 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7800 files added (on-disk size: 32170.1 KB)
+0005.943 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 7900 files added (on-disk size: 32170.1 KB)
+0005.946 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8000 files added (on-disk size: 32170.1 KB)
+0005.947 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (4 MB, 14022 files batched, 501 (8016) added so far); re-opening (prior size: 32170.1 KB)
+0006.194 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8100 files added (on-disk size: 33352.2 KB)
+0006.197 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8200 files added (on-disk size: 33352.2 KB)
+0006.199 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8300 files added (on-disk size: 33352.2 KB)
+0006.202 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8400 files added (on-disk size: 33352.2 KB)
+0006.204 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8500 files added (on-disk size: 33352.2 KB)
+0006.205 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (11.9 MB, 14022 files batched, 501 (8517) added so far); re-opening (prior size: 33352.2 KB)
+0006.806 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8600 files added (on-disk size: 39494.7 KB)
+0006.808 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8700 files added (on-disk size: 39494.7 KB)
+0006.811 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8800 files added (on-disk size: 39494.7 KB)
+0006.814 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 8900 files added (on-disk size: 39494.7 KB)
+0006.817 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9000 files added (on-disk size: 39494.7 KB)
+0006.818 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.7 MB, 14022 files batched, 501 (9018) added so far); re-opening (prior size: 39494.7 KB)
+0007.164 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9100 files added (on-disk size: 42237.1 KB)
+0007.166 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9200 files added (on-disk size: 42237.1 KB)
+0007.168 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9300 files added (on-disk size: 42237.1 KB)
+0007.170 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9400 files added (on-disk size: 42237.1 KB)
+0007.172 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9500 files added (on-disk size: 42237.1 KB)
+0007.173 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.8 MB, 14022 files batched, 501 (9519) added so far); re-opening (prior size: 42237.1 KB)
+0007.637 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9600 files added (on-disk size: 46254.4 KB)
+0007.641 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9700 files added (on-disk size: 46254.4 KB)
+0007.643 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9800 files added (on-disk size: 46254.4 KB)
+0007.645 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 9900 files added (on-disk size: 46254.4 KB)
+0007.647 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10000 files added (on-disk size: 46254.4 KB)
+0007.648 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.4 MB, 14022 files batched, 501 (10020) added so far); re-opening (prior size: 46254.4 KB)
+0008.135 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10100 files added (on-disk size: 50042 KB)
+0008.137 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10200 files added (on-disk size: 50042 KB)
+0008.139 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10300 files added (on-disk size: 50042 KB)
+0008.141 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10400 files added (on-disk size: 50042 KB)
+0008.143 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10500 files added (on-disk size: 50042 KB)
+0008.143 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5 MB, 14022 files batched, 501 (10521) added so far); re-opening (prior size: 50042 KB)
+0008.704 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10600 files added (on-disk size: 52071.9 KB)
+0008.709 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10700 files added (on-disk size: 52071.9 KB)
+0008.712 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10800 files added (on-disk size: 52071.9 KB)
+0008.716 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 10900 files added (on-disk size: 52071.9 KB)
+0008.719 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11000 files added (on-disk size: 52071.9 KB)
+0008.721 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (11.6 MB, 14022 files batched, 501 (11022) added so far); re-opening (prior size: 52071.9 KB)
+0009.178 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11100 files added (on-disk size: 60215.8 KB)
+0009.181 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11200 files added (on-disk size: 60215.8 KB)
+0009.184 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11300 files added (on-disk size: 60215.8 KB)
+0009.186 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11400 files added (on-disk size: 60215.8 KB)
+0009.189 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11500 files added (on-disk size: 60215.8 KB)
+0009.191 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.8 MB, 14022 files batched, 501 (11523) added so far); re-opening (prior size: 60215.8 KB)
+0009.513 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11600 files added (on-disk size: 63898.4 KB)
+0009.517 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11700 files added (on-disk size: 63898.4 KB)
+0009.521 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11800 files added (on-disk size: 63898.4 KB)
+0009.525 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 11900 files added (on-disk size: 63898.4 KB)
+0009.529 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12000 files added (on-disk size: 63898.4 KB)
+0009.531 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (3 MB, 14022 files batched, 501 (12024) added so far); re-opening (prior size: 63898.4 KB)
+0009.761 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12100 files added (on-disk size: 65565.4 KB)
+0009.765 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12200 files added (on-disk size: 65565.4 KB)
+0009.769 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12300 files added (on-disk size: 65565.4 KB)
+0009.773 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12400 files added (on-disk size: 65565.4 KB)
+0009.777 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12500 files added (on-disk size: 65565.4 KB)
+0009.779 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (6.6 MB, 14022 files batched, 501 (12525) added so far); re-opening (prior size: 65565.4 KB)
+0010.274 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12600 files added (on-disk size: 68169.2 KB)
+0010.276 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12700 files added (on-disk size: 68169.2 KB)
+0010.278 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12800 files added (on-disk size: 68169.2 KB)
+0010.279 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 12900 files added (on-disk size: 68169.2 KB)
+0010.281 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13000 files added (on-disk size: 68169.2 KB)
+0010.282 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (17.1 MB, 14022 files batched, 501 (13026) added so far); re-opening (prior size: 68169.2 KB)
+0011.172 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13100 files added (on-disk size: 73796.8 KB)
+0011.175 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13200 files added (on-disk size: 73796.8 KB)
+0011.178 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13300 files added (on-disk size: 73796.8 KB)
+0011.181 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13400 files added (on-disk size: 73796.8 KB)
+0011.184 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13500 files added (on-disk size: 73796.8 KB)
+0011.186 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (10.4 MB, 14022 files batched, 501 (13527) added so far); re-opening (prior size: 73796.8 KB)
+0011.782 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13600 files added (on-disk size: 79741.4 KB)
+0011.784 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13700 files added (on-disk size: 79741.4 KB)
+0011.786 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13800 files added (on-disk size: 79741.4 KB)
+0011.788 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 13900 files added (on-disk size: 79741.4 KB)
+0011.790 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip.tmp: 14000 files added (on-disk size: 79741.4 KB)
+0013.370 (0) Created plugins zip (0) - 83600.7 KB in 13.3 s (6293.2 KB/s) (sha1: 1b8a8ff99dedafd3addbaf7ff04715b794c3c357, sha256: 98655b4d2e9b1078ee9fe3a5577ad6c678355f69f6e088c7e22a37d1572b7bf3)
+0013.372 (0) Beginning creation of dump of themes (split every: 400 MB)
+0013.395 (0) Total entities for the zip file: 94 directories, 873 files (0 skipped as non-modified), 8.1 MB
+0013.398 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0013.402 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0013.405 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0013.408 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 400 files added (on-disk size: 0 KB)
+0013.412 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 500 files added (on-disk size: 0 KB)
+0013.413 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (5.7 MB, 873 files batched, 501 (501) added so far); re-opening (prior size: 0 KB)
+0013.679 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: size is now: 3.10 MB
+0013.683 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 600 files added (on-disk size: 3136 KB)
+0013.686 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 700 files added (on-disk size: 3136 KB)
+0013.688 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: 800 files added (on-disk size: 3136 KB)
+0013.876 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip.tmp: size is now: 4.70 MB
+0013.978 (0) Created themes zip (0) - 4831.3 KB in 0.6 s (7984.9 KB/s) (sha1: c836e420ed90cf0190ce35f64a242c29154276ee, sha256: f5a1fd411cd544f209a91f1788ff1e7566dce13fb9e364628d99394d64fd09b1)
+0013.987 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+0013.988 (0) Looking for candidates to backup in: /home/lquartet/lquartet.xsrv.jp/public_html/wp-content/uploads
+0013.989 (0) finding files: 2015: adding to list (1)
+0013.989 (0) finding files: 2016: adding to list (2)
+0013.994 (0) finding files: 2017: adding to list (3)
+0014.003 (0) finding files: abovethefold: adding to list (4)
+0014.004 (0) finding files: ewpt_cache: adding to list (5)
+0014.004 (0) finding files: sass: adding to list (6)
+0014.016 (0) finding files: siteorigin-widgets: adding to list (7)
+0014.028 (0) finding files: wc-logs: adding to list (8)
+0014.029 (0) finding files: woocommerce_uploads: adding to list (9)
+0014.030 (0) finding files: wow-slider-plugin: adding to list (10)
+0014.036 (0) finding files: mc4wp-debug-log.php: adding to list (11)
+0014.040 (0) finding files: 2018: adding to list (12)
+0014.043 (0) finding files: GeoLite2-Country.mmdb: adding to list (13)
+0014.060 (0) finding files: master-slider: adding to list (14)
+0014.072 (0) finding files: 2012: adding to list (15)
+0014.076 (0) finding files: revslider: adding to list (16)
+0014.077 (0) finding files: wp-clone: skipping: excluded by options
+0014.078 (0) finding files: GeoIP.dat: adding to list (17)
+0014.079 (0) finding files: GeoIPv6.dat: adding to list (18)
+0014.080 (0) Beginning creation of dump of uploads (split every: 400 MB)
+0014.454 (0) Total entities for the zip file: 262 directories, 13863 files (0 skipped as non-modified), 746 MB
+0014.457 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 100 files added (on-disk size: 0 KB)
+0014.461 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 200 files added (on-disk size: 0 KB)
+0014.462 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 25 MB added on this batch (26.2 MB, 13863 files batched, 203 (203) added so far); re-opening (prior size: 0 KB)
+0014.833 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: size is now: 26.20 MB
+0014.835 (0) A useful amount of data was added after this amount of zip processing: 1.5 s (normalised: 1.5 s, rate: 17479.7 KB/s)
+0014.837 (0) Performance is good - will increase the amount of data we attempt to batch (time=1.5320498943329, normalised_time=1.4645535753389, max_time=-1, data points known=0, old_max_bytes=26214400, new_max_bytes=107395456)
+0014.840 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 300 files added (on-disk size: 26871.7 KB)
+0014.844 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 400 files added (on-disk size: 26871.7 KB)
+0014.847 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 500 files added (on-disk size: 26871.7 KB)
+0014.850 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 600 files added (on-disk size: 26871.7 KB)
+0014.853 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 700 files added (on-disk size: 26871.7 KB)
+0014.854 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (33.7 MB, 13863 files batched, 501 (704) added so far); re-opening (prior size: 26871.7 KB)
+0015.496 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: size is now: 60.10 MB
+0015.502 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 800 files added (on-disk size: 61491.9 KB)
+0015.506 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 900 files added (on-disk size: 61491.9 KB)
+0015.509 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1000 files added (on-disk size: 61491.9 KB)
+0015.512 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1100 files added (on-disk size: 61491.9 KB)
+0015.515 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1200 files added (on-disk size: 61491.9 KB)
+0015.516 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (26.2 MB, 13863 files batched, 501 (1205) added so far); re-opening (prior size: 61491.9 KB)
+0016.187 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: size is now: 86.30 MB
+0016.191 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1300 files added (on-disk size: 88388.6 KB)
+0016.195 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1400 files added (on-disk size: 88388.6 KB)
+0016.198 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1500 files added (on-disk size: 88388.6 KB)
+0016.201 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1600 files added (on-disk size: 88388.6 KB)
+0016.205 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1700 files added (on-disk size: 88388.6 KB)
+0016.206 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.4 MB, 13863 files batched, 501 (1706) added so far); re-opening (prior size: 88388.6 KB)
+0016.937 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: size is now: 104.80 MB
+0016.941 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1800 files added (on-disk size: 107307.5 KB)
+0016.944 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 1900 files added (on-disk size: 107307.5 KB)
+0016.947 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2000 files added (on-disk size: 107307.5 KB)
+0016.951 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2100 files added (on-disk size: 107307.5 KB)
+0016.953 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2200 files added (on-disk size: 107307.5 KB)
+0016.954 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.1 MB, 13863 files batched, 501 (2207) added so far); re-opening (prior size: 107307.5 KB)
+0017.342 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2300 files added (on-disk size: 125985.3 KB)
+0017.344 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2400 files added (on-disk size: 125985.3 KB)
+0017.346 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2500 files added (on-disk size: 125985.3 KB)
+0017.347 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2600 files added (on-disk size: 125985.3 KB)
+0017.349 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2700 files added (on-disk size: 125985.3 KB)
+0017.350 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (24.3 MB, 13863 files batched, 501 (2708) added so far); re-opening (prior size: 125985.3 KB)
+0017.869 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2800 files added (on-disk size: 151001.9 KB)
+0017.871 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 2900 files added (on-disk size: 151001.9 KB)
+0017.873 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3000 files added (on-disk size: 151001.9 KB)
+0017.875 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3100 files added (on-disk size: 151001.9 KB)
+0017.876 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3200 files added (on-disk size: 151001.9 KB)
+0017.877 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (19.8 MB, 13863 files batched, 501 (3209) added so far); re-opening (prior size: 151001.9 KB)
+0018.361 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3300 files added (on-disk size: 171406.9 KB)
+0018.364 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3400 files added (on-disk size: 171406.9 KB)
+0018.367 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3500 files added (on-disk size: 171406.9 KB)
+0018.369 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3600 files added (on-disk size: 171406.9 KB)
+0018.371 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3700 files added (on-disk size: 171406.9 KB)
+0018.372 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (31 MB, 13863 files batched, 501 (3710) added so far); re-opening (prior size: 171406.9 KB)
+0018.993 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3800 files added (on-disk size: 203292.3 KB)
+0018.995 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 3900 files added (on-disk size: 203292.3 KB)
+0018.997 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4000 files added (on-disk size: 203292.3 KB)
+0018.999 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4100 files added (on-disk size: 203292.3 KB)
+0019.000 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4200 files added (on-disk size: 203292.3 KB)
+0019.001 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (23.8 MB, 13863 files batched, 501 (4211) added so far); re-opening (prior size: 203292.3 KB)
+0019.579 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4300 files added (on-disk size: 227754.5 KB)
+0019.581 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4400 files added (on-disk size: 227754.5 KB)
+0019.583 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4500 files added (on-disk size: 227754.5 KB)
+0019.585 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4600 files added (on-disk size: 227754.5 KB)
+0019.586 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4700 files added (on-disk size: 227754.5 KB)
+0019.587 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (17.4 MB, 13863 files batched, 501 (4712) added so far); re-opening (prior size: 227754.5 KB)
+0020.119 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4800 files added (on-disk size: 245726.3 KB)
+0020.121 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 4900 files added (on-disk size: 245726.3 KB)
+0020.124 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5000 files added (on-disk size: 245726.3 KB)
+0020.125 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5100 files added (on-disk size: 245726.3 KB)
+0020.127 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5200 files added (on-disk size: 245726.3 KB)
+0020.128 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (18.3 MB, 13863 files batched, 501 (5213) added so far); re-opening (prior size: 245726.3 KB)
+0020.662 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5300 files added (on-disk size: 264533.3 KB)
+0020.664 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5400 files added (on-disk size: 264533.3 KB)
+0020.666 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5500 files added (on-disk size: 264533.3 KB)
+0020.668 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5600 files added (on-disk size: 264533.3 KB)
+0020.669 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5700 files added (on-disk size: 264533.3 KB)
+0020.670 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (21.6 MB, 13863 files batched, 501 (5714) added so far); re-opening (prior size: 264533.3 KB)
+0021.306 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5800 files added (on-disk size: 286724.6 KB)
+0021.311 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 5900 files added (on-disk size: 286724.6 KB)
+0021.314 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6000 files added (on-disk size: 286724.6 KB)
+0021.318 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6100 files added (on-disk size: 286724.6 KB)
+0021.322 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6200 files added (on-disk size: 286724.6 KB)
+0021.323 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (31.3 MB, 13863 files batched, 501 (6215) added so far); re-opening (prior size: 286724.6 KB)
+0022.026 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6300 files added (on-disk size: 318853.1 KB)
+0022.028 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6400 files added (on-disk size: 318853.1 KB)
+0022.031 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6500 files added (on-disk size: 318853.1 KB)
+0022.034 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6600 files added (on-disk size: 318853.1 KB)
+0022.036 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6700 files added (on-disk size: 318853.1 KB)
+0022.038 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (26.4 MB, 13863 files batched, 501 (6716) added so far); re-opening (prior size: 318853.1 KB)
+0022.774 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6800 files added (on-disk size: 345952.3 KB)
+0022.777 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 6900 files added (on-disk size: 345952.3 KB)
+0022.780 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7000 files added (on-disk size: 345952.3 KB)
+0022.783 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7100 files added (on-disk size: 345952.3 KB)
+0022.786 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7200 files added (on-disk size: 345952.3 KB)
+0022.787 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (28.7 MB, 13863 files batched, 501 (7217) added so far); re-opening (prior size: 345952.3 KB)
+0023.601 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7300 files added (on-disk size: 375428.2 KB)
+0023.603 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7400 files added (on-disk size: 375428.2 KB)
+0023.605 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7500 files added (on-disk size: 375428.2 KB)
+0023.607 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip.tmp: 7600 files added (on-disk size: 375428.2 KB)
+0023.608 (0) Adding batch to zip file (UpdraftPlus_BinZip): possibly approaching split limit (30.6 MB, 403 (7620) files added so far); last ratio: 1; re-opening (prior size: 375428.2 KB)
+0024.434 (0) Zip size is at/near split limit (397.3 MB / 400 MB) - bumping index (from: 0)
+0028.451 (0) Created uploads zip (0) - 406824.6 KB in 10.4 s (39295.3 KB/s) (checksums: sha1: 1d1c6fc4ff2244e52298406a5047f7c941e38e1e, sha256: 9646bac6e173a551df7803a1637501f094475985f3dd394f5954c40e7f65b565)
+0028.454 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 2.0 seconds have passed since the last write (0 MB, 1 (7621) files added so far); re-opening (prior size: 0 KB)
+0028.486 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 0.00 MB
+0028.490 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 7700 files added (on-disk size: 2 KB)
+0028.493 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 7800 files added (on-disk size: 2 KB)
+0028.496 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 7900 files added (on-disk size: 2 KB)
+0028.499 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8000 files added (on-disk size: 2 KB)
+0028.501 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8100 files added (on-disk size: 2 KB)
+0028.503 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (23.3 MB, 13863 files batched, 501 (8122) added so far); re-opening (prior size: 2 KB)
+0028.976 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 23.40 MB
+0028.981 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8200 files added (on-disk size: 23990.7 KB)
+0028.983 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8300 files added (on-disk size: 23990.7 KB)
+0028.985 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8400 files added (on-disk size: 23990.7 KB)
+0028.987 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8500 files added (on-disk size: 23990.7 KB)
+0028.989 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8600 files added (on-disk size: 23990.7 KB)
+0028.990 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (20.5 MB, 13863 files batched, 501 (8623) added so far); re-opening (prior size: 23990.7 KB)
+0029.332 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 44.00 MB
+0029.335 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8700 files added (on-disk size: 45096.7 KB)
+0029.337 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8800 files added (on-disk size: 45096.7 KB)
+0029.339 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 8900 files added (on-disk size: 45096.7 KB)
+0029.341 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9000 files added (on-disk size: 45096.7 KB)
+0029.342 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9100 files added (on-disk size: 45096.7 KB)
+0029.343 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (15.2 MB, 13863 files batched, 501 (9124) added so far); re-opening (prior size: 45096.7 KB)
+0029.840 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 59.30 MB
+0029.845 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9200 files added (on-disk size: 60773.9 KB)
+0029.848 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9300 files added (on-disk size: 60773.9 KB)
+0029.850 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9400 files added (on-disk size: 60773.9 KB)
+0029.852 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9500 files added (on-disk size: 60773.9 KB)
+0029.853 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9600 files added (on-disk size: 60773.9 KB)
+0029.854 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (8.6 MB, 13863 files batched, 501 (9625) added so far); re-opening (prior size: 60773.9 KB)
+0030.306 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9700 files added (on-disk size: 69759.5 KB)
+0030.308 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9800 files added (on-disk size: 69759.5 KB)
+0030.310 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 9900 files added (on-disk size: 69759.5 KB)
+0030.312 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10000 files added (on-disk size: 69759.5 KB)
+0030.314 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10100 files added (on-disk size: 69759.5 KB)
+0030.315 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (27.1 MB, 13863 files batched, 501 (10126) added so far); re-opening (prior size: 69759.5 KB)
+0031.042 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 92.90 MB
+0031.047 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10200 files added (on-disk size: 95103.2 KB)
+0031.050 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10300 files added (on-disk size: 95103.2 KB)
+0031.054 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10400 files added (on-disk size: 95103.2 KB)
+0031.057 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10500 files added (on-disk size: 95103.2 KB)
+0031.060 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10600 files added (on-disk size: 95103.2 KB)
+0031.062 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (56.1 MB, 13863 files batched, 501 (10627) added so far); re-opening (prior size: 95103.2 KB)
+0031.681 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 149.10 MB
+0031.686 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10700 files added (on-disk size: 152631.2 KB)
+0031.689 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10800 files added (on-disk size: 152631.2 KB)
+0031.691 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 10900 files added (on-disk size: 152631.2 KB)
+0031.694 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11000 files added (on-disk size: 152631.2 KB)
+0031.696 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11100 files added (on-disk size: 152631.2 KB)
+0031.698 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (42.3 MB, 13863 files batched, 501 (11128) added so far); re-opening (prior size: 152631.2 KB)
+0032.344 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 191.40 MB
+0032.347 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11200 files added (on-disk size: 196027 KB)
+0032.349 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11300 files added (on-disk size: 196027 KB)
+0032.351 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11400 files added (on-disk size: 196027 KB)
+0032.353 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11500 files added (on-disk size: 196027 KB)
+0032.355 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11600 files added (on-disk size: 196027 KB)
+0032.356 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (42.5 MB, 13863 files batched, 501 (11629) added so far); re-opening (prior size: 196027 KB)
+0033.068 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: size is now: 234.00 MB
+0033.072 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11700 files added (on-disk size: 239629.1 KB)
+0033.074 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11800 files added (on-disk size: 239629.1 KB)
+0033.076 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 11900 files added (on-disk size: 239629.1 KB)
+0033.078 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12000 files added (on-disk size: 239629.1 KB)
+0033.080 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12100 files added (on-disk size: 239629.1 KB)
+0033.080 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (28.9 MB, 13863 files batched, 501 (12130) added so far); re-opening (prior size: 239629.1 KB)
+0033.806 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12200 files added (on-disk size: 269364.1 KB)
+0033.808 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12300 files added (on-disk size: 269364.1 KB)
+0033.810 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12400 files added (on-disk size: 269364.1 KB)
+0033.812 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12500 files added (on-disk size: 269364.1 KB)
+0033.813 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12600 files added (on-disk size: 269364.1 KB)
+0033.814 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (30.5 MB, 13863 files batched, 501 (12631) added so far); re-opening (prior size: 269364.1 KB)
+0034.596 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12700 files added (on-disk size: 300707.5 KB)
+0034.599 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12800 files added (on-disk size: 300707.5 KB)
+0034.601 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 12900 files added (on-disk size: 300707.5 KB)
+0034.603 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13000 files added (on-disk size: 300707.5 KB)
+0034.605 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13100 files added (on-disk size: 300707.5 KB)
+0034.607 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (21.7 MB, 13863 files batched, 501 (13132) added so far); re-opening (prior size: 300707.5 KB)
+0035.259 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13200 files added (on-disk size: 323032.1 KB)
+0035.262 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13300 files added (on-disk size: 323032.1 KB)
+0035.264 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13400 files added (on-disk size: 323032.1 KB)
+0035.266 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13500 files added (on-disk size: 323032.1 KB)
+0035.268 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13600 files added (on-disk size: 323032.1 KB)
+0035.269 (0) Adding batch to zip file (UpdraftPlus_BinZip): over 500 files added on this batch (28 MB, 13863 files batched, 501 (13633) added so far); re-opening (prior size: 323032.1 KB)
+0036.292 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13700 files added (on-disk size: 350122.4 KB)
+0036.294 (0) Zip: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip.tmp: 13800 files added (on-disk size: 350122.4 KB)
+0040.750 (0) Created uploads zip (1) - 354220.4 KB in 12.3 s (28804.8 KB/s) (sha1: b83448cb6020c9eb6cf42fd2e8ccabbab0da1390, sha256: 943daee596a0b803bee71ab0d71da4492895a0b42184f0a7877f1f93fc8c0842)
+0040.752 (0) Beginning backup of other directories found in the content directory (index: 0)
+0040.754 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups,mysql.sql,debug.log
+0040.755 (0) Looking for candidates to backup in: /home/lquartet/lquartet.xsrv.jp/public_html/wp-content
+0040.755 (0) finding files: languages: adding to list (1)
+0040.756 (0) finding files: plugins: skipping: this is the plugins directory
+0040.756 (0) finding files: themes: skipping: this is the themes directory
+0040.757 (0) finding files: upgrade: skipping: excluded by options
+0040.758 (0) finding files: uploads: skipping: this is the uploads directory
+0040.759 (0) finding files: advanced-cache.php: adding to list (2)
+0040.759 (0) finding files: index.php: adding to list (3)
+0040.760 (0) finding files: wp-cache-config.php: adding to list (4)
+0040.761 (0) finding files: cache: skipping: excluded by options
+0040.762 (0) finding files: mu-plugins: adding to list (5)
+0040.762 (0) finding files: updraft: skipping: this is the updraft directory
+0040.766 (0) Total entities for the zip file: 5 directories, 59 files (0 skipped as non-modified), 5.7 MB
+0041.020 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-others.zip.tmp: size is now: 1.60 MB
+0041.059 (0) Created others zip (0) - 1602.9 KB in 0.3 s (5434.1 KB/s) (sha1: 3edb02942ff9e82d67ecdc25c24aee548a46d718, sha256: 1ccd59f6d98d9e8faf5fb0a658fe287ee760d5754f4a981194d4444b070eebae)
+0041.063 (0) Saving backup status to database (elements: 9)
+0041.066 (0) Beginning creation of database dump (WordPress DB)
+0041.068 (0) Testing potential mysqldump binary: /usr/bin/mysqldump
+0041.095 (0) Output: /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;\n/*!40103 SET TIME_ZONE='+00:00' */;\n/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;\n/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;\nDROP TABLE IF EXISTS `wp_options`;\n/*!40101 SET @saved_cs_client     = @@character_set_client */;\n/*!40101 SET character_set_client = utf8 */;\nCRE (truncated - 1076 bytes total)
+0041.098 (0) Working binary mysqldump found: /usr/bin/mysqldump
+0041.109 (0) Table wp_options: Total expected rows (approximate): 3305
+0041.422 (0) Table wp_options: Total rows added: 3301 in 0.31 seconds
+0041.423 (0) Table wp_options: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_options.table.gz - 401.5 KB)
+0041.427 (0) Table wp_users: Total expected rows (approximate): 152
+0041.432 (0) Table wp_users: Total rows added: 152 in 0.00 seconds
+0041.433 (0) Table wp_users: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_users.table.gz - 10.3 KB)
+0041.436 (0) Table wp_usermeta: Total expected rows (approximate): 6144
+0041.485 (0) Table wp_usermeta: Total rows added: 6144 in 0.05 seconds
+0041.498 (0) Table wp_usermeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_usermeta.table.gz - 71 KB)
+0041.503 (0) Table wp_commentmeta: Total expected rows (approximate): 1193
+0041.511 (0) Table wp_commentmeta: Total rows added: 1193 in 0.01 seconds
+0041.513 (0) Table wp_commentmeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_commentmeta.table.gz - 6.2 KB)
+0041.516 (0) Table wp_comments: Total expected rows (approximate): 1606
+0041.561 (0) Table wp_comments: Total rows added: 1606 in 0.04 seconds
+0041.563 (0) Table wp_comments: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_comments.table.gz - 28.1 KB)
+0041.568 (0) Table wp_links: Total expected rows (approximate): 0
+0041.570 (0) Table wp_links: Total rows added: 0 in 0.00 seconds
+0041.571 (0) Table wp_links: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_links.table.gz - 0.4 KB)
+0041.574 (0) Table wp_postmeta: Total expected rows (approximate): 52095
+0041.817 (0) Table wp_postmeta: binary mysqldump finished (writes: 37) in 0.24 seconds
+0041.820 (0) Table wp_postmeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_postmeta.table.gz - 564.5 KB)
+0041.824 (0) Table wp_posts: Total expected rows (approximate): 3742
+0041.987 (0) Table wp_posts: Total rows added: 3742 in 0.16 seconds
+0041.988 (0) Table wp_posts: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_posts.table.gz - 202.8 KB)
+0041.991 (0) Table wp_term_relationships: Total expected rows (approximate): 1026
+0041.996 (0) Table wp_term_relationships: Total rows added: 1026 in 0.00 seconds
+0041.998 (0) Table wp_term_relationships: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_term_relationships.table.gz - 3.3 KB)
+0042.002 (0) Table wp_term_taxonomy: Total expected rows (approximate): 115
+0042.006 (0) Table wp_term_taxonomy: Total rows added: 115 in 0.00 seconds
+0042.007 (0) Table wp_term_taxonomy: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_term_taxonomy.table.gz - 2.4 KB)
+0042.011 (0) Table wp_termmeta: Total expected rows (approximate): 117
+0042.013 (0) Table wp_termmeta: Total rows added: 117 in 0.00 seconds
+0042.015 (0) Table wp_termmeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_termmeta.table.gz - 1.2 KB)
+0042.018 (0) Table wp_terms: Total expected rows (approximate): 115
+0042.021 (0) Table wp_terms: Total rows added: 115 in 0.00 seconds
+0042.022 (0) Table wp_terms: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_terms.table.gz - 2 KB)
+0042.025 (0) Table wp_woocommerce_order_itemmeta: Total expected rows (approximate): 7981
+0042.107 (0) Table wp_woocommerce_order_itemmeta: Total rows added: 8160 in 0.08 seconds
+0042.108 (0) Table wp_woocommerce_order_itemmeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_order_itemmeta.table.gz - 53.6 KB)
+0042.111 (0) Table wp_woocommerce_payment_tokenmeta: Total expected rows (approximate): 0
+0042.114 (0) Table wp_woocommerce_payment_tokenmeta: Total rows added: 0 in 0.00 seconds
+0042.114 (0) Table wp_woocommerce_payment_tokenmeta: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_payment_tokenmeta.table.gz - 0.3 KB)
+0042.116 (0) Skipping table (lacks our prefix (wp_)): woof_query_cache
+0042.119 (0) Table wp_duplicator_packages: Total expected rows (approximate): 2
+0042.121 (0) Table wp_duplicator_packages: Total rows added: 2 in 0.00 seconds
+0042.122 (0) Table wp_duplicator_packages: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_duplicator_packages.table.gz - 1.6 KB)
+0042.125 (0) Table wp_gpi_page_blacklist: Total expected rows (approximate): 0
+0042.127 (0) Table wp_gpi_page_blacklist: Total rows added: 0 in 0.00 seconds
+0042.128 (0) Table wp_gpi_page_blacklist: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_blacklist.table.gz - 0.3 KB)
+0042.131 (0) Table wp_gpi_page_reports: Total expected rows (approximate): 0
+0042.133 (0) Table wp_gpi_page_reports: Total rows added: 0 in 0.00 seconds
+0042.133 (0) Table wp_gpi_page_reports: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_reports.table.gz - 0.3 KB)
+0042.137 (0) Table wp_gpi_page_stats: Total expected rows (approximate): 0
+0042.139 (0) Table wp_gpi_page_stats: Total rows added: 0 in 0.00 seconds
+0042.140 (0) Table wp_gpi_page_stats: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_stats.table.gz - 0.4 KB)
+0042.142 (0) Table wp_masterslider_options: Total expected rows (approximate): 2
+0042.145 (0) Table wp_masterslider_options: Total rows added: 2 in 0.00 seconds
+0042.145 (0) Table wp_masterslider_options: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_masterslider_options.table.gz - 0.4 KB)
+0042.149 (0) Table wp_masterslider_sliders: Total expected rows (approximate): 1
+0042.151 (0) Table wp_masterslider_sliders: Total rows added: 1 in 0.00 seconds
+0042.152 (0) Table wp_masterslider_sliders: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_masterslider_sliders.table.gz - 3.2 KB)
+0042.155 (0) Table wp_po_plugins: Total expected rows (approximate): 0
+0042.157 (0) Table wp_po_plugins: Total rows added: 0 in 0.00 seconds
+0042.158 (0) Table wp_po_plugins: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_po_plugins.table.gz - 0.5 KB)
+0042.161 (0) Table wp_revslider_css: Total expected rows (approximate): 98
+0042.167 (0) Table wp_revslider_css: Total rows added: 109 in 0.01 seconds
+0042.168 (0) Table wp_revslider_css: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_css.table.gz - 4.9 KB)
+0042.171 (0) Table wp_revslider_layer_animations: Total expected rows (approximate): 0
+0042.173 (0) Table wp_revslider_layer_animations: Total rows added: 0 in 0.00 seconds
+0042.174 (0) Table wp_revslider_layer_animations: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_layer_animations.table.gz - 0.3 KB)
+0042.177 (0) Table wp_revslider_navigations: Total expected rows (approximate): 0
+0042.180 (0) Table wp_revslider_navigations: Total rows added: 0 in 0.00 seconds
+0042.180 (0) Table wp_revslider_navigations: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_navigations.table.gz - 0.3 KB)
+0042.184 (0) Table wp_revslider_sliders: Total expected rows (approximate): 0
+0042.186 (0) Table wp_revslider_sliders: Total rows added: 0 in 0.00 seconds
+0042.187 (0) Table wp_revslider_sliders: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_sliders.table.gz - 0.3 KB)
+0042.190 (0) Table wp_revslider_slides: Total expected rows (approximate): 0
+0042.193 (0) Table wp_revslider_slides: Total rows added: 0 in 0.00 seconds
+0042.194 (0) Table wp_revslider_slides: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_slides.table.gz - 0.3 KB)
+0042.198 (0) Table wp_revslider_static_slides: Total expected rows (approximate): 0
+0042.202 (0) Table wp_revslider_static_slides: Total rows added: 0 in 0.00 seconds
+0042.203 (0) Table wp_revslider_static_slides: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_static_slides.table.gz - 0.3 KB)
+0042.206 (0) Table wp_say_what_strings: Total expected rows (approximate): 0
+0042.213 (0) Table wp_say_what_strings: Total rows added: 0 in 0.01 seconds
+0042.214 (0) Table wp_say_what_strings: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_say_what_strings.table.gz - 0.3 KB)
+0042.219 (0) Table wp_toolset_post_guid_id: Total expected rows (approximate): 0
+0042.221 (0) Table wp_toolset_post_guid_id: Total rows added: 0 in 0.00 seconds
+0042.222 (0) Table wp_toolset_post_guid_id: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_toolset_post_guid_id.table.gz - 0.3 KB)
+0042.226 (0) Table wp_vtprd_lifetime_limits_purchaser: Total expected rows (approximate): 0
+0042.229 (0) Table wp_vtprd_lifetime_limits_purchaser: Total rows added: 0 in 0.00 seconds
+0042.229 (0) Table wp_vtprd_lifetime_limits_purchaser: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser.table.gz - 0.4 KB)
+0042.233 (0) Table wp_vtprd_lifetime_limits_purchaser_logid_rule: Total expected rows (approximate): 0
+0042.236 (0) Table wp_vtprd_lifetime_limits_purchaser_logid_rule: Total rows added: 0 in 0.00 seconds
+0042.237 (0) Table wp_vtprd_lifetime_limits_purchaser_logid_rule: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser_logid_rule.table.gz - 0.4 KB)
+0042.241 (0) Table wp_vtprd_lifetime_limits_purchaser_rule: Total expected rows (approximate): 0
+0042.244 (0) Table wp_vtprd_lifetime_limits_purchaser_rule: Total rows added: 0 in 0.00 seconds
+0042.245 (0) Table wp_vtprd_lifetime_limits_purchaser_rule: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser_rule.table.gz - 0.4 KB)
+0042.249 (0) Table wp_vtprd_purchase_log: Total expected rows (approximate): 0
+0042.251 (0) Table wp_vtprd_purchase_log: Total rows added: 0 in 0.00 seconds
+0042.252 (0) Table wp_vtprd_purchase_log: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log.table.gz - 0.4 KB)
+0042.256 (0) Table wp_vtprd_purchase_log_product: Total expected rows (approximate): 0
+0042.259 (0) Table wp_vtprd_purchase_log_product: Total rows added: 0 in 0.00 seconds
+0042.260 (0) Table wp_vtprd_purchase_log_product: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log_product.table.gz - 0.4 KB)
+0042.264 (0) Table wp_vtprd_purchase_log_product_rule: Total expected rows (approximate): 0
+0042.267 (0) Table wp_vtprd_purchase_log_product_rule: Total rows added: 0 in 0.00 seconds
+0042.268 (0) Table wp_vtprd_purchase_log_product_rule: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log_product_rule.table.gz - 0.3 KB)
+0042.272 (0) Table wp_wc_download_log: Total expected rows (approximate): 0
+0042.275 (0) Table wp_wc_download_log: Total rows added: 0 in 0.00 seconds
+0042.275 (0) Table wp_wc_download_log: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wc_download_log.table.gz - 0.4 KB)
+0042.279 (0) Table wp_wc_webhooks: Total expected rows (approximate): 0
+0042.282 (0) Table wp_wc_webhooks: Total rows added: 0 in 0.00 seconds
+0042.282 (0) Table wp_wc_webhooks: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wc_webhooks.table.gz - 0.5 KB)
+0042.286 (0) Table wp_woocommerce_api_keys: Total expected rows (approximate): 0
+0042.289 (0) Table wp_woocommerce_api_keys: Total rows added: 0 in 0.00 seconds
+0042.289 (0) Table wp_woocommerce_api_keys: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_api_keys.table.gz - 0.4 KB)
+0042.293 (0) Table wp_woocommerce_attribute_taxonomies: Total expected rows (approximate): 3
+0042.296 (0) Table wp_woocommerce_attribute_taxonomies: Total rows added: 3 in 0.00 seconds
+0042.296 (0) Table wp_woocommerce_attribute_taxonomies: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_attribute_taxonomies.table.gz - 0.4 KB)
+0042.300 (0) Table wp_woocommerce_downloadable_product_permissions: Total expected rows (approximate): 0
+0042.303 (0) Table wp_woocommerce_downloadable_product_permissions: Total rows added: 0 in 0.00 seconds
+0042.304 (0) Table wp_woocommerce_downloadable_product_permissions: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_downloadable_product_permissions.table.gz - 0.5 KB)
+0042.307 (0) Table wp_woocommerce_log: Total expected rows (approximate): 0
+0042.310 (0) Table wp_woocommerce_log: Total rows added: 0 in 0.00 seconds
+0042.311 (0) Table wp_woocommerce_log: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_log.table.gz - 0.3 KB)
+0042.314 (0) Table wp_woocommerce_order_items: Total expected rows (approximate): 1291
+0042.329 (0) Table wp_woocommerce_order_items: Total rows added: 1294 in 0.01 seconds
+0042.330 (0) Table wp_woocommerce_order_items: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_order_items.table.gz - 7.9 KB)
+0042.334 (0) Table wp_woocommerce_payment_tokens: Total expected rows (approximate): 0
+0042.337 (0) Table wp_woocommerce_payment_tokens: Total rows added: 0 in 0.00 seconds
+0042.337 (0) Table wp_woocommerce_payment_tokens: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_payment_tokens.table.gz - 0.4 KB)
+0042.341 (0) Table wp_woocommerce_sessions: Total expected rows (approximate): 15
+0042.344 (0) Table wp_woocommerce_sessions: Total rows added: 16 in 0.00 seconds
+0042.345 (0) Table wp_woocommerce_sessions: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_sessions.table.gz - 2.6 KB)
+0042.349 (0) Table wp_woocommerce_shipping_zone_locations: Total expected rows (approximate): 1
+0042.351 (0) Table wp_woocommerce_shipping_zone_locations: Total rows added: 1 in 0.00 seconds
+0042.352 (0) Table wp_woocommerce_shipping_zone_locations: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zone_locations.table.gz - 0.4 KB)
+0042.356 (0) Table wp_woocommerce_shipping_zone_methods: Total expected rows (approximate): 2
+0042.358 (0) Table wp_woocommerce_shipping_zone_methods: Total rows added: 2 in 0.00 seconds
+0042.359 (0) Table wp_woocommerce_shipping_zone_methods: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zone_methods.table.gz - 0.4 KB)
+0042.363 (0) Table wp_woocommerce_shipping_zones: Total expected rows (approximate): 1
+0042.365 (0) Table wp_woocommerce_shipping_zones: Total rows added: 1 in 0.00 seconds
+0042.366 (0) Table wp_woocommerce_shipping_zones: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zones.table.gz - 0.3 KB)
+0042.369 (0) Table wp_woocommerce_tax_rate_locations: Total expected rows (approximate): 0
+0042.371 (0) Table wp_woocommerce_tax_rate_locations: Total rows added: 0 in 0.00 seconds
+0042.372 (0) Table wp_woocommerce_tax_rate_locations: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_tax_rate_locations.table.gz - 0.3 KB)
+0042.376 (0) Table wp_woocommerce_tax_rates: Total expected rows (approximate): 1
+0042.379 (0) Table wp_woocommerce_tax_rates: Total rows added: 1 in 0.00 seconds
+0042.379 (0) Table wp_woocommerce_tax_rates: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_tax_rates.table.gz - 0.5 KB)
+0042.383 (0) Table wp_woof_query_cache: Total expected rows (approximate): 0
+0042.386 (0) Table wp_woof_query_cache: Total rows added: 0 in 0.00 seconds
+0042.387 (0) Table wp_woof_query_cache: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woof_query_cache.table.gz - 0.2 KB)
+0042.390 (0) Table wp_wowslider: Total expected rows (approximate): 11
+0042.394 (0) Table wp_wowslider: Total rows added: 11 in 0.00 seconds
+0042.395 (0) Table wp_wowslider: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wowslider.table.gz - 0.8 KB)
+0042.399 (0) Table wp_wpeditor_settings: Total expected rows (approximate): 24
+0042.403 (0) Table wp_wpeditor_settings: Total rows added: 24 in 0.00 seconds
+0042.404 (0) Table wp_wpeditor_settings: finishing file (backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wpeditor_settings.table.gz - 0.6 KB)
+0042.408 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_options.table.gz (1/53): adding to final database dump
+0042.556 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_users.table.gz (2/53): adding to final database dump
+0042.558 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_usermeta.table.gz (3/53): adding to final database dump
+0042.580 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_commentmeta.table.gz (4/53): adding to final database dump
+0042.583 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_comments.table.gz (5/53): adding to final database dump
+0042.591 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_links.table.gz (6/53): adding to final database dump
+0042.592 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_postmeta.table.gz (7/53): adding to final database dump
+0042.717 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_posts.table.gz (8/53): adding to final database dump
+0042.759 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_term_relationships.table.gz (9/53): adding to final database dump
+0042.761 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_term_taxonomy.table.gz (10/53): adding to final database dump
+0042.762 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_termmeta.table.gz (11/53): adding to final database dump
+0042.763 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_terms.table.gz (12/53): adding to final database dump
+0042.764 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_order_itemmeta.table.gz (13/53): adding to final database dump
+0042.784 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_payment_tokenmeta.table.gz (14/53): adding to final database dump
+0042.784 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_duplicator_packages.table.gz (15/53): adding to final database dump
+0042.786 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_blacklist.table.gz (16/53): adding to final database dump
+0042.786 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_reports.table.gz (17/53): adding to final database dump
+0042.787 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_gpi_page_stats.table.gz (18/53): adding to final database dump
+0042.788 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_masterslider_options.table.gz (19/53): adding to final database dump
+0042.789 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_masterslider_sliders.table.gz (20/53): adding to final database dump
+0042.790 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_po_plugins.table.gz (21/53): adding to final database dump
+0042.791 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_css.table.gz (22/53): adding to final database dump
+0042.793 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_layer_animations.table.gz (23/53): adding to final database dump
+0042.794 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_navigations.table.gz (24/53): adding to final database dump
+0042.795 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_sliders.table.gz (25/53): adding to final database dump
+0042.795 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_slides.table.gz (26/53): adding to final database dump
+0042.796 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_revslider_static_slides.table.gz (27/53): adding to final database dump
+0042.797 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_say_what_strings.table.gz (28/53): adding to final database dump
+0042.798 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_toolset_post_guid_id.table.gz (29/53): adding to final database dump
+0042.800 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser.table.gz (30/53): adding to final database dump
+0042.800 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser_logid_rule.table.gz (31/53): adding to final database dump
+0042.801 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_lifetime_limits_purchaser_rule.table.gz (32/53): adding to final database dump
+0042.802 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log.table.gz (33/53): adding to final database dump
+0042.803 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log_product.table.gz (34/53): adding to final database dump
+0042.804 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_vtprd_purchase_log_product_rule.table.gz (35/53): adding to final database dump
+0042.804 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wc_download_log.table.gz (36/53): adding to final database dump
+0042.805 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wc_webhooks.table.gz (37/53): adding to final database dump
+0042.806 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_api_keys.table.gz (38/53): adding to final database dump
+0042.806 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_attribute_taxonomies.table.gz (39/53): adding to final database dump
+0042.807 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_downloadable_product_permissions.table.gz (40/53): adding to final database dump
+0042.808 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_log.table.gz (41/53): adding to final database dump
+0042.809 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_order_items.table.gz (42/53): adding to final database dump
+0042.811 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_payment_tokens.table.gz (43/53): adding to final database dump
+0042.812 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_sessions.table.gz (44/53): adding to final database dump
+0042.814 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zone_locations.table.gz (45/53): adding to final database dump
+0042.815 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zone_methods.table.gz (46/53): adding to final database dump
+0042.815 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_shipping_zones.table.gz (47/53): adding to final database dump
+0042.816 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_tax_rate_locations.table.gz (48/53): adding to final database dump
+0042.817 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woocommerce_tax_rates.table.gz (49/53): adding to final database dump
+0042.818 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_woof_query_cache.table.gz (50/53): adding to final database dump
+0042.819 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wowslider.table.gz (51/53): adding to final database dump
+0042.820 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db-table-wp_wpeditor_settings.table.gz (52/53): adding to final database dump
+0042.821 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db.gz: finished writing out complete database file (1352 KB)
+0042.842 (0) Total database tables backed up: 52 (backup_2018-10-31-0723_LQUARTET_188d901be862-db.gz, size: 1405229, sha256)
+0042.848 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip: plugins: This file has not yet been successfully uploaded: will queue
+0042.849 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip: themes: This file has not yet been successfully uploaded: will queue
+0042.849 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip: uploads: This file has not yet been successfully uploaded: will queue
+0042.850 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip: uploads: This file has not yet been successfully uploaded: will queue
+0042.851 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-others.zip: others: This file has not yet been successfully uploaded: will queue
+0042.851 (0) backup_2018-10-31-0723_LQUARTET_188d901be862-db.gz: db: This file has not yet been successfully uploaded: will queue
+0042.852 (0) Saving backup history. Total backup size: 832.5 MB
+0042.854 (0) Requesting upload of the files that have not yet been successfully uploaded (6)
+0042.857 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0042.857 (0) No remote despatch: user chose no remote backup service
+0042.858 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-plugins.zip
+0042.860 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-themes.zip
+0042.861 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads.zip
+0042.864 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-uploads2.zip
+0042.865 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-others.zip
+0042.867 (0) Recording as successfully uploaded: backup_2018-10-31-0723_LQUARTET_188d901be862-db.gz
+0042.870 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0042.871 (0) Number of backup sets in history: 1; groups (db): 1
+0042.872 (0) Examining (for databases) backup set with group_id=0, nonce=188d901be862, datestamp=1540938227 (Oct 30 2018 22:23:47)
+0042.873 (0) This backup set is the backup set just made, so will not be deleted.
+0042.873 (0) Number of backup sets in history: 1; groups (files): 1
+0042.873 (0) Examining (for files) backup set with nonce=188d901be862, datestamp=1540938227 (Oct 30 2018 22:23:47)
+0042.873 (0) This backup set is the backup set just made, so will not be deleted.
+0042.874 (0) This backup set is the backup set just made, so will not be deleted.
+0042.874 (0) This backup set is the backup set just made, so will not be deleted.
+0042.874 (0) This backup set is the backup set just made, so will not be deleted.
+0042.874 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0042.875 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0042.877 (0) Resume backup (188d901be862, 0): finish run
+0042.878 (0) Decremented the semaphore (fd) by 1
+0042.879 (0) Semaphore (fd) unlocked
+0042.880 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0042.882 (0) The backup apparently succeeded and is now complete
+0042.883 (0) No email will/can be sent - the user has not configured an email address.
+0042.884 (0) バックアップは成功し完了しました。

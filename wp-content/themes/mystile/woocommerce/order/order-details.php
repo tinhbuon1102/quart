@@ -183,9 +183,9 @@ $order = wc_get_order( $order_id );
 
 <?php if ( ! wc_ship_to_billing_address_only() && $order->needs_shipping_address() && get_option( 'woocommerce_calc_shipping' ) !== 'no' ) : ?>
 
-<div class="col2-set addresses">
+<div class="row addresses">
 
-	<div class="col-1">
+	<div class="col-12 col-lg-6">
 
 <?php endif; ?>
 
@@ -206,7 +206,7 @@ $order = wc_get_order( $order_id );
 
 	</div><!-- /.col-1 -->
 
-	<div class="col-2">
+	<div class="col-12 col-lg-6">
 
 		<header class="title">
 			<h3><?php _e( 'Shipping Address', 'woocommerce' ); ?></h3>

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: metaslider_schedule_slides 1.0\n"
-"POT-Creation-Date: 2017-06-15 18:45+0200\n"
-"PO-Revision-Date: 2017-06-15 18:45+0200\n"
+"POT-Creation-Date: 2018-09-10 17:39+0100\n"
+"PO-Revision-Date: 2018-09-10 17:39+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -14,64 +14,64 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../meta-slider-schedule-slides.php:133
+#: ../meta-slider-schedule-slides.php:193
 msgid "Schedule"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:138
+#: ../meta-slider-schedule-slides.php:198
 msgid "Hide slide"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:139
+#: ../meta-slider-schedule-slides.php:199
 msgid "Slide Title (Admin only)"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:155
+#: ../meta-slider-schedule-slides.php:215
 msgid "Schedule slide"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:158
-#: ../meta-slider-schedule-slides.php:160
+#: ../meta-slider-schedule-slides.php:218
+#: ../meta-slider-schedule-slides.php:220
 msgid "From"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:163
-#: ../meta-slider-schedule-slides.php:165
+#: ../meta-slider-schedule-slides.php:223
+#: ../meta-slider-schedule-slides.php:225
 msgid "To"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:235
+#: ../meta-slider-schedule-slides.php:315
 msgid "Month"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:241
+#: ../meta-slider-schedule-slides.php:321
 #, php-format
 msgid "%1$s-%2$s"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:245
+#: ../meta-slider-schedule-slides.php:325
 msgid "Day"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:246
+#: ../meta-slider-schedule-slides.php:326
 msgid "Year"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:247
+#: ../meta-slider-schedule-slides.php:327
 msgid "Hour"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:248
+#: ../meta-slider-schedule-slides.php:328
 msgid "Minute"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:252
+#: ../meta-slider-schedule-slides.php:335
 #, php-format
 msgid "%1$s %2$s, %3$s @ %4$s:%5$s"
 msgstr ""
 
-#: ../meta-slider-schedule-slides.php:268
+#: ../meta-slider-schedule-slides.php:346
 msgid ""
 "Meta Slider Schedule Slides could not be loaded because the plugin "
-"<strong>MetaSlider</strong> wasn't fount."
+"<strong>MetaSlider</strong> wasn't found."
 msgstr ""

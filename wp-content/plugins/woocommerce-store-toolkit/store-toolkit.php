@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce - Store Toolkit
 Plugin URI: http://www.visser.com.au/woocommerce/plugins/store-toolkit/
 Description: Store Toolkit includes a growing set of commonly-used WooCommerce administration tools aimed at web developers and store maintainers.
-Version: 1.9.2
+Version: 2.0
 Author: Visser Labs
 Author URI: http://www.visser.com.au/about/
 License: GPL2
@@ -12,7 +12,7 @@ Text Domain: woocommerce-store-toolkit
 Domain Path: /languages/
 
 WC requires at least: 2.3
-WC tested up to: 3.4
+WC tested up to: 3.5
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -209,6 +209,21 @@ if( is_admin() ) {
 				}
 				break;
 
+			case 'woo_st-generate_orders':
+				// We need to verify the nonce.
+				if( !empty( $_POST ) && check_admin_referer( 'generate_orders', 'woo_st-generate_orders' ) ) {
+
+					$args = array(
+						'limit' => ( isset( $_POST['limit'] ) ? sanitize_text_field( $_POST['limit'] ) : false )
+					);
+					$response = woo_st_generate_sample_orders( $args );
+					if( $response ) {
+						$message = __( 'Sample Orders have been generated.', 'woocommerce-store-toolkit' );
+						woo_st_admin_notice( $message );
+					}
+				}
+				break;
+
 			case 'woo_st-tools':
 				// We need to verify the nonce.
 				if( !empty( $_POST ) && check_admin_referer( 'tools', 'woo_st-tools' ) ) {
@@ -255,6 +270,10 @@ if( is_admin() ) {
 				add_filter( 'manage_users_columns', 'woo_st_add_user_column', 11 );
 				add_filter( 'manage_users_custom_column', 'woo_st_user_column_values', 11, 3 );
 				add_filter( 'admin_footer_text', 'woo_st_admin_footer_text' );
+
+				// Add a User column to the Orders screen
+				add_filter( 'manage_edit-shop_order_columns', 'woo_st_admin_order_column_headers', 20 );
+				add_action( 'manage_shop_order_posts_custom_column', 'woo_st_admin_order_column_content' );
 				break;
 
 		}
