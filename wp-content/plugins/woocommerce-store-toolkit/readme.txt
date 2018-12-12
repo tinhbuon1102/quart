@@ -4,8 +4,8 @@ Contributors: visser, visser.labs
 Donate link: https://www.visser.com.au/donations/
 Tags: woocommerce, mod, delete store, clean store, nuke, store toolkit
 Requires at least: 2.9.2
-Tested up to: 4.9.8
-Stable tag: 2.0
+Tested up to: 5.0
+Stable tag: 2.0.2
 License: GPLv2 or later
 
 == Description ==
@@ -120,6 +120,13 @@ If you have any problems, questions or suggestions please join the members discu
 http://www.visser.com.au/woocommerce/forums/
 
 == Changelog ==
+
+= 2.0.2 =
+* Added: WordPress Action to allow developers to extend individual nuke types
+
+= 2.0.1 =
+* Fixed: Fatal PHP error on Edit User screen where Classes are serialized as custom User meta (thanks Pavle)
+* Fixed: PHP warning notice on Users screen where no Orders are returned for a User (thanks Michael)
 
 = 2.0 =
 * Added: Post Types screen to Store Toolkit (thanks Rob)

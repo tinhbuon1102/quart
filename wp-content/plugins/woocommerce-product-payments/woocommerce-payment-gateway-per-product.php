@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Woocommerce Payment Gateway Per Product
  * Plugin URI: https://www.dreamfoxmedia.com/shop/plugins/woocommerce-payment-gateway-per-product-premium/
- * Version: 2.5.5
+ * Version: 2.5.6
  * Author: Dreamfox Media
  * Author URI: www.dreamfoxmedia.com 
  * Description: Extend Woocommerce plugin to add payments methods to a product
- * Requires at least: 4.0
- * Tested up to: 4.9.8
+ * Requires at least: 4.5
+ * Tested up to: 5.0.0
  * WC requires at least: 3.0.0
- * WC tested up to: 3.4.5
+ * WC tested up to: 3.5.2
  * Text Domain: softdev
  * Domain Path: /languages
  * @Developer : Anand Rathi / Marco van Loghum Slaterus

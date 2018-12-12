@@ -3,16 +3,32 @@
 /**
  * Plugin Name: WooCommerce Pretty Emails
  * Description: Customize your WooCommerce emails.
- * Version: 1.4.3
+ * Version: 1.8.6
  * Author: MB Création
+ * Text Domain: mbc-pretty-emails
+ * Domain Path: /languages/
  * Author URI: http://www.mbcreation.net
  * License: http://codecanyon.net/licenses/regular_extended
  *
  */
 
 
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+// Load the auto-update class
+add_action( 'admin_init', 'activate_wpe_mbcreation' ); 
+
+function activate_wpe_mbcreation()
+{
+	if(!class_exists('WPMBC_AutoUpdate'))
+		require_once ( dirname(__FILE__).'/wp_autoupdate.php' );
+	$plugin_data = get_plugin_data( __FILE__ );
+	$plugin_current_version = $plugin_data['Version'];
+	$plugin_remote_path = 'http://www.mbcreation.com/plugin/woocommerce-pretty-emails/';	
+	$plugin_slug = plugin_basename( __FILE__ );
+	new WPMBC_AutoUpdate( $plugin_current_version, $plugin_remote_path, $plugin_slug );	
+}
 
 /**
  * WooCommerce_Pretty_Emails
@@ -25,27 +41,36 @@ if ( ! class_exists( 'WooCommerce_Pretty_Emails' ) ) {
 class WooCommerce_Pretty_Emails {
 
 
+
 		private $_templates = array();
+
+		private $_context = false;
 		
 		function __construct(){
+
+			define('MBWPE_TPL_PATH', plugin_dir_path(__FILE__).'/emails');
 
 			$this->_templates = array(
 				
 				'emails/email-header.php',
 				'emails/email-footer.php',
 				'emails/customer-completed-order.php',
-				'emails/customer-paidorder-order.php',
 				'emails/admin-new-order.php',
 				'emails/customer-invoice.php',
 				'emails/customer-new-account.php',
 				'emails/customer-processing-order.php',
+				'emails/customer-on-hold-order.php',
 				'emails/customer-reset-password.php',
 				'emails/customer-note.php',
 				'emails/email-addresses.php',
 				'emails/email-order-items.php',
-				'emails/admin-cancelled-order.php'
+				'emails/admin-cancelled-order.php',
+				'emails/customer-refunded-order.php',
+				'emails/admin-failed-order.php',
+				'emails/email-customer-details.php'
 			
 			); 
+
 			
 			load_plugin_textdomain('mbc-pretty-emails', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/');
 			add_action('plugins_loaded', array(&$this, 'hooks') );
@@ -65,9 +90,40 @@ class WooCommerce_Pretty_Emails {
 			add_action( 'admin_init', array( $this, 'preview_emails' ) );
 
 
+			// Since 1.6.
+			add_action( 'woocommerce_pretty_before_template', array($this, 'display_banners'), 20 );
+			// Since 1.7.
+			add_action( 'woocommerce_pretty_before_template', array($this, 'add_attachment'), 30 );
 
+			add_filter('woocommerce_email_subject_customer_processing_order', array( $this, 'replace_order_subject' ), 99, 2 );
+			add_filter('woocommerce_email_subject_customer_completed_order', array( $this, 'replace_order_subject' ), 99, 2 );
+		
 		}
 
+
+		public function replace_order_subject( $subject, $object ){
+
+			if( version_compare( WC_VERSION, '3.0', '>' ) ){
+
+				preg_match_all('/\{\{(.*)\}\}/Uis', $subject, $mps );
+
+				if(is_array($mps) && !empty($mps[1]) ) :
+					
+					foreach ($mps[1] as $mp) {
+
+						$fn = 'get_' . trim($mp);
+
+						if( isset($object) && method_exists( $object, $fn ) )
+							$subject = str_replace('{{'.$mp.'}}', $object->$fn(), $subject );
+					}
+
+				endif;
+
+			}
+
+			return $subject;
+
+		}
 
 		public function extra_settings($settings){
 
@@ -78,19 +134,26 @@ class WooCommerce_Pretty_Emails {
 			$settings[] = array( 'title' => __( 'Email Preview', 'mbc-pretty-emails' ), 'type' => 'title',
 			 'desc' => sprintf(__( 
 
-					 	'<a href="%s" target="_blank">'.__('New order template','mbc-pretty-emails').'</a> |'.
-					 	'<a href="%s" target="_blank">'.__('Customer processing order template','mbc-pretty-emails').'</a> |'.
-					 	'<a href="%s" target="_blank">'.__('Customer completed order template','mbc-pretty-emails').'</a> |'.
-					 	'<a href="%s" target="_blank">'.__('Customer invoice order template','mbc-pretty-emails').'</a> |'.
-					 	'<a href="%s" target="_blank">'.__('Customer note order template','mbc-pretty-emails').'</a> |'.
-					 	'<a href="%s" target="_blank">'.__('Customer new account','mbc-pretty-emails').'</a>'  
+			 			'<a href="%s" target="_blank">'.__( 'Cancelled order', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'New order', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Order on-hold', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Processing order', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Completed order', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Customer invoice', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Customer note', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'New account', 'woocommerce' ).'</a> | '.
+					 	'<a href="%s" target="_blank">'.__( 'Refunded order', 'woocommerce' ).'</a>'    
 					 	),
+			 			wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Cancelled_Order'), 'pretty-preview-mail'),
 					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_New_Order'), 'pretty-preview-mail'),
+					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_On_Hold_Order'), 'pretty-preview-mail'),
 					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_Processing_Order'), 'pretty-preview-mail'),
 					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_Completed_Order'), 'pretty-preview-mail'),
 					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_Invoice'), 'pretty-preview-mail'),
 					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_Note'), 'pretty-preview-mail'),
-					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_New_Account'), 'pretty-preview-mail')
+					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_New_Account'), 'pretty-preview-mail'),
+					 	wp_nonce_url(admin_url('?pretty_email_admin_new_order=WC_Email_Customer_Refunded_Order'), 'pretty-preview-mail')
+
 			 		), 
 			 'id' => 'email_template_options_extra_preview' 
 			 );
@@ -124,6 +187,17 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => false
 			);
 
+			$settings[] = array(
+				'title'    => __( 'Logo Link', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Enter here an url to make your logo clickable.', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_logo_link',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
+				'autoload' => false
+			);
+
+
 			$settings[] = 	array(
 				'title'    => __( 'Footer Logo width', 'mbc-pretty-emails' ),
 				'desc'     => __( 'The footer logo width. Default <code>175</code>.', 'mbc-pretty-emails' ),
@@ -135,6 +209,7 @@ class WooCommerce_Pretty_Emails {
 				),
 				'css'      => 'width:6em;',
 				'default'  => '175',
+				'desc_tip' => __( 'Set this value to 0 if you want to remove the logo from the footer', 'mbc-pretty-emails' ),
 				'autoload' => true
 			);
 
@@ -150,6 +225,21 @@ class WooCommerce_Pretty_Emails {
 				'css'      => 'width:6em;',
 				'default'  => '700',
 				'autoload' => true
+			);
+
+			$settings[] = array(
+				'title'	   => __('Logo display template', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_header_theme',
+				'desc'     => __( 'Header template (default) or centered logo (with menu above)', 'mbc-pretty-emails' ),
+				'type'     => 'select',
+				'default'  => 'default',
+				'options'  => array(
+					
+					'default'=>__('Default','mbc-pretty-emails'),
+					'centered'=>__('Centered Logo','mbc-pretty-emails')
+				),
+
+				'desc_tip' => __( 'This setting only apply on every emails', 'mbc-pretty-emails' ),
 			);
 
 
@@ -168,6 +258,32 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => true
 			);
 
+			$settings[] = array(
+
+					'title'    => __( 'Body font family', 'mbc-pretty-emails' ),
+					'id'       => 'woocommerce_email_mbc_body_font',
+					'type'     => 'select',
+					'default'  => "'Helvetica',Arial,sans-serif",
+					'options'  => array(
+						
+						"'Arial', Arial, Sans-Serif"=> 'Arial',
+						"'Arial Black', Arial, Sans-Serif"=>'Arial Black',
+						"'Helvetica', Helvetica, Arial, Sans-Serif"=>'Helvetica',
+						"'Impact', Helvetica, Arial, Sans-Serif"=>'Impact',
+						"'Verdana', Helvetica, Arial, Sans-Serif"=>'Verdana', 
+						"'Lucida Grande', Helvetica, Arial, Sans-Serif"=>'Lucida Grande',
+						"'Courier New', Georgia, serif"=>'Courier New', 
+						"'Georgia', Georgia, serif"=>'Georgia', 
+						"'Palatino', Georgia, serif"=>'Palatino', 
+					
+					),
+
+					'class'    => 'chosen_select_nostd',
+					'css'      => 'min-width:300px;',
+					'desc_tip' => __( 'Font family that will be used everywhere but heading tags', 'mbc-pretty-emails' ),
+			);
+
+
 			$settings[] = 	array(
 				
 				'title'    => __( 'Heading 1 font size', 'mbc-pretty-emails' ),
@@ -182,6 +298,19 @@ class WooCommerce_Pretty_Emails {
 				'default'  => '18',
 				'autoload' => true
 			);
+
+
+			$settings[] = 	array(
+				
+				'title'    => __( 'Heading 1 font color', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Heading 1 font color. Default <code>#FFFFFF</code>.', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_h1color',
+				'type'     => 'color',
+				'css'      => 'width:6em;',
+				'default'  => '#FFFFFF',
+				'autoload' => true
+			);
+
 
 			$settings[] = 	array(
 				
@@ -200,6 +329,17 @@ class WooCommerce_Pretty_Emails {
 
 			$settings[] = 	array(
 				
+				'title'    => __( 'Heading 2 font color', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Heading 2 font color. Default <code>#505050</code>.', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_h2color',
+				'type'     => 'color',
+				'css'      => 'width:6em;',
+				'default'  => '#505050',
+				'autoload' => true
+			);
+
+			$settings[] = 	array(
+				
 				'title'    => __( 'Heading 3 font size', 'mbc-pretty-emails' ),
 				'desc'     => __( 'H3 tag font size in pixels. Default <code>18</code>.', 'mbc-pretty-emails' ),
 				'id'       => 'woocommerce_email_mbc_h3size',
@@ -211,6 +351,43 @@ class WooCommerce_Pretty_Emails {
 				'css'      => 'width:6em;',
 				'default'  => '14',
 				'autoload' => true
+			);
+
+
+			$settings[] = 	array(
+				
+				'title'    => __( 'Heading 3 font color', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Heading 3 font color. Default <code>#505050</code>.', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_h3color',
+				'type'     => 'color',
+				'css'      => 'width:6em;',
+				'default'  => '#505050',
+				'autoload' => true
+			);
+
+			$settings[] = array(
+				
+					'title'    => __( 'Headings font family', 'mbc-pretty-emails' ),
+					'id'       => 'woocommerce_email_mbc_heading_font',
+					'type'     => 'select',
+					'default'  => "'Helvetica',Arial,sans-serif",
+					'options'  => array(
+						
+						"'Arial', Arial, Sans-Serif"=> 'Arial',
+						"'Arial Black', Arial, Sans-Serif"=>'Arial Black',
+						"'Helvetica', Helvetica, Arial, Sans-Serif"=>'Helvetica',
+						"'Impact', Helvetica, Arial, Sans-Serif"=>'Impact',
+						"'Verdana', Helvetica, Arial, Sans-Serif"=>'Verdana', 
+						"'Lucida Grande', Helvetica, Arial, Sans-Serif"=>'Lucida Grande',
+						"'Courier New', Georgia, serif"=>'Courier New', 
+						"'Georgia', Georgia, serif"=>'Georgia', 
+						"'Palatino', Georgia, serif"=>'Palatino', 
+
+					),
+
+					'class'    => 'chosen_select_nostd',
+					'css'      => 'min-width:300px;',
+					'desc_tip' => __( 'Font family that will be used in every heading tags', 'mbc-pretty-emails' ),
 			);
 
 			$settings[] = 	array(
@@ -239,10 +416,24 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => true
 			);
 
+		
+
 			$settings[] = 	array(
 				
-				'title'    => __( 'Border color', 'mbc-pretty-emails' ),
-				'desc'     => __( 'Surrounding the main table, blockquote and order tables. Default <code>#EEE</code>.', 'mbc-pretty-emails' ),
+				'title'    => __( 'Main border color', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Surrounding the main table. Default <code>#EEE</code>.', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_mbordercolor',
+				'type'     => 'color',
+				'css'      => 'width:6em;',
+				'default'  => '#eeeeee',
+				'autoload' => true
+			);
+
+
+			$settings[] = 	array(
+				
+				'title'    => __( 'Order table border color', 'mbc-pretty-emails' ),
+				'desc'     => __( 'Surrounding order tables. Default <code>#EEE</code>.', 'mbc-pretty-emails' ),
 				'id'       => 'woocommerce_email_mbc_bordercolor',
 				'type'     => 'color',
 				'css'      => 'width:6em;',
@@ -274,6 +465,22 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => true
 			);
 			
+			
+			$settings[] = array(
+				'title'   => __( 'Product SKU', 'mbc-pretty-emails' ),
+				'desc'    => __( 'Display sku in email', 'mbc-pretty-emails' ),
+				'id'      => 'woocommerce_email_mbc_displaysku',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			);
+
+			$settings[] = array(
+				'title'   => __( 'Product Link', 'mbc-pretty-emails' ),
+				'desc'    => __( 'Make product clickable in email', 'mbc-pretty-emails' ),
+				'id'      => 'woocommerce_email_mbc_linkproduct',
+				'type'    => 'checkbox',
+				'default' => false,
+			);
 
 
 
@@ -420,8 +627,9 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => false
 			);
 
+
 			$settings[] = array(
-				'title'    => __( 'Introduction for customer processing order email', 'mbc-pretty-emails' ),
+				'title'    => __( 'Specific settings for the "customer processing order" email', 'mbc-pretty-emails' ),
 				'desc'     => __( 'The text to appear in the introduction for the customer processing order email', 'mbc-pretty-emails' ),
 				'id'       => 'woocommerce_email_mbc_cpo_intro',
 				'css'      => 'width:100%; height: 75px;',
@@ -430,9 +638,60 @@ class WooCommerce_Pretty_Emails {
 				'autoload' => true
 			);
 
+			$settings[] = array(
+				'title'    => '',
+				'desc'     => sprintf(__( 'Enter an image URL to display a banner on the processing order email. Upload your image using the <a href="%s">media uploader</a>.', 'mbc-pretty-emails' ), admin_url('media-new.php')),
+				'id'       => 'woocommerce_email_mbc_cpo_intro_banner',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'desc_tip' => __( 'This setting only apply on the "Customer Processing Order email"', 'mbc-pretty-emails' ),
+				'default'  => '',
+				'autoload' => false
+			);
 
 			$settings[] = array(
-				'title'    => __( 'Introduction for customer completed order email', 'mbc-pretty-emails' ),
+				
+					'id'       => 'woocommerce_email_mbc_cpo_intro_banner_position',
+					'desc'     => __( 'Display the banner before or after the order table', 'mbc-pretty-emails' ),
+					'type'     => 'select',
+					'default'  => 'before',
+					'options'  => array(
+						
+						'after'=>__('After order table','mbc-pretty-emails'),
+						'before'=>__('Before order table','mbc-pretty-emails')
+					),
+
+					'desc_tip' => __( 'This setting only apply on the "Customer Processing Order email"', 'mbc-pretty-emails' ),
+			);
+
+
+			$settings[] = array(
+
+				'desc'     => __( 'Enter an url to make that banner clickable', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_cpo_intro_banner_link',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
+				'autoload' => false,
+				'desc_tip' => __( 'This setting only apply on the "Customer Processing Order email"', 'mbc-pretty-emails' ),
+			);
+
+
+			$settings[] = array(
+
+				'desc'     => __( 'Add an attachment (absolute url of a WordPress uploads file ), i.e. https://www.yoursite.com/wp-content/uploads/terms-and-conditions.pdf', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_cpo_attachment',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
+				'autoload' => false,
+				'desc_tip' => __( 'This setting only apply on the "Customer Processing Order email"', 'mbc-pretty-emails' ),
+			
+			);
+
+
+			$settings[] = array(
+				'title'    => __( 'Specific settings for the "customer completed order" email', 'mbc-pretty-emails' ),
 				'desc'     => __( 'The text to appear in the introduction for the customer completed order email', 'mbc-pretty-emails' ),
 				'id'       => 'woocommerce_email_mbc_cco_intro',
 				'css'      => 'width:100%; height: 75px;',
@@ -440,15 +699,55 @@ class WooCommerce_Pretty_Emails {
 				'default'  => sprintf( __( "Hi there. Your recent order on %s has been completed. Your order details are shown below for your reference:", 'woocommerce' ), get_option( 'blogname' ) ),
 				'autoload' => true
 			);
-			
+
 			$settings[] = array(
-				'title'    => __( 'Introduction for customer paid order email', 'mbc-pretty-emails' ),
-				'desc'     => __( 'The text to appear in the introduction for the customer paid order email', 'mbc-pretty-emails' ),
-				'id'       => 'woocommerce_email_mbc_cpaido_intro',
-				'css'      => 'width:100%; height: 75px;',
-				'type'     => 'textarea',
-				'default'  => sprintf( __( "Hi there. Your recent order on %s has been paid. Your order details are shown below for your reference:", 'woocommerce' ), get_option( 'blogname' ) ),
-				'autoload' => true
+				'title'    => '',
+				'desc'     => sprintf(__( 'Enter an image URL to display a banner on the processing order email. Upload your image using the <a href="%s">media uploader</a>.', 'mbc-pretty-emails' ), admin_url('media-new.php')),
+				'id'       => 'woocommerce_email_mbc_cco_intro_banner',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'desc_tip' => __( 'This setting only apply on the "Customer Completed Order email"', 'mbc-pretty-emails' ),
+				'default'  => '',
+				'autoload' => false
+			);
+
+			$settings[] = array(
+				
+					'id'       => 'woocommerce_email_mbc_cco_intro_banner_position',
+					'desc'     => __( 'Display the banner before or after the order table', 'mbc-pretty-emails' ),
+					'type'     => 'select',
+					'default'  => 'before',
+					'options'  => array(
+						
+						'after'=>__('After order table','mbc-pretty-emails'),
+						'before'=>__('Before order table','mbc-pretty-emails')
+					),
+
+					'desc_tip' => __( 'This setting only apply on the "Customer Completed Order email"', 'mbc-pretty-emails' ),
+			);
+
+
+			$settings[] = array(
+
+				'desc'     => __( 'Enter an url to make that banner clickable', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_cco_intro_banner_link',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
+				'autoload' => false,
+				'desc_tip' => __( 'This setting only apply on the "Customer Completed Order email"', 'mbc-pretty-emails' ),
+			);
+
+			$settings[] = array(
+
+				'desc'     => __( 'Add an attachment (absolute url of a WordPress uploads file ), i.e. https://www.yoursite.com/uploads/terms-and-conditions.pdf', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_cco_attachment',
+				'type'     => 'text',
+				'css'      => 'min-width:300px;',
+				'default'  => '',
+				'autoload' => false,
+				'desc_tip' => __( 'This setting only apply on the "Customer Completed Order email"', 'mbc-pretty-emails' ),
+			
 			);
 			
 			$settings[] = array(
@@ -458,6 +757,44 @@ class WooCommerce_Pretty_Emails {
 				'css'      => 'width:100%; height: 75px;',
 				'type'     => 'textarea',
 				'autoload' => true
+			);
+
+			$settings[] = array(
+				'title'    => __( 'Introduction for customer on-hold order email', 'mbc-pretty-emails' ),
+				'desc'     => __( 'The text to appear in the introduction for the customer on-hold order email', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_coh_intro',
+				'css'      => 'width:100%; height: 75px;',
+				'type'     => 'textarea',
+				'autoload' => true
+			);
+
+			$settings[] = array(
+				'title'    => __( 'Introduction for customer note email', 'mbc-pretty-emails' ),
+				'desc'     => __( 'The text to appear in the introduction for the customer note email', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_cn_intro',
+				'css'      => 'width:100%; height: 75px;',
+				'type'     => 'textarea',
+				'autoload' => true,
+				'desc_tip' => __( 'Do not forget to include {{customer_note}} in your text where you want to display the actual note', 'mbc-pretty-emails' ),
+			);
+
+
+			$settings[] = array(
+				'title'    => __( 'Introduction for customer invoice email', 'mbc-pretty-emails' ),
+				'desc'     => __( 'The text to appear in the introduction for the customer invoice email', 'mbc-pretty-emails' ),
+				'id'       => 'woocommerce_email_mbc_ci_intro',
+				'css'      => 'width:100%; height: 75px;',
+				'type'     => 'textarea',
+				'autoload' => true,
+				'desc_tip' => __( 'Do not forget to include {{customer_note}} in your text where you want to display the actual note', 'mbc-pretty-emails' ),
+			);
+
+			$settings[] = array(
+				'title'   => __( 'Override new user email notification', 'mbc-pretty-emails' ),
+				'desc'    => __( 'New user notication email will be styled using Pretty email template', 'mbc-pretty-emails' ),
+				'id'      => 'woocommerce_email_mbc_wp_new_user_notification',
+				'type'    => 'checkbox',
+				'default' => 'no',
 			);
 
 			$settings[] = array( 'type' => 'sectionend', 'id' => 'email_template_options_extra');
@@ -479,8 +816,25 @@ class WooCommerce_Pretty_Emails {
 
 		public function custom_template($located, $template_name, $args, $template_path, $default_path){
 
-			if( in_array( $template_name, $this->_templates ) )
-			return plugin_dir_path( __FILE__ ).$template_name;
+			if( in_array( $template_name, apply_filters('woocommerce_pretty_emails_templates_array', $this->_templates ) ) ):
+
+				if( strrpos($template_name, 'customer-processing-order') !== false )
+				$this->_context = 'cpo';
+				
+				if( strrpos($template_name, 'customer-completed-order') !== false )
+				$this->_context = 'cco';
+
+				do_action('woocommerce_pretty_before_template');
+
+				if( file_exists( get_stylesheet_directory().'/woocommerce-pretty-emails/'.$template_name ) )
+						return get_stylesheet_directory().'/woocommerce-pretty-emails/'.$template_name;
+
+				if( $template_name === 'emails/email-header.php' && get_option('woocommerce_email_mbc_header_theme','default') === 'centered'  )
+						return plugin_dir_path(__FILE__).'/emails/themes/email-header-centered.php';
+
+				return plugin_dir_path( __FILE__ ).$template_name;
+
+			endif;
 
 			return $located;
 				
@@ -507,6 +861,14 @@ class WooCommerce_Pretty_Emails {
 
 				switch ($_GET['pretty_email_admin_new_order']) {
 
+					case 'WC_Email_Cancelled_Order':
+
+						$email = WC()->mailer();
+						$email->emails['WC_Email_Cancelled_Order']->object = wc_get_order( $_preview_order_id );
+						echo $email->emails['WC_Email_Cancelled_Order']->get_content_html();
+
+						break;
+
 					case 'WC_Email_New_Order':
 
 						$email = WC()->mailer();
@@ -514,6 +876,15 @@ class WooCommerce_Pretty_Emails {
 						echo $email->emails['WC_Email_New_Order']->get_content_html();
 
 						break;
+
+					case 'WC_Email_Customer_On_Hold_Order':
+
+						$email = WC()->mailer();
+						$email->emails['WC_Email_Customer_On_Hold_Order']->object = wc_get_order( $_preview_order_id );
+						echo $email->emails['WC_Email_Customer_On_Hold_Order']->get_content_html();
+
+						break;
+					
 					
 					case 'WC_Email_Customer_Processing_Order':
 						
@@ -559,6 +930,17 @@ class WooCommerce_Pretty_Emails {
 						echo $email->emails['WC_Email_Customer_New_Account']->get_content_html();
 						
 					break;
+
+					case 'WC_Email_Customer_Refunded_Order':
+
+						$email = WC()->mailer();
+						$email->emails['WC_Email_Customer_Refunded_Order']->object = wc_get_order( $_preview_order_id );
+						$email->emails['WC_Email_Customer_Refunded_Order']->refund = false;
+						$email->emails['WC_Email_Customer_Refunded_Order']->partial_refund = false;
+
+						echo $email->emails['WC_Email_Customer_Refunded_Order']->get_content_html();
+
+					break;
 						
 				}
 
@@ -587,8 +969,132 @@ class WooCommerce_Pretty_Emails {
 			
 		}
 
+		public function display_banners(){
+
+				
+			if( $this->_context ) :
+
+				$position = get_option('woocommerce_email_mbc_'.$this->_context.'_intro_banner_position', 'before' );
+				add_action( 'woocommerce_email_'.$position.'_order_table', array( $this, 'get_banner'), 999 );
+
+			endif;
+
+
+
+		}
+
+
+		public function add_attachment(){
+
+				
+			if( $this->_context ) :
+
+				$attachement = get_option('woocommerce_email_mbc_'.$this->_context.'_attachment' );
+				
+				if( strpos( $attachement, 'wp-content/uploads') !== false ){
+
+					$path = explode('wp-content/', $attachement);
+					$path = end($path);
+					$path = WP_CONTENT_DIR.'/'.$path;
+
+					if( file_exists( $path ) ) {
+
+						$this->_path = $path;
+						add_filter('woocommerce_email_attachments', array( $this, 'attach'), 99 );
+
+					}
+
+				}
+
+			endif;
+
+
+		}
+
+		public function attach(){
+
+			return $this->_path;
+
+		}
+
+
+		
+
+
+		public function get_banner(){
+
+			 $banner = '';
+					
+			 if ( $img = get_option( 'woocommerce_email_mbc_'.$this->_context.'_intro_banner' ) ) {
+         					
+         					$banner.= '<p style="text-align:center;margin:0;padding:0;">';
+         					if ( $linkb = get_option( 'woocommerce_email_mbc_'.$this->_context.'_intro_banner_link' ) )
+         					$banner.= '<a href="'.esc_url($linkb).'">';
+            				$banner.= '<img border="0" src="' . esc_url( $img ) . '" alt="' . get_bloginfo( 'name' ) . '"  align="top" style="width:100%; height:auto;" />';
+          					if ( $linkb = get_option( 'woocommerce_email_mbc_'.$this->_context.'_intro_banner_link' ) )
+         					$banner.= '</a>';
+          					$banner.= '</p>';
+             }
+
+             echo apply_filters( 'woocommerce_email_mbc_'.$this->_context.'_intro_banner_html' , $banner );
+
+		}
+
+
 
 	}
+
+	if ( !function_exists('wp_new_user_notification') && 'yes' === get_option( 'woocommerce_email_mbc_wp_new_user_notification' ) ) :
+
+	function wp_new_user_notification( $user_id, $deprecated = null, $notify = '' ) {
+		if ( $deprecated !== null ) {
+			_deprecated_argument( __FUNCTION__, '4.3.1' );
+		}
+
+		global $wpdb, $wp_hasher;
+		$user = get_userdata( $user_id );
+
+		// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+		// we want to reverse this for the plain text arena of emails.
+		$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+
+		$message  = sprintf(__('New user registration on your site %s:'), $blogname) . "\r\n\r\n";
+		$message .= sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
+		$message .= sprintf(__('Email: %s'), $user->user_email) . "\r\n";
+
+		@wp_mail(get_option('admin_email'), sprintf(__('[%s] New User Registration'), $blogname), $message);
+
+		// `$deprecated was pre-4.3 `$plaintext_pass`. An empty `$plaintext_pass` didn't sent a user notifcation.
+		if ( 'admin' === $notify || ( empty( $deprecated ) && empty( $notify ) ) ) {
+			return;
+		}
+
+		// Generate something random for a password reset key.
+		$key = wp_generate_password( 20, false );
+
+		/** This action is documented in wp-login.php */
+		do_action( 'retrieve_password_key', $user->user_login, $key );
+
+		// Now insert the key, hashed, into the DB.
+		if ( empty( $wp_hasher ) ) {
+			require_once ABSPATH . WPINC . '/class-phpass.php';
+			$wp_hasher = new PasswordHash( 8, true );
+		}
+		$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
+		$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
+
+		$message = sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
+		$message .= __('To set your password, visit the following address:') . "\r\n\r\n";
+		$message .= network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . "\r\n\r\n";
+
+		$message .= wp_login_url() . "\r\n";
+			
+		$mailer = WC()->mailer();
+		$mailer->send( $user->user_email, sprintf(__('[%s] Your username and password info'), $blogname) , $mailer->wrap_message( sprintf(__('[%s] Your username and password info'), $blogname), $message ), '', '' );
+	
+	}
+
+	endif;
 	
 	
 	$load = new WooCommerce_Pretty_Emails();

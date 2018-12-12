@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Woo Checkout Field Editor Pro
+ * Plugin Name: Checkout Field Editor for WooCommerce
  * Description: Customize WooCommerce checkout fields(Add, Edit, Delete and re-arrange fields).
  * Author:      ThemeHiGH
- * Version:     1.2.9
+ * Version:     1.3.0
  * Author URI:  https://www.themehigh.com
  * Plugin URI:  https://www.themehigh.com
  * Text Domain: thwcfd
@@ -34,7 +34,7 @@ if(is_woocommerce_active()) {
 		global $supress_field_modification;
 		$supress_field_modification = false;
 		
-		define('TH_WCFD_VERSION', '1.2.9');
+		define('TH_WCFD_VERSION', '1.3.0');
 		!defined('TH_WCFD_BASE_NAME') && define('TH_WCFD_BASE_NAME', plugin_basename( __FILE__ ));
 		!defined('TH_WCFD_URL') && define('TH_WCFD_URL', plugins_url( '/', __FILE__ ));
 		!defined('TH_WCFD_ASSETS_URL') && define('TH_WCFD_ASSETS_URL', TH_WCFD_URL . 'assets/');
@@ -239,13 +239,17 @@ if(is_woocommerce_active()) {
 			}
 
 			// check if order_comments is enabled/disabled
-			if(isset($additional_fields) && !$additional_fields['order_comments']['enabled']){
+			if(is_array($additional_fields) && !$additional_fields['order_comments']['enabled']){
 				unset($fields['order']['order_comments']);
 			}
 		}
 				
 		if(isset($fields['order']) && is_array($fields['order'])){
 			$fields['order'] = thwcfd_prepare_checkout_fields_lite($fields['order'], false);
+		}
+
+		if(isset($fields['order']) && !is_array($fields['order'])){
+			unset($fields['order']);
 		}
 		
 		return $fields;

@@ -1,32 +1,32 @@
-=== WooCommerce Checkout Field Editor (Manager) Pro ===
+=== Checkout Field Editor (Checkout Manager) for WooCommerce ===
 Contributors: ThemeHigh
 Donate link: https://themehigh.com/
 Tags: checkout field editor, woocommerce checkout field editor, checkout manager, woocommerce checkout manager, checkout field customizer, checkout form editor, checkout form customizer, checkout, WooCommerce checkout, checkout form designer, checkout
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WooCommerce Checkout Field Editor Pro - The best WooCommerce checkout manager plugin to customize checkout fields on your WooCommerce checkout page.
+Checkout Field Editor (Checkout Manager) for WooCommerce - The best WooCommerce checkout manager plugin to customize checkout fields on your WooCommerce checkout page.
 
 == Description ==
 
 = Introduction =
-If you are wondering how to add custom field in WooCommerce checkout page, you are at the right place. Woo Checkout Field Editor Pro plugin provides an easy way to customise (add, edit, delete and change display order) your fields displayed on WooCommerce checkout page. This plugin requires WooCommerce to be installed, activated, and configured.
+If you are wondering how to add custom field in WooCommerce checkout page, you are at the right place. Checkout Field Editor for WooCommerce plugin provides an easy way to customise (add, edit, delete and change display order) your fields displayed on WooCommerce checkout page. This plugin requires WooCommerce to be installed, activated, and configured.
 
 = BASIC FEATURES =
 * <strong>Add new custom field(s).</strong> Adding custom fields to the WooCommerce checkout page is a breeze now. You can add custom field(s) in Billing, Shipping and Additional fields sections. New field form contains options to provide values for Type, Name, Label, Placeholder, Class, Label Class etc. It also has the option to choose validations rules from a predefined list.
 * <strong>Edit field(s).</strong> You can edit core and custom field(s) in Billing, Shipping and Additional fields sections. In edit form you have the option to provide new values for Name, Type, Label, Placeholder, Class, Label Class, validation rules etc(availability of these options may change based on the field types). 
 * Available field types are <strong>Input Text</strong> and <strong>Select</strong>
-* <strong>Display in Order Details page and Email.</strong> You can decide on a field whether it need to be displayed in Order Details page and Email using the the checkboxes ‘Display in Order Detail Pages’ and ‘Display in Emails’. These checkboxes are availabe in both the ‘New Field’ and ‘Edit Field’ forms.
+* <strong>Display in Order Details page and Email.</strong> You can decide on a field whether it need to be displayed in Order Details page and Email using the the checkboxes ‘Display in Order Detail Pages’ and ‘Display in Emails’. These checkboxes are available in both the ‘New Field’ and ‘Edit Field’ forms.
 * <strong>Remove field(s).</strong> You can remove field(s) from displaying in checkout page, order details page and emails. Removing core fields may leads to unexpected results with some plugins. We are not recommending this.
 * <strong>Enable/Disable field(s).</strong> You can enable/disable field(s)(temporarily remove) from displaying in checkout page, order details page and emails. Disabling core fields may leads to unexpected results with some plugins. We are not recommending this.
 * <strong>Change checkout fields order.</strong> You can easily manage the display order of checkout fields from admin side by just moving fields up and down.
 * <strong>Reset to default field set.</strong> You can reset all your changes back to the original WooCommerce fields set using the button ‘Reset to default fields’.
 
 = BUY PREMIUM VERSION =
-Check out the premium version of WooCommerce Checkout Field Editor Pro - The best WooCommerce checkout manager plugin which helps you to customize checkout fields displayed on your WooCommerce checkout page. Add custom fields to WooCommerce checkout page easily.
+Check out the premium version of Checkout Field Editor for WooCommerce - The best WooCommerce Checkout Manager Plugin which helps you to customize checkout fields displayed on your WooCommerce checkout page. Add custom fields to WooCommerce checkout page easily.
 <a rel="nofollow" href="https://www.themehigh.com/product/woocommerce-checkout-field-editor-pro/?utm_source=wordpress&utm_medium=referral&utm_content=tracking">Buy Now!</a>
 
 <blockquote>
@@ -98,6 +98,34 @@ Check out the premium version of WooCommerce Checkout Field Editor Pro - The bes
 The manual installation method involves downloading 'WooCommerce Checkout Field Editor Pro' plugin and uploading it to your webserver via FTP application. You may find more instructions on how to do this here (http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
 
 == Frequently Asked Questions ==
+=Is there a possible way to provide a validation other than the predefined validations provided like email, phone etc?=
+The free version doesn’t provide the feature to create custom validators, but with the Checkout Field Editor for WooCommerce pro version of the plugin, custom validators can be defined based on regular expressions.
+
+=How to modify the styling properties of fields created using this plugin?=
+The plugin provides a feature: Class for modifying the styling properties of the fields. 
+<ol>
+<li>Define a class in the Additional CSS(Appearance >> Customize >> Additional CSS).</li>
+<li>Enter the name of the created class in the field Class of the Add/Edit pop-up</li>
+<li>Save the changes</li>
+</ol>
+
+The style defined in the class will be applied to the default and custom fields for which this class is included.
+
+=Can I apply price for the fields created using this plugin?=
+No, the free version of the plugin doesn’t support the Price feature. With the premium version, you can use 5 different price types.
+
+=How to make the no options selected for the Select field by default?=
+By default, the First value of the Select field will be selected. For making the field selected with no options, enter a Pipe symbol(|)  before all the options. Enter all the other options after this pipe separated by each other.
+
+=How can the field be made to display only on admin emails and not in the customer emails?=
+With the Checkout Field Editor (Checkout Manager) Pro for WooCommerce, the fields can be either displayed on all the emails or not. With the premium version of the plugin, the fields can be displayed in emails for customer or admin optionally.
+
+=Is it possible to make the State field a select field with drop-down options defined?=
+Yes. The field must be overridden by creating a field in the same name as the state field(billing_state). Set the field type as Select. Enter the state options for dropdown in the options field pipe separated.
+
+=Is it possible to include the custom fields to the My Account page as well?=
+With the free plugin, the fields can be displayed and edited only from the Checkout page. Upgrading to the premium version lets you display the fields at the Checkout page, My Account page, and User profile. The value once entered by the user will be saved so that the user need not have to enter the value every time while they are placing the order.
+
 = Can I go back to WooCommerce default settings at a later point? =
 Yes. There is a button 'reset to default fields' to go back to the WooCommerce default fields. 
 
@@ -112,6 +140,9 @@ Yes. There is a button 'reset to default fields' to go back to the WooCommerce d
 8. Newly added field
 
 == Changelog ==
+= 1.3.0 =
+* Fix for the issue of showing warning message in checkout page.
+
 = 1.2.9 =
 * Fix for the compatibility issues with WooCommerce latest version.
 * WooCommerce tested up to version updated.

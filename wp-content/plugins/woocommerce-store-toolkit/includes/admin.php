@@ -1606,7 +1606,9 @@ function woo_st_user_column_values( $value, $column_name, $user_id ) {
 	$args = array(
 		'fields' => 'ids'
 	);
-	$value = count( woo_st_get_user_orders( $user_id, $args ) );
+	$orders = woo_st_get_user_orders( $user_id, $args );
+	if( !empty( $orders ) )
+		$value = count( $orders );
 
 	return $value;
 

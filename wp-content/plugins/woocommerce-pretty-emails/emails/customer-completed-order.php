@@ -9,15 +9,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 
-<?php include( dirname(__FILE__).'/settings.php' ); ?>
+<?php include( MBWPE_TPL_PATH.'/settings.php' ); ?>
 
-<?php do_action( 'woocommerce_email_header', $email_heading ); ?>
+<?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <?php
 
 if ( $intro = get_option( 'woocommerce_email_mbc_cco_intro' ) ) :
 
- echo wpautop( wp_kses_post( wptexturize( apply_filters( 'woocommerce_email_mbc_cco_intro_filter', $intro ) ) ) );
+ echo apply_filters( 'woocommerce_email_mbc_cco_intro_filter', wpautop( wp_kses_post( wptexturize(  $intro  ) ) ) );
 
 else : ?>
 	             	
@@ -25,11 +25,11 @@ else : ?>
 
 <?php endif; ?>
 
-<?php do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text ); ?>
+<?php do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
 <h2 <?php echo $orderref;?>><?php printf( __( 'Order #%s', 'woocommerce' ), $order->get_order_number() ); ?></h2>
 
-<table cellspacing="0" cellpadding="6" style="border-collapse:collapse; width: 100%; border: 1px solid <?php echo $bordercolor;?>;" border="1" bordercolor="<?php echo $bordercolor;?>">
+<table cellspacing="0" cellpadding="6" style="border-collapse: collapse; width: 100%; border: 1px solid <?php echo $bordercolor;?>;" border="1" bordercolor="<?php echo $bordercolor;?>">
 	<thead>
 		<tr>
 			<th scope="col" width="50%" style="<?php echo $missingstyle;?>text-align:center; border: 1px solid <?php echo $bordercolor;?>;"><?php _e( 'Product', 'woocommerce' ); ?></th>
@@ -38,18 +38,34 @@ else : ?>
 		</tr>
 	</thead>
 	<tbody>
-		<?php echo $order->email_order_items_table( true, false, true, $displayimage, array($imgsize, $imgsize) ); ?>
+		<?php include( MBWPE_TPL_PATH.'/tbody.php' ); ?>
 	</tbody>
-	<?php include( dirname(__FILE__).'/tfoot.php' ); ?>
+	<?php include( MBWPE_TPL_PATH.'/tfoot.php' ); ?>
 </table>
 
-<?php do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text ); ?>
+<?php do_action( 'woocommerce_email_after_order_table', $order, $sent_to_admin, $plain_text, $email ); ?>
 
-<?php do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text ); ?>
+<?php do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email ); ?>
 
-<?php do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text ); ?>
+<?php if ( version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) : ?>
 
-<?php do_action( 'woocommerce_email_footer' ); ?>
+<h2><?php _e( 'Customer details', 'woocommerce' ); ?></h2>
 
+	<?php if ( $order->billing_email ) : ?>
+		<p><strong><?php _e( 'Email:', 'woocommerce' ); ?></strong> <?php echo $order->billing_email; ?></p>
+	<?php endif; ?>
+	<?php if ( $order->billing_phone ) : ?>
+		<p><strong><?php _e( 'Tel:', 'woocommerce' ); ?></strong> <?php echo $order->billing_phone; ?></p>
+	<?php endif; ?>	
 
-<?php include( dirname(__FILE__).'/treatments.php' ); ?>
+	<?php wc_get_template( 'emails/email-addresses.php', array( 'order' => $order ) ); ?>
+
+<?php else : ?>
+
+	<?php do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email ); ?>
+
+<?php endif; ?>
+
+<?php do_action( 'woocommerce_email_footer', $email); ?>
+
+<?php include( MBWPE_TPL_PATH.'/treatments.php' ); ?>

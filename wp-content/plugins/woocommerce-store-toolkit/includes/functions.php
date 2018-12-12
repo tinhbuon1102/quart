@@ -654,8 +654,13 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					break;
 				}
 			}
-			if( !WOO_ST_DEBUG )
+			if( !WOO_ST_DEBUG ) {
 				delete_transient( 'wc_featured_products' );
+
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product' );
+
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -738,6 +743,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 				if( !WOO_ST_DEBUG )
 					$wpdb->query( $wpdb->prepare( "DELETE FROM `" . $wpdb->term_taxonomy . "` WHERE `taxonomy` = %s", $term_taxonomy ) );
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product_category' );
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -776,6 +785,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					$output = false;
 					break;
 				}
+			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product_tag' );
 			}
 			if( !isset( $output ) )
 				$output = true;
@@ -816,6 +829,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					break;
 				}
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product_brand' );
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -853,6 +870,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					$output = false;
 					break;
 				}
+			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product_vendor' );
 			}
 			if( !isset( $output ) )
 				$output = true;
@@ -924,6 +945,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					$output = false;
 					break;
 				}
+			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_product_image' );
 			}
 			if( !isset( $output ) )
 				$output = true;
@@ -1081,6 +1106,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					$wpdb->query( "TRUNCATE TABLE `" . $wpdb->prefix . "woocommerce_order_itemmeta`" );
 				}
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_order' );
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -1090,12 +1119,19 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 				$wpdb->query( "TRUNCATE TABLE `" . $wpdb->prefix . "woocommerce_tax_rates`" );
 				$wpdb->query( "TRUNCATE TABLE `" . $wpdb->prefix . "woocommerce_tax_rate_locations`" );
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_tax_rate' );
+			}
 			$output = true;
 			break;
 
 		case 'download_permission':
 			if( !WOO_ST_DEBUG ) {
 				$wpdb->query( "TRUNCATE TABLE `" . $wpdb->prefix . "woocommerce_downloadable_product_permissions`" );
+
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_download_permission' );
 			}
 			$output = true;
 			break;
@@ -1136,6 +1172,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					break;
 				}
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_coupon' );
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -1175,6 +1215,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 					break;
 				}
 			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_shipping_class' );
+			}
 			if( !isset( $output ) )
 				$output = true;
 			break;
@@ -1201,6 +1245,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 						}
 					}
 				}
+			}
+			if( !WOO_ST_DEBUG ) {
+				// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+				do_action( 'woo_st_clear_dataset_woocommerce_log' );
 			}
 			break;
 
@@ -1231,6 +1279,10 @@ function woo_st_clear_dataset( $export_type = '', $data = false ) {
 				if( !WOO_ST_DEBUG ) {
 					$wpdb->query( "DELETE FROM `" . $wpdb->prefix . "woocommerce_attribute_taxonomies`" );
 					delete_transient( 'wc_attribute_taxonomies' );
+
+					// Allow Plugin/Theme authors to perform their own tactical nukes when clearing this dataset
+					do_action( 'woo_st_clear_dataset_attribute' );
+
 				}
 			}
 			$output = true;

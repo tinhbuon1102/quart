@@ -24,24 +24,6 @@ msgstr ""
 msgid "Email Preview"
 msgstr "Prévisualiser les emails"
 
-msgid "<a href=\"%s\" target=\"_blank\">'.__('New order template"
-msgstr "<a href=\"%s\" target=\"_blank\">'.__('Nouvelle commande"
-
-msgid "Customer processing order template"
-msgstr "Commande en cours"
-
-msgid "Customer completed order template"
-msgstr "Commande terminée"
-
-msgid "Customer invoice order template"
-msgstr "Facture de commande"
-
-msgid "Customer note order template"
-msgstr "Note client"
-
-msgid "Customer new account"
-msgstr "Nouveau compte client"
-
 msgid "! Email Preview is disabled !"
 msgstr "! Prévisualisation désactivée !"
 
@@ -65,6 +47,12 @@ msgstr ""
 "L'url absolue de votre logo. Envoyez une image à l'aide du <a href=\"%s"
 "\">gestionnaire de média</a>."
 
+msgid "Logo Link"
+msgstr "Lien de destination du logo"
+
+msgid "Enter here an url to make your logo clickable."
+msgstr "URL si vous souhaitez rendre la logo cliquable"
+
 msgid "Footer Logo width"
 msgstr "Largeur du logo dans le pied l'email"
 
@@ -73,6 +61,9 @@ msgstr ""
 "Largeur maximum du logo en pied de page en pixel. Valeur par défaut "
 "<code>175</code>."
 
+msgid "Set this value to 0 if you want to remove the logo from the footer"
+msgstr "Mettre la valeur à 0 pour masquer le logo dans le footer"
+
 msgid "Email Template Width"
 msgstr "Largeur de l'email"
 
@@ -80,11 +71,32 @@ msgid "The email template width. Default <code>700</code>."
 msgstr ""
 "Largeur maximum de l'email en pixel. Valeur par défaut <code>700</code>."
 
+msgid "Logo display template"
+msgstr "Disposition du logo"
+
+msgid "Header template (default) or centered logo (with menu above)"
+msgstr "Par défaut (logo à gauche) ou \"Centré\" (avec le menu en dessous)"
+
+msgid "Default"
+msgstr "Par défaut"
+
+msgid "Centered Logo"
+msgstr "Logo centré"
+
+msgid "This setting only apply on every emails"
+msgstr "Ce réglages s'applique à tous les emails"
+
 msgid "Body font size"
 msgstr "Taille de la police"
 
 msgid "Body font size in pixels. Default <code>12</code>."
 msgstr "Taille de la police en pixel. Valeur par défaut <code>12</code>."
+
+msgid "Body font family"
+msgstr "Police du corps de mail"
+
+msgid "Font family that will be used everywhere but heading tags"
+msgstr "Cette police s'appliquera partout sauf sur les titres."
 
 msgid "Heading 1 font size"
 msgstr "Taille de la police pour les H1"
@@ -92,17 +104,46 @@ msgstr "Taille de la police pour les H1"
 msgid "H1 tag font size in pixels. Default <code>18</code>."
 msgstr "Taille en pixels. Valeur par défaut <code>18</code>."
 
+msgid "Heading 1 font color"
+msgstr "Couleur de la police pour les H1 (heading)"
+
+msgid "Heading 1 font color. Default <code>#FFFFFF</code>."
+msgstr ""
+"Couleur de la police du \"heading\" H1. Valeur par défaut  <code>#000</code>."
+
 msgid "Heading 2 font size"
 msgstr "Taille de la police pour les H2"
 
 msgid "H2 tag font size in pixels. Default <code>18</code>."
 msgstr "Taille en pixels. Valeur par défaut <code>16</code>."
 
+msgid "Heading 2 font color"
+msgstr "Couleur de la police pour les H2 (heading)"
+
+msgid "Heading 2 font color. Default <code>#505050</code>."
+msgstr ""
+"Couleur de la police du \"heading\" H2. Valeur par défaut  <code>#505050</"
+"code>."
+
 msgid "Heading 3 font size"
 msgstr "Taille de la police pour les H3"
 
 msgid "H3 tag font size in pixels. Default <code>18</code>."
 msgstr "Taille en pixels. Valeur par défaut <code>14</code>."
+
+msgid "Heading 3 font color"
+msgstr "Couleur de la police pour les H3 (heading)"
+
+msgid "Heading 3 font color. Default <code>#505050</code>."
+msgstr ""
+"Couleur de la police du \"heading\" H3. Valeur par défaut  <code>#505050</"
+"code>."
+
+msgid "Headings font family"
+msgstr "Police pour les balises titre"
+
+msgid "Font family that will be used in every heading tags"
+msgstr "Cette police s'appliquera sur tous les tags de titre"
 
 msgid "Download link font size"
 msgstr "Taille de la police des liens de téléchargement"
@@ -117,15 +158,20 @@ msgstr "Couleur des liens de téléchargement"
 msgid "Download link font color. Default <code>#000</code>."
 msgstr "Couleur de la police des liens. Valeur par défaut  <code>#000</code>."
 
-msgid "Border color"
-msgstr "Couleur de bordure"
+msgid "Main border color"
+msgstr "Couleur de la bordure principale"
 
-msgid ""
-"Surrounding the main table, blockquote and order tables. Default <code>#EEE</"
-"code>."
+msgid "Surrounding the main table. Default <code>#EEE</code>."
 msgstr ""
-"Entoure l'email, les \"notes\" et les tableaux de commande. Valeur par "
-"défaut <code>#EEE</code>."
+"Bordure qui entoure globalement l'email. Valeur par défaut <code>#EEE</code>."
+
+msgid "Order table border color"
+msgstr "Couleur des bordures intérieures (notamment tableau de commande)"
+
+msgid "Surrounding order tables. Default <code>#EEE</code>."
+msgstr ""
+"Utilisée principalement sur les tableaux de commandes à l'intérieur de "
+"l'email. Valeur par défaut <code>#EEE</code>."
 
 msgid "Product Thumbnails"
 msgstr "Miniature de produits"
@@ -138,6 +184,18 @@ msgstr "Taille des miniatures de produit"
 
 msgid "Product Thumbnails Size. Default <code>32</code>."
 msgstr "Taille des miniatures en pixel. Valeur par défaut <code>32</code>."
+
+msgid "Product SKU"
+msgstr "SKU Produit"
+
+msgid "Display sku in email"
+msgstr "Afficher les SKU des produits dans les emails."
+
+msgid "Product Link"
+msgstr "Lien vers fiche produit"
+
+msgid "Make product clickable in email"
+msgstr "Rendre cliquable les miniatures et / ou titres produits"
 
 msgid "Extra link one"
 msgstr "Lien de menu"
@@ -248,20 +306,59 @@ msgstr ""
 "Entrez l'url de votre logo Google+ pour afficher votre propre logo en pied "
 "de page"
 
-msgid "Introduction for customer processing order email"
-msgstr "Commande en cours"
+msgid "Specific settings for the \"customer processing order\" email"
+msgstr "Réglages spécifiques à l'email de commande en cours"
 
 msgid ""
 "The text to appear in the introduction for the customer processing order "
 "email"
 msgstr "Texte d'introduction pour les emails de commande en cours"
 
-msgid "Introduction for customer completed order email"
-msgstr "Commande terminée "
+msgid ""
+"Enter an image URL to display a banner on the processing order email. Upload "
+"your image using the <a href=\"%s\">media uploader</a>."
+msgstr ""
+"L'url absolue de votre bannière d'email de commande en cours. Envoyez une "
+"image à l'aide du <a href=\"%s\">gestionnaire de média</a>."
+
+msgid "This setting only apply on the \"Customer Processing Order email\""
+msgstr "Ce réglage ne s'applique qu'à l'email de commande en cours"
+
+msgid "Display the banner before or after the order table"
+msgstr "Afficher la bannière avant ou après le récap' de la commande"
+
+msgid "After order table"
+msgstr "Après la commande"
+
+msgid "Before order table"
+msgstr "Avant la commande"
+
+msgid "Enter an url to make that banner clickable"
+msgstr "URL si vous souhaitez rendre la bannière cliquable"
+
+msgid ""
+"Add an attachment (absolute url of a WordPress uploads file ), i.e. https://"
+"www.yoursite.com/wp-content/uploads/terms-and-conditions.pdf"
+msgstr ""
+"Ajouter une pièce jointe (url absolue d'un fichier présent dans vos média ), "
+"i.e https://www.votresite.fr/wp-content/uploads/cgv.pdf"
+
+msgid "Specific settings for the \"customer completed order\" email"
+msgstr "Réglages spécifiques pour l'email de commande terminée"
 
 msgid ""
 "The text to appear in the introduction for the customer completed order email"
 msgstr "Texte d'introduction pour les emails de commandes terminées"
+
+msgid "This setting only apply on the \"Customer Completed Order email\""
+msgstr "Ce réglages ne s'applique qu'à l'email de commande terminée"
+
+msgid ""
+"Add an attachment (absolute url of a WordPress uploads file ), i.e. https://"
+"www.yoursite.com/uploads/terms-and-conditions.pdf"
+msgstr ""
+"Ajouter une pièce jointe (url absolue d'un fichier présent dans vos média ), "
+"i.e https://www.votresite.fr/wp-content/uploads/cgv.pdf"
 
 msgid "Introduction for customer new account email"
 msgstr ""
@@ -272,5 +369,52 @@ msgid ""
 "The text to appear in the introduction for the customer new account email"
 msgstr "Texte d'introduction pour les emails de nouveau client"
 
-#~ msgid "New order template"
-#~ msgstr "Nouvelle commande"
+msgid "Introduction for customer on-hold order email"
+msgstr "Texte d'introduction pour une commande \"en-cours\""
+
+msgid ""
+"The text to appear in the introduction for the customer on-hold order email"
+msgstr "Le texte apparaitra en introduction du texte \"commande en cours\"."
+
+msgid "Introduction for customer note email"
+msgstr "Texte d'introduction de l'email note client"
+
+msgid "The text to appear in the introduction for the customer note email"
+msgstr "Texte d'introduction pour les emails de note client"
+
+msgid ""
+"Do not forget to include {{customer_note}} in your text where you want to "
+"display the actual note"
+msgstr "N'oubliez pas d'inclure {{customer_note}} dans votre texte."
+
+msgid "Introduction for customer invoice email"
+msgstr "Texte d'introduction de l'email facture client"
+
+msgid "The text to appear in the introduction for the customer invoice email"
+msgstr ""
+"Texte d'introduction pour les emails de facture client (n'oubliez pas "
+"{{pay_url}} dans votre texte pour afficher le lien de paiement."
+
+msgid "Override new user email notification"
+msgstr "Surcharger l'email de notification d'un nouvel utilisateur"
+
+msgid "New user notication email will be styled using Pretty email template"
+msgstr "L'email de l'ajout d'un nouvel utilisateur sera relooke par le plugin"
+
+#~ msgid "Customer processing order template"
+#~ msgstr "Commande en cours"
+
+#~ msgid "Customer completed order template"
+#~ msgstr "Commande terminée"
+
+#~ msgid "Customer invoice order template"
+#~ msgstr "Facture de commande"
+
+#~ msgid "Customer note order template"
+#~ msgstr "Note client"
+
+#~ msgid "Customer new account"
+#~ msgstr "Nouveau compte client"
+
+#~ msgid "<a href=\"%s\" target=\"_blank\">'.__('New order template"
+#~ msgstr "<a href=\"%s\" target=\"_blank\">'.__('Nouvelle commande"

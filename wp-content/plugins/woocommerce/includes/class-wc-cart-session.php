@@ -61,6 +61,7 @@ final class WC_Cart_Session {
 	 * @since 3.2.0
 	 */
 	public function get_cart_from_session() {
+		do_action( 'woocommerce_load_cart_from_session' );
 		$this->cart->set_totals( WC()->session->get( 'cart_totals', null ) );
 		$this->cart->set_applied_coupons( WC()->session->get( 'applied_coupons', array() ) );
 		$this->cart->set_coupon_discount_totals( WC()->session->get( 'coupon_discount_totals', array() ) );
@@ -326,7 +327,7 @@ final class WC_Cart_Session {
 			$cart_id          = WC()->cart->generate_cart_id( $product_id, $variation_id, $variations, $cart_item_data );
 			$product_data     = wc_get_product( $variation_id ? $variation_id : $product_id );
 			$cart[ $cart_id ] = apply_filters(
-				'woocommerce_add_cart_item', array_merge(
+				'woocommerce_add_order_again_cart_item', array_merge(
 					$cart_item_data, array(
 						'key'          => $cart_id,
 						'product_id'   => $product_id,
@@ -340,7 +341,7 @@ final class WC_Cart_Session {
 			);
 		}
 
-		do_action( 'woocommerce_ordered_again', $order->get_id() );
+		do_action( 'woocommerce_ordered_again', $order->get_id(), $order_items, $cart );
 
 		$num_items_in_cart           = count( $cart );
 		$num_items_in_original_order = count( $order_items );

@@ -3,9 +3,9 @@
  * WP Multibyte Patch Japanese Locale Extension
  *
  * @package WP_Multibyte_Patch
- * @version 2.8.1
+ * @version 2.8.2
  * @author Seisuke Kuraishi <210pura@gmail.com>
- * @copyright Copyright (c) 2016 Seisuke Kuraishi, Tinybit Inc.
+ * @copyright Copyright (c) 2018 Seisuke Kuraishi, Tinybit Inc.
  * @license http://opensource.org/licenses/gpl-2.0.php GPLv2
  * @link http://eastcoder.com/code/wp-multibyte-patch/
  */
@@ -95,7 +95,7 @@ if ( class_exists( 'multibyte_patch' ) ) :
 		if ( 'UTF-8' == $mode ) {
 			$phpmailer->CharSet = 'UTF-8';
 			$phpmailer->Encoding = 'base64';
-			$phpmailer->AddCustomHeader( 'Content-Disposition: inline' );
+			$phpmailer->addCustomHeader( 'Content-Disposition: inline' );
 			$phpmailer->FromName = $this->encode_mimeheader_b_uncut( $phpmailer->FromName, 'UTF-8' );
 			$phpmailer->Subject = $this->encode_mimeheader_b_uncut( $phpmailer->Subject, 'UTF-8' );
 

@@ -9,13 +9,16 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 
-<?php include( dirname(__FILE__).'/settings.php' ); ?>
+<?php include( MBWPE_TPL_PATH.'/settings.php' ); ?>
 
-<?php do_action( 'woocommerce_email_header', $email_heading ); ?>
+<?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <?php 
 
 if ( $intro = get_option( 'woocommerce_email_mbc_cna_intro' ) ) :
+
+	if( function_exists('pll__') )
+ 		$intro = pll__($intro);
 
 	$intro =  str_replace(
 		array('{{blogname}}','{{user_login}}','{{user_pass}}', '{{account_page}}'),
@@ -23,7 +26,7 @@ if ( $intro = get_option( 'woocommerce_email_mbc_cna_intro' ) ) :
 		$intro
 	);
 
-	echo wpautop( wp_kses_post( wptexturize( apply_filters( 'woocommerce_email_mbc_cna_intro_filter', $intro ) ) ) );
+	echo apply_filters( 'woocommerce_email_mbc_cna_intro_filter', wpautop( wp_kses_post( wptexturize(  $intro  ) ) ) );
 
 
 else :
@@ -42,6 +45,6 @@ else :
 
 <?php endif;?>
 
-<?php do_action( 'woocommerce_email_footer' ); ?>
+<?php do_action( 'woocommerce_email_footer', $email ); ?>
 
-<?php include( dirname(__FILE__).'/treatments.php' ); ?>
+<?php include( MBWPE_TPL_PATH.'/treatments.php' ); ?>

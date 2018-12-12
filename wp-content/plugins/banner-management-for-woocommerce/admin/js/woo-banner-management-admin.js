@@ -1,7 +1,7 @@
-(function($) {
+(function ($) {
     'use strict';
-    $(window).load(function() {
-        $('body').on('click', '#wbm_shop_setting_enable', function() {
+    $(window).on('load', function () {
+        $('body').on('click', '#wbm_shop_setting_enable', function () {
             var ele = $(this).find(':checkbox');
 
             var checked = $('input[id="wbm_shop_setting_enable"][type="checkbox"]:checked').val();
@@ -16,7 +16,7 @@
 
         });
         //script for cart page setting script
-        $('body').on('click', '#wbm_shop_setting_cart_enable', function() {
+        $('body').on('click', '#wbm_shop_setting_cart_enable', function () {
             var checked = $('input[id="wbm_shop_setting_cart_enable"][type="checkbox"]:checked').val();
             var checked1 = $('input[id="wbm_cart_open_new_tab"][type="checkbox"]:checked').val();
             var ele = $(this).find(':checkbox');
@@ -27,7 +27,7 @@
             }
         });
         //script for check out page setting script 
-        $('body').on('click', '#wbm_shop_setting_checkout_enable', function() {
+        $('body').on('click', '#wbm_shop_setting_checkout_enable', function () {
             var checked = $('input[id="wbm_shop_setting_checkout_enable"][type="checkbox"]:checked').val();
             var checked1 = $('input[id="wbm_checkout_open_new_tab"][type="checkbox"]:checked').val();
             var ele = $(this).find(':checkbox');
@@ -38,7 +38,7 @@
             }
         });
         //script for tahnk you page
-        $('body').on('click', '#wbm_shop_setting_thank_you_page_enable', function() {
+        $('body').on('click', '#wbm_shop_setting_thank_you_page_enable', function () {
             var checked = $('input[id="wbm_shop_setting_thank_you_page_enable"][type="checkbox"]:checked').val();
             var checked1 = $('input[id="wbm_thankyou_open_new_tab"][type="checkbox"]:checked').val();
             var ele = $(this).find(':checkbox');
@@ -50,7 +50,7 @@
             }
         });
         //script for save the setting data	
-        $('body').on('click', '#save_wbm_shop_page_setting', function() {
+        $('body').on('click', '#save_wbm_shop_page_setting', function () {
             //get the value by shop page setting section
             var shop_page_banner_image_results = '';
             var shop_page_banner_link_results = '';
@@ -67,7 +67,7 @@
             }
             var shop_page_banner_enable_or_not = $('input[id="wbm_shop_setting_enable"][type="checkbox"]:checked').val();
             var shop_page_benner_open_new_tab = $('input[id="wbm_shop_open_new_tab"][type="checkbox"]:checked').val();
-          
+
             if (shop_page_banner_enable_or_not != '') {
                 shop_page_banner_enable_or_not_results = shop_page_banner_enable_or_not;
             }
@@ -178,13 +178,13 @@
                 thankyou_page_banner_image_results = thankyou_page_banner_image;
             }
             var thankyou_page_banner_link = $('#shop_thank_you_page_banner_image_link').val();
-           
+
             if (thankyou_page_banner_link != '') {
                 thankyou_page_banner_link_results = thankyou_page_banner_link;
             }
             var thankyou_page_banner_enable_or_not = $('input[id="wbm_shop_setting_thank_you_page_enable"][type="checkbox"]:checked').val();
             var thankyou_page_benner_open_new_tab = $('input[id="wbm_thankyou_open_new_tab"][type="checkbox"]:checked').val();
-            
+
             if (thankyou_page_banner_enable_or_not != '') {
                 thankyou_page_banner_enable_or_not_results = thankyou_page_banner_enable_or_not;
             }
@@ -222,10 +222,12 @@
                     thankyou_page_banner_link_results: thankyou_page_banner_link_results,
                     thankyou_page_banner_enable_or_not_results: thankyou_page_banner_enable_or_not_results,
                     thankyou_page_benner_open_new_tab_results: thankyou_page_benner_open_new_tab_results,
-                    security: $( '#category-ajax-nonce_field' ).val()
+                    security: $('#category-ajax-nonce_field').val()
                 }),
-                success: function(response) {
-                    setTimeout(function() { alert("Setting saved."); }, 500);
+                success: function (response) {
+                    setTimeout(function () {
+                        alert("Setting saved.");
+                    }, 500);
                     $('#succesful_message_wbm').css('display', 'block');
                     $('#succesful_message_wbm').delay(2000).fadeOut('slow');
                 }
@@ -236,7 +238,7 @@
 
         //accrodian jquery script 
 
-        jQuery('.custom-accordian .aco-title').click(function() {
+        jQuery('.custom-accordian .aco-title').click(function () {
             jQuery(this).siblings().slideToggle(400);
             jQuery(this).toggleClass('open');
         });
@@ -255,7 +257,7 @@
             jQuery('.accordion-crea-setting .accordion-section-content').slideUp(300).removeClass('open');
         }
 
-        jQuery('.accordion-section-title').click(function(e) {
+        jQuery('.accordion-section-title').click(function (e) {
             // Grab current anchor value
             var currentAttrValue = jQuery(this).attr('href');
 
@@ -273,7 +275,7 @@
             e.preventDefault();
         });
 
-        jQuery('.accordion_preview-section-title').click(function(e) {
+        jQuery('.accordion_preview-section-title').click(function (e) {
             // Grab current anchor value
             var currentAttrValue = jQuery(this).attr('href');
 

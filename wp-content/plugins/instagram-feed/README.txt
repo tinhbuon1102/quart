@@ -2,8 +2,8 @@
 Contributors: smashballoon, craig-at-smash-balloon
 Tags: Instagram, Instagram feed, Instagram photos, Instagram widget, Instagram gallery
 Requires at least: 3.0
-Tested up to: 4.9
-Stable tag: 1.10.1
+Tested up to: 5.0
+Stable tag: 1.10.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,7 +11,7 @@ Display beautifully clean, customizable, and responsive feeds from multiple Inst
 
 == Description ==
 
-Display Instagram photos from any non-private Instagram accounts, either in the same single feed or in multiple different ones.
+Display Instagram posts from your Instagram accounts, either in the same single feed or in multiple different ones.
 
 = Features =
 * Super **simple to set up**
@@ -142,8 +142,6 @@ Yep. You can just separate the IDs by commas, either in the User ID(s) field on 
 = How do I find my Instagram Access Token and Instagram User ID =
 
 We've made it super easy. Simply click on the big blue button on the Instagram Feed Settings page and log into your Instagram account. The plugin will then retrieve and display both your Access Token and User ID from Instagram.
-
-You can also display photos from other peoples Instagram accounts. To find their Instagram User ID you can use [this tool](http://www.otzberg.net/iguserid/).
 
 = My Instagram feed isn't displaying. Why not!? =
 
@@ -287,7 +285,7 @@ We understand that sometimes you need help, have issues or just have questions. 
 
 = What can it do? =
 
-* Display Instagram photos from any non-private Instagram account.
+* Display Instagram photos from any Instagram account you own.
 * Completely responsive and mobile ready –your Instagram feed layout looks great on any screen size and in any container width
 * Display multiple Instagram feeds on the same page or on different pages throughout your site by using our powerful Instagram Feed shortcode options
 * Display posts from multiple Instagram User IDs
@@ -310,6 +308,13 @@ We understand that sometimes you need help, have issues or just have questions. 
 * Plus more customization options added all the time!
 
 == Changelog ==
+= 1.10.2 =
+* Confirmed compatibility with the upcoming WordPress 5.0 "Gutenberg" update
+* Fix: Fixed an issue caused by some themes which affected the formatting of the 'Load More' and 'Follow' buttons
+* Fix: Fixed an occassional formatting issue with error messages due to no line-height being set
+* Fix: Minor admin UI fixes
+* Tweak: Removed mention of some Pro features which will be deprecated due to upcoming Instagram API changes
+
 = 1.10.1 =
 * Tweak: Automatic image resolution detection setting now works better with wide images. Resizing the browser will now automatically raise the image resolution if needed.
 * Fix: Fixed an issue where the Load More button would disappear if all posts for a feed were cached.

@@ -20,6 +20,7 @@ A comprehensive collection of visual components for your site
 
 * 50+ beautiful shortcodes
 * 1-click shortcode insertion with live preview
+* Gutenberg-ready
 * Works with any theme
 * Modern responsive design
 * Documentation
@@ -136,7 +137,7 @@ Yes! [How to use shortcodes in template files](http://docs.getshortcodes.com/art
 Yes! Shortcodes Ultimate is designed to work with any theme, but your theme must include very basic things: 'wp_head' and 'wp_footer' template tags. Sometimes, the plugin may not work properly because of javascript errors caused by third-party plugins/themes.
 
 = Where can I report a bug? =
-You should [create an issue at GitHub](https://github.com/gndev/shortcodes-ultimate/) or [open new support ticket](https://getshortcodes.com/account/open-support-ticket/) (for premium add-ons only).
+You should [create an issue at GitHub](https://github.com/gndev/shortcodes-ultimate/) or [open new support ticket](https://getshortcodes.com/contact/) (for premium add-ons only).
 
 = Where to find additional information? =
 Plugin has comprehensive [documentation](http://docs.getshortcodes.com/).
@@ -144,12 +145,21 @@ Also, you can find more answers at [support page](https://getshortcodes.com/supp
 
 = Where can I get support or talk to other users? =
 If you get stuck, you can ask for help in [official plugin forum](https://wordpress.org/support/plugin/shortcodes-ultimate).
-For help with premium add-ons, please [open new support ticket](https://getshortcodes.com/account/open-support-ticket/).
+For help with premium add-ons, please [open new support ticket](https://getshortcodes.com/contact/).
 
 
 == Changelog ==
 
-= trunk =
+= 5.1.1 =
+
+- Gutenberg compatibility enabled by default
+
+
+= 5.1.0 =
+
+**What's new**
+
+- Added compatibility with the Gutenberg editor. [Learn more](https://vanokhin.com/su-now-supports-gutenberg/).
 
 **Fixes**
 

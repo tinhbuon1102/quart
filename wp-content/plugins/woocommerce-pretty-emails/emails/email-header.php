@@ -8,21 +8,14 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-include( dirname(__FILE__).'/settings.php' );
-
+include( MBWPE_TPL_PATH.'/settings.php' );
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'?>">
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title><?php echo get_bloginfo( 'name' ); ?></title>
-
-
-
-
-
-
 <style type="text/css">
 img {
 max-width: 100%; height: auto;
@@ -64,56 +57,60 @@ background-color: <?php echo $bg;?>;
 </style>
 </head>
 
-<body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; height: 100%; line-height: 1.6; background: <?php echo $bg;?>; margin: 0; padding: 0;">
+<body style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; height: 100%; line-height: 1.6; background: <?php echo $bg;?>; margin: 0; padding: 0;">
 <!--[if gte mso 9]>
 <table width="<?php echo $width;?>" align="center"><tr>
 <td width="<?php echo $width;?>">
 <![endif]-->
-<table class="body-wrap" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; width: 100%; background: <?php echo $bg;?>; margin: 0; padding: 0;">
-		<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-		<td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
-		<td class="container dark" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; display: block !important; max-width: <?php echo $width.'px';?> !important; clear: both !important; margin: 0 auto; padding: 0;" valign="middle"> 
+<table class="body-wrap" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; width: 100%; background: <?php echo $bg;?>; margin: 0; padding: 0;">
+		<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+		<td style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
+		<td class="container dark" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; display: block !important; max-width: <?php echo $width.'px';?> !important; clear: both !important; margin: 0 auto; padding: 0;" valign="middle"> 
 			
 
 			
-			<div class="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; max-width: <?php echo $width.'px';?>; display: block; margin: 0 auto; padding: 20px; padding-bottom:10px;">
-				<table width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-				<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-					<td class="half" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; width: 50%; margin: 0; padding: 0;" valign="middle">
+			<div class="content" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; max-width: <?php echo $width.'px';?>; display: block; margin: 0 auto; padding: 20px; padding-bottom:10px;">
+				<table width="100%" cellpadding="0" cellspacing="0" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+				<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+					<td class="half" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; width: 50%; margin: 0; padding: 0;" valign="middle">
 					
 					<?php
 
 					if ( $img = get_option( 'woocommerce_email_mbc_logo' ) ) {
-	             		
-	                	echo '<img src="'.esc_url($img).'" style="max-width: 100%; height: auto; margin: 0; padding: 0;" align="top"  />';
+
+						if ( $linkl = get_option( 'woocommerce_email_mbc_logo_link' ) )
+	             		echo '<a href="'.esc_url($linkl).'">';
+						echo '<img src="'.esc_url($img).'" style="max-width: 100%; height: auto; margin: 0; padding: 0;" align="top"  />';
+	              		if ( $linkl = get_option( 'woocommerce_email_mbc_logo_link' ) )
+	             		echo '</a>';
 	              	}
 
 	                ?>
 					
 					</td>
 					
-					<td class="half alignright headlinks" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: bottom; text-align: right; width: 50%; margin: 0; padding: 0;" align="right" valign="bottom">
+					<td class="half alignright headlinks" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: bottom; text-align: <?php echo is_rtl() ? 'left' : 'right' ?>; width: 50%; margin: 0; padding: 0;" align="right" valign="bottom">
 
 						<?php if( $onelink = get_option('woocommerce_email_mbc_extra_link_one') ) : ?>
-						<a href="<?php echo get_permalink($onelink);?>" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($onelink); ?></a>
+						<a href="<?php echo get_permalink($onelink);?>" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($onelink); ?></a>
 						<?php endif; ?>
 						
 						<?php if( $onelink = get_option('woocommerce_email_mbc_extra_link_one') &&  $secondlink = get_option('woocommerce_email_mbc_extra_link_two') ) : ?>
-						<span style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 10px; margin: 0; padding: 0;">|</span>	
+						<span style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: 10px; margin: 0; padding: 0;">|</span>	
 						<?php endif; ?>
 
 						<?php if( $secondlink = get_option('woocommerce_email_mbc_extra_link_two') ) : ?>
-						<a href="<?php echo get_permalink($secondlink);?>" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($secondlink); ?></a>
+						<a href="<?php echo get_permalink($secondlink);?>" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($secondlink); ?></a>
 						<?php endif; ?>
 						
 	
 						<?php if( $secondlink = get_option('woocommerce_email_mbc_extra_link_two') &&  $thirdlink = get_option('woocommerce_email_mbc_extra_link_three') ) : ?>
-						<span style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 10px; margin: 0; padding: 0;">|</span>	
+						<span style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: 10px; margin: 0; padding: 0;">|</span>	
 						<?php endif; ?>
 					
 
 						<?php if( $thirdlink = get_option('woocommerce_email_mbc_extra_link_three') ) : ?>
-						<a href="<?php echo get_permalink($thirdlink);?>" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($thirdlink); ?></a>
+						<a href="<?php echo get_permalink($thirdlink);?>" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; color: <?php echo $elcolor;?>; text-decoration: underline; margin: 0; padding: 0;"><?php echo get_the_title($thirdlink); ?></a>
 						<?php endif; ?>
 
 
@@ -125,14 +122,14 @@ background-color: <?php echo $bg;?>;
 			</div>
 	
 		</td>
-		<td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
+		<td style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
 		</tr>
 
-		<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-		<td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
-		<td class="container" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; display: block !important; max-width: <?php echo $width.'px';?> !important; clear: both !important; margin: 0 auto; padding: 0;" valign="middle">
-			<div class="content" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; max-width: <?php echo $width.'px';?>; display: block; margin: 0 auto; padding: 20px; padding-top:10px;">
-			<table class="main" width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; background: <?php echo $bodybg; ?> ; margin: 0; padding: 0; border: 1px solid <?php echo $bordercolor; ?>;">
+		<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+		<td style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle"></td>
+		<td class="container" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; display: block !important; max-width: <?php echo $width.'px';?> !important; clear: both !important; margin: 0 auto; padding: 0;" valign="middle">
+			<div class="content" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; max-width: <?php echo $width.'px';?>; display: block; margin: 0 auto; padding: 20px; padding-top:10px;">
+			<table class="main" width="100%" cellpadding="0" cellspacing="0" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; background: <?php echo $bodybg; ?> ; margin: 0; padding: 0; border: 1px solid <?php echo $mbordercolor; ?>;">
 			<?php
 	              
 	              if ( $img = get_option( 'woocommerce_email_header_image' ) ) {
@@ -148,14 +145,14 @@ background-color: <?php echo $bg;?>;
 	              }
 
 	            ?>
-			<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-					<td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 20px; background: <?php echo $base;?>;" valign="middle">
-						<h1 class="content" style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; box-sizing: border-box; font-size: <?php echo $h1;?>;  max-width: <?php echo $width.'px';?>; display: block; color: white; line-height: 1.2; font-weight: 500; background: <?php echo $base;?>; margin: 0 auto; padding: 0px;"><?php echo $email_heading; ?></h1>
+			<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+					<td style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 20px; background: <?php echo $base;?>;" valign="middle">
+						<h1 class="content" style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; box-sizing: border-box; font-size: <?php echo $h1;?>;  max-width: <?php echo $width.'px';?>; display: block; color: <?php echo $h1c; ?>; line-height: 1.2; font-weight: 500; background: <?php echo $base;?>; margin: 0 auto; padding: 0px;"><?php echo $email_heading; ?></h1>
 					</td>	
 			</tr>
-			<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-					<td class="content-wrap" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 20px;" valign="middle">
-						<table width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+			<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+					<td class="content-wrap" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 20px;" valign="middle">
+						<table width="100%" cellpadding="0" cellspacing="0" style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
 
-						<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
-							<td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle">
+						<tr style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; margin: 0; padding: 0;">
+							<td style="font-family: <?php echo $bodyFont;?>; box-sizing: border-box; font-size: <?php echo $bodyfontsize;?>; vertical-align: middle; margin: 0; padding: 0;" valign="middle">

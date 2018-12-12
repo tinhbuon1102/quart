@@ -8,7 +8,7 @@ License: GPLv2
 Requires at least: 3.7
 Requires PHP: 5.3
 Tested up to: 4.9
-Stable tag: 2.3.4
+Stable tag: 2.3.5
 
 The complete and reliable plugin for managing custom post types, custom taxonomies and custom fields.
 
@@ -171,6 +171,9 @@ Additionally, Types is the only plugin that lets you define parent/child relatio
 
 == Changelog ==
 
+= 2.3.5 =
+* Fixed a blank screen on the post editing page when using Types versions older than 2.3.4 on a site running Wordpress 5.0 (or using a Gutenberg plugin).
+
 = 2.3.4 =
 * Security Update
 
@@ -188,6 +191,9 @@ Additionally, Types is the only plugin that lets you define parent/child relatio
 * Added a dismissable notice about what is going on with Types development.
 * Removed the Installer dependency. Clients who buy Toolset will have to download Types 3.0+ manually for the first time.
 * Users should no longer be asked to buy a subscription in order to upgrade (sorry about that).
+
+= 2.2.24 =
+* Security Update
 
 = 2.2.23 =
 * Fixed issue with Toolset registration

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP Multibyte Patch
 Description: Multibyte functionality enhancement for the WordPress Japanese package.
-Version: 2.8.1
+Version: 2.8.2
 Plugin URI: http://eastcoder.com/code/wp-multibyte-patch/
 Author: Seisuke Kuraishi
 Author URI: http://tinybit.co.jp/
@@ -15,9 +15,9 @@ Domain Path: /languages
  * Multibyte functionality enhancement for the WordPress Japanese package.
  *
  * @package WP_Multibyte_Patch
- * @version 2.8.1
+ * @version 2.8.2
  * @author Seisuke Kuraishi <210pura@gmail.com>
- * @copyright Copyright (c) 2016 Seisuke Kuraishi, Tinybit Inc.
+ * @copyright Copyright (c) 2018 Seisuke Kuraishi, Tinybit Inc.
  * @license http://opensource.org/licenses/gpl-2.0.php GPLv2
  * @link http://eastcoder.com/code/wp-multibyte-patch/
  */
@@ -219,6 +219,10 @@ class multibyte_patch {
 
 	public function trim_multibyte_excerpt( $text = '', $length = 110, $more = ' [&hellip;]', $encoding = 'UTF-8' ) {
 		$text = strip_shortcodes( $text );
+
+		if ( function_exists( 'excerpt_remove_blocks' ) )
+			$text = excerpt_remove_blocks( $text );
+
 		$text = str_replace( ']]>', ']]&gt;', $text );
 		$text = strip_tags( $text );
 		$text = trim( preg_replace( "/[\n\r\t ]+/", ' ', $text ), ' ' );

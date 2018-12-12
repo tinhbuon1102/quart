@@ -16,6 +16,6 @@ if (!defined('ABSPATH')) {
 define('WOO_BANNER_MANAGEMENT_PLUGIN_SLUG', 'banner-management-for-woocommerce');
 define('WOO_BANNER_MANAGEMENT_PLUGIN_NAME', __('Woocommerce Category Banner Management'));
 define('WOO_BANNER_MANAGEMENT_TEXT_DOMAIN', 'banner-management-for-woocommerce');
-define('WBM_PLUGIN_VERSION', '1.1.1');
+define('WBM_PLUGIN_VERSION', '1.1.4');
 define('WBM_PLUGIN_NAME', 'Woocommerce Category Banner Management');
 

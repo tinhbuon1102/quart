@@ -8,17 +8,40 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 
-<?php include( dirname(__FILE__).'/settings.php' ); ?>
+<?php include( MBWPE_TPL_PATH.'/settings.php' ); ?>
 
-<?php do_action( 'woocommerce_email_header', $email_heading ); ?>
+<?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
+
+<?php if( version_compare( WC_VERSION, '3.0', '>' ) ){ ?>
+
+<p><?php printf( __( 'The order #%1$d from %2$s has been cancelled. The order was as follows:', 'woocommerce' ), $order->get_order_number(), $order->get_formatted_billing_full_name() ); ?></p>
+
+<?php } else { ?>
 
 <p><?php printf( __( 'The order #%d from %s has been cancelled. The order was as follows:', 'woocommerce' ), $order->get_order_number(), $order->billing_first_name . ' ' . $order->billing_last_name ); ?></p>
 
+<?php } ?>
+
 <?php do_action( 'woocommerce_email_before_order_table', $order, true, false ); ?>
 
-<h2><a href="<?php echo admin_url( 'post.php?post=' . $order->id . '&action=edit' ); ?>"><?php printf( __( 'Order: %s', 'woocommerce'), $order->get_order_number() ); ?></a> (<?php printf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $order->order_date ) ), date_i18n( wc_date_format(), strtotime( $order->order_date ) ) ); ?>)</h2>
+<?php if( version_compare( WC_VERSION, '3.0', '>' ) ) { ?>
 
-<table cellspacing="0" cellpadding="6" style="border-collapse:collapse; width: 100%; border: 1px solid <?php echo $bordercolor;?>;" border="1" bordercolor="<?php echo $bordercolor;?>">	<thead>
+	<?php if ( ! $sent_to_admin ) : ?>
+		<h2 <?php echo $orderref;?>><?php printf( __( 'Order #%s', 'woocommerce' ), $order->get_order_number() ); ?></h2>
+	<?php else : ?>
+		<h2 <?php echo $orderref;?>><a class="link" href="<?php echo esc_url( admin_url( 'post.php?post=' . $order->get_id() . '&action=edit' ) ); ?>"><?php printf( __( 'Order #%s', 'woocommerce' ), $order->get_order_number() ); ?></a> (<?php printf( '<time datetime="%s">%s</time>', $order->get_date_created()->format( 'c' ), wc_format_datetime( $order->get_date_created() ) ); ?>)</h2>
+	<?php endif; ?>
+
+<?php } ?>
+
+<?php if( version_compare( WC_VERSION, '3.0', '<' ) ) { ?>
+
+	<h2 <?php echo $orderref;?>><a href="<?php echo admin_url( 'post.php?post=' . $order->id . '&action=edit' ); ?>"><?php printf( __( 'Order: %s', 'woocommerce'), $order->get_order_number() ); ?></a> (<?php printf( '<time datetime="%s">%s</time>', date_i18n( 'c', strtotime( $order->order_date ) ), date_i18n( wc_date_format(), strtotime( $order->order_date ) ) ); ?>)</h2>
+
+<?php } ?>
+
+
+<table cellspacing="0" cellpadding="6" style="border-collapse: collapse; width: 100%; border: 1px solid <?php echo $bordercolor;?>;" border="1" bordercolor="<?php echo $bordercolor;?>">	<thead>
 		<tr>
 			<th scope="col" width="50%" style="<?php echo $missingstyle;?>text-align:left; border: 1px solid <?php echo $bordercolor;?>;"><?php _e( 'Product', 'woocommerce' ); ?></th>
 			<th scope="col" width="25%" style="<?php echo $missingstyle;?>text-align:center; border: 1px solid <?php echo $bordercolor;?>;"><?php _e( 'Quantity', 'woocommerce' ); ?></th>
@@ -26,17 +49,34 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 		</tr>
 	</thead>
 	<tbody>
-		<?php echo $order->email_order_items_table( false, true, false, $displayimage, array($imgsize, $imgsize) ); ?>
+		<?php include( MBWPE_TPL_PATH.'/tbody.php' ); ?>
 	</tbody>
-	<?php include( dirname(__FILE__).'/tfoot.php' ); ?>
+	<?php include( MBWPE_TPL_PATH.'/tfoot.php' ); ?>
 </table>
 
-<?php do_action( 'woocommerce_email_after_order_table', $order, true, false ); ?>
+<?php do_action( 'woocommerce_email_after_order_table', $order, true, false, $email ); ?>
 
-<?php do_action( 'woocommerce_email_order_meta', $order, true, false ); ?>
+<?php do_action( 'woocommerce_email_order_meta', $order, true, false, $email ); ?>
 
-<?php do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text ); ?>
+<?php if ( version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) : ?>
 
-<?php do_action( 'woocommerce_email_footer' ); ?>
+<h2><?php _e( 'Customer details', 'woocommerce' ); ?></h2>
 
-<?php include( dirname(__FILE__).'/treatments.php' ); ?>
+	<?php if ( $order->billing_email ) : ?>
+		<p><strong><?php _e( 'Email:', 'woocommerce' ); ?></strong> <?php echo $order->billing_email; ?></p>
+	<?php endif; ?>
+	<?php if ( $order->billing_phone ) : ?>
+		<p><strong><?php _e( 'Tel:', 'woocommerce' ); ?></strong> <?php echo $order->billing_phone; ?></p>
+	<?php endif; ?>	
+	
+	<?php wc_get_template( 'emails/email-addresses.php', array( 'order' => $order ) ); ?>
+
+<?php else : ?>
+
+	<?php do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email ); ?>
+
+<?php endif; ?>
+
+<?php do_action( 'woocommerce_email_footer', $email ); ?>
+
+<?php include( MBWPE_TPL_PATH.'/treatments.php' ); ?>

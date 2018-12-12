@@ -26,7 +26,7 @@ class MetaSlider_Gutenberg {
 		wp_enqueue_script(
 			'metaslider-blocks',
 			plugins_url('assets/js/editor-block-' . sanitize_title(METASLIDER_VERSION) . '.js', __FILE__),
-			array('wp-i18n', 'wp-element', 'wp-blocks', 'wp-components', 'wp-api'),
+			array('wp-i18n', 'wp-element', 'wp-block-library', 'wp-components', 'wp-api'),
 			$version
 		);
 		
@@ -39,7 +39,7 @@ class MetaSlider_Gutenberg {
 		 * gutenberg_get_jed_locale_data uses WP function get_translations_for_domain, 
 		 * which can be usefull if we want to use wp.18n.__ in the rest of the plugin.
 		 */
-		$locale_data = gutenberg_get_jed_locale_data('ml-slider');
+		$locale_data = $this->gutenberg_get_jed_locale_data('ml-slider');
 		wp_add_inline_script(
 			'metaslider-blocks',
 			'wp.i18n.setLocaleData(' . json_encode($locale_data) . ', \'ml-slider\');',
@@ -50,7 +50,7 @@ class MetaSlider_Gutenberg {
 		wp_enqueue_style(
 			'metaslider-blocks-editor-css',
 			plugins_url('assets/css/gutenberg/editor-block-' . sanitize_title(METASLIDER_VERSION) . '.css', __FILE__),
-			array('wp-blocks'),
+			array('wp-block-library'),
 			$version
 		);
 		
@@ -79,5 +79,34 @@ class MetaSlider_Gutenberg {
 		}
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Backup function for Gutenberg's gutenberg_get_jed_locale_data
+	 * 
+	 * @param string $domain - The text domain for the strings
+	 */
+	private function gutenberg_get_jed_locale_data($domain) {
+
+		if (function_exists('gutenberg_get_jed_locale_data')) {
+			return gutenberg_get_jed_locale_data($domain);
+		}
+		
+		$translations = get_translations_for_domain($domain);
+		$locale = array(
+			'' => array(
+				'domain' => $domain,
+				'lang' => is_admin() && function_exists('get_user_locale') ? get_user_locale() : get_locale(),
+			),
+		);
+
+		if (!empty($translations->headers['Plural-Forms'])) {
+			$locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
+		}
+
+		foreach ($translations->entries as $msgid => $entry) {
+			$locale[$msgid] = $entry->translations;
+		}
+		return $locale;
 	}
 }

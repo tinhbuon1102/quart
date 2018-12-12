@@ -22,6 +22,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h3><?php _e( 'Billing address', 'woocommerce' ); ?></h3>
 
 			<p><?php echo $order->get_formatted_billing_address(); ?></p>
+			
+			<?php if( method_exists($order, 'get_billing_phone') ) : ?>
+
+			<?php if ( $order->get_billing_phone() )  ?>
+					<p><?php echo esc_html( $order->get_billing_phone() ); ?></p>
+
+			<?php endif; ?>
+
+			<?php if( method_exists($order, 'get_billing_email') ) : ?>
+
+			<?php if ( $order->get_billing_email() ) ?>
+					<p><?php echo esc_html( $order->get_billing_email() ); ?></p>
+
+			<?php endif; ?>
 
 		</td>
 
