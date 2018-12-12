@@ -14,11 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $post, $product, $woocommerce;
 
 $attachment_ids = $product->get_gallery_attachment_ids();
-
+$image_caption 	= get_post( get_post_thumbnail_id() )->post_excerpt;
+$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $loop->post->ID ), 'full' );
 if ( $attachment_ids ) {
 	$loop 		= 0;
 	$columns 	= apply_filters( 'woocommerce_product_thumbnails_columns', 3 );
 	?>
+<?php if($image_caption=="mobile") { ?>
 	<div id="pdp-thumb-alt-wrapper" ><?php
 
 		foreach ( $attachment_ids as $attachment_id ) {
@@ -41,6 +43,7 @@ if ( $attachment_ids ) {
 			$image_class = esc_attr( implode( ' ', $classes ) );
 			$image_title = esc_attr( get_the_title( $attachment_id ) );
 			$zoom_img_caption =  wp_get_attachment( $attachment_id );
+			$attachment_ids = $product->get_gallery_image_ids();
 			?>
             
             
@@ -51,17 +54,30 @@ if ( $attachment_ids ) {
 						</a>
                         <a style="float:right; padding:5px;" href="<?php echo $image_link ?>" title="<?php echo $image_title ?>" rel="useZoom: 'pdp-zoom'" class="pdp-image-alt pdp-image-alt-hide "></a>
                         
-			<?php } ?>	
+
 						
             <?php
 
-			// echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', sprintf( '<a href="%s" class="%s" title="%s" data-rel="prettyPhoto[product-gallery]">%s</a>', $image_link, $image_class, $image_title, $image ), $attachment_id, $post->ID, $image_class );
+			/**/
             
-            
+		}
 
 			$loop++;
 		}
 
 	?></div>
+<?php } else { ?>
+<div id="thumbs" class="thums-box">
+<?php
+		if ( $attachment_ids && $product->get_image_id() ) {
+			echo '<img src="'.$featured_image[0].'" class="thum-image" />';
+				foreach ( $attachment_ids as $attachment_id ) {
+					$full_url = wp_get_attachment_image_src( $attachment_id, 'full' )[0];
+					echo '<img src="'.$full_url.'" class="thum-image" />'; // phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
+				}
+			}
+		?>
+</div><!--/thums-box-->
+<?php } ?>
 	<?php 
 }

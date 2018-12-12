@@ -928,6 +928,7 @@ add_action( 'wp_enqueue_scripts', 'custom_styles' );
 // Hooking up our function to theme setup
 add_action( 'init', 'create_posttype' );*/
 function add_scripts(){
+	wp_register_script( 'singlepro-js', get_template_directory_uri() . '/js/single-product.js', array(), false, true);
 	wp_register_script( 'lookbook-js', get_template_directory_uri() . '/js/lookbook.js', array(), false, true);
 	$tmp_path_arr = array(
 	'temp_uri' => get_template_directory_uri(),
@@ -936,6 +937,9 @@ function add_scripts(){
 	wp_localize_script( 'lookbook-js', 'home_path', 'tmp_path', $tmp_path_arr );
     if( is_single() && get_post_type()=='lookbook' ){
         wp_enqueue_script('lookbook-js');
+    }
+	if( is_product() ){
+        wp_enqueue_script('singlepro-js');
     }
 }
 add_action('wp_enqueue_scripts', 'add_scripts');

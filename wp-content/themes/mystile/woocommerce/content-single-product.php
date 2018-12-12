@@ -12,7 +12,14 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
-
+global $post, $product, $woocommerce;
+$attachment_ids = $product->get_gallery_attachment_ids();
+$image_caption 	= get_post( get_post_thumbnail_id() )->post_excerpt;
+if($image_caption=="mobile") {
+	$wrapClass = 'zoomed-wrap';
+}else{
+	$wrapClass = 'normal-wrap';
+}
 ?>
 
 <?php
@@ -28,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 	return;
 	 }
 ?>
-<div id="pdp class="dark"   >
+<div id="pdp" class="dark <?php echo $wrapClass; ?>">
 <div itemscope itemtype="<?php echo woocommerce_get_product_schema(); ?>" id="product-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<?php
 		/**

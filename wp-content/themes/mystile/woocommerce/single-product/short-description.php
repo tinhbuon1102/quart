@@ -27,7 +27,7 @@ if ( ! $post->post_excerpt ) {
 if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
     ?>                       
 <div class="pre-note">
-<ul class="pre-list"><li>10月中旬以降からの発送開始となります。</li>
+<ul class="pre-list"><li>3月下旬からの発送開始となります。</li>
 <li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
@@ -37,7 +37,7 @@ if (preg_match("/Pre Order/i", $categ) && preg_match("/OUTER/i", $categ)) {
     ?>                       
 <div class="pre-note">
 <ul class="pre-list">
-<li>10月中旬以降からの発送開始となります。</li>
+<li>3月下旬からの発送開始となります。</li>
 <li>お支払いは銀行振込またはPaypalのみでお願い致します。</li>
 <li>キャンセル、不良品理由以外での返品は不可となります。</li>
 </ul>
@@ -104,8 +104,16 @@ echo ('[/su_tab]');
 	
 echo ('[/su_tab]');
 echo ('[/su_tabs]'); ?>
+<?php //} elseif( ) { ?>
 <?php } else { ?>
 	<?php echo apply_filters( 'woocommerce_short_description', $post->post_excerpt ) ?>
+	<div class="size-chart-yith">
+	<?php 
+	//$charts = $post->get_charts_from_product_id( $post->ID );
+			 //echo $charts;
+	do_action('yith_wcpsc_print_product_size_chart_by_id', $id, true); 
+	?>
+	</div>
 	<?php }
 	
 $tabs_shortcode = ob_get_contents();

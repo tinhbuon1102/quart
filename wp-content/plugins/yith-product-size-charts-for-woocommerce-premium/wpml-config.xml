@@ -1,0 +1,5 @@
+<wpml-config>
+    <custom-fields>
+        <custom-field action="copy">yith_wcpsc_product_charts</custom-field>
+    </custom-fields>
+</wpml-config>
