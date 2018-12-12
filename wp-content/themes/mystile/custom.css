@@ -2752,6 +2752,9 @@ a.cart-go-back i {
 body.single-product.two-col-left {
     background: #FFF;
 }
+.woocommerce .yith-wcpsc-product-size-charts-popup {
+    box-shadow: none !important;
+}
 @media only screen and (min-width: 768px) {
 	div#thumbs .thum-image {
     cursor: pointer;

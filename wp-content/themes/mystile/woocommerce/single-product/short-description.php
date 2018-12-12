@@ -104,16 +104,22 @@ echo ('[/su_tab]');
 	
 echo ('[/su_tab]');
 echo ('[/su_tabs]'); ?>
-<?php //} elseif( ) { ?>
+<?php } elseif ( function_exists( 'YITH_WCPSC_Frontend' ) && is_callable( array( YITH_WCPSC_Frontend(), 'get_charts_from_product_id' ) ) && !!YITH_WCPSC_Frontend()->get_charts_from_product_id( $product_id ) ) { ?>
+	<?php 
+	echo ('[su_tabs class="my-custom-tabs"]');
+echo ('[su_tab title="アイテム説明"]');
+echo apply_filters( 'woocommerce_short_description', $post->post_excerpt );
+echo ('[/su_tab]');
+	echo ('[su_tab title="サイズ詳細"]');
+		echo '<div class="size-chart-yith">';
+		echo ('[sizecharts type="charts"]');
+		echo '<p>サイズ単位はcmです。</p>';
+		echo '</div>';
+	echo ('[/su_tab]');
+echo ('[/su_tabs]');
+	?>
 <?php } else { ?>
 	<?php echo apply_filters( 'woocommerce_short_description', $post->post_excerpt ) ?>
-	<div class="size-chart-yith">
-	<?php 
-	//$charts = $post->get_charts_from_product_id( $post->ID );
-			 //echo $charts;
-	do_action('yith_wcpsc_print_product_size_chart_by_id', $id, true); 
-	?>
-	</div>
 	<?php }
 	
 $tabs_shortcode = ob_get_contents();
