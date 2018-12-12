@@ -104,7 +104,7 @@ echo ('[/su_tab]');
 	
 echo ('[/su_tab]');
 echo ('[/su_tabs]'); ?>
-<?php } elseif ( function_exists( 'YITH_WCPSC_Frontend' ) && is_callable( array( YITH_WCPSC_Frontend(), 'get_charts_from_product_id' ) ) && !!YITH_WCPSC_Frontend()->get_charts_from_product_id( $product_id ) ) { ?>
+<?php } elseif ( function_exists( 'YITH_WCPSC_Frontend' ) && is_callable( array( YITH_WCPSC_Frontend(), 'get_charts_from_product_id' ) ) && !!YITH_WCPSC_Frontend()->get_charts_from_product_id( $post->ID ) ) { ?>
 	<?php 
 	echo ('[su_tabs class="my-custom-tabs"]');
 echo ('[su_tab title="アイテム説明"]');
