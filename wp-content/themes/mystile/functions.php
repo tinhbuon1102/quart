@@ -1141,3 +1141,20 @@ function touch_private_time( $edit = 1, $for_post = 1, $tab_index = 0, $multi = 
 	
 	echo '</div><input type="hidden" id="ss_private" name="private_time[ss]" value="' . $ss . '" disabled/>';
 }
+
+add_filter('woocommerce_shipping_free_shipping_is_available', 'ch_free_is_available_in_time', 10, 1);
+if (!function_exists('ch_free_is_available_in_time')) {
+
+    function ch_free_is_available_in_time($is_available) {
+		date_default_timezone_set('Asia/Tokyo');
+        $from = "2018-12-21 21:00:00.0";
+        $to = "2018-12-25 23:59:00.0";
+//  check if date is today or in the future
+        if (time() >= strtotime($from) && time() <= strtotime($to)) {
+            return $is_available;
+        } else {
+            return false;
+        }
+    }
+
+}
