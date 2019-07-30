@@ -42,7 +42,7 @@ class DUPX_Log
 
 	public static function infoObject($msg, $object, $logging = 1)
 	{
-		$msg = $msg + "\n" + print_r($object, true);
+		$msg = $msg . "\n" . print_r($object, true);
 
 		self::Info($msg, $logging);
 	}
@@ -56,9 +56,65 @@ class DUPX_Log
 		$log_msg = strip_tags($log_msg);
 		@fwrite($GLOBALS["LOG_FILE_HANDLE"], "\nINSTALLER ERROR:\n{$log_msg}\n");
 		@fclose($GLOBALS["LOG_FILE_HANDLE"]);
+		if ($GLOBALS['DUPX_STATE']->mode == DUPX_InstallerMode::OverwriteInstall) {
+			DUPX_U::maintenanceMode(false, $GLOBALS['DUPX_ROOT']);
+		}
 		die("<div class='dupx-ui-error'><hr size='1' /><b style='color:#B80000;'>INSTALL ERROR!</b><br/>{$errorMessage}</div>");
 	}
 
 }
 
+class DUPX_Handler {
 
+	public static $should_log = true;
+
+	/**
+	 * Error handler
+	 *
+	 * @param  integer $errno   Error level
+	 * @param  string  $errstr  Error message
+	 * @param  string  $errfile Error file
+	 * @param  integer $errline Error line
+	 * @return void
+	 */
+	public static function error($errno, $errstr, $errfile, $errline) {
+		if (self::$should_log) {
+			$msg = $errstr.' (Code: '.$errno.', line '.$errline.' in '.$errfile.')';
+
+			switch ($errno) {
+				case E_ERROR :		
+					$log_message = '*** PHP Fatal Error Message: ' . $msg;
+					DUPX_Log::error($log_message);
+					break;
+				case E_WARNING :	
+					$log_message = '*** PHP Warning Message: ' . $msg;
+					DUPX_Log::info($log_message);
+					break;
+				case E_NOTICE  :
+					if ($GLOBALS["LOGGING"] > 2) {
+						$log_message = '*** PHP Notice Message: ' . $msg;
+						DUPX_Log::info($log_message);
+					}
+					break;
+				default :
+					$log_message = "***  PHP Issue Message ({$errno}): " . $msg;
+					DUPX_Log::info($log_message);
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Shutdown handler
+	 *
+	 * @return void
+	 */
+	public static function shutdown() {
+		if (($error = error_get_last())) {
+			DUPX_Handler::error($error['type'], $error['message'], $error['file'], $error['line']);
+		}
+	}
+}
+
+@set_error_handler('DUPX_Handler::error');
+@register_shutdown_function('DUPX_Handler::shutdown');

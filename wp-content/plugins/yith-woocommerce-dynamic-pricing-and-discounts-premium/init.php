@@ -1,19 +1,21 @@
 <?php
 /*
 Plugin Name: YITH WooCommerce Dynamic Pricing and Discounts Premium
-Description: YITH WooCommerce Dynamic Pricing and Discounts offers a powerful tool to directly modify prices and discounts of your store
-Version: 1.2.5
-Author: YITHEMES
-Author URI: http://yithemes.com/
+Plugin URI: https://yithemes.com/themes/plugins/yith-woocommerce-dynamic-pricing-and-discounts/
+Description: <code><strong>YITH WooCommerce Dynamic Pricing and Discounts</code></strong> allows editing prices and enabling dynamic discounts in a simple, quick and intuitive way. Keeping a store without this features would be a serious mistake! <a href="https://yithemes.com/" target="_blank">Get more plugins for your e-commerce shop on <strong>YITH</strong></a>.
+Version: 1.4.9
+Author: YITH
+Author URI: https://yithemes.com/
 Text Domain: ywdpd
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Domain Path: /languages/
+WC requires at least: 3.0.0
+WC tested up to: 3.5.0
 */
 
 /*
  * @package YITH WooCommerce Dynamic Pricing and Discounts Premium
  * @since   1.0.0
- * @author  YITHEMES
+ * @author  YITH
  */
 
 
@@ -49,7 +51,7 @@ yit_deactive_free_version( 'YITH_YWDPD_FREE_INIT', plugin_basename( __FILE__ ) )
 if ( defined( 'YITH_YWDPD_VERSION' ) ) {
     return;
 }else{
-    define( 'YITH_YWDPD_VERSION', '1.2.5' );
+    define( 'YITH_YWDPD_VERSION', '1.4.9' );
 }
 
 if ( ! defined( 'YITH_YWDPD_PREMIUM' ) ) {
@@ -108,6 +110,11 @@ if ( ! function_exists( 'yith_ywdpd_install' ) ) {
         } else {
             do_action( 'yith_ywdpd_init' );
         }
+
+	    // check for update table
+	    if( function_exists( 'yith_ywdpd_check_update_to_cpt' ) ) {
+		    yith_ywdpd_check_update_to_cpt();
+	    }
     }
 
     add_action( 'plugins_loaded', 'yith_ywdpd_install', 12 );
@@ -138,13 +145,17 @@ function yith_ywdpd_premium_constructor() {
 
     // Load YWDPD text domain ___________________________________
     load_plugin_textdomain( 'ywdpd', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	if( ! class_exists( 'WP_List_Table' ) ) {
+		require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+	}
 
     require_once( YITH_YWDPD_INC . 'functions.yith-wc-dynamic-pricing.php' );
     require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing.php' );
     require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-discounts.php' );
-	require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing-admin.php' );
-	require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing-frontend.php' );
 	require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing-helper.php' );
+    require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing-admin.php' );
+	require_once( YITH_YWDPD_INC . 'class-yith-wc-dynamic-pricing-frontend.php' );
+	require_once( YITH_YWDPD_INC . 'admin/class.ywdpd-discount-list-table.php' );
 
     if( defined( 'YITH_WPV_PREMIUM') ){
         require_once( YITH_YWDPD_INC . 'compatibility/yith-woocommerce-product-vendors.php' );
@@ -160,8 +171,6 @@ function yith_ywdpd_premium_constructor() {
     YITH_WC_Dynamic_Pricing();
     YITH_WC_Dynamic_Pricing_Frontend();
     YITH_WC_Dynamic_Discounts();
-
-
 
 }
 add_action( 'yith_ywdpd_init', 'yith_ywdpd_premium_constructor' );

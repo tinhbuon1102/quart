@@ -281,7 +281,8 @@ Auto Posts to view.step3.php  -->
                 pos: 0,
                 pass: 0,
                 first_chunk: 1,
-				progress: 0
+				progress: 0,
+				delimiter: ';'
             };
         } else if(!dbchunk){
 		    local_data = {};
@@ -297,7 +298,6 @@ Auto Posts to view.step3.php  -->
 		$.ajax({
 			type: "POST",
 			timeout: dbchunk ? 600000 : 10000000, // in milliseconds
-			dataType: "json",
 			url: window.location.href,
 			data: $formInput.serialize() + new_data,
 			beforeSend: function () {
@@ -307,7 +307,49 @@ Auto Posts to view.step3.php  -->
 					loadProgress();
 				}
 			},
-			success: function (data) {
+			success: function (respData, textStatus, xHr) {
+				try {
+					var data = DUPX.parseJSON(respData);
+				} catch(err) {
+					console.error(err);
+					console.error('JSON parse failed for response data: ' + respData);
+					var dbchunk_retry = parseInt($('#dbchunk_retry').val());
+					if (dbchunk && dbchunk_retry < <?php echo $GLOBALS['DB_INSTALL_MULTI_THREADED_MAX_RETRIES'];?>) {
+						var status  = "Server Code: " + xhr.status + "\n";
+						status += "Status: " + xhr.statusText + "\n";
+						status += "Response: " + xhr.responseText;
+						console.error(status);
+
+						dbchunk_retry = dbchunk_retry + 1;
+						console.log('Incrementing db chunk install retrying to: ' + dbchunk_retry);
+						$('#dbchunk_retry').val(dbchunk_retry);
+						DUPX.runDeployment();
+					} else {
+						var status  = "<b>Server Code:</b> "	+ xhr.status		+ "<br/>";
+						status += "<b>Status:</b> "				+ xhr.statusText	+ "<br/>";
+						status += "<b>Response:</b> "			+ xhr.responseText  + "<hr/>";
+
+						if(textStatus && textStatus.toLowerCase() == "timeout" || textStatus.toLowerCase() == "service unavailable") {
+							status += "<b>Recommendation:</b><br/>";
+							status += "To resolve this problem please follow the instructions showing <a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-100-q'>in the FAQ</a>.<br/><br/>";
+						}
+						else if((xhr.status == 403) || (xhr.status == 500)) {
+							status += "<b>Recommendation</b><br/>";
+							status += "See <a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-120-q'>this section</a> of the Technical FAQ for possible resolutions.<br/><br/>"
+						}
+						else if(xhr.status == 0) {
+							status += "<b>Recommendation</b><br/>";
+							status += "This may be a server timeout and performing a 'Manual Extract' install can avoid timeouts. See <a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/?reload=1#faq-installer-015-q'>this section</a> of the FAQ for a description of how to do that.<br/><br/>"
+						} else {
+							status += "<b>Additional Troubleshooting Tips:</b><br/> ";
+							status += "&raquo; <a target='_blank' href='https://snapcreek.com/duplicator/docs/'>Help Resources</a><br/>";
+							status += "&raquo; <a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/'>Technical FAQ</a>";
+						}
+						$('#ajaxerr-data').html(status);
+						DUPX.hideProgressBar();
+					}
+					return false;
+				}
 			    if(local_data.continue_chunking){
 					var is_error = false;
                     if ('undefined' === typeof(data)) {
@@ -373,7 +415,7 @@ Auto Posts to view.step3.php  -->
 					DUPX.hideProgressBar();
 				}
 			},
-			error: function (xhr, textstatus) {
+			error: function (xhr, textStatus) {
 				var dbchunk_retry = parseInt($('#dbchunk_retry').val());
 				if (dbchunk && dbchunk_retry < <?php echo $GLOBALS['DB_INSTALL_MULTI_THREADED_MAX_RETRIES'];?>) {
 					var status  = "Server Code: " + xhr.status + "\n";
@@ -390,7 +432,7 @@ Auto Posts to view.step3.php  -->
 					status += "<b>Status:</b> "				+ xhr.statusText	+ "<br/>";
 					status += "<b>Response:</b> "			+ xhr.responseText  + "<hr/>";
 
-					if(textstatus && textstatus.toLowerCase() == "timeout" || textstatus.toLowerCase() == "service unavailable") {
+					if(textStatus && textStatus.toLowerCase() == "timeout" || textStatus.toLowerCase() == "service unavailable") {
 						status += "<b>Recommendation:</b><br/>";
 						status += "To resolve this problem please follow the instructions showing <a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-100-q'>in the FAQ</a>.<br/><br/>";
 					}

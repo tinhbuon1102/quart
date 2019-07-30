@@ -43,13 +43,22 @@ if (isset($_REQUEST['action'])) {
 
 <!-- ===============================
 NEW FEATURES -->
-<label class="profile-type"><?php DUP_PRO_U::esc_html_e("New Features "); echo  "({$dup_version})" ; ?></label>
-<?php
-        //DUP_PRO_U::esc_html_e('Primarily a security and bug-fix release.');
-	?>
-<br/>
-    See <a href="https://snapcreek.com/duplicator/docs/changelog/" target="_blank">changelog</a> for details on new features and fixes in this release.
-<br/><br/><br/>
+<label class="profile-type"><?php DUP_PRO_U::esc_html_e("Recent Feature Highlights "); ?></label>
+
+<p class="item">
+
+        <?php
+            echo '<b>';
+            DUP_PRO_U::esc_html_e('S3-Compatible Storage: ');
+            echo '</b>';
+            
+            DUP_PRO_U::esc_html_e('Support for S3-Compatible Storage types besides Amazon (Wasabi, Digital Ocean, etc...)');
+        ?>
+
+    <br/><br/>
+    See <a href="https://snapcreek.com/duplicator/docs/changelog/" target="_blank">changelog</a> for details on all new features and fixes in this release.           
+</p>
+
 
 <!-- ===============================
 RECENT FEATURES -->
@@ -76,7 +85,7 @@ RECENT FEATURES -->
 FEATURE SURVEY -->
 <label class="profile-type"><?php DUP_PRO_U::esc_html_e("Want a New Feature?")?></label><br/>
 <?php
-    echo '<strong><a target="blank" href="https://www.surveymonkey.com/r/XGFC7K8">' . 
+    echo '<strong><a target="blank" href="https://snapcreek.com/prosurvey">' . 
         DUP_PRO_U::__('Just answer this single question') . '</a></strong>' . DUP_PRO_U::__(' to tell us what feature you want added!');
 ?>
 <br/><br/><br/>

@@ -368,10 +368,26 @@ DUPX.testDBConnect = function ()
     }
 	$.ajax({
 		type: "POST",
+		dataType: "text",
 		timeout: 25000,
 		url: ajax_url,
 		data: $('#s2-input-form').serialize(),
-		success: function (data) {
+		success: function (respData, textStatus, xHr) {
+			try { 
+                var data = DUPX.parseJSON(respData); 
+            } catch(err) {
+                console.error(err);
+                console.error('JSON parse failed for response data: ' + respData);
+				var msg  = "<b>Error Processing Request</b> <br/> An error occurred while testing the database connection! Please Try Again...<br/> ";
+				msg		+= "<small>If the error persists contact your host for database connection requirements.</small><br/> ";
+				msg		+= "<small>Status details: " + textStatus + "</small>";
+				$dbResult.html("<div class='message dupx-fail'>" + msg + "</div>");
+				<?php if ($GLOBALS['DUPX_DEBUG']) : ?>
+					var jsonStr = JSON.stringify(data, null, 2);
+					$('#debug-dbtest-json').val(jsonStr);
+				<?php endif; ?>
+                return false; 
+            } 
 			DUPX.intTestDBResults(data, $dbResult);
 		},
 		error: function (data) {

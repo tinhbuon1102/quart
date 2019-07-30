@@ -31,6 +31,51 @@ DupPro._WordPressInitTime		= '<?php echo  current_time("H:i:s")?>';
 DupPro._ServerInitDateTime		= '<?php echo  date("D M d Y H:i:s O")?>';
 DupPro._ClientInitDateTime		= new Date();
 
+DupPro.parseJSON = function(mixData) {
+    try {
+		var parsed = JSON.parse(mixData);
+		return parsed;
+	} catch (e) {
+		console.log("JSON parse failed - 1");
+		console.log(mixData);
+	}
+
+	if (mixData.indexOf('[') > -1 && mixData.indexOf('{') > -1) {
+		if (mixData.indexOf('{') < mixData.indexOf('[')) {
+			var startBracket = '{';
+			var endBracket = '}';
+		} else {
+			var startBracket = '[';
+			var endBracket = ']';
+		}
+	} else if (mixData.indexOf('[') > -1 && mixData.indexOf('{') === -1) {
+		var startBracket = '[';
+		var endBracket = ']';
+	} else {
+		var startBracket = '{';
+		var endBracket = '}';
+	}
+	
+	var jsonStartPos = mixData.indexOf(startBracket);
+	var jsonLastPos = mixData.lastIndexOf(endBracket);
+	if (jsonStartPos > -1 && jsonLastPos > -1) {
+		var expectedJsonStr = mixData.slice(jsonStartPos, jsonLastPos + 1);
+		try {
+			var parsed = JSON.parse(expectedJsonStr);
+			return parsed;
+		} catch (e) {
+			console.log("JSON parse failed - 2");
+			console.log(mixData);
+			throw e;
+            // errorCallback(xHr, textstatus, 'extract');
+            return false;
+		}
+	}
+	// errorCallback(xHr, textstatus, 'extract');
+	throw "could not parse the JSON";
+    return false;
+}
+
 /* ============================================================================
  *  BASE NAMESPACE: All methods at the top of the Duplicator Namespace 
  * ============================================================================ */
@@ -159,12 +204,18 @@ DupPro.UI.ClearTraceLog = function (reload)
     jQuery.ajax({
         type: "POST",
         url: ajaxurl,
-        dataType: "json",
         data: {
 			action: 'duplicator_pro_delete_trace_log',
 			nonce: '<?php echo wp_create_nonce('duplicator_pro_delete_trace_log'); ?>'
 		},
-        success: function (data) {
+        success: function (respData) {
+			try {
+                var data = DupPro.parseJSON(respData);
+            } catch(err) {
+                console.error(err);
+                console.error('JSON parse failed for response data: ' + respData);
+				return false;
+			}
 			if (reload) {
 				window.location.reload();
 			}
@@ -223,7 +274,14 @@ DupPro.UI.Clock  = function()
 	};
 }();
 
+/* ============================================================================
+ *  Util functions
+ *  =========================================================================== */
+DupPro.Util = {};
 
+DupPro.Util.isEmpty = function (val) {
+    return (val === undefined || val == null || val.length <= 0) ? true : false;
+};
 
 jQuery(document).ready(function ($) 
 {

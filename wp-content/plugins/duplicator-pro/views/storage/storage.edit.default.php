@@ -65,7 +65,14 @@ TOOL-BAR -->
     <table class="provider form-table">	
 		<tr valign="top">
             <th scope="row"><label><?php DUP_PRO_U::esc_html_e("Name"); ?></label></th>
-            <td><?php DUP_PRO_U::esc_html_e('Default'); ?></td>
+            <td>
+				<?php DUP_PRO_U::esc_html_e('Default'); ?>
+				<i class="fa fa-question-circle"
+				   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Default Storage Type:"); ?>"
+				   data-tooltip="<?php DUP_PRO_U::esc_attr_e('The "Default" storage type is a built in type that cannot be removed.  This storage type is used by default should '
+					   . 'no other storage types be available.  This storage type is always stored to the local server.'); ?>">
+				</i>
+			</td>
         </tr>	
         <tr valign="top">
             <th scope="row"><label><?php DUP_PRO_U::esc_html_e("Type"); ?></label></th>

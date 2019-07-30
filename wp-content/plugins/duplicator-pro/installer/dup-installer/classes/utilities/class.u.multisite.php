@@ -96,20 +96,20 @@ class DUPX_MU
 
                 // Get a list of all files/subdirectories within the core uploads dir. For all 'non-sites' directories do a recursive delete. For all files, delete.
 
-                $filenames = array_diff(scandir($uploads_dir), array('.', '..'));
-
-                foreach ($filenames as $filename) {
-                    $full_path = "$uploads_dir/$filename";
-
-                    if (is_dir($full_path)) {
-                        DUPX_Log::info("#### Recursively deleting $full_path");
-                        if ($filename != 'sites' || $is_old_mu) {
-                            DUPX_U::deleteDirectory($full_path, true);
+                if (file_exists($uploads_dir)) {
+                    $filenames = array_diff(scandir($uploads_dir), array('.', '..'));
+                    foreach ($filenames as $filename) {
+                        $full_path = "$uploads_dir/$filename";
+                        if (is_dir($full_path)) {
+                            DUPX_Log::info("#### Recursively deleting $full_path");
+                            if ($filename != 'sites' || $is_old_mu) {
+                                DUPX_U::deleteDirectory($full_path, true);
+                            } else {
+                                DUPX_Log::info("#### Skipping $full_path");
+                            }
                         } else {
-                            DUPX_Log::info("#### Skipping $full_path");
+                            $success = @unlink($full_path);
                         }
-                    } else {
-                        $success = @unlink($full_path);
                     }
                 }
             } catch (Exception $ex) {
@@ -231,7 +231,7 @@ class DUPX_MU
 
         self::purgeMultisiteTables($dbh, $base_prefix);
 
-        return $success;
+        return true;
     }
 
     // Purge non_site where meta_key in wp_usermeta starts with data from other subsite or root site,

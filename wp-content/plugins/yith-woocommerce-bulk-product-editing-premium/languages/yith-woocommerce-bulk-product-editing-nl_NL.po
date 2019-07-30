@@ -4,15 +4,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: YITH WooCommerce Bulk Product Editing Premium\n"
 "Report-Msgid-Bugs-To: Your Inspiration Themes <plugins@yithemes.com>\n"
-"POT-Creation-Date: 2018-06-06 12:09+0100\n"
-"PO-Revision-Date: 2018-06-06 12:14+0100\n"
+"POT-Creation-Date: 2018-11-19 14:21:51+00:00\n"
+"PO-Revision-Date: 2018-10-29 19:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: Your Inspiration Themes <info@yithemes.com>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.13\n"
+"X-Generator: Poedit 2.1.1\n"
 "X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
 "_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;"
 "esc_html_x:1,2c\n"
@@ -38,7 +38,7 @@ msgstr "Importeren"
 msgid "Enabled Columns"
 msgstr "Kolummen inschakelen"
 
-#: class.yith-wcbep-admin-premium.php:74 class.yith-wcbep-admin.php:210
+#: class.yith-wcbep-admin-premium.php:74
 msgid "Settings"
 msgstr "Instellingen"
 
@@ -57,14 +57,12 @@ msgid "Importing..."
 msgstr "Importeren..."
 
 #: class.yith-wcbep-admin-premium.php:144
-#, php-format
 msgid "%s product deleted"
 msgid_plural "%s products deleted"
 msgstr[0] "%s product verwijderd"
 msgstr[1] "%s producten verwijderd"
 
-#: class.yith-wcbep-admin-premium.php:874
-#, php-format
+#: class.yith-wcbep-admin-premium.php:833
 msgid ""
 "The downloadable file %s cannot be used as it does not have an allowed file "
 "type. Allowed types include: %s"
@@ -72,66 +70,50 @@ msgstr ""
 "Het gedownloade bestand %s kan niet worden gebruikt, aangezien het geen "
 "toegestaan bestandstype heeft. Toegestane bestandstypes bevatten: %s"
 
-#: class.yith-wcbep-admin-premium.php:881
-#, php-format
+#: class.yith-wcbep-admin-premium.php:840
 msgid ""
 "The downloadable file %s cannot be used as it does not exist on the server."
 msgstr ""
 "Het gedownloade bestand %s kan niet worden gebruikt, aangezien het niet "
 "bestaat in de server."
 
-#: class.yith-wcbep-admin-premium.php:931 class.yith-wcbep-admin.php:190
-#, php-format
+#: class.yith-wcbep-admin.php:190
 msgid "%s product edited"
 msgid_plural "%s products edited"
 msgstr[0] "%s product bewerkt"
 msgstr[1] "%s producten bewerkt"
 
-#: class.yith-wcbep-admin-premium.php:933
-#, php-format
-msgid "%s new product"
-msgid_plural "%s new products"
-msgstr[0] "%s nieuw product"
-msgstr[1] "%s nieuwe producten"
-
-#: class.yith-wcbep-admin.php:232
-msgid "Plugin Documentation"
-msgstr "Plugin Documentatie"
-
-#: class.yith-wcbep-admin.php:254 class.yith-wcbep-admin.php:266
-#: class.yith-wcbep-admin.php:267
+#: class.yith-wcbep-admin.php:252
 msgid "Bulk Product Editing"
 msgstr "Bulk Product Editing"
 
-#: class.yith-wcbep-admin.php:258
+#: class.yith-wcbep-admin.php:256
 msgid "Premium Version"
 msgstr "Premium Versie"
 
-#: class.yith-wcbep-admin.php:324
+#: class.yith-wcbep-admin.php:322
 msgid "No Product Selected: to make a bulk edit, select one or more products"
 msgstr ""
 "Geen product geselecteerd: voor bulk bewerking, selecteer een of meer "
 "producten"
 
-#: class.yith-wcbep-admin.php:325
+#: class.yith-wcbep-admin.php:323
 msgid "- - - Empty - - -"
 msgstr "- - - Leeg - - -"
 
-#: class.yith-wcbep-admin.php:326
-#: includes/class.yith-wcbep-list-table-premium.php:743
+#: class.yith-wcbep-admin.php:324
 msgid "file"
 msgstr "bestand"
 
-#: class.yith-wcbep-admin.php:327
-#: includes/class.yith-wcbep-list-table-premium.php:743
+#: class.yith-wcbep-admin.php:325
 msgid "files"
 msgstr "bestanden"
 
-#: class.yith-wcbep-admin.php:328
+#: class.yith-wcbep-admin.php:326
 msgid "This field is not editable for this product!"
 msgstr "Dit veld is niet bewerkbaar voor dit product!"
 
-#: class.yith-wcbep-admin.php:329
+#: class.yith-wcbep-admin.php:327
 msgid ""
 "This field is not editable right now! Please save before trying to edit this "
 "field."
@@ -139,221 +121,220 @@ msgstr ""
 "Dit veld is op dit moment niet bewerkbaar! Sla de wijzigingen op voordat u "
 "dit veld gaat bewerken."
 
-#: class.yith-wcbep-admin.php:330
+#: class.yith-wcbep-admin.php:328
 msgid "ERROR: file not correct!"
 msgstr "ERROR: Bestand onjuist!"
 
-#: class.yith-wcbep-admin.php:331
-#, php-format
+#: class.yith-wcbep-admin.php:329
 msgid "Confirm Deletion [Selected Products: %s]"
 msgstr "Bevestig verwijdering [Geselecteerde producten: %s]"
 
-#: class.yith-wcbep-admin.php:332
-#: templates/premium/main-tab-filters-and-table.php:362
+#: class.yith-wcbep-admin.php:330
+#: templates/premium/main-tab-filters-and-table.php:384
 msgid "Delete Selected"
 msgstr "Verwijder selectie"
 
-#: functions.yith-wcbep-premium.php:95
-#: includes/class.yith-wcbep-list-table-premium.php:956
-#: templates/premium/main-tab-bulk-editor.php:640
+#: functions.yith-wcbep-premium.php:130
+#: includes/class.yith-wcbep-list-table-premium.php:993
+#: templates/premium/main-tab-bulk-editor.php:643
 msgid "Grouped product"
 msgstr "Gegroupeerd product"
 
-#: functions.yith-wcbep-premium.php:98
-#: includes/class.yith-wcbep-list-table-premium.php:957
-#: templates/premium/main-tab-bulk-editor.php:641
+#: functions.yith-wcbep-premium.php:133
+#: includes/class.yith-wcbep-list-table-premium.php:994
+#: templates/premium/main-tab-bulk-editor.php:644
 msgid "External/Affiliate product"
 msgstr "Extern/verwant product"
 
-#: functions.yith-wcbep-premium.php:101
-#: includes/class.yith-wcbep-list-table-premium.php:958
-#: templates/premium/main-tab-bulk-editor.php:642
+#: functions.yith-wcbep-premium.php:136
+#: includes/class.yith-wcbep-list-table-premium.php:995
+#: templates/premium/main-tab-bulk-editor.php:645
 msgid "Variable product"
 msgstr "Variabel product"
 
-#: functions.yith-wcbep-premium.php:104
-#: includes/class.yith-wcbep-list-table-premium.php:955
-#: templates/premium/main-tab-bulk-editor.php:639
+#: functions.yith-wcbep-premium.php:139
+#: includes/class.yith-wcbep-list-table-premium.php:992
+#: templates/premium/main-tab-bulk-editor.php:642
 msgid "Simple product"
 msgstr "Simpel product"
 
-#: functions.yith-wcbep-premium.php:120
+#: functions.yith-wcbep-premium.php:155
 #: includes/class.yith-wcbep-list-table.php:51
 msgid "ID"
 msgstr "ID"
 
-#: functions.yith-wcbep-premium.php:121
+#: functions.yith-wcbep-premium.php:156
 #: includes/class.yith-wcbep-list-table.php:52
 msgid "Title"
 msgstr "Titel"
 
-#: functions.yith-wcbep-premium.php:122
+#: functions.yith-wcbep-premium.php:157
 msgid "Slug"
 msgstr "Slug"
 
-#: functions.yith-wcbep-premium.php:123
+#: functions.yith-wcbep-premium.php:158
 msgid "Image"
 msgstr "Afbeelding"
 
-#: functions.yith-wcbep-premium.php:124
+#: functions.yith-wcbep-premium.php:159
 msgid "Product gallery"
 msgstr "Productgalerij"
 
-#: functions.yith-wcbep-premium.php:125
+#: functions.yith-wcbep-premium.php:160
 msgid "Description"
 msgstr "Beschrijving"
 
-#: functions.yith-wcbep-premium.php:126
+#: functions.yith-wcbep-premium.php:161
 msgid "Short description"
 msgstr "Korte beschrijving"
 
-#: functions.yith-wcbep-premium.php:127
+#: functions.yith-wcbep-premium.php:162
 msgid "Regular price"
 msgstr "Normale prijs"
 
-#: functions.yith-wcbep-premium.php:128
+#: functions.yith-wcbep-premium.php:163
 msgid "Sale price"
 msgstr "Uitverkoop prijs"
 
-#: functions.yith-wcbep-premium.php:129
+#: functions.yith-wcbep-premium.php:164
 msgid "Purchase note"
 msgstr "Verkoop notitie"
 
-#: functions.yith-wcbep-premium.php:130
+#: functions.yith-wcbep-premium.php:165
 #: includes/class.yith-wcbep-list-table.php:55
 msgid "Categories"
 msgstr "Categoriën"
 
-#: functions.yith-wcbep-premium.php:131
+#: functions.yith-wcbep-premium.php:166
 msgid "Tags"
 msgstr "Tags"
 
-#: functions.yith-wcbep-premium.php:132
+#: functions.yith-wcbep-premium.php:167
 msgid "SKU"
 msgstr "SKU"
 
-#: functions.yith-wcbep-premium.php:133
+#: functions.yith-wcbep-premium.php:168
 msgid "Weight"
 msgstr "Gewicht"
 
-#: functions.yith-wcbep-premium.php:134
+#: functions.yith-wcbep-premium.php:169
 msgid "Height"
 msgstr "Hoogte"
 
-#: functions.yith-wcbep-premium.php:135
+#: functions.yith-wcbep-premium.php:170
 msgid "Width"
 msgstr "Breedte"
 
-#: functions.yith-wcbep-premium.php:136
+#: functions.yith-wcbep-premium.php:171
 msgid "Length"
 msgstr "Lengte"
 
-#: functions.yith-wcbep-premium.php:137
+#: functions.yith-wcbep-premium.php:172
 msgid "Stock qty"
 msgstr "Voorraad hoeveelheid"
 
-#: functions.yith-wcbep-premium.php:138
+#: functions.yith-wcbep-premium.php:173
 msgid "Download limit"
 msgstr "Downloadlimiet"
 
-#: functions.yith-wcbep-premium.php:139
+#: functions.yith-wcbep-premium.php:174
 msgid "Download expiry"
 msgstr "Vervaldatum download"
 
-#: functions.yith-wcbep-premium.php:140
+#: functions.yith-wcbep-premium.php:175
 msgid "Downloadable files"
 msgstr "Downloadbare bestanden"
 
-#: functions.yith-wcbep-premium.php:141
+#: functions.yith-wcbep-premium.php:176
 msgid "Menu order"
 msgstr "Menu bestelling"
 
-#: functions.yith-wcbep-premium.php:142
+#: functions.yith-wcbep-premium.php:177
 msgid "Stock status"
 msgstr "Voorraad status"
 
-#: functions.yith-wcbep-premium.php:143
+#: functions.yith-wcbep-premium.php:178
 msgid "Manage stock"
 msgstr "Beheer voorraad"
 
-#: functions.yith-wcbep-premium.php:144
+#: functions.yith-wcbep-premium.php:179
 msgid "Sold individually"
 msgstr "Individueel verkocht"
 
-#: functions.yith-wcbep-premium.php:145
+#: functions.yith-wcbep-premium.php:180
 msgid "Featured"
 msgstr "Featured"
 
-#: functions.yith-wcbep-premium.php:146
+#: functions.yith-wcbep-premium.php:181
 msgid "Virtual"
 msgstr "Virtueel"
 
-#: functions.yith-wcbep-premium.php:147
+#: functions.yith-wcbep-premium.php:182
 msgid "Downloadable"
 msgstr "Downloadbaar"
 
-#: functions.yith-wcbep-premium.php:148
+#: functions.yith-wcbep-premium.php:183
 msgid "Enable reviews"
 msgstr "Reviews inschakelen"
 
-#: functions.yith-wcbep-premium.php:149
+#: functions.yith-wcbep-premium.php:184
 msgid "Tax status"
 msgstr "Belasting status"
 
-#: functions.yith-wcbep-premium.php:150
+#: functions.yith-wcbep-premium.php:185
 msgid "Tax class"
 msgstr "Belasting klasse"
 
-#: functions.yith-wcbep-premium.php:151
+#: functions.yith-wcbep-premium.php:186
 msgid "Allow backorders?"
 msgstr "Nabestellingen toestaan?"
 
-#: functions.yith-wcbep-premium.php:152
+#: functions.yith-wcbep-premium.php:187
 msgid "Shipping class"
 msgstr "Verzending klasse"
 
-#: functions.yith-wcbep-premium.php:153
+#: functions.yith-wcbep-premium.php:188
 msgid "Status"
 msgstr "Status"
 
-#: functions.yith-wcbep-premium.php:154
+#: functions.yith-wcbep-premium.php:189
 msgid "Catalog visibility"
 msgstr "Zichtbaarheid catalogus"
 
-#: functions.yith-wcbep-premium.php:155
+#: functions.yith-wcbep-premium.php:190
 msgid "Download Type"
 msgstr "Download Type"
 
-#: functions.yith-wcbep-premium.php:156
+#: functions.yith-wcbep-premium.php:191
 msgid "Product Type"
 msgstr "Productype"
 
-#: functions.yith-wcbep-premium.php:157
+#: functions.yith-wcbep-premium.php:192
 #: includes/class.yith-wcbep-list-table.php:56
 msgid "Date"
 msgstr "Datum"
 
-#: functions.yith-wcbep-premium.php:158
+#: functions.yith-wcbep-premium.php:193
 msgid "Sale price from"
 msgstr "Uitverkoop prijs formulier"
 
-#: functions.yith-wcbep-premium.php:159
+#: functions.yith-wcbep-premium.php:194
 msgid "Sale price to"
 msgstr "Uitverkoop prijs naar"
 
-#: functions.yith-wcbep-premium.php:160
+#: functions.yith-wcbep-premium.php:195
 msgid "Button text"
 msgstr "Knop tekst"
 
-#: functions.yith-wcbep-premium.php:161
+#: functions.yith-wcbep-premium.php:196
 msgid "Product URL"
 msgstr "Product URL"
 
-#: functions.yith-wcbep-premium.php:162
+#: functions.yith-wcbep-premium.php:197
 msgid "Upsells"
 msgstr "Upsells"
 
-#: functions.yith-wcbep-premium.php:163
+#: functions.yith-wcbep-premium.php:198
 msgid "Cross-sells"
 msgstr "Cross-sells"
 
@@ -365,34 +346,35 @@ msgstr "Aangepaste velden"
 
 #: includes/class.yith-wcbep-custom-fields-manager.php:215
 #: includes/class.yith-wcbep-custom-taxonomies-manager.php:348
+#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:129
 #: includes/compatibility/class.yith-wcbep-brands-add-on-compatibility.php:248
 #: templates/main-tab.php:116 templates/main-tab.php:131
 #: templates/premium/main-tab-bulk-editor.php:37
 #: templates/premium/main-tab-bulk-editor.php:53
 #: templates/premium/main-tab-bulk-editor.php:69
 #: templates/premium/main-tab-bulk-editor.php:85
-#: templates/premium/main-tab-bulk-editor.php:103
-#: templates/premium/main-tab-bulk-editor.php:121
-#: templates/premium/main-tab-bulk-editor.php:139
-#: templates/premium/main-tab-bulk-editor.php:225
-#: templates/premium/main-tab-bulk-editor.php:248
-#: templates/premium/main-tab-bulk-editor.php:281
-#: templates/premium/main-tab-bulk-editor.php:316
-#: templates/premium/main-tab-bulk-editor.php:379
-#: templates/premium/main-tab-bulk-editor.php:394
-#: templates/premium/main-tab-bulk-editor.php:412
-#: templates/premium/main-tab-bulk-editor.php:425
-#: templates/premium/main-tab-bulk-editor.php:505
-#: templates/premium/main-tab-bulk-editor.php:521
-#: templates/premium/main-tab-bulk-editor.php:537
-#: templates/premium/main-tab-bulk-editor.php:553
-#: templates/premium/main-tab-bulk-editor.php:601
-#: templates/premium/main-tab-bulk-editor.php:694
-#: templates/premium/main-tab-bulk-editor.php:711
-#: templates/premium/main-tab-bulk-editor.php:749
-#: templates/premium/main-tab-bulk-editor.php:767
-#: templates/premium/main-tab-bulk-editor.php:785
-#: templates/premium/main-tab-bulk-editor.php:802
+#: templates/premium/main-tab-bulk-editor.php:104
+#: templates/premium/main-tab-bulk-editor.php:123
+#: templates/premium/main-tab-bulk-editor.php:142
+#: templates/premium/main-tab-bulk-editor.php:228
+#: templates/premium/main-tab-bulk-editor.php:251
+#: templates/premium/main-tab-bulk-editor.php:284
+#: templates/premium/main-tab-bulk-editor.php:319
+#: templates/premium/main-tab-bulk-editor.php:382
+#: templates/premium/main-tab-bulk-editor.php:397
+#: templates/premium/main-tab-bulk-editor.php:415
+#: templates/premium/main-tab-bulk-editor.php:428
+#: templates/premium/main-tab-bulk-editor.php:508
+#: templates/premium/main-tab-bulk-editor.php:524
+#: templates/premium/main-tab-bulk-editor.php:540
+#: templates/premium/main-tab-bulk-editor.php:556
+#: templates/premium/main-tab-bulk-editor.php:604
+#: templates/premium/main-tab-bulk-editor.php:697
+#: templates/premium/main-tab-bulk-editor.php:714
+#: templates/premium/main-tab-bulk-editor.php:752
+#: templates/premium/main-tab-bulk-editor.php:770
+#: templates/premium/main-tab-bulk-editor.php:788
+#: templates/premium/main-tab-bulk-editor.php:805
 msgid "Set new"
 msgstr "Nieuwe instellen"
 
@@ -401,13 +383,13 @@ msgstr "Nieuwe instellen"
 #: templates/premium/main-tab-bulk-editor.php:54
 #: templates/premium/main-tab-bulk-editor.php:70
 #: templates/premium/main-tab-bulk-editor.php:86
-#: templates/premium/main-tab-bulk-editor.php:104
-#: templates/premium/main-tab-bulk-editor.php:122
-#: templates/premium/main-tab-bulk-editor.php:282
-#: templates/premium/main-tab-bulk-editor.php:750
-#: templates/premium/main-tab-bulk-editor.php:768
-#: templates/premium/main-tab-bulk-editor.php:786
-#: templates/premium/main-tab-bulk-editor.php:803
+#: templates/premium/main-tab-bulk-editor.php:105
+#: templates/premium/main-tab-bulk-editor.php:124
+#: templates/premium/main-tab-bulk-editor.php:285
+#: templates/premium/main-tab-bulk-editor.php:753
+#: templates/premium/main-tab-bulk-editor.php:771
+#: templates/premium/main-tab-bulk-editor.php:789
+#: templates/premium/main-tab-bulk-editor.php:806
 msgid "Prepend"
 msgstr "Voorvoegen"
 
@@ -416,13 +398,13 @@ msgstr "Voorvoegen"
 #: templates/premium/main-tab-bulk-editor.php:55
 #: templates/premium/main-tab-bulk-editor.php:71
 #: templates/premium/main-tab-bulk-editor.php:87
-#: templates/premium/main-tab-bulk-editor.php:105
-#: templates/premium/main-tab-bulk-editor.php:123
-#: templates/premium/main-tab-bulk-editor.php:283
-#: templates/premium/main-tab-bulk-editor.php:751
-#: templates/premium/main-tab-bulk-editor.php:769
-#: templates/premium/main-tab-bulk-editor.php:787
-#: templates/premium/main-tab-bulk-editor.php:804
+#: templates/premium/main-tab-bulk-editor.php:106
+#: templates/premium/main-tab-bulk-editor.php:125
+#: templates/premium/main-tab-bulk-editor.php:286
+#: templates/premium/main-tab-bulk-editor.php:754
+#: templates/premium/main-tab-bulk-editor.php:772
+#: templates/premium/main-tab-bulk-editor.php:790
+#: templates/premium/main-tab-bulk-editor.php:807
 msgid "Append"
 msgstr "Achteraan toevoegen"
 
@@ -431,33 +413,36 @@ msgstr "Achteraan toevoegen"
 #: templates/premium/main-tab-bulk-editor.php:56
 #: templates/premium/main-tab-bulk-editor.php:72
 #: templates/premium/main-tab-bulk-editor.php:88
-#: templates/premium/main-tab-bulk-editor.php:106
-#: templates/premium/main-tab-bulk-editor.php:124
-#: templates/premium/main-tab-bulk-editor.php:284
-#: templates/premium/main-tab-bulk-editor.php:752
-#: templates/premium/main-tab-bulk-editor.php:770
-#: templates/premium/main-tab-bulk-editor.php:788
-#: templates/premium/main-tab-bulk-editor.php:805
+#: templates/premium/main-tab-bulk-editor.php:107
+#: templates/premium/main-tab-bulk-editor.php:126
+#: templates/premium/main-tab-bulk-editor.php:287
+#: templates/premium/main-tab-bulk-editor.php:755
+#: templates/premium/main-tab-bulk-editor.php:773
+#: templates/premium/main-tab-bulk-editor.php:791
+#: templates/premium/main-tab-bulk-editor.php:808
 msgid "Replace"
 msgstr "Vervangen"
 
 #: includes/class.yith-wcbep-custom-fields-manager.php:219
-#: templates/main-tab.php:138 templates/premium/main-tab-bulk-editor.php:142
-#: templates/premium/main-tab-bulk-editor.php:226
-#: templates/premium/main-tab-bulk-editor.php:401
-#: templates/premium/main-tab-bulk-editor.php:413
-#: templates/premium/main-tab-bulk-editor.php:426
-#: templates/premium/main-tab-bulk-editor.php:510
-#: templates/premium/main-tab-bulk-editor.php:526
-#: templates/premium/main-tab-bulk-editor.php:542
-#: templates/premium/main-tab-bulk-editor.php:558
-#: templates/premium/main-tab-bulk-editor.php:606
-#: templates/premium/main-tab-bulk-editor.php:699
-#: templates/premium/main-tab-bulk-editor.php:716
-#: templates/premium/main-tab-bulk-editor.php:753
-#: templates/premium/main-tab-bulk-editor.php:771
-#: templates/premium/main-tab-bulk-editor.php:789
-#: templates/premium/main-tab-bulk-editor.php:806
+#: templates/main-tab.php:138 templates/premium/main-tab-bulk-editor.php:89
+#: templates/premium/main-tab-bulk-editor.php:108
+#: templates/premium/main-tab-bulk-editor.php:127
+#: templates/premium/main-tab-bulk-editor.php:145
+#: templates/premium/main-tab-bulk-editor.php:229
+#: templates/premium/main-tab-bulk-editor.php:404
+#: templates/premium/main-tab-bulk-editor.php:416
+#: templates/premium/main-tab-bulk-editor.php:429
+#: templates/premium/main-tab-bulk-editor.php:513
+#: templates/premium/main-tab-bulk-editor.php:529
+#: templates/premium/main-tab-bulk-editor.php:545
+#: templates/premium/main-tab-bulk-editor.php:561
+#: templates/premium/main-tab-bulk-editor.php:609
+#: templates/premium/main-tab-bulk-editor.php:702
+#: templates/premium/main-tab-bulk-editor.php:719
+#: templates/premium/main-tab-bulk-editor.php:756
+#: templates/premium/main-tab-bulk-editor.php:774
+#: templates/premium/main-tab-bulk-editor.php:792
+#: templates/premium/main-tab-bulk-editor.php:809
 #: templates/premium/main-tab-custom-input.php:38
 msgid "Delete"
 msgstr "Verwijderen"
@@ -468,16 +453,18 @@ msgid "Custom Taxonomies"
 msgstr "Aangepaste taxonomieën"
 
 #: includes/class.yith-wcbep-custom-taxonomies-manager.php:346
+#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:127
 #: includes/compatibility/class.yith-wcbep-brands-add-on-compatibility.php:246
-#: templates/premium/main-tab-bulk-editor.php:246
-#: templates/premium/main-tab-bulk-editor.php:314
+#: templates/premium/main-tab-bulk-editor.php:249
+#: templates/premium/main-tab-bulk-editor.php:317
 msgid "Add"
 msgstr "Toevoegen"
 
 #: includes/class.yith-wcbep-custom-taxonomies-manager.php:347
+#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:128
 #: includes/compatibility/class.yith-wcbep-brands-add-on-compatibility.php:247
-#: templates/premium/main-tab-bulk-editor.php:247
-#: templates/premium/main-tab-bulk-editor.php:315
+#: templates/premium/main-tab-bulk-editor.php:250
+#: templates/premium/main-tab-bulk-editor.php:318
 msgid "Remove"
 msgstr "Verwijderen"
 
@@ -499,33 +486,27 @@ msgid "Failed to import an attribute because it has no valid name"
 msgstr "Importeren van een eigenschap mislukt, ongeldige naam"
 
 #: includes/class.yith-wcbep-importer.php:160
-#, php-format
 msgid "Attribute <strong>%s</strong> already exists."
 msgstr "Eigenschap <strong>%s</strong> bestaat al."
 
 #: includes/class.yith-wcbep-importer.php:216
-#, php-format
 msgid "Failed to import %s %s"
 msgstr "Importeren mislukt %s %s"
 
 #: includes/class.yith-wcbep-importer.php:237
-#, php-format
 msgid "Failed to import <strong>%s</strong>: Invalid post type %s"
 msgstr "Importeren mislukt <strong>%s</strong>: Ongeldig post type %s"
 
 #: includes/class.yith-wcbep-importer.php:252
-#, php-format
 msgid "%s <strong>%s</strong> already exists."
 msgstr "%s <strong>%s</strong> bestaat al."
 
 #: includes/class.yith-wcbep-importer.php:307
 #: includes/class.yith-wcbep-importer.php:321
-#, php-format
 msgid "Failed to import %s <strong>%s</strong>"
 msgstr "Importeren mislukt %s <strong>%s</strong>"
 
 #: includes/class.yith-wcbep-importer.php:360
-#, php-format
 msgid "Failed to import %s [%s]"
 msgstr "Importeren mislukt %s [%s]"
 
@@ -538,7 +519,6 @@ msgid "Remote server did not respond"
 msgstr "Externe server reageerd niet"
 
 #: includes/class.yith-wcbep-importer.php:481
-#, php-format
 msgid "Remote server returned error response %1$d %2$s"
 msgstr "Externe server geeft error melding %1$d %2$s"
 
@@ -551,107 +531,92 @@ msgid "Zero size file downloaded"
 msgstr "Nul grootte bestand gedownload"
 
 #: includes/class.yith-wcbep-importer.php:502
-#, php-format
 msgid "Remote file is too large, limit is %s"
 msgstr "Extern bestand is te groot, limiet is %s"
 
-#: includes/class.yith-wcbep-list-table-premium.php:743
-#, php-format
-msgid "1 "
-msgid_plural "%s "
-msgstr[0] "1 "
-msgstr[1] "%s "
-
-#: includes/class.yith-wcbep-list-table-premium.php:848
-#: templates/premium/main-tab-bulk-editor.php:439
+#: includes/class.yith-wcbep-list-table-premium.php:885
+#: templates/premium/main-tab-bulk-editor.php:442
 msgid "Taxable"
 msgstr "Belastbaar"
 
-#: includes/class.yith-wcbep-list-table-premium.php:849
-#: templates/premium/main-tab-bulk-editor.php:440
+#: includes/class.yith-wcbep-list-table-premium.php:886
+#: templates/premium/main-tab-bulk-editor.php:443
 msgid "Shipping only"
 msgstr "Uitsluitend verzending"
 
-#: includes/class.yith-wcbep-list-table-premium.php:850
-#: templates/premium/main-tab-bulk-editor.php:441
-msgctxt "Tax status"
-msgid "None"
-msgstr "Geen"
-
-#: includes/class.yith-wcbep-list-table-premium.php:860
-#: templates/premium/main-tab-bulk-editor.php:456
+#: includes/class.yith-wcbep-list-table-premium.php:897
+#: templates/premium/main-tab-bulk-editor.php:459
 msgid "Standard"
 msgstr "Standaard"
 
-#: includes/class.yith-wcbep-list-table-premium.php:879
-#: templates/premium/main-tab-bulk-editor.php:619
+#: includes/class.yith-wcbep-list-table-premium.php:916
+#: templates/premium/main-tab-bulk-editor.php:622
 msgid "Do not allow"
 msgstr "Niet toestaan"
 
-#: includes/class.yith-wcbep-list-table-premium.php:880
-#: templates/premium/main-tab-bulk-editor.php:620
+#: includes/class.yith-wcbep-list-table-premium.php:917
+#: templates/premium/main-tab-bulk-editor.php:623
 msgid "Allow, but notify customer"
 msgstr "Toestaan, maar klant inlichten"
 
-#: includes/class.yith-wcbep-list-table-premium.php:881
-#: templates/premium/main-tab-bulk-editor.php:621
+#: includes/class.yith-wcbep-list-table-premium.php:918
+#: templates/premium/main-tab-bulk-editor.php:624
 msgid "Allow"
 msgstr "Toestaan"
 
-#: includes/class.yith-wcbep-list-table-premium.php:894
-#: templates/premium/main-tab-bulk-editor.php:481
-#: templates/premium/main-tab-filters-and-table.php:274
+#: includes/class.yith-wcbep-list-table-premium.php:931
+#: templates/premium/main-tab-bulk-editor.php:484
+#: templates/premium/main-tab-filters-and-table.php:296
 msgid "No shipping class"
 msgstr "Geen verzendklasse"
 
-#: includes/class.yith-wcbep-list-table-premium.php:919
-#: templates/premium/main-tab-bulk-editor.php:197
+#: includes/class.yith-wcbep-list-table-premium.php:956
+#: templates/premium/main-tab-bulk-editor.php:200
 msgid "Catalog/search"
 msgstr "Catalogus/zoeken"
 
-#: includes/class.yith-wcbep-list-table-premium.php:920
-#: templates/premium/main-tab-bulk-editor.php:198
+#: includes/class.yith-wcbep-list-table-premium.php:957
+#: templates/premium/main-tab-bulk-editor.php:201
 msgid "Catalog"
 msgstr "Catalogus"
 
-#: includes/class.yith-wcbep-list-table-premium.php:921
-#: templates/premium/main-tab-bulk-editor.php:199
+#: includes/class.yith-wcbep-list-table-premium.php:958
+#: templates/premium/main-tab-bulk-editor.php:202
 msgid "Search"
 msgstr "Zoeken"
 
-#: includes/class.yith-wcbep-list-table-premium.php:922
-#: templates/premium/main-tab-bulk-editor.php:200
+#: includes/class.yith-wcbep-list-table-premium.php:959
+#: templates/premium/main-tab-bulk-editor.php:203
 msgid "Hidden"
 msgstr "Verbergen"
 
-#: includes/class.yith-wcbep-list-table-premium.php:936
-#: templates/premium/main-tab-bulk-editor.php:731
+#: includes/class.yith-wcbep-list-table-premium.php:973
+#: templates/premium/main-tab-bulk-editor.php:734
 msgid "Standard Product"
 msgstr "Standaard Product"
 
-#: includes/class.yith-wcbep-list-table-premium.php:937
-#: templates/premium/main-tab-bulk-editor.php:732
+#: includes/class.yith-wcbep-list-table-premium.php:974
+#: templates/premium/main-tab-bulk-editor.php:735
 msgid "Application/Software"
 msgstr "Applicatie/Software"
 
-#: includes/class.yith-wcbep-list-table-premium.php:938
-#: templates/premium/main-tab-bulk-editor.php:733
+#: includes/class.yith-wcbep-list-table-premium.php:975
+#: templates/premium/main-tab-bulk-editor.php:736
 msgid "Music"
 msgstr "Muziek"
 
-#: includes/class.yith-wcbep-list-table-premium.php:951
+#: includes/class.yith-wcbep-list-table-premium.php:988
 msgid "Variation"
 msgstr "Keuze"
 
-#: includes/class.yith-wcbep-list-table-premium.php:1175
+#: includes/class.yith-wcbep-list-table-premium.php:1211
 #: includes/class.yith-wcbep-list-table.php:290
-#: templates/premium/main-tab-columns-settings.php:36
+#: templates/premium/main-tab-columns-settings.php:33
 msgid "Select All"
 msgstr "Alles selecteren"
 
-#: includes/class.yith-wcbep-list-table-premium.php:1280
+#: includes/class.yith-wcbep-list-table-premium.php:1316
 #: includes/class.yith-wcbep-list-table.php:378
-#, php-format
 msgid "1 item"
 msgid_plural "%s items"
 msgstr[0] "1 item"
@@ -673,15 +638,10 @@ msgid ""
 msgstr ""
 "Dit blijkt geen WXR bestand te zijn, ontbreekt/onjuist WXR versie nummer"
 
-#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:62
-#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:174
+#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:66
+#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:122
 msgid "Badge"
 msgstr "Badge"
-
-#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:78
-#: includes/compatibility/class.yith-wcbep-badge-management-compatibility.php:179
-msgid "None"
-msgstr "Geen"
 
 #: includes/compatibility/class.yith-wcbep-brands-add-on-compatibility.php:83
 #: includes/compatibility/class.yith-wcbep-brands-add-on-compatibility.php:134
@@ -700,26 +660,26 @@ msgid "Default"
 msgstr "Standaard"
 
 #: includes/compatibility/class.yith-wcbep-deposits-compatibility.php:68
-#: templates/premium/main-tab-bulk-editor.php:154
-#: templates/premium/main-tab-bulk-editor.php:166
-#: templates/premium/main-tab-bulk-editor.php:344
-#: templates/premium/main-tab-bulk-editor.php:357
-#: templates/premium/main-tab-bulk-editor.php:575
-#: templates/premium/main-tab-bulk-editor.php:659
-#: templates/premium/main-tab-bulk-editor.php:671
-#: templates/premium/main-tab-bulk-editor.php:683
+#: templates/premium/main-tab-bulk-editor.php:157
+#: templates/premium/main-tab-bulk-editor.php:169
+#: templates/premium/main-tab-bulk-editor.php:347
+#: templates/premium/main-tab-bulk-editor.php:360
+#: templates/premium/main-tab-bulk-editor.php:578
+#: templates/premium/main-tab-bulk-editor.php:662
+#: templates/premium/main-tab-bulk-editor.php:674
+#: templates/premium/main-tab-bulk-editor.php:686
 msgid "Yes"
 msgstr "Ja"
 
 #: includes/compatibility/class.yith-wcbep-deposits-compatibility.php:69
-#: templates/premium/main-tab-bulk-editor.php:155
-#: templates/premium/main-tab-bulk-editor.php:167
-#: templates/premium/main-tab-bulk-editor.php:345
-#: templates/premium/main-tab-bulk-editor.php:358
-#: templates/premium/main-tab-bulk-editor.php:576
-#: templates/premium/main-tab-bulk-editor.php:660
-#: templates/premium/main-tab-bulk-editor.php:672
-#: templates/premium/main-tab-bulk-editor.php:684
+#: templates/premium/main-tab-bulk-editor.php:158
+#: templates/premium/main-tab-bulk-editor.php:170
+#: templates/premium/main-tab-bulk-editor.php:348
+#: templates/premium/main-tab-bulk-editor.php:361
+#: templates/premium/main-tab-bulk-editor.php:579
+#: templates/premium/main-tab-bulk-editor.php:663
+#: templates/premium/main-tab-bulk-editor.php:675
+#: templates/premium/main-tab-bulk-editor.php:687
 msgid "No"
 msgstr "Nee"
 
@@ -769,6 +729,17 @@ msgid "If enabled, the prices will be rounded when bulk editing."
 msgstr ""
 "Indien ingeschakeld, zullen de prijzen worden afgerond bij bulk bewerking."
 
+#: plugin-options/settings-options.php:25
+msgid "Use Regular Expressions"
+msgstr "Reguliere expressies gebruiken"
+
+#: plugin-options/settings-options.php:29
+msgid ""
+"If enabled, the plugin uses Regular Expressions when searching for texts."
+msgstr ""
+"Indien ingeschakeld, de plugin maakt gebruik van reguliere expressies bij "
+"het zoeken naar teksten."
+
 #: templates/main-tab.php:10
 #: templates/premium/main-tab-filters-and-table.php:15
 msgid "Filters"
@@ -779,22 +750,22 @@ msgid "Filter Categories"
 msgstr "Filter categorieën"
 
 #: templates/main-tab.php:78
-#: templates/premium/main-tab-filters-and-table.php:302
+#: templates/premium/main-tab-filters-and-table.php:324
 msgid "Products per page"
 msgstr "Producten per pagina"
 
 #: templates/main-tab.php:85
-#: templates/premium/main-tab-filters-and-table.php:320
+#: templates/premium/main-tab-filters-and-table.php:342
 msgid "Get products"
 msgstr "Krijg producten"
 
 #: templates/main-tab.php:86
-#: templates/premium/main-tab-filters-and-table.php:322
+#: templates/premium/main-tab-filters-and-table.php:344
 msgid "Reset filters"
 msgstr "Filters resetten"
 
 #: templates/main-tab.php:90
-#: templates/premium/main-tab-filters-and-table.php:328
+#: templates/premium/main-tab-filters-and-table.php:350
 msgid "Products"
 msgstr "Producten"
 
@@ -802,7 +773,7 @@ msgstr "Producten"
 #: templates/premium/main-tab-custom-input.php:45
 #: templates/premium/main-tab-custom-input.php:55
 #: templates/premium/main-tab-custom-input.php:67
-#: templates/premium/main-tab-filters-and-table.php:332
+#: templates/premium/main-tab-filters-and-table.php:354
 #: templates/premium/panel/custom-fields-tab.php:27
 #: templates/premium/panel/custom-taxonomies-tab.php:45
 #: templates/premium/panel/enabled-columns-tab.php:40
@@ -811,35 +782,35 @@ msgstr "Opslaan"
 
 #: templates/main-tab.php:92 templates/main-tab.php:108
 #: templates/premium/main-tab-bulk-editor.php:16
-#: templates/premium/main-tab-filters-and-table.php:334
+#: templates/premium/main-tab-filters-and-table.php:356
 msgid "Bulk editing"
 msgstr "Bulk bewerking"
 
 #: templates/main-tab.php:117 templates/main-tab.php:132
-#: templates/premium/main-tab-bulk-editor.php:140
-#: templates/premium/main-tab-bulk-editor.php:380
-#: templates/premium/main-tab-bulk-editor.php:395
-#: templates/premium/main-tab-bulk-editor.php:506
-#: templates/premium/main-tab-bulk-editor.php:522
-#: templates/premium/main-tab-bulk-editor.php:538
-#: templates/premium/main-tab-bulk-editor.php:554
-#: templates/premium/main-tab-bulk-editor.php:602
-#: templates/premium/main-tab-bulk-editor.php:695
-#: templates/premium/main-tab-bulk-editor.php:712
+#: templates/premium/main-tab-bulk-editor.php:143
+#: templates/premium/main-tab-bulk-editor.php:383
+#: templates/premium/main-tab-bulk-editor.php:398
+#: templates/premium/main-tab-bulk-editor.php:509
+#: templates/premium/main-tab-bulk-editor.php:525
+#: templates/premium/main-tab-bulk-editor.php:541
+#: templates/premium/main-tab-bulk-editor.php:557
+#: templates/premium/main-tab-bulk-editor.php:605
+#: templates/premium/main-tab-bulk-editor.php:698
+#: templates/premium/main-tab-bulk-editor.php:715
 msgid "Increase by value"
 msgstr "Toenemen waarde"
 
 #: templates/main-tab.php:118 templates/main-tab.php:133
-#: templates/premium/main-tab-bulk-editor.php:141
-#: templates/premium/main-tab-bulk-editor.php:381
-#: templates/premium/main-tab-bulk-editor.php:396
-#: templates/premium/main-tab-bulk-editor.php:507
-#: templates/premium/main-tab-bulk-editor.php:523
-#: templates/premium/main-tab-bulk-editor.php:539
-#: templates/premium/main-tab-bulk-editor.php:555
-#: templates/premium/main-tab-bulk-editor.php:603
-#: templates/premium/main-tab-bulk-editor.php:696
-#: templates/premium/main-tab-bulk-editor.php:713
+#: templates/premium/main-tab-bulk-editor.php:144
+#: templates/premium/main-tab-bulk-editor.php:384
+#: templates/premium/main-tab-bulk-editor.php:399
+#: templates/premium/main-tab-bulk-editor.php:510
+#: templates/premium/main-tab-bulk-editor.php:526
+#: templates/premium/main-tab-bulk-editor.php:542
+#: templates/premium/main-tab-bulk-editor.php:558
+#: templates/premium/main-tab-bulk-editor.php:606
+#: templates/premium/main-tab-bulk-editor.php:699
+#: templates/premium/main-tab-bulk-editor.php:716
 msgid "Decrease by value"
 msgstr "Afnemen waarde"
 
@@ -851,44 +822,43 @@ msgstr "Toenemen percentage"
 msgid "Decrease by percentage"
 msgstr "Afnemen percentage"
 
-#: templates/main-tab.php:134 templates/premium/main-tab-bulk-editor.php:382
-#: templates/premium/main-tab-bulk-editor.php:397
-#: templates/premium/main-tab-bulk-editor.php:508
-#: templates/premium/main-tab-bulk-editor.php:524
-#: templates/premium/main-tab-bulk-editor.php:540
-#: templates/premium/main-tab-bulk-editor.php:556
-#: templates/premium/main-tab-bulk-editor.php:604
-#: templates/premium/main-tab-bulk-editor.php:697
-#: templates/premium/main-tab-bulk-editor.php:714
+#: templates/main-tab.php:134 templates/premium/main-tab-bulk-editor.php:385
+#: templates/premium/main-tab-bulk-editor.php:400
+#: templates/premium/main-tab-bulk-editor.php:511
+#: templates/premium/main-tab-bulk-editor.php:527
+#: templates/premium/main-tab-bulk-editor.php:543
+#: templates/premium/main-tab-bulk-editor.php:559
+#: templates/premium/main-tab-bulk-editor.php:607
+#: templates/premium/main-tab-bulk-editor.php:700
+#: templates/premium/main-tab-bulk-editor.php:717
 msgid "Increase by %"
 msgstr "Toenemen %"
 
-#: templates/main-tab.php:135 templates/premium/main-tab-bulk-editor.php:383
-#: templates/premium/main-tab-bulk-editor.php:398
-#: templates/premium/main-tab-bulk-editor.php:509
-#: templates/premium/main-tab-bulk-editor.php:525
-#: templates/premium/main-tab-bulk-editor.php:541
-#: templates/premium/main-tab-bulk-editor.php:557
-#: templates/premium/main-tab-bulk-editor.php:605
-#: templates/premium/main-tab-bulk-editor.php:698
-#: templates/premium/main-tab-bulk-editor.php:715
+#: templates/main-tab.php:135 templates/premium/main-tab-bulk-editor.php:386
+#: templates/premium/main-tab-bulk-editor.php:401
+#: templates/premium/main-tab-bulk-editor.php:512
+#: templates/premium/main-tab-bulk-editor.php:528
+#: templates/premium/main-tab-bulk-editor.php:544
+#: templates/premium/main-tab-bulk-editor.php:560
+#: templates/premium/main-tab-bulk-editor.php:608
+#: templates/premium/main-tab-bulk-editor.php:701
+#: templates/premium/main-tab-bulk-editor.php:718
 msgid "Decrease by %"
 msgstr "Afnemen %"
 
-#: templates/main-tab.php:136 templates/premium/main-tab-bulk-editor.php:399
+#: templates/main-tab.php:136 templates/premium/main-tab-bulk-editor.php:402
 msgid "Decrease by value from regular"
 msgstr "Afnemen waarde normaal"
 
-#: templates/main-tab.php:137 templates/premium/main-tab-bulk-editor.php:400
-#, php-format
+#: templates/main-tab.php:137 templates/premium/main-tab-bulk-editor.php:403
 msgid "Decrease by % from regular"
 msgstr "Afnemen op % fvan normaal"
 
-#: templates/main-tab.php:146 templates/premium/main-tab-bulk-editor.php:831
+#: templates/main-tab.php:146 templates/premium/main-tab-bulk-editor.php:834
 msgid "Apply"
 msgstr "Toepassen"
 
-#: templates/main-tab.php:147 templates/premium/main-tab-bulk-editor.php:833
+#: templates/main-tab.php:147 templates/premium/main-tab-bulk-editor.php:836
 #: templates/premium/main-tab-custom-input.php:20
 #: templates/premium/main-tab-custom-input.php:47
 #: templates/premium/main-tab-custom-input.php:57
@@ -921,34 +891,34 @@ msgstr "Voorraad"
 msgid "Type"
 msgstr "Type"
 
-#: templates/premium/main-tab-bulk-editor.php:230
+#: templates/premium/main-tab-bulk-editor.php:233
 msgid "Choose Image"
 msgstr "Kies afbeelding"
 
-#: templates/premium/main-tab-bulk-editor.php:285
+#: templates/premium/main-tab-bulk-editor.php:288
 msgid "Delete all"
 msgstr "Alles verwijderen"
 
-#: templates/premium/main-tab-bulk-editor.php:338
+#: templates/premium/main-tab-bulk-editor.php:341
 #: templates/premium/main-tab-custom-input.php:114
 msgid "is visible"
 msgstr "is zichtbaar"
 
-#: templates/premium/main-tab-bulk-editor.php:351
+#: templates/premium/main-tab-bulk-editor.php:354
 #: templates/premium/main-tab-custom-input.php:117
 msgid "used for variations"
 msgstr "gebruikt als variatie"
 
-#: templates/premium/main-tab-bulk-editor.php:827
+#: templates/premium/main-tab-bulk-editor.php:830
 msgid "Please note: Bulk Editor edits only enabled columns"
 msgstr "Opmerking: Bulk bewerking, bewerkt uitsluitend ingeschakelde kolommen"
 
-#: templates/premium/main-tab-columns-settings.php:9
-#: templates/premium/main-tab-filters-and-table.php:339
+#: templates/premium/main-tab-columns-settings.php:11
+#: templates/premium/main-tab-filters-and-table.php:361
 msgid "Show/Hide Columns"
 msgstr "Weergeven/Verbergen Kolommen"
 
-#: templates/premium/main-tab-columns-settings.php:37
+#: templates/premium/main-tab-columns-settings.php:34
 msgid "Unselect"
 msgstr "Deselecteren"
 
@@ -981,54 +951,65 @@ msgid "This field is not editable because this is a variation!"
 msgstr "Dit veld is niet bewerkbaar omdat dit een variatie is!"
 
 #: templates/premium/main-tab-filters-and-table.php:29
-#: templates/premium/main-tab-filters-and-table.php:45
+#: templates/premium/main-tab-filters-and-table.php:46
+#: templates/premium/main-tab-filters-and-table.php:63
 msgid "Contains"
 msgstr "Bevat"
 
 #: templates/premium/main-tab-filters-and-table.php:30
-#: templates/premium/main-tab-filters-and-table.php:46
+#: templates/premium/main-tab-filters-and-table.php:47
+#: templates/premium/main-tab-filters-and-table.php:64
 msgid "Does not contain"
 msgstr "Bevat niet"
 
 #: templates/premium/main-tab-filters-and-table.php:31
-#: templates/premium/main-tab-filters-and-table.php:47
+#: templates/premium/main-tab-filters-and-table.php:48
+#: templates/premium/main-tab-filters-and-table.php:65
 msgid "Starts with"
 msgstr "Begint met"
 
 #: templates/premium/main-tab-filters-and-table.php:32
-#: templates/premium/main-tab-filters-and-table.php:48
+#: templates/premium/main-tab-filters-and-table.php:49
+#: templates/premium/main-tab-filters-and-table.php:66
 msgid "Ends with"
 msgstr "Eindigt met"
 
-#: templates/premium/main-tab-filters-and-table.php:289
+#: templates/premium/main-tab-filters-and-table.php:33
+#: templates/premium/main-tab-filters-and-table.php:50
+#: templates/premium/main-tab-filters-and-table.php:67
+#, fuzzy
+msgid "Regular Expression"
+msgstr "Reguliere expressies gebruiken"
+
+#: templates/premium/main-tab-filters-and-table.php:311
 msgid "Show all product types"
 msgstr "Toon alle product types"
 
-#: templates/premium/main-tab-filters-and-table.php:311
+#: templates/premium/main-tab-filters-and-table.php:333
 msgid "Include Variations"
 msgstr "Inclusief variaties"
 
-#: templates/premium/main-tab-filters-and-table.php:324
+#: templates/premium/main-tab-filters-and-table.php:346
 msgid "Select on filters"
 msgstr "Selecteren op filters"
 
-#: templates/premium/main-tab-filters-and-table.php:344
+#: templates/premium/main-tab-filters-and-table.php:366
 msgid "Undo"
 msgstr "Ongedaan maken"
 
-#: templates/premium/main-tab-filters-and-table.php:346
+#: templates/premium/main-tab-filters-and-table.php:368
 msgid "Redo"
 msgstr "Opnieuw"
 
-#: templates/premium/main-tab-filters-and-table.php:353
+#: templates/premium/main-tab-filters-and-table.php:375
 msgid "Export Selected"
 msgstr "Selectie exporteren"
 
-#: templates/premium/main-tab-filters-and-table.php:357
+#: templates/premium/main-tab-filters-and-table.php:379
 msgid "New Product"
 msgstr "Nieuw Product"
 
-#: templates/premium/main-tab-filters-and-table.php:378
+#: templates/premium/main-tab-filters-and-table.php:400
 msgid "Resize Table"
 msgstr "Formaat table wijzigen"
 
@@ -1051,6 +1032,37 @@ msgstr "Alles uitschakelen"
 #: templates/premium/panel/enabled-columns-tab.php:50
 msgid "Saving..."
 msgstr "Opslaan..."
+
+#. Description of the plugin/theme
+msgid ""
+"<code><strong>YITH WooCommerce Bulk Product Editing</strong></code> allows "
+"you to edit multiple products at the same time. You can easily filter "
+"products and edit all fields you need in a massive, simple and fast way. <a "
+"href=\"https://yithemes.com/\" target=\"_blank\">Get more plugins for your e-"
+"commerce shop on <strong>YITH</strong></a>"
+msgstr ""
+
+#: includes/class.yith-wcbep-list-table-premium.php:887
+#: templates/premium/main-tab-bulk-editor.php:444
+msgctxt "Tax status"
+msgid "None"
+msgstr "Geen"
+
+#~ msgid "1 "
+#~ msgid_plural "%s "
+#~ msgstr[0] "1 "
+#~ msgstr[1] "%s "
+
+#~ msgid "%s new product"
+#~ msgid_plural "%s new products"
+#~ msgstr[0] "%s nieuw product"
+#~ msgstr[1] "%s nieuwe producten"
+
+#~ msgid "Plugin Documentation"
+#~ msgstr "Plugin Documentatie"
+
+#~ msgid "None"
+#~ msgstr "Geen"
 
 #~ msgid "Product Gallery"
 #~ msgstr "Product Galerij"

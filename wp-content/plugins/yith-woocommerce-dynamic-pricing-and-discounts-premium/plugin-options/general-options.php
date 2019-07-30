@@ -129,8 +129,7 @@ $settings = array(
 	        array(
 		        'id'      => 'price_format',
 		        'name'    => __( 'Price format', 'ywdpd' ),
-		        'desc'    => __( 'You can use: %original_price%, %discounted_price%, %percentual_discount%. Note: enable the above option to
-		        see the minimum discounted amount', 'ywdpd'),
+		        'desc'    => __( 'You can use: %original_price%, %discounted_price%, %percentual_discount%. Note: enable the above option to see the minimum discounted amount', 'ywdpd'),
 		        'type'    => 'text',
 		        'std' => __( '<del>%original_price%</del> %discounted_price%', 'ywdpd')
 	        ),

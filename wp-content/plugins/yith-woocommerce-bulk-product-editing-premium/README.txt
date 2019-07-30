@@ -2,6 +2,14 @@
 
 == Changelog ==
 
+= Version 1.2.12 - Released: Nov 30, 2018 =
+
+* New - support to WordPress 5 RC1
+* New - filter Title, Description and SKU through Regular Expressions
+* Update - plugin framework
+* Update - language files
+
+
 = Version 1.2.11 - Released: Oct 23, 2018 =
 
 * Update - Plugin Framework

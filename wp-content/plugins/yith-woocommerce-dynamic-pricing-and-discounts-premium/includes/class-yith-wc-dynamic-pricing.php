@@ -10,7 +10,7 @@ if ( !defined( 'ABSPATH' ) || !defined( 'YITH_YWDPD_VERSION' ) ) {
  * @class   YITH_WC_Dynamic_Pricing
  * @package YITH WooCommerce Dynamic Pricing and Discounts
  * @since   1.0.0
- * @author  Yithemes
+ * @author  YITH
  */
 if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
@@ -48,6 +48,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
         public $cart_rules_options = array();
 
+        protected $check_discount = array();
 
         /**
          * Returns single instance of the class
@@ -78,7 +79,8 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
             /* plugin */
             add_action( 'plugins_loaded', array( $this, 'plugin_fw_loader' ), 15 );
 
-            if( defined( 'ICL_SITEPRESS_VERSION' ) && $this->get_option( 'wpml_extend_to_translated_object', 'no' ) == 'yes' ){
+            $wpml_extend_to_translated_object = $this->get_option( 'wpml_extend_to_translated_object', 'no' );
+	        if ( defined( 'ICL_SITEPRESS_VERSION' ) && ywdpd_is_true( $wpml_extend_to_translated_object ) ){
 	            add_filter( 'ywdpd_pricing_rules_filtered', array( $this, 'adjust_rules_for_wpml') );
             }
 
@@ -120,9 +122,24 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
          * @author Emanuela Castorina
          */
         function get_pricing_rules(){
-            $pricing_rules  = $this->filter_valid_rules( $this->get_option( 'pricing-rules' ) );
+
+            $pricing_rules  = $this->filter_valid_rules( $this->recover_pricing_rules() );
 
             return $pricing_rules;
+        }
+
+		/**
+		 * @return array
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		function recover_pricing_rules(){
+	        if( get_option( 'ywdpd_updated_to_cpt' ) !== 'yes' ){
+		        $pricing_rules  = $this->get_option( 'pricing-rules' );
+	        }else{
+	        	$pricing_rules = ywdpd_recover_rules( 'pricing' );
+	        }
+
+	        return $pricing_rules;
         }
 
 		/**
@@ -146,9 +163,9 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
             foreach( $pricing_rules as $key => $rule ){
 
                 //check if the rule is active of the value of discount_amount is empty
-                if( $rule['active'] != 'yes'){
-                    continue;
-                }
+	            if ( ! ywdpd_is_true( $rule['active'] ) ) {
+		            continue;
+	            }
 
                 //DATE SCHEDULE VALIDATION
                 if ( isset($rule['schedule_from']) && isset($rule['schedule_to']) && ($rule['schedule_from'] != '' || $rule['schedule_to'] != '' )) {
@@ -158,7 +175,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
                 }
 
                 //USER VALIDATION
-	            if ( isset( $rule['user_rules'] ) && ( $rule['user_rules'] != 'everyone' && ! YITH_WC_Dynamic_Pricing_Helper()->validate_user( $rule['user_rules'], $rule[ 'user_rules_' . $rule['user_rules'] ] ) ) ) {
+	            if ( isset( $rule['user_rules'] ) && ( $rule['user_rules'] != 'everyone' && isset( $rule[ 'user_rules_' . $rule['user_rules'] ] ) && ! YITH_WC_Dynamic_Pricing_Helper()->validate_user( $rule['user_rules'], $rule[ 'user_rules_' . $rule['user_rules'] ] ) ) ) {
 		            continue;
 	            }
 
@@ -170,6 +187,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
                 if( isset($rule['apply_adjustment']) && ( $rule['apply_adjustment'] != 'all_products' && $rule['apply_adjustment'] != 'same_product' ) && isset( $rule['apply_adjustment_'.$rule['apply_adjustment']] )  && ! is_array( $rule['apply_adjustment_'.$rule['apply_adjustment']] ) ){
                     continue;
                 }
+
 
                 //DISCOUNT RULES VALIDATION
                 if ( isset( $rule['discount_mode'] )  && $rule['discount_mode'] == 'bulk' ) {
@@ -238,15 +256,14 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
             foreach ( $this->validated_rules as $key_rule => $rule ) {
 
 	            // DISCOUNT CAN BE COMBINED WITH COUPON
-	            if ( isset( $rule['disable_with_other_coupon'] ) && ywdpd_check_cart_coupon() ) {
-//	            	error_log('nonvalida');
-//	            	error_log( print_r( $rule, true) );
+	            $with_other_coupons = isset( $rule['disable_with_other_coupon'] ) && ywdpd_is_true( $rule['disable_with_other_coupon'] );
+	            if ( $with_other_coupons && ywdpd_check_cart_coupon() ) {
 		            continue;
 	            }
 
-	            if ( !YITH_WC_Dynamic_Pricing_Helper()->validate_apply_to( $key_rule, $rule, $cart_item_key, $cart_item ) ) {
-	            	continue;
-                }
+	            if ( ! YITH_WC_Dynamic_Pricing_Helper()->validate_apply_to( $key_rule, $rule, $cart_item_key, $cart_item ) ) {
+		            continue;
+	            }
             }
         }
 
@@ -277,22 +294,31 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 		}
 
 		/**
-		 * @param $product
+		 * @param $product WC_Product
 		 *
 		 * @return bool
 		 */
 		function check_discount( $product ) {
 
-        	if( apply_filters('ywdpd_exclude_products_from_discount', false, $product)){
+			if ( apply_filters( 'ywdpd_exclude_products_from_discount', false, $product ) ) {
 				return false;
+			} elseif ( isset( $this->check_discount[ $product->get_id() ] ) ) {
+				return $this->check_discount[ $product->get_id() ];
 			}
 
+
+			$return = false;
+			$is_single_check = apply_filters( 'ywdpd_check_if_single_page', is_single() );
 			foreach ( $this->validated_rules as $rule ) {
-				if ( YITH_WC_Dynamic_Pricing_Helper()->valid_product_to_apply_bulk( $rule, $product, true ) && ( is_single() || ( isset( $rule['show_in_loop'] ) && $rule['show_in_loop'] == 1 && $rule['apply_adjustment'] == 'same_product' ) ) ) {
-					return true;
+				if ( ( YITH_WC_Dynamic_Pricing_Helper()->valid_product_to_apply_bulk( $rule, $product, true ) && YITH_WC_Dynamic_Pricing_Helper()->valid_product_to_adjustment_bulk( $rule, $product, true )  ) && ( $is_single_check || ( isset( $rule['show_in_loop'] ) && ywdpd_is_true( $rule['show_in_loop'] ) && $rule['apply_adjustment'] == 'same_product' ) ) ) {
+
+					$return = true;
 				}
 			}
-			return false;
+
+			$this->check_discount[ $product->get_id() ] = $return;
+
+			return $return;
 		}
 
 	    /**
@@ -303,22 +329,30 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 	     */
 	    function get_discount_price( $default_price, $product ){
 
-            $current_difference = 0;
-		    $discount_price = $default_price;
+		    if( empty( $default_price ) ) {
+			    return $default_price;
+		    }
+
+
+		    $current_difference = 0;
+
+		    $discount_price = floatval( $default_price );
+
             foreach( $this->validated_rules as $rule ){
-                $even_onsale = ( isset( $rule['apply_on_sale'] ) ) ? 1 : 0;
+                $even_onsale = isset( $rule['apply_on_sale'] ) && ywdpd_is_true( $rule['apply_on_sale'] );
 	            $sale_price = yit_get_prop( $product, 'sale_price', true, 'edit' );
-	            if ( $sale_price != '' && $product->sale_price != $default_price && ! $even_onsale ) {
+	           
+	            if ( $sale_price != '' && $sale_price != $default_price && ! $even_onsale ) {
 		            continue;
 	            }
 
-                if ( YITH_WC_Dynamic_Pricing_Helper()->valid_product_to_apply_bulk( $rule, $product, false ) && ( is_single() || ( isset( $rule['show_in_loop'] ) && $rule['show_in_loop'] == 1 && $rule['apply_adjustment'] == 'same_product' ) )  ) {
+	            if ( YITH_WC_Dynamic_Pricing_Helper()->valid_product_to_apply_bulk( $rule, $product, false ) && ( is_single() || ( isset( $rule['show_in_loop'] ) && ywdpd_is_true( $rule['show_in_loop'] ) && $rule['apply_adjustment'] == 'same_product' ) ) ) {
 
                 	//$is_exclusive = ( isset( $rule['apply_with_other_rules'] ) && $rule['apply_with_other_rules'] == 1 ) ? 0 : 1;
 
 	                if( $rule && isset( $rule['rules'] ) &&  $rule['rules']){
 	                    foreach( $rule['rules'] as $qty_rule ){
-		                    if( $qty_rule['min_quantity'] == 1 ){
+		                    if( $qty_rule['min_quantity'] == 1 && is_numeric( $qty_rule['discount_amount'] ) ){
 			                    switch( $qty_rule['type_discount'] ){
 				                    case 'percentage':
 					                    $current_difference = $discount_price * $qty_rule['discount_amount'];
@@ -358,13 +392,15 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 		 * @param $cart_item
 		 * @param $cart_item_key
 		 */
-        public function apply_discount( $cart_item, $cart_item_key ){
+        public function apply_discount( $cart_item, $cart_item_key, $reset = false ){
+
+        	$this->adjust_counter = $reset ? array() : $this->adjust_counter;
 
 	        $discounts     = $cart_item['ywdpd_discounts'];
 	        $product_id    = ( isset( $cart_item['variation_id'] ) && $cart_item['variation_id'] != '' ) ? $cart_item['variation_id'] : $cart_item['product_id'];
 	        $product       = wc_get_product( $product_id );
 	        $has_exclusive = $this->has_exclusive( $discounts );
-
+			$back = false;
 	        remove_filter( 'woocommerce_'.YITH_WC_Dynamic_Pricing_Frontend()->get_product_filter.'get_price', array( YITH_WC_Dynamic_Pricing_Frontend(), 'get_price' ), 10);
             $default_price =  $cart_item['data']->get_price();
 	        $price = $current_price = $default_price;
@@ -384,25 +420,28 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
                     $difference = 0;
                 }
 
-                if ( ! $discount['onsale'] && ( $product->get_sale_price() !== '' && $product->get_sale_price() !== $product->get_regular_price() ) ) {
+	            if (!$discount['onsale'] && ( ($product->get_sale_price() !== '' AND $product->get_sale_price() > 0) && $product->get_sale_price() !== $product->get_regular_price() )){
 	                continue;
                 }
+
 
                 //check if the discount has an exclusive rule
                 if( $has_exclusive && !$discount['exclusive'] ){
 	               continue;
                 }
 
-                $current_difference = 0;
+                $current_difference = apply_filters( 'ywdpd_apply_discount_current_difference', 0, $discount, $dm, $cart_item, $cart_item_key, $price );
                 if( $discount['discount_mode'] == 'bulk' && isset( $dm['type']) ){
                     switch( $dm['type'] ){
                         case 'percentage':
                             $current_difference = $price * $dm['amount'];
+	                        $back = true;
                             break;
                         case 'price':
                             $current_difference = $dm['amount'];
                             break;
                         case 'fixed-price':
+	                        $amount = apply_filters('ywdpd_maybe_should_be_converted', $dm['amount'] );
                             $current_difference = $price - $dm['amount'];
                             break;
                         default:
@@ -423,8 +462,6 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
 	                }
 
-//	                error_log( '$cart_item_key '. $cart_item_key );
-//	                error_log( 'adjust_counter '. $adj_counter );
 
 	                $a = ( $adj_counter > $cart_item['quantity'] ) ? $cart_item['quantity'] : $adj_counter;
 
@@ -435,7 +472,6 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 	                switch ( $dm['type'] ) {
 		                case 'percentage':
 			                $difference_s        = $price - $price * $dm['amount'];
-							//error_log($price);
 			                $line_total          = ( $discount_quantity * $difference_s ) + ( $full_price_quantity * $price );
 			                $current_difference  = ( $normal_line_total - $line_total ) / $cart_item['quantity'];
 			                $current_difference  = $current_difference >= 0 ? $current_difference : 0;
@@ -449,10 +485,11 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 			                $current_difference  = $current_difference >= 0 ? $current_difference : 0;
 			                break;
 		                case 'fixed-price':
-			                $difference_s = $dm['amount'];
+			                $difference_s = apply_filters('ywdpd_maybe_should_be_converted', $dm['amount']);
 			                $line_total = ($discount_quantity * $difference_s) + ($full_price_quantity * $price);
 			                $current_difference  = ( $normal_line_total - $line_total ) / $cart_item['quantity'];
 			                $current_difference  = $current_difference >= 0 ? $current_difference : 0;
+			                break;
 		                default:
 	                }
 
@@ -465,7 +502,6 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 			                $this->adjust_counter[ $key.$parent_id ] = 0;
 		                }
 	                }else{
-
 		                if ( $dm['total_target'] > $cart_item['quantity'] ) {
 			                $this->adjust_counter[ $key ] -= $cart_item['quantity'];
 			                WC()->cart->cart_contents[ $cart_item_key ]['available_quantity'] = 0;
@@ -477,13 +513,14 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
                 }
 
-
                 $difference += $current_difference;
 
-//	            error_log('$difference '.$difference);
                 $price = ( ( $default_price - $difference ) < 0 ) ? 0 : ( $default_price - $difference ) ;
-	            $price = round( $price , wc_get_price_decimals() );
-//	            error_log('$price '.$price);
+
+                if ( apply_filters( 'ywdpd_round_total_price', true ) ) {
+		            $price = round( $price , wc_get_price_decimals() );
+	            }
+
                 WC()->cart->cart_contents[$cart_item_key]['ywdpd_discounts'][$discount['key']]['status']           = 'applied';
                 WC()->cart->cart_contents[$cart_item_key]['ywdpd_discounts'][$discount['key']]['discount_applied'] = $current_difference;
                 WC()->cart->cart_contents[$cart_item_key]['ywdpd_discounts'][$discount['key']]['current_price']    = $price;
@@ -501,6 +538,14 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 				WC()->cart->cart_contents[$cart_item_key]['data']->price = $price;
 				WC()->cart->cart_contents[$cart_item_key]['data']->has_dynamic_price = true;
 	        }else{
+		        if (class_exists('WOOCS') && $back) {
+			        global $WOOCS;
+			        if ($WOOCS->current_currency != $WOOCS->default_currency AND $WOOCS->is_multiple_allowed) {
+				        $currencies = $WOOCS->get_currencies();
+				        $price = $price / $currencies[$WOOCS->current_currency]['rate'];
+			        }
+		        }
+
 		        WC()->cart->cart_contents[$cart_item_key]['data']->set_price($price);
                 $product =  WC()->cart->cart_contents[$cart_item_key]['data'];
                 yit_set_prop( $product,'has_dynamic_price', true );
@@ -524,7 +569,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
 		/**
 		 * Check if a product has specific categories
-		 *
+		 * @deprecated
 		 *
 		 * @since  1.0.0
 		 * @author Emanuela Castorina
@@ -565,7 +610,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing' ) ) {
 
 		/**
 		 * Check if a product has specific tags
-		 *
+		 * @deprecated
 		 *
 		 * @since  1.1.0
 		 * @author Emanuela Castorina

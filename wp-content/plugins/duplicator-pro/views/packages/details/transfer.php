@@ -277,10 +277,21 @@ $alert6->initAlert();
 				$.ajax({
 					type: "POST",
 					url: ajaxurl,
-					dataType: "json",
+					cache: false,
 					timeout: 10000000,
 					data: data,
-					success: function (data) {
+					success: function (respData) {
+						try {  
+							var data = DupPro.parseJSON(respData);  
+						} catch(err) {
+							console.error(err);
+                    		console.error('JSON parse failed for response data: ' + respData);
+							<?php $alert2->showAlert(); ?>
+							transferRequestedTimestamp = 0;
+							DupPro.Pack.Transfer.SetUIState(false);
+							console.log(respData);
+							return false;
+						}
 						if(! data.succeeded) 
 						{
 							if(data.retval != '') {
@@ -311,10 +322,18 @@ $alert6->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 timeout: 10000000,
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+					try {
+						var data = DupPro.parseJSON(respData);
+					} catch(err) {
+						console.error(err);
+                    	console.error('JSON parse failed for response data: ' + respData);
+						<?php $alert4->showAlert(); ?>
+						$("#dup-pro-stop-transfer-btn").prop("disabled", false);
+						return false;
+					}
 					if(! data.succeeded) {
                         <?php $alert3->showAlert(); ?>
 						$("#dup-pro-stop-transfer-btn").prop("disabled", false);
@@ -362,10 +381,20 @@ $alert6->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 timeout: 10000000,
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+					try {
+						var data = DupPro.parseJSON(respData);
+					} catch(err) {
+                        console.error(err);
+						console.error('JSON parse failed for response data: ' + respData);
+						console.log("Transfer failure.");
+						DupPro.Pack.Transfer.SetUIState(false);
+						console.log(respData);
+						return false;
+                    }
+
 					console.log(data);
 					if(data.succeeded)
 					{

@@ -13,7 +13,6 @@ defined("DUPXABSPATH") or die("");
  */
 class DUPX_WPConfig
 {
-
 	/**
 	 * Updates the standard WordPress config file settings
 	 *

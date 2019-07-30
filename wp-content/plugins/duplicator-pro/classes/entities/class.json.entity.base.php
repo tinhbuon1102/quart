@@ -225,6 +225,22 @@ class DUP_PRO_JSON_Entity_Base
         return $filtered_instances;
     }
 
+    public static function is_exist_by_id_and_type($id, $type, $table_name = self::DEFAULT_TABLE_NAME)
+    {
+        global $wpdb;
+
+        $table_name = $wpdb->base_prefix.$table_name;
+
+        $query_string = "SELECT count(id) FROM ".$table_name;
+        $query_string .= " WHERE id = %d";
+
+        $prepped = $wpdb->prepare($query_string, $id);
+
+        $count = $wpdb->get_var($prepped);
+        
+        return $count;
+    }
+
     public static function get_by_type($type, $table_name = self::DEFAULT_TABLE_NAME, $page = 0)
     {
 

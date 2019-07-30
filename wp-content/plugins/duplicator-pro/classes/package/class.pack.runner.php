@@ -100,20 +100,29 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                             if ($package_to_cancel != null) {
 
                                 if ($package_to_cancel->Status == DUP_PRO_PackageStatus::STORAGE_PROCESSING) {
+
+                                    do_action('duplicator_pro_package_before_set_status' , $package_to_cancel , DUP_PRO_PackageStatus::STORAGE_CANCELLED);
+
                                     $package_to_cancel->Status = DUP_PRO_PackageStatus::STORAGE_CANCELLED;
 
                                     $package_to_cancel->cancel_all_uploads();
 
                                     $package_to_cancel->update();
 
+                                    do_action('duplicator_pro_package_after_set_status' , $package_to_cancel , DUP_PRO_PackageStatus::STORAGE_CANCELLED);
+
                                     if ($package_to_cancel->schedule_id != -1) {
                                         add_action('plugins_loaded', array($package_to_cancel, 'post_scheduled_storage_failure'));
                                     }
                                 } else {
 
+                                    do_action('duplicator_pro_package_before_set_status' , $package_to_cancel , DUP_PRO_PackageStatus::BUILD_CANCELLED);
+
                                     $package_to_cancel->Status = DUP_PRO_PackageStatus::BUILD_CANCELLED;
 
                                     $package_to_cancel->update();
+
+                                    do_action('duplicator_pro_package_after_set_status' , $package_to_cancel , DUP_PRO_PackageStatus::BUILD_CANCELLED);
 
                                     if ($package_to_cancel->schedule_id != -1) {
                                         add_action('plugins_loaded', array($package_to_cancel, 'post_scheduled_build_failure'));
@@ -271,8 +280,7 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
 
                             if($global->ajax_protocol == 'custom')
                             {
-                                if(!SnapLibURLU::urlExists($global->custom_ajax_url))
-                                {
+                                if(!DUP_PRO_U::urlExists($global->custom_ajax_url)) {
                                     $fix_text = DUP_PRO_U::__('The Plugin is configured for the wrong admin-ajax URL. Click button to fix this issue.');
                                     $system_global->add_recommended_quick_fix($error_text, $fix_text, 'special:{stuck_5percent_pending_fix:1}');
                                     $notification = false;
@@ -296,8 +304,12 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                             $message = DUP_PRO_U::__("$error_text  **RECOMMENDATION: $log_fix_test.");
                             DUP_PRO_LOG::trace($message);
 
+                            do_action('duplicator_pro_package_before_set_status' , $active_package , DUP_PRO_PackageStatus::ERROR);
+
                             $active_package->Status = DUP_PRO_PackageStatus::ERROR;
                             $active_package->save();
+
+                            do_action('duplicator_pro_package_after_set_status' , $active_package , DUP_PRO_PackageStatus::ERROR);
 
                             if ($active_package->schedule_id != -1) {
                                 add_action('plugins_loaded', array($active_package, 'post_scheduled_build_failure'));
@@ -343,6 +355,8 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                 } else {
                     // Server-side kickoff
                     $ajax_url = SnapLibURLU::appendQueryValue($ajax_url, 'action', 'duplicator_pro_process_worker');
+                    $ajax_url = SnapLibURLU::appendQueryValue($ajax_url, 'now', time());
+                    
                     // $duplicator_pro_process_worker_nonce = wp_create_nonce('duplicator_pro_process_worker');
                     //require_once(ABSPATH.'wp-includes/pluggable.php');
                     //$ajax_url = wp_nonce_url($ajax_url, 'duplicator_pro_process_worker', 'nonce');
@@ -368,7 +382,7 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
         public static function process()
         {
             if (!defined('WP_MAX_MEMORY_LIMIT')) {
-                define('WP_MAX_MEMORY_LIMIT', '256M');
+                define('WP_MAX_MEMORY_LIMIT', '512M');
             }
 
 			@ini_set('memory_limit', WP_MAX_MEMORY_LIMIT);
@@ -376,7 +390,7 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
             @set_time_limit(7200);
 
             @ignore_user_abort(true);
-
+            @ini_set( 'pcre.backtrack_limit', PHP_INT_MAX );
             @ini_set('default_socket_timeout', 7200); // 2 Hours
 
             /* @var $global DUP_PRO_Global_Entity */
@@ -488,8 +502,14 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                             DUP_PRO_Log::error(DUP_PRO_U::__('Requirements Failed'), print_r($dup_tests, true), false);
 
                             DUP_PRO_LOG::traceError('Requirements didn\'t pass so can\'t perform backup!');
+
+                            do_action('duplicator_pro_package_before_set_status' , $package , DUP_PRO_PackageStatus::REQUIREMENTS_FAILED);
+
                             $package->Status = DUP_PRO_PackageStatus::REQUIREMENTS_FAILED;
+                           
                             $package->update();
+
+                            do_action('duplicator_pro_package_after_set_status' , $package , DUP_PRO_PackageStatus::REQUIREMENTS_FAILED);
                         }
                     }
 

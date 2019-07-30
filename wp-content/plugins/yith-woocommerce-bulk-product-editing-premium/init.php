@@ -3,7 +3,7 @@
  * Plugin Name: YITH WooCommerce Bulk Product Editing Premium
  * Plugin URI: https://yithemes.com/themes/plugins/yith-woocommerce-bulk-product-editing/
  * Description: <code><strong>YITH WooCommerce Bulk Product Editing</strong></code> allows you to edit multiple products at the same time. You can easily filter products and edit all fields you need in a massive, simple and fast way. <a href="https://yithemes.com/" target="_blank">Get more plugins for your e-commerce shop on <strong>YITH</strong></a>
- * Version: 1.2.11
+ * Version: 1.2.12
  * Author: YITH
  * Author URI: https://yithemes.com/
  * Text Domain: yith-woocommerce-bulk-product-editing
@@ -13,7 +13,7 @@
  *
  * @author yithemes
  * @package YITH WooCommerce Bulk Product Editing Premium
- * @version 1.2.11
+ * @version 1.2.12
  */
 /*  Copyright 2015  Your Inspiration Themes  (email : plugins@yithemes.com)
 
@@ -61,7 +61,7 @@ register_activation_hook( __FILE__, 'yith_plugin_registration_hook' );
 
 
 if ( !defined( 'YITH_WCBEP_VERSION' ) ) {
-    define( 'YITH_WCBEP_VERSION', '1.2.11' );
+    define( 'YITH_WCBEP_VERSION', '1.2.12' );
 }
 
 if ( !defined( 'YITH_WCBEP_PREMIUM' ) ) {

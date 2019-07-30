@@ -1,6 +1,5 @@
 <?php
 defined("ABSPATH") or die("");
-require_once (DUPLICATOR_PRO_PLUGIN_PATH.'classes/entities/class.global.entity.php');
 
 class DUP_PRO_Shell_U
 {
@@ -64,13 +63,20 @@ class DUP_PRO_Shell_U
         return true;
     }
 
-    public static function isPopenEnabled() { 
-        if (!function_exists('popen') || !function_exists('proc_open')) { 
-            $ret = false; 
-        } else { 
-            $ret = true; 
-        } 
-        $ret = apply_filters('duplicator_pro_is_popen_enabled', $ret); 
-        return $ret; 
+    /**
+     *
+     * @return boolean
+     *
+     */
+    public static function isPopenEnabled() {
+
+        if (!DUP_PRO_U::isIniFunctionEnalbe('popen') || !DUP_PRO_U::isIniFunctionEnalbe('proc_open')) {
+            $ret = false;
+        } else {
+            $ret = true;
+        }
+
+        $ret = apply_filters('duplicator_pro_is_popen_enabled', $ret);
+        return $ret;
     }
 }

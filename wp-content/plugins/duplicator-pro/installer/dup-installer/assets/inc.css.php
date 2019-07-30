@@ -63,12 +63,13 @@
 
     /*Adv Opts */
     table.dupx-opts {width:100%; border:0px;}
-	table.dupx-opts td{white-space:nowrap; padding:3px;}
+	table.dupx-opts td{padding:3px;}
 	table.dupx-opts td:first-child{width:125px; font-weight: bold}
 	table.dupx-advopts td:first-child{width:125px;}
 	table.dupx-advopts label.radio {width:50px; display:inline-block}
-	table.dupx-advopts label {cursor:pointer}
+	table.dupx-advopts label {white-space:nowrap; cursor:pointer}
 	table.dupx-advopts-space {line-height:24px}
+	table.dupx-advopts tr {vertical-align:top}
 
 	div.error-pane {border:1px solid #efefef; border-left:4px solid #D54E21; padding:0 0 0 10px; margin:2px 0 10px 0}
 	div.dupx-ui-error {padding-top:2px; font-size:13px; line-height: 20px}
@@ -79,6 +80,7 @@
 	form#form-debug {display:block; margin:10px auto; width:750px;}
 	form#form-debug a {display:inline-block;}
 	form#form-debug pre {margin-top:-2px; display:none}
+	small.info {font-style:italic}
 
     /*Dialog Info */
 	div.dlg-serv-info {line-height:22px; font-size:12px}
@@ -123,7 +125,7 @@
 	div.s1-reqs div.header {background-color:#E0E0E0; color:#000;  border-bottom: 1px solid silver; padding:2px; font-weight:bold }
 	div.s1-reqs div.status {float:right; border-radius:4px; color:#fff; padding:0 3px 0 3px; margin:4px 5px 0 0; font-size:11px; min-width:30px; text-align:center;}
 	div.s1-reqs div.pass {background-color:green;}
-	div.s1-reqs div.fail {background-color:maroon;}
+	div.s1-reqs div.fail {background-color:#636363;}
 	div.s1-reqs div.title {padding:3px 3px 3px 5px; font-size:13px;}
 	div.s1-reqs div.title:hover {background-color:#dfdfdf; cursor:pointer}
 	div.s1-reqs div.info {padding:8px 8px 20px 8px; background-color:#fff; display:none; line-height:18px; font-size: 12px}

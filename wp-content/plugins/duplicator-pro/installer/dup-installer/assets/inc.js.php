@@ -6,6 +6,49 @@
     DUPX.Const = new Object();
 	DUPX.GLB_DEBUG =  <?php echo ($_GET['debug'] || $GLOBALS['DEBUG_JS']) ? 'true' : 'false'; ?>;
 
+	DUPX.parseJSON = function(mixData) {
+		try {
+			var parsed = JSON.parse(mixData);
+			return parsed;
+		} catch (e) {
+			console.log("JSON parse failed - 1");
+			console.log(mixData);
+		}
+
+		if (mixData.indexOf('[') > -1 && mixData.indexOf('{') > -1) {
+			if (mixData.indexOf('{') < mixData.indexOf('[')) {
+				var startBracket = '{';
+				var endBracket = '}';
+			} else {
+				var startBracket = '[';
+				var endBracket = ']';
+			}
+		} else if (mixData.indexOf('[') > -1 && mixData.indexOf('{') === -1) {
+			var startBracket = '[';
+			var endBracket = ']';
+		} else {
+			var startBracket = '{';
+			var endBracket = '}';
+		}
+		
+		var jsonStartPos = mixData.indexOf(startBracket);
+		var jsonLastPos = mixData.lastIndexOf(endBracket);
+		if (jsonStartPos > -1 && jsonLastPos > -1) {
+			var expectedJsonStr = mixData.slice(jsonStartPos, jsonLastPos + 1);
+			try {
+				var parsed = JSON.parse(expectedJsonStr);
+				return parsed;
+			} catch (e) {
+				console.log("JSON parse failed - 2");
+				console.log(mixData);
+				throw e;
+				return false;
+			}
+		}
+		throw "could not parse the JSON";
+		return false;
+	}
+
 	DUPX.showProgressBar = function ()
 	{
 		DUPX.animateProgressBar('progress-bar');
@@ -66,11 +109,22 @@
 			type: "POST",
 			cache: false,
 			timeout: timeout,
-			dataType: "json",
 			url: requestURI,
 			data:  obj.params,
-			success: function(data) { if (DUPX.GLB_DEBUG) console.log(data); obj.callback(data); },
-			error:   function(data) { if (DUPX.GLB_DEBUG) console.log(data); obj.callback(data); }
+			success: function(respData) {
+				if (DUPX.GLB_DEBUG) console.log(respData);
+				try {
+					var data = DUPX.parseJSON(respData);
+				} catch(err) {
+					console.error(err);
+					console.error('JSON parse failed for response data: ' + respData);
+					var data = respData;
+				}
+				obj.callback(data);
+			},
+			error:   function(data) {
+				if (DUPX.GLB_DEBUG) console.log(data);
+				obj.callback(data); }
 		});
 	}
 

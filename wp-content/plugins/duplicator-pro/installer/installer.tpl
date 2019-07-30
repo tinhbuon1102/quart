@@ -193,7 +193,13 @@ class DUPX_Bootstrap
 
         //$archive_extension = strtolower(pathinfo($archive_filepath)['extension']);
         $archive_extension		= strtolower(pathinfo($archive_filepath, PATHINFO_EXTENSION));
-		$manual_extract_found   = file_exists($installer_directory."/main.installer.php");
+		$manual_extract_found   = (
+									file_exists($installer_directory."/main.installer.php")
+									&&
+									file_exists($installer_directory."/dup-archive__".self::PACKAGE_HASH.".txt")
+									&&
+									file_exists($installer_directory."/dup-database__".self::PACKAGE_HASH.".sql")
+									);
 
         $isZip = ($archive_extension == 'zip');
 
@@ -267,42 +273,74 @@ class DUPX_Bootstrap
 
 		
 
-		// INSTALL DIRECTORY: Check if its setup correctly AND we are not in overwrite mode
-		// disable extract installer mode by passing GET var like installer.php?extract-installer=0 or installer.php?extract-installer=disable
-        if ((isset($_GET['extract-installer']) && ('0' == $_GET['extract-installer'] || 'disable' == $_GET['extract-installer'] || 'false' == $_GET['extract-installer'])) && file_exists($installer_directory)) {
-//RSR for testing        if (file_exists($installer_directory)) {
+		if ($manual_extract_found) {
+			// INSTALL DIRECTORY: Check if its setup correctly AND we are not in overwrite mode
+			if (isset($_GET['force-extract-installer']) && ('1' == $_GET['force-extract-installer'] || 'enable' == $_GET['force-extract-installer'] || 'false' == $_GET['force-extract-installer'])) {
 
-			self::log("$installer_directory already exists");
-			$extract_installer = !file_exists($installer_directory."/main.installer.php");
+				self::log("Manual extract found with force extract installer get parametr");
+				$extract_installer = true;
 
-			($extract_installer)
-				? self::log("But main.installer.php doesn't so extracting anyway")
-				: self::log("main.installer.php also exists so not going to extract installer directory");
-
+			} else {
+				$extract_installer = false;
+				self::log("Manual extract found so not going to extract dup-installer dir");
+			}
 		} else {
-			self::log("Going to overwrite installer directory since either in overwrite mode or installer directory doesn't exist");
+			$extract_installer = true;
+			self::log("Manual extract didn't found so going to extract dup-installer dir");
 		}
 
-		if ($extract_installer && file_exists($installer_directory)) {
-			$scanned_directory = array_diff(scandir($installer_directory), array('..', '.'));
-			foreach ($scanned_directory as $object) {
-				$object_file_path = $installer_directory.'/'.$object;
-				if (is_file($object_file_path)) {
-					if (unlink($object_file_path)) {
-						self::log('Successfully deleted the file '.$object_file_path);
-					} else {
-						$error .= 'Error deleting the file '.$object_file_path.' Please manually delete it and try again.';
-						self::log($error);
+		// if ($extract_installer && file_exists($installer_directory)) {
+		if (file_exists($installer_directory)) {
+			$hash_pattern = '[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]';
+			$file_patterns_with_hash_file = array(
+				// file pattern => hash file
+				'dup-archive__'.$hash_pattern.'.txt' => 'dup-archive__'.self::PACKAGE_HASH.'.txt',
+				'dup-database__'.$hash_pattern.'.sql' => 'dup-database__'.self::PACKAGE_HASH.'.sql',
+				'dup-installer-data__'.$hash_pattern.'.sql' => 'dup-installer-data__'.self::PACKAGE_HASH.'.sql',
+				'dup-installer-log__'.$hash_pattern.'.txt' => 'dup-installer-log__'.self::PACKAGE_HASH.'.txt',
+				'dup-scan__'.$hash_pattern.'.json' => 'dup-scan__'.self::PACKAGE_HASH.'.json',
+				'dup-scanned-dirs__'.$hash_pattern.'.txt' => 'dup-scanned-dirs__'.self::PACKAGE_HASH.'.txt',
+				'dup-scanned-files__'.$hash_pattern.'.txt' => 'dup-scanned-files__'.self::PACKAGE_HASH.'.txt',
+			);
+			foreach ($file_patterns_with_hash_file as $file_pattern => $hash_file) {
+				$globs = glob($installer_directory.'/'.$file_pattern);
+				if (!empty($globs)) {
+					foreach ($globs as $glob) {
+						$file = basename($glob);
+						if ($file != $hash_file) {
+							if (unlink($glob)) {
+								self::log('Successfully deleted the file '.$glob);
+							} else {
+								$error .= 'Error deleting the file '.$glob.'. Please manually delete it and try again.';
+								self::log($error);
+							}							
+						}
 					}
 				}
 			}
 		}
-
+		
 		//ATTEMPT EXTRACTION:
 		//ZipArchive and Shell Exec
 		if ($extract_installer) {
-
 			self::log("Ready to extract the installer");
+
+			self::log("Checking permission of destination folder");
+			$destination = dirname(__FILE__);
+			if (!is_writable($destination)) {
+				self::log("destination folder for extraction is not writable");
+				if (@chmod($destination, 0755)) {
+					self::log("Permission of destination folder changed to 0755");
+				} else {
+					self::log("Permission of destination folder failed to change to 0755");
+				}
+			}
+
+			if (!is_writable($destination)) {
+				$error	= "NOTICE: The {$destination} directory is not writable on this server please talk to your host or server admin about making ";
+				$error	.= "<a target='_blank' href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-055-q'>writable {$destination} directory</a> on this server. <br/>";
+				return $error; 
+			}
 
 			if ($isZip) {
 				$zip_mode = $this->getZipMode();
@@ -362,6 +400,73 @@ class DUPX_Bootstrap
 					throw $ex;
 				}
 			}
+
+			$is_apache = (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false);
+			$is_nginx = (strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false);
+
+			$sapi_type = php_sapi_name();
+			$php_ini_data = array(						
+						'max_execution_time' => 3600,
+						'max_input_time' => -1,
+						'ignore_user_abort' => 'On',
+						'post_max_size' => '4096M',
+						'upload_max_filesize' => '4096M',
+						'memory_limit' => '4096M',
+						'default_socket_timeout' => 3600,
+						'pcre.backtrack_limit' => 99999999999,
+					);
+			$sapi_type_first_three_chars = substr($sapi_type, 0, 3);
+			if ('fpm' === $sapi_type_first_three_chars) {
+				self::log("SAPI: FPM");
+				if ($is_apache) {
+					self::log('Server: Apache');
+				} elseif ($is_nginx) {
+					self::log('Server: Nginx');
+				}
+
+				if ($is_apache || $is_nginx) {
+					$htaccess_data = array();
+					foreach ($php_ini_data as $php_ini_key=>$php_ini_val) {
+						if ($is_apache) {
+							$htaccess_data[] = 'SetEnv PHP_VALUE "'.$php_ini_key.' = '.$php_ini_val.'"';
+						} elseif ($is_nginx) {
+							if ('On' == $php_ini_val || 'Off' == $php_ini_val) {
+								$htaccess_data[] = 'php_flag '.$php_ini_key.' '.$php_ini_val;
+							} else {
+								$htaccess_data[] = 'php_value '.$php_ini_key.' '.$php_ini_val;
+							}							
+						}
+					}				
+				
+					$htaccess_text = implode("\n", $htaccess_data);
+					$htaccess_file_path = dirname(__FILE__).'/dup-installer/.htaccess';
+					self::log("creating {$htaccess_file_path} with the content:");
+					self::log($htaccess_text);
+					@file_put_contents($htaccess_file_path, $htaccess_text);
+				}
+			} elseif ('cgi' === $sapi_type_first_three_chars || 'litespeed' === $sapi_type) {
+				if ('cgi' === $sapi_type_first_three_chars) {
+					self::log("SAPI: CGI");
+				} else {
+					self::log("SAPI: litespeed");
+				}
+				if (version_compare(phpversion(), 5.5) >= 0 && (!$is_apache || 'litespeed' === $sapi_type)) {
+					$ini_data = array();
+					foreach ($php_ini_data as $php_ini_key=>$php_ini_val) {
+						$ini_data[] = $php_ini_key.' = '.$php_ini_val;
+					}
+					$ini_text = implode("\n", $ini_data);
+					$ini_file_path = dirname(__FILE__).'/dup-installer/.user.ini';
+					self::log("creating {$ini_file_path} with the content:");
+					self::log($ini_text);
+					@file_put_contents($ini_file_path, $ini_text);
+				} else{
+					self::log("No need to create dup-installer/.htaccess or dup-installer/.user.ini");
+				}
+			} else {
+				self::log("No need to create dup-installer/.htaccess or dup-installer/.user.ini");
+				self::log("SAPI: Unrecognized");
+			}
 		} else {
 			self::log("Didn't need to extract the installer.");
 		}
@@ -396,11 +501,26 @@ class DUPX_Bootstrap
                    $current_url = $current_url.':'.$server_port;
                 }
                 
+        if (!isset($_SERVER['REQUEST_URI']))  {
+
+            $_SERVER['REQUEST_URI'] = substr($_SERVER['PHP_SELF'], 0);
+
+            if (isset($_SERVER['QUERY_STRING']) AND $_SERVER['QUERY_STRING'] != "") {
+
+                $_SERVER['REQUEST_URI'] .= '?'.$_SERVER['QUERY_STRING'];
+            }
+        }
+
 		$current_url .= $_SERVER['REQUEST_URI'];
 		$uri_start    = dirname($current_url);
 
 		if ($error === null) {
                  
+                if(!file_exists($installer_directory)) {
+        
+                    $error = 'Can\'t extract installer directory. See <a target="_blank" href="https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-022-q">this FAQ item</a> for details on how to resolve.</a>';
+                }
+                
                     if($error == null) {
 
                         $bootloader_name	 = basename(__FILE__);
@@ -825,10 +945,14 @@ class DUPX_Bootstrap
     }
 }
 
-$boot  = new DUPX_Bootstrap();
-$boot_error = $boot->run();
-$auto_refresh = isset($_POST['auto-fresh']) ? true : false;
-DUPX_CSRF::resetAllTokens();
+try {
+    $boot  = new DUPX_Bootstrap();
+    $boot_error = $boot->run();
+    $auto_refresh = isset($_POST['auto-fresh']) ? true : false;
+    DUPX_CSRF::resetAllTokens();
+} catch (Exception $e) {
+   $boot_error = $e->getMessage();
+}
 
 if ($boot_error == null) {
 	$secure_csrf_token = DUPX_CSRF::generate('secure');

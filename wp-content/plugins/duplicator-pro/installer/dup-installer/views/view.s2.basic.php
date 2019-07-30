@@ -23,12 +23,23 @@ if($is_standard_mode) {
     $dbFormDisabledString = '';
 } else {
 	$wpConfigPath	= "{$GLOBALS['DUPX_ROOT']}/wp-config.php";
-	$defines = DUPX_WPConfig::parseDefines($wpConfigPath);
+	require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.wp.config.tranformer.php');
+	$config_transformer = new WPConfigTransformer($wpConfigPath);
+	function dupxGetDbConstVal($constName) {
+		if ($GLOBALS['config_transformer']->exists('constant', $constName)) {
+			$configVal = $GLOBALS['config_transformer']->get_value('constant', $constName);
+			$constVal = htmlspecialchars($configVal);
+		} else {
+			$constVal = '';
+		}
+		return $constVal;
+	}
 
-	$ovr_dbhost = htmlspecialchars(SnapLibUtil::getArrayValue($defines, 'DB_HOST'));
-	$ovr_dbname = htmlspecialchars(SnapLibUtil::getArrayValue($defines, 'DB_NAME'));
-	$ovr_dbuser = htmlspecialchars(SnapLibUtil::getArrayValue($defines, 'DB_USER'));
-	$ovr_dbpass = htmlspecialchars(SnapLibUtil::getArrayValue($defines, 'DB_PASSWORD'));
+	$ovr_dbhost = dupxGetDbConstVal('DB_HOST');
+	$ovr_dbname = dupxGetDbConstVal('DB_NAME');
+	$ovr_dbuser = dupxGetDbConstVal('DB_USER');
+	$ovr_dbpass = dupxGetDbConstVal('DB_PASSWORD');
+
     $dbhost = '';
     $dbname = '';
     $dbuser = '';

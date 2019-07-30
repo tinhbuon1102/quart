@@ -32,9 +32,6 @@ class DUP_PRO_Installer
     public $OptsCPNLDBHost   = '';
     public $OptsCPNLDBName   = '';
     public $OptsCPNLDBUser   = '';
-    //ADVANCED OPTS
-    public $OptsCacheWP;
-    public $OptsCachePath;
     //PROTECTED
     protected $Package;
 
@@ -195,9 +192,7 @@ class DUP_PRO_Installer
         $ac->dbname      = $this->Package->Installer->OptsDBName;
         $ac->dbuser      = $this->Package->Installer->OptsDBUser;
         $ac->dbpass      = '';
-        $ac->cache_wp    = $this->Package->Installer->OptsCacheWP;
-        $ac->cache_path  = $this->Package->Installer->OptsCachePath;
-
+        
         //PRE-FILLED: CPANEL
         $ac->cpnl_host     = $this->Package->Installer->OptsCPNLHost;
         $ac->cpnl_user     = $this->Package->Installer->OptsCPNLUser;
@@ -208,10 +203,6 @@ class DUP_PRO_Installer
         $ac->cpnl_dbhost   = $this->Package->Installer->OptsCPNLDBHost;
         $ac->cpnl_dbname   = $this->Package->Installer->OptsCPNLDBName;
         $ac->cpnl_dbuser   = $this->Package->Installer->OptsCPNLDBUser;
-
-        // WP DEBUG
-        $ac->wp_debug = (defined('WP_DEBUG') && WP_DEBUG) ? 1 : 0;
-	    $ac->wp_debug_log = (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) ? 1 : 0;
 
         //MULTISITE
         $ac->mu_mode = DUP_PRO_MU::getMode();
@@ -231,6 +222,21 @@ class DUP_PRO_Installer
 
         //LICENSING
         $ac->license_limit = $global->license_limit;
+
+        $ac->is_outer_root_wp_config_file = (!file_exists(DUPLICATOR_PRO_WPROOTPATH . 'wp-config.php')) ? true : false;
+        $ac->is_outer_root_wp_content_dir = $this->Package->Archive->isOuterWPContentDir();
+        if ($ac->is_outer_root_wp_content_dir && DUP_PRO_Archive_Build_Mode::Shell_Exec == $this->Package->build_progress->current_build_mode) {
+            $wpContentDirNormalizePath = $this->Package->Archive->wpContentDirNormalizePath();
+            $wpContentDirBase = basename($wpContentDirNormalizePath);
+            if ('wp-content' == $wpContentDirBase) {
+                $ac->wp_content_dir_base_name = '';
+            } else {
+                $ac->wp_content_dir_base_name = $wpContentDirBase;
+            }
+        } else {
+            $ac->wp_content_dir_base_name = '';
+        }
+        
         
         $json = json_encode($ac);
 
@@ -345,10 +351,11 @@ class DUP_PRO_Installer
 
         DUP_PRO_LOG::trace("Add extra files: Current build mode = ".$package->build_progress->current_build_mode);
 
+        $wpconfig_filepath = $package->Archive->getWPConfigFilePath();
         if ($package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::ZipArchive) {
-            $success = $this->add_extra_files_using_ziparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath, $package->build_progress->current_build_compression);
+            $success = $this->add_extra_files_using_ziparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath, $wpconfig_filepath, $package->build_progress->current_build_compression);
         } else if ($package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::Shell_Exec) {
-            $success = $this->add_extra_files_using_shellexec($archive_filepath, $installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_config_filepath, $package->build_progress->current_build_compression);
+            $success = $this->add_extra_files_using_shellexec($archive_filepath, $installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_config_filepath, $wpconfig_filepath, $package->build_progress->current_build_compression);
             // Adding the shellexec fail text fix
             if(!$success) {
                 $error_text = DUP_PRO_U::__("Problem adding installer to archive");
@@ -359,7 +366,7 @@ class DUP_PRO_Installer
                 $system_global->save();
             }
         } else if ($package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::DupArchive) {
-            $success = $this->add_extra_files_using_duparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath);
+            $success = $this->add_extra_files_using_duparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath, $wpconfig_filepath);
         }
 
         // No sense keeping the archive config around
@@ -370,13 +377,12 @@ class DUP_PRO_Installer
         return $success;
     }
 
-    private function add_extra_files_using_duparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath)
+    private function add_extra_files_using_duparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_filepath, $archive_config_filepath, $wpconfig_filepath)
     {
         $success = false;
 
         try {
 			$htaccess_filepath = DUPLICATOR_PRO_WPROOTPATH . '.htaccess';
-			$wpconfig_filepath = DUPLICATOR_PRO_WPROOTPATH . 'wp-config.php';
 
             $logger = new DUP_PRO_Dup_Archive_Logger();
 
@@ -471,10 +477,9 @@ class DUP_PRO_Installer
         $this->numDirsAdded += $fileops_counts->numDirsAdded;
     }
 
-    private function add_extra_files_using_ziparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $zip_filepath, $archive_config_filepath, $is_compressed)
+    private function add_extra_files_using_ziparchive($installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $zip_filepath, $archive_config_filepath, $wpconfig_filepath, $is_compressed)
     {
 		$htaccess_filepath = DUPLICATOR_PRO_WPROOTPATH . '.htaccess';
-		$wpconfig_filepath = DUPLICATOR_PRO_WPROOTPATH . 'wp-config.php';
 
         $success = false;
 
@@ -527,7 +532,7 @@ class DUP_PRO_Installer
         return $success;
     }
 
-    private function add_extra_files_using_shellexec($zip_filepath, $installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_config_filepath, $is_compressed)
+    private function add_extra_files_using_shellexec($zip_filepath, $installer_filepath, $scan_filepath, $file_list_filepath, $dir_list_filepath, $sql_filepath, $archive_config_filepath, $wpconfig_filepath, $is_compressed)
     {
         $success = false;
         $global  = DUP_PRO_Global_Entity::get_instance();
@@ -559,7 +564,6 @@ class DUP_PRO_Installer
 		$htaccess_filepath = DUPLICATOR_PRO_WPROOTPATH . '.htaccess';
 		$dest_htaccess_orig_filepath  = "{$extras_directory}/" . DUPLICATOR_PRO_HTACCESS_ORIG_FILENAME;
 
-		$wpconfig_filepath = DUPLICATOR_PRO_WPROOTPATH . 'wp-config.php';
 		$dest_wpconfig_ark_filepath  = "{$extras_directory}/dup-wp-config-arc__{$package_hash}.txt";
 
         if (file_exists($extras_directory)) {
@@ -823,7 +827,7 @@ class DUP_PRO_Installer
      */
     private function getEmbeddedFileListFilePath() {
         $package_hash = $this->Package->get_package_hash();
-        $embedded_file_list_file_path = 'dup-installer/dup-scanned_files__'.$package_hash.'.txt';
+        $embedded_file_list_file_path = 'dup-installer/dup-scanned-files__'.$package_hash.'.txt';
         return $embedded_file_list_file_path;
     }
 
@@ -834,7 +838,7 @@ class DUP_PRO_Installer
      */
     private function getEmbeddedDirListFilePath() {
         $package_hash = $this->Package->get_package_hash();
-        $embedded_dir_list_file_path = 'dup-installer/dup-scanned_dirs__'.$package_hash.'.txt';
+        $embedded_dir_list_file_path = 'dup-installer/dup-scanned-dirs__'.$package_hash.'.txt';
         return $embedded_dir_list_file_path;
     }
  

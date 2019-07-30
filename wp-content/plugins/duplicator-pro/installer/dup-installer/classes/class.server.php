@@ -92,7 +92,8 @@ class DUPX_Server
 
 		$ignore_path_prefixes = array(
 			$path.DIRECTORY_SEPARATOR.'dup_installer',
-            $path.DIRECTORY_SEPARATOR.'.' // any special directory
+			$path.DIRECTORY_SEPARATOR.'.', // any special directory
+			$GLOBALS['FW_PACKAGE_PATH'],
 		);
 
 		$ret = true;

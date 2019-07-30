@@ -119,9 +119,10 @@ $package_template_count = count($package_templates);
                     </td>
                     <td>
 
-                        <a href="javascript:void(0);" onclick="document.location.href = '<?php echo esc_url("$edit_template_url&package_template_id=".intval($package_template->id)); ?>'" class="name" ><?php echo esc_html($package_template->name); ?></a>
+                        <a href="javascript:void(0);" onclick="DupPro.Template.Edit(<?php echo intval($package_template->id); ?>);" class="name" ><?php echo esc_html($package_template->name); ?></a>
                         <div class="sub-menu">
-                            <a href="javascript:void(0);" onclick="document.location.href = '<?php echo esc_url("$edit_template_url&package_template_id=$package_template->id"); ?>'"><?php DUP_PRO_U::esc_html_e('Edit'); ?></a> 
+                            <a href="javascript:void(0);"onclick="DupPro.Template.Edit(<?php echo intval($package_template->id); ?>);" ><?php DUP_PRO_U::esc_html_e('Edit'); ?></a> |
+                            <a href="javascript:void(0);"onclick="DupPro.Template.Copy(<?php echo intval($package_template->id); ?>);" ><?php DUP_PRO_U::esc_html_e('Copy'); ?></a>
                             <?php if ($package_template->is_default == false) :?>
                                 | <a href="javascript:void(0);" onclick="DupPro.Template.Delete(<?php echo esc_js("$package_template->id, $schedule_count");?>);"><?php DUP_PRO_U::esc_html_e('Delete'); ?></a>
 							<?php endif; ?>
@@ -175,6 +176,25 @@ $package_template_count = count($package_templates);
         DupPro.Template.View = function (id) {
             $('#' + id).toggle();
         }
+
+        // Edit template
+        DupPro.Template.Edit = function (id) {
+            document.location.href = '<?php echo "$edit_template_url&package_template_id="; ?>' + id;
+        };
+        
+        // Copy template
+        DupPro.Template.Copy = function (id) {
+            <?php
+            $params = array(
+                'action=copy-template',
+                '_wpnonce='.wp_create_nonce('duppro-template-edit'),
+                'package_template_id=-1',
+                'duppro-source-template-id=' // last params get id from js param function
+            );
+            $edit_template_url .= '&'.implode('&' , $params);
+            ?>
+            document.location.href = '<?php echo "$edit_template_url"; ?>' + id;
+        };
 
         //Delets a single record
         DupPro.Template.Delete = function (id, schedule_count) {

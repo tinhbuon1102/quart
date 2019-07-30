@@ -19,21 +19,34 @@ if (DUP_PRO_U::PHP56()) {
     {
         public static function get_raw_onedrive_client()
         {
-            $onedrive = new DuplicatorPro\Krizalys\Onedrive\Client([
+            $opts = array(
                 'client_id' => DUP_PRO_OneDrive_Config::ONEDRIVE_CLIENT_ID,
-            ]);
+            );
+            $opts = self::injectExtraReqArgs($opts);
+            $onedrive = new DuplicatorPro\Krizalys\Onedrive\Client($opts);
 
             return $onedrive;
         }
 
         public static function get_onedrive_client_from_state($state)
         {
-            $onedrive = new DuplicatorPro\Krizalys\Onedrive\Client([
+            $opts = array(
                 'client_id' => DUP_PRO_OneDrive_Config::ONEDRIVE_CLIENT_ID,
                 'state' => $state,
-            ]);
+            );
+            $opts = self::injectExtraReqArgs($opts);
+            $onedrive = new DuplicatorPro\Krizalys\Onedrive\Client($opts);
 
             return $onedrive;
+        }
+
+        private static function injectExtraReqArgs($opts) {
+            $global = DUP_PRO_Global_Entity::get_instance();
+            $opts['sslverify'] = $global->ssl_disableverify ? false : true;
+            if (!$global->ssl_useservercerts) {
+                $opts['ssl_capath'] = DUPLICATOR_PRO_CERT_PATH;
+            }
+            return $opts;
         }
 
         public static function get_onedrive_auth_url_and_client($is_business)

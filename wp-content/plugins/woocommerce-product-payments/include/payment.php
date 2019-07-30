@@ -25,7 +25,7 @@ function wpp_payments_form() {
         /**
          *  skip if payment in disbled from admin
          */
-        if ($pay->enabled == 'no') {
+        if ($pay->enabled === 'no') {
             continue;
         }
         $checked = '';
@@ -55,10 +55,10 @@ function wpp_meta_box_save($post_id, $post) {
     if (isset($post->post_type) && $post->post_type == 'revision') {
         return $post_id;
     }
-    if ( isset($_REQUEST['action']) &&  $_REQUEST['action'] != 'editpost') {
+    if ( isset($_REQUEST['action']) &&  sanitize_title($_REQUEST['action']) != 'editpost') {
         return $post_id;
     }else{
-        if (isset($_POST['post_type']) && $_POST['post_type'] == 'product' && isset($_POST['pays'])) {
+        if (get_post_type() === 'product' && isset($_POST['pays'])) {
             $productIds = get_option('woocommerce_product_apply', array());
             if (is_array($productIds) && !in_array($post_id, $productIds)) {
                 $productIds[] = $post_id;
@@ -66,13 +66,14 @@ function wpp_meta_box_save($post_id, $post) {
             }
                 //delete_post_meta($post_id, 'sd_payments');    
             $payments = array();
-            if ($_POST['pays']) {
-                foreach ($_POST['pays'] as $pay) {
+            $post_payments = array_filter(array_map('sanitize_title', $_POST['pays']));            
+            if ($post_payments) {
+                foreach ($post_payments as $pay) {
                     $payments[] = $pay;
                 }
             }
                 update_post_meta($post_id, 'sd_payments', $payments);
-        } elseif (isset($_POST['post_type']) && $_POST['post_type'] == 'product') {
+        } elseif (get_post_type() === 'product') {
                 update_post_meta($post_id, 'sd_payments', array());
         }
     }

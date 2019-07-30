@@ -42,9 +42,13 @@ class DUP_PRO_ShellZip extends DUP_PRO_Archive
                 }
             }
 
+            do_action('duplicator_pro_package_before_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
+
             $archive->Package->Status = DUP_PRO_PackageStatus::ARCSTART;
             $archive->Package->update();
             $archive->Package->safe_tmp_cleanup(true);
+
+            do_action('duplicator_pro_package_after_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
 
             $global        = DUP_PRO_Global_Entity::get_instance();
             $timerAllStart = DUP_PRO_U::getMicrotime();
@@ -206,6 +210,51 @@ class DUP_PRO_ShellZip extends DUP_PRO_Archive
                     return true;
                 } else {
                     DUP_PRO_LOG::trace("Stderr is null");
+                }
+
+                if ($archive->isOuterWPContentDir()) {
+                    DUP_PRO_LOG::trace("Outer of root wp-content dir detected");
+
+                    $wpContentDirNormalizePath = $archive->wpContentDirNormalizePath();
+                    $wpContentOuterDirNormalizePath = dirname($archive->wpContentDirNormalizePath());
+                    $wpContentDirBase = basename($wpContentDirNormalizePath);
+                    
+                    $command = 'cd '.escapeshellarg($wpContentOuterDirNormalizePath);
+                    $command .= ' && '.escapeshellcmd(DUP_PRO_Zip_U::getShellExecZipPath())." $compression_parameter".' -g -rq ';
+                    $command .= escapeshellarg($zipPath).' '.$wpContentDirBase.'/*';
+                    $command .= " -x $exclude_string 2>&1";
+
+                    DUP_PRO_LOG::trace("Executing shellzip command $command");
+                    $stderr = shell_exec($command);
+                    DUP_PRO_LOG::trace("After shellzip command");
+
+                    if ($stderr != NULL) {
+                        $error_text = "Error executing shell exec zip: $stderr.";
+                        /* @var $system_global DUP_PRO_System_Global_Entity */
+                        $system_global = DUP_PRO_System_Global_Entity::get_instance();
+
+                        if (DUP_PRO_STR::contains($stderr, 'quota')) {
+                            $fix_text = DUP_PRO_U::__("Account out of space so purge large files or talk to your host about increasing quota.");
+                            $system_global->add_recommended_text_fix($error_text, $fix_text);
+                        } else if (DUP_PRO_STR::contains($stderr, 'such file or')) {
+                            $fix_text = sprintf("%s <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-package-160-q' target='_blank'>%s</a>", DUP_PRO_U::__('See FAQ:'),
+                                DUP_PRO_U::__('How to resolve "zip warning: No such file or directory"?'));
+                            $system_global->add_recommended_text_fix($error_text, $fix_text);
+                        } else {
+                            $fix_text = DUP_PRO_U::__("Click on button to switch to the DupArchive archive engine.");
+                            $system_global->add_recommended_quick_fix($error_text, $fix_text, 'global : {archive_build_mode:3}');
+                        }
+
+                        //$system_global->add_recommended_text_fix($error_text, $fix_text);
+                        $system_global->save();
+
+                        DUP_PRO_Log::error("$error_text  **RECOMMENDATION: $fix_text", '', false);
+
+                        $build_progress->failed = true;
+                        return true;
+                    } else {
+                        DUP_PRO_LOG::trace("Stderr is null");
+                    }
                 }
 
                 $file_count_string = '';

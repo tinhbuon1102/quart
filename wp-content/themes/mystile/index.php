@@ -36,7 +36,7 @@
 </div><!--/slider container-->
 <div id="homepage-slider-container" class="mb">
 <?php 
-    echo do_shortcode("[metaslider id=182]"); 
+    echo do_shortcode("[metaslider id=4841]"); 
 ?>
 </div><!--/slider container-->
 <?php if(!wp_is_mobile()): ?>

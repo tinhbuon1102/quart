@@ -42,7 +42,7 @@ if (isset($_POST['action'])) {
 
 						case DUP_PRO_License_Activation_Response::POST_ERROR:
 							$error_response = sprintf(DUP_PRO_U::__("Cannot communicate with snapcreek.com. Please see <a target='_blank' href='%s'>this FAQ entry</a> for possible causes and resolutions."),
-								'https://snapcreek.com/duplicator/docs/faqs-tech/#faq-licensing-08-q');
+								'https://snapcreek.com/duplicator/docs/faqs-tech/#faq-licensing-005-q');
 							break;
 
 						case DUP_PRO_License_Activation_Response::INVALID_RESPONSE:
@@ -74,7 +74,7 @@ if (isset($_POST['action'])) {
 
 					case DUP_PRO_License_Activation_Response::POST_ERROR:
 						$error_response = sprintf(DUP_PRO_U::__("Cannot communicate with snapcreek.com. Please see <a target='_blank' href='%s'>this FAQ entry</a> for possible causes and resolutions."),
-							'https://snapcreek.com/duplicator/docs/faqs-tech/#faq-licensing-08-q');
+							'https://snapcreek.com/duplicator/docs/faqs-tech/#faq-licensing-005-q');
 						break;
 
 					case DUP_PRO_License_Activation_Response::INVALID_RESPONSE:

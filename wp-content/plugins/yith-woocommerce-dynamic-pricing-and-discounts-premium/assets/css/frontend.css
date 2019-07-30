@@ -1,7 +1,7 @@
 /*
  * @package YITH WooCommerce Dynamic Pricing and Discounts Premium
  * @since   1.0.0
- * @author  YITHEMES
+ * @author  YITH
  */
 #ywdpd-table-discounts th {
     font-weight: bold;
@@ -35,6 +35,10 @@ table#ywdpd-table-discounts {
     border-right: 1px solid #efefef;
     padding: 5px;
     }
+#ywdpd-action-discount div#publishing-action {
+    width: 100% !important;
+}
 .show_note_on_apply_products, .show_note_on_adjustment_products {
     margin: 20px 0px;
     }
+

@@ -1,7 +1,7 @@
 /*
  * @package YITH WooCommerce Dynamic Pricing and Discounts Premium
  * @since   1.0.0
- * @author  YITHEMES
+ * @author  YITH
  */
 #wrap.plugin-option tr {
     border-bottom: 0;
@@ -188,3 +188,112 @@ input#yit_ywdpd_options_price_format {
 .ui-timepicker-div.ui-timepicker-oneLine dl dd.ui_tpicker_microsec:before { content:'.'; display:inline-block; }
 .ui-timepicker-div.ui-timepicker-oneLine .ui_tpicker_unit_hide,
 .ui-timepicker-div.ui-timepicker-oneLine .ui_tpicker_unit_hide:before{ display: none; }
+
+
+#ywdpd_pricing_discount input[type="text"]{
+    padding: 5px;
+}
+.metaboxes-tab table.discount-rules input[type="text"], .metaboxes-tab table.discount-rules select,
+.metaboxes-tab table.special-offers-rules input[type="text"], .metaboxes-tab table.special-offers-rules select {
+    width: 100%;
+}
+.yith-plugin-fw .special_offer_discount  input[type=text]:not(.select2-search__field):not(.wp-color-picker),
+.yith-plugin-fw  .discount-table-rules-wrapper input[type=text]:not(.select2-search__field):not(.wp-color-picker) {
+   width: 200px!important;
+}
+.metaboxes-tab table.discount-rules .select2 input[type="text"]{
+    width: 100%;
+    padding: 0px;
+}
+
+.widefat .column-status .ywdpd-discount-status{
+    display: block;
+    text-indent: -9999px;
+    position: relative;
+    height: 1em;
+    width: 1em;
+    background: 0 0;
+    font-size: 1.4em;
+}
+
+
+.ywdpd-discount-status.active:after,
+.ywdpd-discount-status.deactive:after{
+    font-family: WooCommerce;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    text-indent: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+.ywdpd-discount-status.deactive:after{
+    content: "\e013";
+    color: #a00000;
+}
+
+.ywdpd-discount-status.active:after{
+    content: "\e015";
+    color: #44CC2E;
+}
+
+a.ywpdp_subtitle_link {
+    text-decoration: none;
+    padding: 8px;
+    padding-left: 0;
+    display: block;
+}
+a.ywpdp_subtitle_link:focus {
+    box-shadow: none;
+}
+
+
+.ywdpd_submit_box #major-publishing-actions {
+    border-top: 0;
+    background: #fff;
+}
+
+#ywdpd-action-discount table.discount-rules  td {
+    width: 50%;
+}
+
+#ywdpd-action-discount  table.discount-rules {
+    width:80%;
+}
+
+#ywdpd-action-discount table.discount-rules  td table{
+    width: 100%;
+}
+#ywdpd-action-discount  table.discount-rules ul.chosen-choices{
+    min-height: 29px;
+}
+
+
+.metaboxes-tab table.cart-discount-amount td input,
+.metaboxes-tab table.cart-discount-amount td select{
+    width: 100% !important;
+    min-height:29px;
+}
+#ywdpd_cart_discount .select2-container--default.select2-container--focus .select2-selection--multiple,
+#ywdpd_pricing_discount .select2-container--default.select2-container--focus .select2-selection--multiple{
+    border-color: #ccc;
+}
+#ywdpd-action-discount div#publishing-action {
+    float: left;
+    width: 100%;
+}
+
+tr.ywdpd-select-wrapper table {
+    width: 100%;
+}
+.cart_discount,.cart_discount_type{
+    display: none;
+}

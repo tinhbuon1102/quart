@@ -6,6 +6,8 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/assets/js/javascript.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/views/inc.header.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/class.scan.check.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/ui/class.ui.dialog.php');
+require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/ui/class.ui.messages.php');
+
 
 global $wp_version;
 global $wpdb;
@@ -106,31 +108,36 @@ if (isset($_REQUEST['action'])) {
 
 <?php
 // Navigation and includes
-$section        = isset($_GET['section']) ? $_GET['section'] : 'diagnostic';
-$tools_url      = 'admin.php?page=duplicator-pro-tools&tab=diagnostics';
-$dir = dirname(__FILE__);
+$section   = isset($_GET['section']) ? $_GET['section'] : 'diagnostic';
+$tools_url = 'admin.php?page=duplicator-pro-tools&tab=diagnostics';
+$dir       = dirname(__FILE__);
 
 $sections = array(
     "diagnostic" => array(
         'name' => DUP_PRO_U::__("Information"),
-        'url'=>"{$tools_url}&section=diagnostic",
-        'path'=>$dir . '/diagnostic.php'
+        'url' => "{$tools_url}&section=diagnostic",
+        'path' => $dir.'/diagnostic.php'
     ),
     "log" => array(
         'name' => DUP_PRO_U::__("Duplicator Logs"),
-        'url'=>"{$tools_url}&section=log",
-        'path'=>$dir . '/log.php'
+        'url' => "{$tools_url}&section=log",
+        'path' => $dir.'/log.php'
     ),
     "phplogs" => array(
         'name' => DUP_PRO_U::__("PHP Logs"),
-        'url'=>"{$tools_url}&section=phplogs",
-        'path'=>$dir . '/phplogs.php'
+        'url' => "{$tools_url}&section=phplogs",
+        'path' => $dir.'/phplogs.php'
+    ),
+    "tests" => array(
+        'name' => DUP_PRO_U::__("Tests"),
+        'url' => "{$tools_url}&section=tests",
+        'path' => $dir.'/tests.php'
     ),
     "support" => array(
         'name' => DUP_PRO_U::__("Support"),
-        'url'=>"{$tools_url}&section=support",
-        'path'=>$dir . '/support.php'
-    ),
+        'url' => "{$tools_url}&section=support",
+        'path' => $dir.'/support.php'
+    )
 );
 $sect = array();
 $path = $dir . '/diagnostic.php';
@@ -140,7 +147,7 @@ foreach($sections as $switch => $prop){
         $sect[]='<b>'.$prop['name'].'</b>';
         $path = $prop['path'];
     } else {
-        $sect[]='<a href='.$prop['url'].'>'.$prop['name'].'</a>';
+        $sect[]='<a href="'.esc_url($prop['url']).'" >'.$prop['name'].'</a>';
     }
 }
 

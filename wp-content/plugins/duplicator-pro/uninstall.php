@@ -63,4 +63,30 @@ function DUP_PRO_deactivate_license()
 
 DUP_PRO_deactivate_license();
 
-?>
+$global = DUP_PRO_Global_Entity::get_instance();
+
+if ($global->uninstall_packages) {
+	$tableName = $GLOBALS['wpdb']->base_prefix.'duplicator_pro_packages';
+	$GLOBALS['wpdb']->query('DROP TABLE IF EXISTS '.$tableName);
+
+	$ssdir = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH);
+
+	//Sanity check for strange setup
+	$check = glob("{$ssdir}/wp-config.php");
+	if (count($check) == 0) {
+		require_once 'lib/snaplib/class.snaplib.u.io.php';
+		SnapLibIOU::rrmdir($ssdir);
+	}
+}
+
+//Remove all Settings
+if ($global->uninstall_settings) {
+	$tableName = $GLOBALS['wpdb']->base_prefix.DUP_PRO_JSON_Entity_Base::DEFAULT_TABLE_NAME;
+	$GLOBALS['wpdb']->query('DROP TABLE IF EXISTS '.$tableName);
+
+	delete_option('duplicator_pro_plugin_version');
+	delete_option('duplicator_package_active');
+	delete_option('duplicator_pro_trace_log_enabled');
+	delete_option('duplicator_pro_send_trace_to_error_log');
+	delete_option('duplicator_pro_license_key');
+}

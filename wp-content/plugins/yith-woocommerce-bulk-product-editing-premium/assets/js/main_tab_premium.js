@@ -1571,7 +1571,7 @@ jQuery( function ( $ ) {
                             tags_new = tags_old_value + tags_v;
                             break;
                         case 'rep':
-                            let to_search = 'yes' === ajax_object.use_regex ? new RegExp( tags_v, "g" ) : tags_v;
+                            var to_search = 'yes' === ajax_object.use_regex ? new RegExp( tags_v, "g" ) : tags_v;
                             tags_new = tags_old_value.replace( to_search, tags_r );
                             break;
                         case 'del':
@@ -1670,7 +1670,7 @@ jQuery( function ( $ ) {
                                 new_value = old_value + v;
                                 break;
                             case 'rep':
-                                let to_search = 'yes' === ajax_object.use_regex ? new RegExp( v, "g" ) : v;
+                                var to_search = 'yes' === ajax_object.use_regex ? new RegExp( v, "g" ) : v;
                                 new_value = old_value.replace( to_search, r );
                                 break;
                             case 'del':
@@ -1743,7 +1743,7 @@ jQuery( function ( $ ) {
                                 new_value = old_value + v;
                                 break;
                             case 'rep':
-                                let to_search = 'yes' === ajax_object.use_regex ? new RegExp( v, "g" ) : v;
+                                var to_search = 'yes' === ajax_object.use_regex ? new RegExp( v, "g" ) : v;
                                 new_value = old_value.replace( to_search, r );
                                 break;
                             case 'del':

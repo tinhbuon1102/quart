@@ -127,9 +127,19 @@ jQuery(document).ready(function($)
 		$.ajax({
 			type: "POST",
 			url: ajaxurl,
-			dataType: "json",
+			dataType: "text",
 			data: data,
-			success: function(data) {DupPro.Tools.IntScanValidator(data)},
+			success: function(respData) {
+				try {
+                    var data = DupPro.parseJSON(respData);
+                } catch(err) {
+                    console.error(err);
+					console.error('JSON parse failed for response data: ' + respData);
+					console.log(respData);
+                    return false;
+                }
+				DupPro.Tools.IntScanValidator(data);
+			},
 			error: function(data) {console.log(data)},
 			done: function(data) {console.log(data)}
 		});

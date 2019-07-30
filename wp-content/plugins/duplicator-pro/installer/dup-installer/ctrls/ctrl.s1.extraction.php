@@ -28,7 +28,6 @@ class DUP_PRO_Extraction
     public $chunkedExtractionCompleted = false;
     public $num_files = 0;
 
-    public $max_files_extract_at_a_time = 50;
     public $max_size_extract_at_a_time;
 
     public function __construct($post)
@@ -140,8 +139,13 @@ class DUP_PRO_Extraction
         $this->runZipArchiveChunking();
     }
 
-    public function runZipArchiveChunking()
+    public function runZipArchiveChunking($chunk = true)
     {
+        if (!class_exists('ZipArchive')) {
+            DUPX_Log::info("ERROR: Stopping install process.  Trying to extract without ZipArchive module installed.  Please use the 'Manual Archive Extraction' mode to extract zip file.");
+            DUPX_Log::error(ERR_ZIPARCHIVE);
+        }
+        
         $zip = new ZipArchive();
         $start_time = DUPX_U::getMicrotime();
         $time_over = false;
@@ -156,7 +160,7 @@ class DUP_PRO_Extraction
             // Main chunk
             do {
                 $skip_filenames = array();
-                $extract_filenames = array();
+                $extract_filename = null;
 
                 $no_of_files_in_micro_chunk = 0;
                 $size_in_micro_chunk = 0;
@@ -169,7 +173,7 @@ class DUP_PRO_Extraction
                     if ($skip) {
                         $skip_filenames[] = $filename;
                     } else {
-                        $extract_filenames[] = $filename;
+                        $extract_filename = $filename;
                         $size_in_micro_chunk += $stat_data['size'];
                         $no_of_files_in_micro_chunk++;
                     }
@@ -177,27 +181,26 @@ class DUP_PRO_Extraction
                 } while (
                     $this->archive_offset < $num_files_minus_1
                     &&
-                    $no_of_files_in_micro_chunk < $this->max_files_extract_at_a_time
+                    $no_of_files_in_micro_chunk < 1
                     &&
                     $size_in_micro_chunk < $this->max_size_extract_at_a_time
                 );
 
                 if (!empty($skip_filenames)) {
-                    $skip_filenames_str = implode(', ', $skip_filenames);
-                    DUPX_Log::info("Skipping {$skip_filenames_str}");
+                    DUPX_Log::info("SKIPPING\n".implode("\n", $skip_filenames),2);
                 }
 
-                $extract_filenames_str = implode(', ', $extract_filenames);
-
-                if (!empty($extract_filenames)) {
-               //rsr uncomment if debugging     DUPX_Log::info("Attempting to extract {$extract_filenames_str}. Time:". time());
-                    if (!$zip->extractTo($this->root_path, $extract_filenames)) {
-                        $zip_err_msg = ERR_ZIPEXTRACTION;
-                        $zip_err_msg .= "<br/><br/><b>To resolve error see <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q' target='_blank'>https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q</a></b>";
-                        DUPX_Log::error($zip_err_msg);
-                        die();
+                if (!empty($extract_filename)) {
+                    try {
+                        //rsr uncomment if debugging     DUPX_Log::info("Attempting to extract {$extract_filename}. Time:". time());
+                        if (!$zip->extractTo($this->root_path, $extract_filename)) {
+                            DUPX_Log::info("FILE EXTRACION ERROR: ".$extract_filename);
+                        } else {
+                            DUPX_Log::info("DONE: ".$extract_filename,2);
+                        }
+                    } catch (Exception $ex) {
+                        DUPX_Log::info("FILE EXTRACION ERROR: {$extract_filename} | MSG:" . $ex->getMessage());
                     }
-                    DUPX_Log::info("Done {$extract_filenames_str}");
                 }
 
                 $extracted_size += $size_in_micro_chunk;
@@ -206,7 +209,11 @@ class DUP_PRO_Extraction
                     $this->chunkedExtractionCompleted = true;
                     break;
                 }
-                $time_over = (DUPX_U::getMicrotime() - $start_time) > $this->chunk_time;                
+                
+                if (($time_over = $chunk && (DUPX_U::getMicrotime() - $start_time) > $this->chunk_time)) {
+                    DUPX_Log::info("TIME IS OVER - CHUNK", 2);
+                }
+                
             } while ($this->archive_offset < $num_files_minus_1 && !$time_over);
             $zip->close();
 
@@ -219,7 +226,9 @@ class DUP_PRO_Extraction
             $average_extract_rate = array_sum($zip_arc_chunks_extract_rates) / count($zip_arc_chunks_extract_rates);
 
             $archive_size = filesize($this->archive_path);
-            $expected_extract_time = $archive_size / $average_extract_rate;
+            $expected_extract_time = $average_extract_rate > 0
+                                        ? $archive_size / $average_extract_rate
+                                        : 0;
 
             DUPX_Log::info("Expected total archive extract time: {$expected_extract_time}");
             DUPX_Log::info("Total extraction elapsed time until now: {$expected_extract_time}");
@@ -250,6 +259,9 @@ class DUP_PRO_Extraction
 
       //rsr todo uncomment when debugging      DUPX_Log::info("Zip archive chunk notice no.: {$this->zip_arc_chunk_notice_no}");
         } else{
+            $zip_err_msg = ERR_ZIPOPEN;
+            $zip_err_msg .= "<br/><br/><b>To resolve error see <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q' target='_blank'>https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q</a></b>";
+            DUPX_Log::info($zip_err_msg);
             throw new Exception("Couldn't open zip archive.");
         }
     }
@@ -356,7 +368,7 @@ class DUP_PRO_Extraction
 
         DUPX_Log::info("ZIP:\tShell Exec Unzip");
 
-        $command = "{$this->shell_exec_path} -o -qq \"{$this->archive_path}\" -d {$this->root_path} 2>&1";
+        $command = escapeshellcmd($this->shell_exec_path)." -o -qq ".escapeshellarg($this->archive_path)." -d ".escapeshellarg($this->root_path)." 2>&1";
         if ($this->zip_filetime == 'original') {
             DUPX_Log::info("\nShell Exec Current does not support orginal file timestamp please use ZipArchive");
         }
@@ -374,42 +386,7 @@ class DUP_PRO_Extraction
     public function runZipArchive()
     {
         DUPX_Log::info(">>> Starting ZipArchive Unzip");
-
-        if (!class_exists('ZipArchive')) {
-            DUPX_Log::info("ERROR: Stopping install process.  Trying to extract without ZipArchive module installed.  Please use the 'Manual Archive Extraction' mode to extract zip file.");
-            DUPX_Log::error(ERR_ZIPARCHIVE);
-        }
-
-        $zip = new ZipArchive();
-
-        if ($zip->open($this->archive_path) === true) {
-
-            if (!$zip->extractTo($this->root_path)) {
-                $zip_err_msg = ERR_ZIPEXTRACTION;
-                $zip_err_msg .= "<br/><br/><b>To resolve error see <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q' target='_blank'>https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q</a></b>";
-                DUPX_Log::error($zip_err_msg);
-            }
-            $log = print_r($zip, true);
-
-            //FILE-TIMESTAMP
-            if ($this->zip_filetime == 'original') {
-                $log .= "File timestamp set to Original\n";
-                for ($idx = 0; $s = $zip->statIndex($idx); $idx++) {
-                    touch($this->root_path . DIRECTORY_SEPARATOR . $s['name'], $s['mtime']);
-                }
-            } else {
-                $now = @date("Y-m-d H:i:s");
-                $log .= "File timestamp set to Current: {$now}\n";
-            }
-
-            $close_response = $zip->close();
-            $log .= "<<< ZipArchive Unzip Complete: " . var_export($close_response, true);
-            DUPX_Log::info($log);
-        } else {
-            $zip_err_msg = ERR_ZIPOPEN;
-            $zip_err_msg .= "<br/><br/><b>To resolve error see <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q' target='_blank'>https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-130-q</a></b>";
-            DUPX_Log::error($zip_err_msg);
-        }
+        $this->runZipArchiveChunking(false);
     }
 
     public function setFilePermission()

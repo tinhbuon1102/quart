@@ -51,14 +51,19 @@ class DUP_PRO_UI_Dialog
     public $progressOn = true;
 
     /**
-     * The javascript call back method to call when the 'Yes' button is clicked
-     * Available only on confirm dialogs
+     * The javascript call back method to call when the 'Yes' or 'Ok' button is clicked 
      */
-    public $jscallback;
+    public $jsCallback = null;
 
     public $okText;
 
     public $cancelText;
+
+    /**
+     * If true close dialog on confirm
+     * @var bool
+     */
+    public $closeOnConfirm = false;
 
 
     /**
@@ -111,6 +116,12 @@ class DUP_PRO_UI_Dialog
      */
     public function initAlert()
     {
+        $onClickClose = '';
+        if (!is_null($this->jsCallback)) {
+            $onClickClose .= $this->jsCallback.';';
+        }
+        $onClickClose .= 'tb_remove();';
+
         $html = '
 		<div id="'.esc_attr($this->id).'" style="display:none">
 			<div class="dpro-dlg-alert-txt" id="'.esc_attr($this->id).'-alert-txt">
@@ -118,7 +129,7 @@ class DUP_PRO_UI_Dialog
 				<br/><br/>
 			</div>
 			<div class="dpro-dlg-alert-btns">
-				<input id="'.esc_attr($this->id).'-confirm" type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="tb_remove()" />
+				<input id="'.esc_attr($this->id).'-confirm" type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="'.$onClickClose.'" />
 			</div>
 		</div>';
 
@@ -143,6 +154,16 @@ class DUP_PRO_UI_Dialog
     }
 
     /**
+     * js code to update html message content from js var name
+     * 
+     * @param string $jsVarName
+     */
+    public function updateMessage($jsVarName) {
+        $js = '$("#'.$this->getID().'_message").html('.$jsVarName.');';
+        echo $js;
+    }
+
+    /**
      * Shows the confirm base JS code used to display when needed
      *
      * @return string	The JS content used for the confirm dialog
@@ -151,6 +172,11 @@ class DUP_PRO_UI_Dialog
     {
         $progress_data  = '';
         $progress_func2 = '';
+
+        $onClickConfirm = '';
+        if (!is_null($this->jsCallback)) {
+            $onClickConfirm .= $this->jsCallback.';';
+        }
 
         //Enable the progress spinner
         if ($this->progressOn) {
@@ -175,6 +201,11 @@ class DUP_PRO_UI_Dialog
 					}
 				</script>
 HTML;
+            $onClickConfirm .= $progress_func2.';';
+        }
+
+        if ($this->closeOnConfirm) {
+             $onClickConfirm .= 'tb_remove();';
         }
 
         $html = '
@@ -185,7 +216,7 @@ HTML;
 					'.$progress_data.'
 				</div>
 				<div class="dpro-dlg-confirm-btns">
-					<input id="'.esc_attr($this->id).'-confirm" type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="'.$this->jsCallback.$progress_func2.'" />
+					<input id="'.esc_attr($this->id).'-confirm" type="button" class="button button-large" value="'.esc_attr($this->okText).'" onclick="'.$onClickConfirm.'" />
 					<input id="'.esc_attr($this->id).'-cancel" type="button" class="button button-large" value="'.esc_attr($this->cancelText).'" onclick="tb_remove()" />
 				</div>
 			</div>';

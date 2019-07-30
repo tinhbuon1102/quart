@@ -20,7 +20,7 @@ if ( ! class_exists( 'YIT_Video' ) ) {
      * Class to manage the video from youtube and vimeo or other services
      *
      * @class YIT_Video
-     * @package    Yithemes
+     * @package    YITH
      * @since      1.0.0
      * @author     Antonino Scarfi' <antonino.scarfi@yithemes.com>
      *
@@ -135,6 +135,7 @@ if ( ! class_exists( 'YIT_Video' ) ) {
         public static function video_id_by_url( $url ) {
             $parsed = parse_url( esc_url( $url ) );
 
+
             if ( ! isset( $parsed['host'] ) ) {
                 return false;
             }
@@ -150,7 +151,8 @@ if ( ! class_exists( 'YIT_Video' ) ) {
 
                 case 'www.vimeo.com' :
                 case 'vimeo.com' :
-                    preg_match( '/http(s)?:\/\/(\w+.)?vimeo\.com\/(.*)?(\/[0-9]+)/', $url, $matches );
+                    preg_match( '/http(s)?:\/\/(\w+.)?vimeo\.com\/(.*\/)?([0-9]+)/', $url, $matches );
+
                     $id = trim( $matches[4], '/' );
                     return "vimeo:$id";
 

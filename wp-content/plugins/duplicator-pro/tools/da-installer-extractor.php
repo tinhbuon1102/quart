@@ -37,7 +37,7 @@
 
 class DupArchive_Installer_Extractor
 {
-		const VERSION			 = '3.7.9';
+		const VERSION			 = '3.8.1';
 
 	/**
 	 * Instantiate the Bootstrap Object

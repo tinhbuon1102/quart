@@ -18,22 +18,30 @@ jQuery(document).ready(function ()
             async: true,
             type: "POST",
             url: dp_gateway.ajaxurl,
-            dataType: "json",
             timeout: 10000000,
             data: data,
             complete: function () {
 
             },
-            success: function (data) {
-                if (data['status'] == 0)
-                {
-                    //   DupPro.Schedule.SetUpdateInterval(1);
-                    //              alert("Process worker sent");
-                }
-                else
-                {
-                    //             alert("Process worker failed");
-                    console.log(data);
+            success: function (respData) {
+                if ('ok' != respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        return false;
+                    }
+                    if (data['status'] == 0)
+                    {
+                        //   DupPro.Schedule.SetUpdateInterval(1);
+                        //              alert("Process worker sent");
+                    }
+                    else
+                    {
+                        //             alert("Process worker failed");
+                        console.log(data);
+                    }
                 }
             },
             error: function (data) {

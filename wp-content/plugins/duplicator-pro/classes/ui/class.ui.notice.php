@@ -36,8 +36,8 @@ class DUP_PRO_UI_Notice
 
         $screen = get_current_screen();
         if (!isset($screen)) return;
-
-        if (DUP_PRO_Server::hasInstallFiles()) {
+        $is_lite_installer_cleanup_req = ($screen->id == 'duplicator_page_duplicator-tools' && isset($_GET['action']) && $_GET['action'] == 'installer');
+        if (DUP_PRO_Server::hasInstallFiles() && !$is_lite_installer_cleanup_req) {
 			
             $on_active_tab = isset($_GET['section'])? $_GET['section'] : '';
             echo '<div class="dup-updated notice-success" id="dpro-global-error-reserved-files"><p>';

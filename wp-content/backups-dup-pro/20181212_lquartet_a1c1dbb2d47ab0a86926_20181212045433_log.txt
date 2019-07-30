@@ -1,0 +1,65 @@
+********************************************************************************
+DUPLICATOR PRO PACKAGE-LOG: 2018-12-12 04:54:50
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	3.7.9
+WORDPRESS:	4.9.8
+PHP INFO:	7.2.6 | SAPI: cgi-fcgi
+SERVER:		Apache 
+ARCHITECTURE:	64-bit 
+PHP TIME LIMIT: [7200] not allowed 
+PHP MAX MEMORY: 5000M (300M default) 
+RUN TYPE: Manual
+MEMORY STACK: 16MB 
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   PHP + CHUNKING (chunk size - 500 rows)
+ 
+TABLES: total:45 | filtered:0 | create:45 
+FILTERED: [] 
+SCHEMA SIZE: [23113255] 
+SQL CREATED: 20181212_lquartet_a1c1dbb2d47ab0a86926_20181212045433_database.sql 
+SQL FILE SIZE: 11.58MB 
+SQL FILE TIME: 2018-12-12 04:55:01 
+SQL RUNTIME: 11.180 sec. 
+MEMORY STACK: 12MB 
+
+******************************************************************************** 
+ARCHIVE  Type=ZIP Mode=Shell 
+******************************************************************************** 
+ARCHIVE DIR:  /home/lquartet/l-quartet.com/public_html/wp 
+ARCHIVE FILE: 20181212_lquartet_a1c1dbb2d47ab0a86926_20181212045433_archive.zip 
+FILTERS: *OFF* 
+DIRS:  not set 
+EXTS:  not set 
+FILES:  not set 
+---------------------------------------- 
+COMPRESSING 
+SIZE:	0B 
+STATS:	Dirs 0 | Files 0 | Total 0 
+COMPRESSED SIZE: 0B 
+ARCHIVE RUNTIME: 0.003 sec. 
+MEMORY STACK: 18MB 
+
+******************************************************************************** 
+STORAGE: 
+******************************************************************************** 
+LOCAL: Default, /home/lquartet/l-quartet.com/public_html/wp/wp-content/backups-dup-pro 
+
+******************************************************************************** 
+INTEGRITY CHECKS: 
+******************************************************************************** 
+SQL FILE: 11.58MB 
+INSTALLER FILE: 35.05KB 
+ARCHIVE FILE: 2.24MB  
+EXPECTED FILE/DIRECTORY COUNT: 0 
+ACTUAL FILE/DIRECTORY COUNT: 2 
+
+********************************************************************************
+RECORD ID:[1]
+TOTAL PROCESS RUNTIME: 18.165 sec.
+PEAK PHP MEMORY USED: 34MB
+DONE PROCESSING => 20181212_lquartet 2018-12-12 04:55:08
+ 

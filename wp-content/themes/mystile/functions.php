@@ -1158,3 +1158,10 @@ if (!function_exists('ch_free_is_available_in_time')) {
     }
 
 }
+
+function ch_filter_edit_shop_order_views_mine( $views ) { 
+    // Unset the Mine option. 
+    unset( $views['mine'] );
+    return $views; 
+}
+add_filter( 'views_edit-shop_order', 'ch_filter_edit_shop_order_views_mine' ); 

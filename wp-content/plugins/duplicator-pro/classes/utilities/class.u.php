@@ -41,6 +41,13 @@ class DUP_PRO_U
      */
     public static $PHP7_plus;
 
+    /**
+     * array of ini disable functions
+     *
+     * @var array
+     */
+    private static $iniDisableFuncs = null;
+
 	// Pseudo-constants
     private static $type_format_array;
 
@@ -298,6 +305,9 @@ class DUP_PRO_U
      */
     public static function getDownloadAttachment($filepath, $contentType)
     {
+        // Clean previous or after eny notice texts
+        ob_clean();
+        ob_start();
         $filename = basename($filepath);
 
         header('Content-Type: $contentType');
@@ -307,6 +317,7 @@ class DUP_PRO_U
         if (readfile($filepath) === false) {
             throw new Exception(self::__("Couldn't read {$filepath}"));
         }
+        ob_end_flush();
     }
 
     /**
@@ -384,13 +395,13 @@ class DUP_PRO_U
         $ret_val = $wpdb->get_var($query_string);
 
         if ($ret_val == 0) {
-            DUP_PRO_LOG::trace("Couldnt get mysql lock {$lock_name}");
+            DUP_PRO_LOG::trace("Mysql lock {$lock_name} denied");
             return false;
         } else if ($ret_val == null) {
             DUP_PRO_LOG::trace("Error retrieving mysql lock {$lock_name}");
             return false;
         } else {
-            DUP_PRO_LOG::trace("Mysql lock {$lock_name} obtained");
+            DUP_PRO_LOG::trace("Mysql lock {$lock_name} acquired");
             return true;
         }
     }
@@ -569,6 +580,16 @@ class DUP_PRO_U
                 $destObject->$member_name = $member_value;
             }
         }
+    }
+
+    /**
+     * Is the server PHP 5.3 or better
+     *
+     * @return  bool    Returns true if the server PHP 5.3 or better
+     */
+    public static function isCurlExists()
+    {
+        return function_exists('curl_version');
     }
 
     /**
@@ -981,6 +1002,50 @@ class DUP_PRO_U
             }
         }
         return $tell_result;
+    }
+
+    /**
+     * return ini disable functions array
+     *
+     * @return array
+     */
+    public static function getIniDisableFuncs() {
+        if (is_null(self::$iniDisableFuncs)) {
+            $tmpFuncs = ini_get ( 'disable_functions' );
+            $tmpFuncs = explode(',',$tmpFuncs);
+            self::$iniDisableFuncs = array();
+            foreach ($tmpFuncs as $cFunc) {
+                self::$iniDisableFuncs[] = trim($cFunc);
+            }
+        }
+
+        return self::$iniDisableFuncs;
+    }
+
+    /**
+     * Check if functione exists and isn't in ini disable_functions
+     *
+     * @param string $function_name
+     * @return bool
+     */
+    public static function isIniFunctionEnalbe($function_name) {
+        return function_exists($function_name) && !in_array($function_name, self::getIniDisableFuncs());
+    }
+
+    /**
+     * Check to see if the URL is valid
+     *
+     * @param string $url - preferably a fully qualified URL
+     * @return boolean - true if it is out there somewhere
+     */
+    public static function urlExists($url) {
+        if (($url == '') || ($url == null)) { return false; }
+        $response = wp_remote_head($url, array('timeout' => 5));
+        $accepted_status_codes = array(200, 301, 302);
+        if (!is_wp_error($response) && in_array(wp_remote_retrieve_response_code($response), $accepted_status_codes)) {
+            return true;
+        }
+        return false;
     }
 }
 

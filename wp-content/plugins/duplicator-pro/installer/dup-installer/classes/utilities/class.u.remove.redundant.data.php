@@ -76,6 +76,7 @@ class DUPX_RemoveRedundantData {
                     '=WP_UNINSTALL_PLUGIN=',
                     '!=WP_UNINSTALL_PLUGIN',
 
+                    'current_user_can',
                 );
                 foreach ($prohibited_codes as $prohibited_code) {
                     if (false !== stripos($uninstall_file_content, $prohibited_code)) {
@@ -257,6 +258,19 @@ class DUPX_RemoveRedundantData {
                 );
             }
         }
+
+        // We shouldn't remove WP_DEFAULT_THEME defined theme
+        $wpConfigPath	= "{$GLOBALS['DUPX_ROOT']}/wp-config.php";
+        require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.wp.config.tranformer.php');
+        $config_transformer = new WPConfigTransformer($wpConfigPath);
+        if ($config_transformer->exists('constant', 'WP_DEFAULT_THEME')) {
+            $default_theme = $config_transformer->get_value('constant', 'WP_DEFAULT_THEME');
+            if (is_string($default_theme)) {
+                $active_themes[] = $default_theme;
+                DUPX_Log::info("WP_DEFAULT_THEME: ".$default_theme);
+            }
+        }
+
         $active_themes = array_unique($active_themes);
         DUPX_Log::info("Active themes: ".print_r($active_themes, true));
 

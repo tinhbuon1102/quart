@@ -4,17 +4,19 @@ return apply_filters( 'yit_ywdpd_cart_rules_options', array(
 
     'rules_type' => array(
 
-        'customers'          => array(
-            'label' => __('Customers','ywdpd'),
-            'options' => array(
-                'customers_list'      => __( 'Users in list', 'ywdpd' ),
-                'customers_list_excluded'  => __( 'Exclude users in list', 'ywdpd' ),
-                'role_list'     => __( 'Roles in list', 'ywdpd' ),
-                'role_list_excluded' => __( 'Roles not in list', 'ywdpd' ),
-                'num_of_orders'     => __( 'Minimum number of orders required', 'ywdpd' ),
-                'amount_spent'      => __( 'Minimum past expense required', 'ywdpd' )
-            )
-        ),
+	    'customers' => array(
+		    'label'   => __( 'Customers', 'ywdpd' ),
+		    'options' => array(
+			    'customers_list'          => __( 'Users in list', 'ywdpd' ),
+			    'customers_list_excluded' => __( 'Exclude users in list', 'ywdpd' ),
+			    'role_list'               => __( 'Roles in list', 'ywdpd' ),
+			    'role_list_excluded'      => __( 'Roles not in list', 'ywdpd' ),
+			    'num_of_orders'           => __( 'Minimum number of orders required', 'ywdpd' ),
+			    'max_num_of_orders'       => __( 'Maximum number of orders required', 'ywdpd' ),
+			    'amount_spent'            => __( 'Minimum past expense required', 'ywdpd' ),
+			    'max_amount_spent'        => __( 'Maximum past expense required', 'ywdpd' )
+		    )
+	    ),
 
         'products'          => array(
             'label' => __('Products','ywdpd'),
@@ -53,9 +55,9 @@ return apply_filters( 'yit_ywdpd_cart_rules_options', array(
     ),
 
     'discount_type' => array(
-        'percentage'  => __( 'Percentage Discount', 'ywdpd' ),
-        'price'       => __( 'Price Discount', 'ywdpd' ),
-        'fixed-price' => __( 'Fixed Price', 'ywdpd' )
+	    'percentage'    => __( 'Percentage Discount', 'ywdpd' ),
+	    'price'         => __( 'Price Discount', 'ywdpd' ),
+	    'fixed-price'   => __( 'Fixed Price', 'ywdpd' )
     )
 
 

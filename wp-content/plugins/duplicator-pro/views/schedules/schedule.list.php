@@ -52,6 +52,7 @@ if ($active_package != null) {
     table.schedule-tbl a.name {font-weight: bold}
     table.schedule-tbl input[type='checkbox'] {margin-left: 5px}
     table.schedule-tbl div.sub-menu {margin: 5px 0 0 2px; display: none}
+	table.schedule-tbl div.sub-menu a:hover {text-decoration: underline}
     tr.schedule-detail {display: none;}
     tr.schedule-detail td {padding:2px 2px 2px 15px; margin:-5px 0 2px 0; height: 22px}
     td.dpro-no-data {text-align: center; background:#fff; padding:40px; line-height:30px}
@@ -91,7 +92,7 @@ TOOL-BAR -->
         <thead>
             <tr>
                 <th style='width:10px;'><input type="checkbox" id="dpro-chk-all" title="Select all packages" onclick="DupPro.Schedule.SetDeleteAll(this)"></th>
-                <th style='width:235px;'><?php DUP_PRO_U::esc_html_e('Name'); ?></th>
+                <th style='width:255px;'><?php DUP_PRO_U::esc_html_e('Name'); ?></th>
 				<th><?php DUP_PRO_U::esc_html_e('Storage'); ?></th>
                 <th><?php DUP_PRO_U::esc_html_e('Runs Next'); ?></th>
                 <th><?php DUP_PRO_U::esc_html_e('Last Ran'); ?></th>
@@ -127,6 +128,7 @@ TOOL-BAR -->
 					<div class="sub-menu">
 						<a href="javascript:void(0);" onclick="DupPro.Schedule.QuickView('<?php echo $schedule->id ?>');"><?php DUP_PRO_U::esc_html_e('Quick View'); ?></a> |
 						<a href="javascript:void(0);" onclick="DupPro.Schedule.Edit('<?php echo $schedule->id ?>');"><?php DUP_PRO_U::esc_html_e('Edit'); ?></a> |
+                        <a href="javascript:void(0);" onclick="DupPro.Schedule.Copy('<?php echo $schedule->id; ?>');"><?php DUP_PRO_U::esc_html_e('Copy'); ?></a> |
 						<a href="javascript:void(0);" onclick="DupPro.Schedule.Delete('<?php echo $schedule->id; ?>');"><?php DUP_PRO_U::esc_html_e('Delete'); ?></a> |
 						<a href="javascript:void(0);" onclick="DupPro.Schedule.RunNow('<?php echo $schedule->id; ?>');"><?php DUP_PRO_U::esc_html_e('Run Now'); ?></a> 
 					</div>
@@ -234,13 +236,13 @@ TOOL-BAR -->
         /*METHOD: Shows quick view summary */
         DupPro.Schedule.QuickView = function (id) {
             $('#detail-' + id).toggle();
-        }
+        };
 
 		/*METHOD: Run the schedule now and redirect to packages page */
         DupPro.Schedule.RunNow = function (schedule_id) {
             <?php $confirm2->showConfirm(); ?>
             $("#<?php echo $confirm2->getID(); ?>-confirm").attr('data-id', schedule_id);
-        }
+        };
 
         DupPro.Schedule.Run = function(e){
             var schedule_id = $(e).attr('data-id');
@@ -255,26 +257,33 @@ TOOL-BAR -->
               $.ajax({
                   type: "POST",
                   url: ajaxurl,
-                  dataType: "json",
                   timeout: 10000000,
                   data: data
-              }).done(function (data) {
-                  window.location.href = "admin.php?page=duplicator-pro";
+              }).done(function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        return false;
+                    }
+
+                    window.location.href = "admin.php?page=duplicator-pro";
               });
-        }
+        };
 
 		/*METHOD: Deletes a single schedule */
         DupPro.Schedule.Delete = function (id) {
             <?php $confirm3->showConfirm(); ?>
             $("#<?php echo $confirm3->getID(); ?>-confirm").attr('data-id', id);
-        }
+        };
 
         DupPro.Schedule.DeleteThis = function (e) {
             var id = $(e).attr('data-id');
             $("#dup-schedule-form-action").val('delete');
             $("#dup-schedule-selected-schedule").val(id);
             $("#dup-schedule-form").submit();
-        }
+        };
 
         //	Creats a comma seperate list of all selected package ids
         DupPro.Schedule.DeleteList = function ()
@@ -290,7 +299,7 @@ TOOL-BAR -->
             });
 
             return arr.join(',');
-        }
+        };
 
         // Bulk delete
         DupPro.Schedule.BulkDelete = function ()
@@ -307,7 +316,7 @@ TOOL-BAR -->
             }).done(function(data) {
                 $('#dup-schedule-form').submit();
             });
-        }
+        };
 
 		/*METHOD: Bulk action response */
         DupPro.Schedule.BulkAction = function () {
@@ -337,19 +346,33 @@ TOOL-BAR -->
                         break;
                 }
             }
-        }
+        };
 
         /*METHOD: Edit a single schedule */
         DupPro.Schedule.Edit = function (id) {
             document.location.href = '<?php echo "$edit_schedule_url&schedule_id="; ?>' + id;
-        }
+        };
+
+        /*METHOD: Copy a schedule */
+        DupPro.Schedule.Copy = function (id) {
+            <?php
+            $params = array(
+                'action=copy-schedule',
+                '_wpnonce='.wp_create_nonce('duppro-schedule-edit'),
+                'schedule_id=-1',
+                'duppro-source-schedule-id=' // last params get id from js param function
+            );
+            $edit_schedule_url .= '&'.implode('&' , $params);
+            ?>
+            document.location.href = '<?php echo $edit_schedule_url; ?>' + id;
+        };
 
         /*METHOD: Set delete all */
         DupPro.Schedule.SetDeleteAll = function (chkbox) {
             $('.item-chk').each(function () {
                 this.checked = chkbox.checked;
             });
-        }
+        };
 
 		/*METHOD: Enableds the update flag to track proccessing */
         DupPro.Schedule.SetUpdateInterval = function(period) {
@@ -359,7 +382,7 @@ TOOL-BAR -->
                 DupPro.Schedule.setIntervalID = -1
             }
             DupPro.Schedule.setIntervalID = setInterval(DupPro.Schedule.UpdateSchedules, period * 1000);
-        }
+        };
 
 		/*METHOD: Checks the schedule status */
         DupPro.Schedule.UpdateSchedules = function () {
@@ -372,9 +395,20 @@ TOOL-BAR -->
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (schedule_infos) {
+                success: function (respData) {
+                    try {
+                        var schedule_infos = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        console.log("error");
+                        console.log(data);
+                        $(".schedule-status-icon").display('none');
+                        DupPro.Schedule.SetUpdateInterval(60);
+                        return false;
+                    }
+
                     activeSchedulePresent = false;
                     for(schedule_info_key in schedule_infos) 
 					{
@@ -405,7 +439,7 @@ TOOL-BAR -->
                     DupPro.Schedule.SetUpdateInterval(60);
                 }
             });
-        }
+        };
 
         //INIT: startup items
         $("tr.schedule-row").hover(

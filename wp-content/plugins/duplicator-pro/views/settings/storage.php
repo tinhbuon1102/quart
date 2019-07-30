@@ -11,12 +11,19 @@ $global->configure_dropbox_transfer_mode();
 
 //SAVE RESULTS
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'save') {
-	check_admin_referer($nonce_action);
-	$global->storage_htaccess_off			 = isset($_REQUEST['_storage_htaccess_off']) ? 1 : 0;
-	$global->dropbox_upload_chunksize_in_kb	 = $_REQUEST['dropbox_upload_chunksize_in_kb'];
-	$global->dropbox_transfer_mode			 = $_REQUEST['dropbox_transfer_mode'];
-	$global->max_storage_retries			 = (int) $_REQUEST['max_storage_retries'];
-	$action_updated = $global->save();
+    check_admin_referer($nonce_action);
+	$global->storage_htaccess_off           = isset($_REQUEST['_storage_htaccess_off']) ? 1 : 0;
+	
+	$global->ssl_useservercerts = isset($_REQUEST['ssl_useservercerts']) ? 1 : 0;
+	$global->ssl_disableverify = isset($_REQUEST['ssl_disableverify']) ? 1 : 0;
+	$global->ipv4_only = isset($_REQUEST['ipv4_only']) ? 1 : 0;
+
+    $global->dropbox_upload_chunksize_in_kb = (int) $_REQUEST['dropbox_upload_chunksize_in_kb'];
+    $global->dropbox_transfer_mode          = $_REQUEST['dropbox_transfer_mode'];
+    $global->max_storage_retries            = (int) $_REQUEST['max_storage_retries'];
+    $global->s3_upload_part_size_in_kb      = (int) $_REQUEST['s3_upload_part_size_in_kb'];
+
+    $action_updated = $global->save();
 }
 ?>
 
@@ -60,6 +67,51 @@ GENERAL SETTINGS -->
 </table>
 
 <!-- ===============================
+SSL SETTINGS -->
+<h3 class="title"><?php DUP_PRO_U::esc_html_e("SSL") ?> </h3>
+<hr size="1" />
+<p class="description" style="color:maroon">
+	<?php DUP_PRO_U::esc_html_e("Do not modify SSL settings unless you know the expected result or have talked to support."); ?>
+</p>
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Use server's SSL certificates"); ?></label></th>
+		<td>
+			<input type="checkbox" name="ssl_useservercerts" id="ssl_useservercerts" <?php echo DUP_PRO_UI::echoChecked($global->ssl_useservercerts); ?> />
+			<p class="description">
+				<?php
+				DUP_PRO_U::esc_html_e("To use server's SSL certificates please enble it. By default Duplicator Pro uses By default uses its own store of SSL certificates to verify the identity of remote storage sites.");
+				?>
+			</p>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Disable verification of SSL certificates"); ?></label></th>
+		<td>
+			<input type="checkbox" name="ssl_disableverify" id="ssl_disableverify" <?php echo DUP_PRO_UI::echoChecked($global->ssl_disableverify); ?> />
+			<p class="description">
+				<?php
+				DUP_PRO_U::esc_html_e("To disable verification of a host and the peer's SSL certificate.");
+				?>
+			</p>
+		</td>
+	</tr>
+
+	
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Use IPv4 only"); ?></label></th>
+		<td>
+			<input type="checkbox" name="ipv4_only" id="ipv4_only" <?php echo DUP_PRO_UI::echoChecked($global->ipv4_only); ?> />
+			<p class="description">
+				<?php
+				DUP_PRO_U::esc_html_e("To use IPv4 only, which can help if your host has a broken IPv6 setup (currently only supported by Google Drive)");
+				?>
+			</p>
+		</td>
+	</tr>
+</table>
+
+<!-- ===============================
 DROPBOX SETTINGS -->
 <h3 class="title"><?php DUP_PRO_U::esc_html_e("Dropbox") ?> </h3>
 <hr size="1" />
@@ -80,10 +132,45 @@ DROPBOX SETTINGS -->
 	<tr valign="top">
 		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Upload Size (KB)"); ?></label></th>
 		<td>
-			<input class="narrow-input" type="text" name="dropbox_upload_chunksize_in_kb" id="dropbox_upload_chunksize_in_kb" data-parsley-required data-parsley-min="100" data-parsley-type="number" data-parsley-errors-container="#dropbox_upload_chunksize_in_kb_error_container" value="<?php echo esc_attr($global->dropbox_upload_chunksize_in_kb); ?>" />
+			<input class="narrow-input" 
+                   type="number"
+                   min="100"
+                   name="dropbox_upload_chunksize_in_kb"
+                   id="dropbox_upload_chunksize_in_kb"
+                   data-parsley-required
+                   data-parsley-type="number"
+                   data-parsley-errors-container="#dropbox_upload_chunksize_in_kb_error_container"
+                   value="<?php echo esc_attr($global->dropbox_upload_chunksize_in_kb); ?>" />
 			<div id="dropbox_upload_chunksize_in_kb_error_container" class="duplicator-error-container"></div>
 			<p class="description">
 				<?php DUP_PRO_U::esc_html_e('How much should be uploaded to Dropbox per attempt. Higher=faster but less reliable.'); ?>
+			</p>
+		</td>
+	</tr>
+</table>
+
+<!-- ===============================
+S3 SETTINGS -->
+<h3 class="title"><?php DUP_PRO_U::esc_html_e("Amazon S3") ?></h3>
+<hr size="1" />
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Upload Size (KB)"); ?></label></th>
+		<td>
+			<input class="narrow-input" 
+                   type="number"
+                   min="<?php echo DUP_PRO_S3_Client_UploadInfo::UPLOAD_PART_MIN_SIZE_IN_K; ?>"
+                   max="5243000"
+                   name="s3_upload_part_size_in_kb"
+                   id="s3_upload_part_size_in_kb"
+                   data-parsley-required
+                   data-parsley-type="number"
+                   data-parsley-errors-container="#s3_upload_chunksize_in_kb_error_container"
+                   value="<?php echo esc_attr($global->s3_upload_part_size_in_kb); ?>" />
+			<div id="s3_upload_chunksize_in_kb_error_container" class="duplicator-error-container"></div>
+			<p class="description">
+				<?php DUP_PRO_U::esc_html_e('How much should be uploaded to Amazon S3 per attempt. Higher=faster but less reliable.'); ?>
+                <?php echo esc_html(sprintf(DUP_PRO_U::__('Min size %skb.') , DUP_PRO_S3_Client_UploadInfo::UPLOAD_PART_MIN_SIZE_IN_K)); ?>
 			</p>
 		</td>
 	</tr>

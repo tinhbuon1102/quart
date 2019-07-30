@@ -457,6 +457,32 @@ if (DUP_PRO_U::PHP53())
         {
             $client = new Duplicator_Pro_Google_Client();
 
+
+            $global = DUP_PRO_Global_Entity::get_instance();
+
+            $io = $client->getIo();
+            $setopts = array();
+
+            if (is_a($io, 'Duplicator_Pro_Google_IO_Curl')) {
+                $setopts[CURLOPT_SSL_VERIFYPEER] = $global->ssl_disableverify ? false : true;
+                $setopts[CURLOPT_SSL_VERIFYHOST] = $global->ssl_disableverify ? 0 : 2;
+
+                if (!$global->ssl_useservercerts) {
+                    $setopts[CURLOPT_CAINFO] = DUPLICATOR_PRO_CERT_PATH;
+                    $setopts[CURLOPT_CAPATH] = DUPLICATOR_PRO_CERT_PATH;
+                }
+                // Raise the timeout from the default of 15
+                $setopts[CURLOPT_TIMEOUT] = 60;
+                $setopts[CURLOPT_CONNECTTIMEOUT] = 15;
+                if ($global->ipv4_only) $setopts[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+            } elseif (is_a($io, 'Duplicator_Pro_Google_IO_Stream')) {
+                $setopts['timeout'] = 60;
+                // https://wiki.php.net/rfc/tls-peer-verification - before PHP 5.6, there is no default CA file
+                if (!$global->ssl_useservercerts || (version_compare(PHP_VERSION, '5.6.0', '<'))) $setopts['cafile'] = DUPLICATOR_PRO_CERT_PATH;
+                if ($global->ssl_disableverify) $setopts['disable_verify_peer'] = true;
+            }
+            $io->setOptions($setopts);
+
             $sv = self::get_binary_self_value();
             $ev = self::get_binary_extraction_value();
 

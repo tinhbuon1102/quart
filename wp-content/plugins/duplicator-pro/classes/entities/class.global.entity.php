@@ -29,10 +29,10 @@ abstract class DUP_PRO_Thread_Lock_Mode
     const SQL_Lock = 1;
 }
 
-abstract class DUP_PRO_File_Lock_Check
+abstract class DUP_PRO_Sql_Lock_Check
 {
-    const Flock_Success = 1;
-    const Flock_Fail = -1;
+    const Sql_Success = 1;
+    const Sql_Fail = -1;
 }
 
 abstract class DUP_PRO_Email_Build_Mode
@@ -120,7 +120,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
     //GENERAL
     public $uninstall_settings; // no longer used
-    public $uninstall_files;  // no longer used
+    public $uninstall_packages;  // no longer used
     public $uninstall_tables; // no longer used
     public $wpfront_integrate;
 
@@ -173,7 +173,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public $dropbox_upload_chunksize_in_kb;
     public $dropbox_transfer_mode;
     public $gdrive_upload_chunksize_in_kb;  // Not exposed through the UI (yet)
-    public $s3_upload_part_size_in_kb;   // Not exposed through the UI (yet)
+    public $s3_upload_part_size_in_kb;
     public $manual_mode_storage_ids;
 
     //LICENSING
@@ -189,6 +189,11 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public $last_edd_api_timestamp;
     public $last_system_check_timestamp;
     public $initial_activation_timestamp;
+
+    // Storage SSL
+    public $ssl_useservercerts = true;
+    public $ssl_disableverify = true;
+    public $ipv4_only;
 
     //DEBUG
     public $debug_on;
@@ -248,7 +253,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     {
         //GENERAL
         $this->uninstall_settings = false;
-        $this->uninstall_files    = false;
+        $this->uninstall_packages    = false;
         $this->uninstall_tables   = true;
         $this->wpfront_integrate  = false;
 
@@ -302,6 +307,10 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->gdrive_upload_chunksize_in_kb  = 2000;  // Not exposed through the UI (yet)
         $this->s3_upload_part_size_in_kb      = 6000;   // Not exposed through the UI (yet)
 
+        $this->ssl_useservercerts             = true;
+        $this->ssl_disableverify              = true;
+        $this->ipv4_only                      = false; 
+
         //DEBUG
         $this->debug_on          = false;
         $this->trace_profiler_on = false;
@@ -333,6 +342,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
         $this->custom_ajax_url         = admin_url('admin-ajax.php', 'http');
 
+        set_transient('duplicator_pro_settings_message', DUP_PRO_U::__('Settings reset to defaults successfully'), 60);
 
     }
 
@@ -346,38 +356,39 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     }
 
     // TODO: Rework this to test proper operation of File locking - suspect a timeout in sql locking could cause problems so auto-setting to sql lock may cause issues
-    public static function get_lock_type()
+    public static function get_lock_type($sslverify =  true)
     {
-        $lock_name = 'dup_pro_test_lock';
         $lock_type = DUP_PRO_Thread_Lock_Mode::Flock;
-        $nonce = wp_create_nonce('duplicator_pro_try_to_lock_test_file');
+        $nonce = wp_create_nonce('duplicator_pro_try_to_lock_test_sql');
 
-		@mkdir(DUPLICATOR_PRO_SSDIR_PATH_TMP, 0755, true);
-        $test_file_path = DUPLICATOR_PRO_SSDIR_PATH_TMP.'/lock_test.txt';
-        $fp = fopen($test_file_path,'w+');
+        if (DUP_PRO_U::getSqlLock(DUPLICATOR_PRO_TEST_SQL_LOCK_NAME)) {
+            $url = admin_url('admin-ajax.php?action=duplicator_pro_try_to_lock_test_sql&nonce='.$nonce);
+            $args = array(
+                'timeout' => 5,
+                'method' => 'POST',
+                'sslverify' => $sslverify,
+            );
+            $res = wp_remote_request($url,$args);
+            if (!is_wp_error($res)) {
+                $body = wp_remote_retrieve_body($res);
+                // Getting new sql locl fail (means SQL lock is working file)
+                if($body == DUP_PRO_Sql_Lock_Check::Sql_Fail){
+                    $lock_type = DUP_PRO_Thread_Lock_Mode::SQL_Lock;
+                }
+            } else{
+                $wp_error = $res->get_error_message();
+                $error_msg = 'Could not check system for file lock support. wp_remote_request failed. Error: '.$wp_error;
+                DUP_PRO_LOG::trace($error_msg);
+                error_log($error_msg);
+                if (false !== stripos($wp_error, 'SSL certificate')) {
+                    return self::get_lock_type(false);
+                }
+            }
+        }
 
-		if($fp !== false) {
-			if(flock($fp,LOCK_EX|LOCK_NB,$eWouldBlock) || !$eWouldBlock){
-				$url = admin_url('admin-ajax.php?action=duplicator_pro_try_to_lock_test_file&nonce='.$nonce);
-				$args = array(
-					'timeout' => 3,
-					'method' => 'POST'
-				);
-				$res = wp_remote_request($url,$args);
-				if (!is_wp_error($res)) {
-					$body = wp_remote_retrieve_body($res);
-					if($body == DUP_PRO_File_Lock_Check::Flock_Success){
-						$lock_type = DUP_PRO_Thread_Lock_Mode::SQL_Lock;
-					}
-				}else{
-					DUP_PRO_LOG::trace("Could not check system for file lock support. wp_remote_request failed");
-				}
-			}
-
-			fclose($fp);
-		}
 
         DUP_PRO_LOG::trace("Lock type auto set to {$lock_type}");
+        DUP_PRO_U::releaseSqlLock(DUPLICATOR_PRO_TEST_SQL_LOCK_NAME);
 
         return $lock_type;
     }
@@ -386,7 +397,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     {
         //GENERAL
         $this->uninstall_settings = $global_data->uninstall_settings;
-        $this->uninstall_files    = $global_data->uninstall_files;
+        $this->uninstall_packages    = $global_data->uninstall_packages;
         $this->uninstall_tables   = $global_data->uninstall_tables;
         $this->wpfront_integrate  = $global_data->wpfront_integrate;
 
@@ -417,6 +428,15 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->basic_auth_user             = $global_data->basic_auth_user;
         $this->installer_base_name         = $global_data->installer_base_name;
         $this->chunk_size                  = $global_data->chunk_size;
+        $this->ssl_useservercerts          = isset($global_data->ssl_useservercerts) 
+                                                ? $global_data->ssl_useservercerts
+                                                : true;
+        $this->ssl_disableverify           = isset($global_data->ssl_disableverify)
+                                                ? $global_data->ssl_disableverify
+                                                : true;
+        $this->ipv4_only                   = isset($global_data->ipv4_only)
+                                                ? $global_data->ipv4_only
+                                                : false;
 
         //SCHEDULES
         $this->send_email_on_build_mode   = $global_data->send_email_on_build_mode;
@@ -430,7 +450,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->dropbox_upload_chunksize_in_kb = $global_data->dropbox_upload_chunksize_in_kb;
         $this->dropbox_transfer_mode          = $global_data->dropbox_transfer_mode;
         $this->gdrive_upload_chunksize_in_kb  = $global_data->gdrive_upload_chunksize_in_kb;  // Not exposed through the UI (yet)
-        $this->s3_upload_part_size_in_kb      = $global_data->s3_upload_part_size_in_kb;   // Not exposed through the UI (yet)
+        $this->s3_upload_part_size_in_kb      = $global_data->s3_upload_part_size_in_kb;
         $this->manual_mode_storage_ids        = $global_data->manual_mode_storage_ids;
 
         //LICENSING
@@ -566,6 +586,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
             } else {
                 DUP_PRO_LOG::trace("Global entity is null!");
             }
+            
             $GLOBALS[self::GLOBAL_NAME] = $global;
         }
 

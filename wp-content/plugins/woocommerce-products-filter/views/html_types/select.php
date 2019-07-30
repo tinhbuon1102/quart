@@ -78,7 +78,7 @@ if (!function_exists('woof_draw_select_childs'))
                 }
 
                 //excluding hidden terms
-                if (in_array($term['term_id'], $hidden_terms))
+                if (in_array($term['term_id'], $hidden_terms) || $count <= 0)
                 {
                     continue;
                 }
@@ -169,7 +169,7 @@ if (!function_exists('woof_draw_select_childs'))
             }
 
             //excluding hidden terms
-            if (in_array($term['term_id'], $hidden_terms))
+            if (in_array($term['term_id'], $hidden_terms) || $count <= 0)
             {
                 continue;
             }

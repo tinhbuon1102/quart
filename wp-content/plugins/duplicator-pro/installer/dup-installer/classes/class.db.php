@@ -24,7 +24,7 @@ class DUPX_DB
      *
      * @return database connection handle
      */
-    public static function connect($host, $username, $password, $dbname = '', $port = null)
+    public static function connect($host, $username, $password, $dbname = '')
     {
         //sock connections
         if ('sock' === substr($host, -4)) {
@@ -35,8 +35,14 @@ class DUPX_DB
                 $port = parse_url($host, PHP_URL_PORT);
                 $host = parse_url($host, PHP_URL_HOST);
             }
-
-            $dbh = @mysqli_connect($host, $username, $password, $dbname, $port);
+            if (isset($port)) {
+                $dbh = @mysqli_connect($host, $username, $password, $dbname, $port);
+            } else {
+                $dbh = @mysqli_connect($host, $username, $password, $dbname);
+            }            
+        }
+        if (method_exists($dbh, 'options')) {
+            $dbh->options(MYSQLI_OPT_LOCAL_INFILE, false);
         }
         return $dbh;
     }

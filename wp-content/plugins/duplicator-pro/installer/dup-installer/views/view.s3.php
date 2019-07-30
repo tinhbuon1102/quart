@@ -200,7 +200,7 @@ VIEW: STEP 3- INPUT -->
         <a href="javascript:void(0)"><i class="fa fa-plus-square"></i>Replace</a>
     </div>
 
-    <div id='s3-custom-replace' style="display:none;">
+    <div id="s3-custom-replace" style="display:none;">
         <div class="help-target">
             <a href="<?php echo $GLOBALS['_HELP_URL_PATH'];?>#help-s3" target="help"><i class="fa fa-question-circle"></i></a>
         </div><br/>
@@ -221,172 +221,460 @@ VIEW: STEP 3- INPUT -->
 	<div class="hdr-sub1 toggle-hdr" data-type="toggle" data-target="#s3-adv-opts">
 		<a href="javascript:void(0)"><i class="fa fa-plus-square"></i>Options</a>
 	</div>
-	<div id='s3-adv-opts' style="display:none;">
-		<div class="help-target">
-			<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
-		</div><br/>
+	<!-- START TABS -->
+    <div id="s3-adv-opts" style="display:none;">
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-admin-account">Admin Account</a></li>
+			<li><a href="#tabs-scan-options">Scan Options</a></li>
+			<li><a href="#tabs-wp-config-file">WP-Config File</a></li>
+		</ul>
 
-		<!-- NEW ADMIN ACCOUNT -->
-		<div class="hdr-sub3">New Admin Account</div>
-		<div style="text-align: center">
-			<i style="color:gray;font-size: 11px">This feature is optional.  If the username already exists the account will NOT be created or updated.</i>
-			<?php
-				if($GLOBALS['DUPX_AC']->mu_mode > 0 && $subsite_id == -1){
-					echo '<br><i style="color:gray;font-size: 11px">You will create Network Administrator account</i>';
-				}
-			?>
+		<!-- =====================
+		ADMIN TAB -->
+		<div id="tabs-admin-account">
+			<div class="help-target">
+				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+			</div><br/>
+
+			<!-- NEW ADMIN ACCOUNT -->
+			<div class="hdr-sub3">New Admin Account</div>
+			<div style="text-align: center">
+				<i style="color:gray;font-size: 11px">This feature is optional.  If the username already exists the account will NOT be created or updated.</i>
+				<?php
+					if($GLOBALS['DUPX_AC']->mu_mode > 0 && $subsite_id == -1){
+						echo '<br><i style="color:gray;font-size: 11px">You will create Network Administrator account</i>';
+					}
+				?>
+			</div>
+
+			<table class="s3-opts" style="margin-top:7px">
+				<tr>
+					<td>Username:</td>
+					<td><input type="text" name="wp_username" id="wp_username" value="" title="4 characters minimum" placeholder="(4 or more characters)" /></td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td><input type="text" name="wp_password" id="wp_password" value="" title="6 characters minimum"  placeholder="(6 or more characters)" /></td>
+				</tr>
+				<tr>
+					<td>Mail:</td>
+					<td><input type="text" name="wp_mail" id="wp_mail" value="" title=""  placeholder="" /></td>
+				</tr>
+				<tr>
+					<td>Nickname:</td>
+					<td><input type="text" name="wp_nickname" id="wp_nickname" value="" title="if username is empty"  placeholder="(if username is empty)" /></td>
+				</tr>
+				<tr>
+					<td>First name:</td>
+					<td><input type="text" name="wp_first_name" id="wp_first_name" value="" title="optional"  placeholder="(optional)" /></td>
+				</tr>
+				<tr>
+					<td>Last name:</td>
+					<td><input type="text" name="wp_last_name" id="wp_last_name" value="" title="optional"  placeholder="(optional)" /></td>
+				</tr>
+			</table>
 		</div>
 
-		<table class="s3-opts" style="margin-top:7px">
-			<tr>
-				<td>Username:</td>
-				<td><input type="text" name="wp_username" id="wp_username" value="" title="4 characters minimum" placeholder="(4 or more characters)" /></td>
-			</tr>
-			<tr>
-				<td>Password:</td>
-				<td><input type="text" name="wp_password" id="wp_password" value="" title="6 characters minimum"  placeholder="(6 or more characters)" /></td>
-			</tr>
-            <tr>
-				<td>Mail:</td>
-				<td><input type="text" name="wp_mail" id="wp_mail" value="" title=""  placeholder="" /></td>
-			</tr>
-            <tr>
-				<td>Nickname:</td>
-				<td><input type="text" name="wp_nickname" id="wp_nickname" value="" title="if username is empty"  placeholder="(if username is empty)" /></td>
-			</tr>
-            <tr>
-				<td>First name:</td>
-				<td><input type="text" name="wp_first_name" id="wp_first_name" value="" title="optional"  placeholder="(optional)" /></td>
-			</tr>
-            <tr>
-				<td>Last name:</td>
-				<td><input type="text" name="wp_last_name" id="wp_last_name" value="" title="optional"  placeholder="(optional)" /></td>
-			</tr>
-		</table>
-		<br/><br/>
+		<!-- =====================
+		SCAN TAB -->
+		<div id="tabs-scan-options">
+			<div class="help-target">
+				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+			</div><br/>
+			<div class="hdr-sub3">Database Scan Options</div>
+			<table  class="s3-opts">
+				<tr style="display: <?php echo $empty_schedule_display; ?>">
+					<td>Cleanup:</td>
+					<td>
+						<input type="checkbox" name="empty_schedule_storage" id="empty_schedule_storage" value="1" checked />
+						<label for="empty_schedule_storage" style="font-weight: normal">Remove schedules and storage endpoints</label>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:105px">Site URL:</td>
+					<td style="white-space: nowrap">
+						<input type="text" name="siteurl" id="siteurl" value="" />
+						<a href="javascript:DUPX.getNewURL('siteurl')" style="font-size:12px">get</a><br/>
+					</td>
+				</tr>
+				<tr valign="top">
+					<td style="width:80px">Old URL:</td>
+					<td>
+						<input type="text" name="url_old" id="url_old" value="<?php echo DUPX_U::esc_attr($GLOBALS['DUPX_AC']->url_old); ?>" readonly="readonly"  class="readonly" />
+						<a href="javascript:DUPX.editOldURL()" id="edit_url_old" style="font-size:12px">edit</a>
+					</td>
+				</tr>
+				<tr valign="top">
+					<td>Old Path:</td>
+					<td>
+						<input type="text" name="path_old" id="path_old" value="<?php echo DUPX_U::esc_attr($old_path); ?>" readonly="readonly"  class="readonly" />
+						<a href="javascript:DUPX.editOldPath()" id="edit_path_old" style="font-size:12px">edit</a>
+					</td>
+				</tr>
+			</table><br/>
 
+			<table>
+				<tr>
+					<td style="padding-right:10px">
+						<b>Scan Tables:</b>
+						<div class="s3-allnonelinks">
+							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',true);">[All]</a>
+							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',false);">[None]</a>
+						</div><br style="clear:both" />
+						<select id="tables" name="tables[]" multiple="multiple" style="width:315px; height:100px">
+							<?php
+							$need_to_check_scan_table = false;
+							if ($GLOBALS['DUPX_AC']->mu_generation > 0
+									&& $GLOBALS['DUPX_AC']->mu_mode > 0
+									&& $subsite_id > 0) {
+								$subsite_table_prefix = $GLOBALS['DUPX_AC']->wp_tableprefix.$subsite_id.'_';
+								$prefix_len = strlen($GLOBALS['DUPX_AC']->wp_tableprefix);
+								
+								$need_to_check_scan_table = true;
+							}
+							foreach( $all_tables as $table ) {
+								if ($need_to_check_scan_table) {
+									$table_len = strlen($table);
+									$table_without_base_prefix = substr($table, $prefix_len, $table_len);
+									$table_subsite_id = intval($table_without_base_prefix);
+									if (($subsite_id != $GLOBALS['DUPX_AC']->main_site_id && 0 === stripos($table, $subsite_table_prefix)) 
+										|| 
+										0 === $table_subsite_id) {
+										echo '<option selected="selected" value="' . DUPX_U::esc_attr($table) . '">' . DUPX_U::esc_html($table) . '</option>';
+									}
+								} else {
+									echo '<option selected="selected" value="' . DUPX_U::esc_attr($table) . '">' . DUPX_U::esc_html($table) . '</option>';
+								}
+							}
+							?>
+						</select>
+					</td>
+					<td valign="top">
+						<b>Activate<?php echo ((($GLOBALS['DUPX_AC']->mu_mode > 0) && ($subsite_id == -1)) ? ' Network ' : ' ')?>Plugins:</b>
+						<?php echo ($_POST['exe_safe_mode'] > 0) ? '<small class="s3-warn">Safe Mode Enabled</small>' : '' ; ?>
+						<div class="s3-allnonelinks" style="<?php echo ($_POST['exe_safe_mode']>0)? 'display:none':''; ?>">
+							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',true);">[All]</a>
+							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',false);">[None]</a>
+						</div><br style="clear:both" />
+						<select id="plugins" name="plugins[]" multiple="multiple" style="width:315px; height:100px" <?php echo ($_POST['exe_safe_mode'] > 0) ? 'disabled="true"' : ''; ?>>
+							<?php
+							$exclude_plugins = array(
+								'really-simple-ssl/rlrsssl-really-simple-ssl.php',
+								'simple-google-recaptcha/simple-google-recaptcha.php',
+							);
+							$selected_string = ($_POST['exe_safe_mode'] > 0 || $subsite_id > 0) ? '' : 'selected="selected"';
+							foreach ($active_plugins as $plugin) {
+								$label = dirname($plugin) == '.' ? $plugin : dirname($plugin);
+								if (in_array($plugin, $exclude_plugins)) {
+									echo "<option value='".DUPX_U::esc_attr($plugin)."'>".DUPX_U::esc_html($label).'</option>';
+								} else {
+									echo "<option {$selected_string} value='".DUPX_U::esc_attr($plugin)."'>".DUPX_U::esc_html($label).'</option>';
+								}								
+							}
+							?>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<br>
+			<input type="checkbox" name="fullsearch" id="fullsearch" value="1" /> <label for="fullsearch">Use Database Full Search Mode</label><br/>
+			<input type="checkbox" name="postguid" id="postguid" value="1" /> <label for="postguid">Keep Post GUID Unchanged</label><br/>
+			<br/><br/>
+		</div>
 
-		<!-- SCAN OPTIONS -->
-		<div class="hdr-sub3">Scan Options</div>
-		<table  class="s3-opts">
-			<tr style="display: <?php echo $empty_schedule_display; ?>">
-				<td>Cleanup:</td>
-				<td>
-					<input type="checkbox" name="empty_schedule_storage" id="empty_schedule_storage" value="1" checked />
-					<label for="empty_schedule_storage" style="font-weight: normal">Remove schedules and storage endpoints</label>
-				</td>
-			</tr>
-			<tr>
-				<td style="width:105px">Site URL:</td>
-				<td style="white-space: nowrap">
-					<input type="text" name="siteurl" id="siteurl" value="" />
-					<a href="javascript:DUPX.getNewURL('siteurl')" style="font-size:12px">get</a><br/>
-				</td>
-			</tr>
-			<tr valign="top">
-				<td style="width:80px">Old URL:</td>
-				<td>
-					<input type="text" name="url_old" id="url_old" value="<?php echo DUPX_U::esc_attr($GLOBALS['DUPX_AC']->url_old); ?>" readonly="readonly"  class="readonly" />
-					<a href="javascript:DUPX.editOldURL()" id="edit_url_old" style="font-size:12px">edit</a>
-				</td>
-			</tr>
-			<tr valign="top">
-				<td>Old Path:</td>
-				<td>
-					<input type="text" name="path_old" id="path_old" value="<?php echo DUPX_U::esc_attr($old_path); ?>" readonly="readonly"  class="readonly" />
-					<a href="javascript:DUPX.editOldPath()" id="edit_path_old" style="font-size:12px">edit</a>
-				</td>
-			</tr>
-		</table><br/>
+		<!-- =====================
+		WP-CONFIG TAB -->
+		<div id="tabs-wp-config-file">
+			<div class="help-target">
+				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+			</div><br/>
 
-		<table>
-			<tr>
-				<td style="padding-right:10px">
-                    <b>Scan Tables:</b>
-					<div class="s3-allnonelinks">
-						<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',true);">[All]</a>
-						<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',false);">[None]</a>
-					</div><br style="clear:both" />
-					<select id="tables" name="tables[]" multiple="multiple" style="width:315px; height:100px">
-						<?php
-						foreach( $all_tables as $table ) {
-							echo '<option selected="selected" value="' . DUPX_U::esc_attr($table) . '">' . DUPX_U::esc_html($table) . '</option>';
+			<?php
+				require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.wp.config.tranformer.php');
+				$root_path		= $GLOBALS['DUPX_ROOT'];
+				$wpconfig_ark_path	= "{$root_path}/dup-wp-config-arc__{$GLOBALS['DUPX_AC']->package_hash}.txt";
+                if (file_exists($wpconfig_ark_path)) {
+    				$config_transformer = new WPConfigTransformer($wpconfig_ark_path);
+                } else {
+                    $config_transformer = null;
+                }
+			?>
+			<table class="dupx-opts dupx-advopts">
+                <?php
+                if (file_exists($wpconfig_ark_path) && !is_null($config_transformer)) { ?>
+				<tr><td colspan="2"><div class="hdr-sub3">Posts/Pages</div></td></tr>
+				<tr>
+					<td>Editor:</td>
+					<td>
+					<?php
+						$disallow_file_edit_val = false;
+						if ($config_transformer->exists('constant', 'DISALLOW_FILE_EDIT')) {
+							$disallow_file_edit_val = $config_transformer->get_value('constant', 'DISALLOW_FILE_EDIT');
 						}
 						?>
-					</select>
-
-				</td>
-				<td valign="top">
-                    <b>Activate<?php echo ((($GLOBALS['DUPX_AC']->mu_mode > 0) && ($subsite_id == -1)) ? ' Network ' : ' ')?>Plugins:</b>
-					<?php echo ($_POST['exe_safe_mode'] > 0) ? '<small class="s3-warn">Safe Mode Enabled</small>' : '' ; ?>
-					<div class="s3-allnonelinks" style="<?php echo ($_POST['exe_safe_mode']>0)? 'display:none':''; ?>">
-						<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',true);">[All]</a>
-						<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',false);">[None]</a>
-					</div><br style="clear:both" />
-					<select id="plugins" name="plugins[]" multiple="multiple" style="width:315px; height:100px" <?php echo ($_POST['exe_safe_mode'] > 0) ? 'disabled="true"' : ''; ?>>
-						<?php
-						$selected_string = ($_POST['exe_safe_mode'] > 0 || $subsite_id > 0) ? '' : 'selected="selected"';
-						foreach ($active_plugins as $plugin) {
-                            $label = dirname($plugin) == '.' ? $plugin : dirname($plugin);
-                            echo "<option {$selected_string} value='".DUPX_U::esc_attr($plugin)."'>".DUPX_U::esc_html($label).'</option>';
-                        }
-						?>
-					</select>
-					
-				</td>
-			</tr>
-		</table>
-		<br/>
-
-		<input type="checkbox" name="fixpartials" id="fixpartials" value="1" /> <label for="fixpartials">Fix Incomplete Serialized Objects </label><br/>
-		<input type="checkbox" name="fullsearch" id="fullsearch" value="1" /> <label for="fullsearch">Use Database Full Search Mode</label><br/>
-		<input type="checkbox" name="postguid" id="postguid" value="1" /> <label for="postguid">Keep Post GUID Unchanged</label><br/>
-		<br/><br/>
-		
-		<!-- WP-CONFIG -->
-		<div class="hdr-sub3">WP-Config File</div>
-		<table class="dupx-opts dupx-advopts">
-			<tr>
-				<td>Cache:</td>
-				<td style="width:100px"><input type="checkbox" name="cache_wp" id="cache_wp" <?php echo ($GLOBALS['DUPX_AC']->cache_wp) ? "checked='checked'" : ""; ?> /> <label for="cache_wp">Keep Enabled</label></td>
-				<td><input type="checkbox" name="cache_path" id="cache_path" <?php echo ($GLOBALS['DUPX_AC']->cache_path) ? "checked='checked'" : ""; ?> /> <label for="cache_path">Keep Home Path</label></td>
-			</tr>
-			<tr>
-				<td>SSL:</td>
-				<td><input type="checkbox" name="ssl_admin" id="ssl_admin" /> <label for="ssl_admin">Enforce on Admin</label></td>
-				<td></td>
-			</tr>
-			<?php
-			$licence_type = $GLOBALS['DUPX_AC']->getLicenseType();
-			if ($licence_type >= DUPX_LicenseType::Freelancer) {
-				?>
+						<input type="checkbox" id="disallow_file_edit" name="disallow_file_edit" <?php SnapLibUIU::echoChecked($disallow_file_edit_val);?> value="1">
+						<label for="disallow_file_edit"><?php echo DUPX_U::esc_attr('Disable the Plugin/Theme Editor'); ?></label>
+					</td>
+				</tr>
 				<tr>
-					<td>Authentication <br/>Keys:</td>
-					<td colspan="2"><input type="checkbox" name="auth_keys_and_salts" id="auth_keys_and_salts" /> <label for="auth_keys_and_salts">Generate New Unique Keys and Salts</label></td>
+					<?php
+					$autosave_interval_val = '';
+                    if ($config_transformer->exists('constant', 'AUTOSAVE_INTERVAL')) {
+						$autosave_interval_val = $config_transformer->get_value('constant', 'AUTOSAVE_INTERVAL');;
+                    }
+					?>
+					<td>AutoSave Interval:</td>
+					<td>
+						<input type="number" name="autosave_interval" id="autosave_interval" value="<?php echo DUPX_U::esc_attr($autosave_interval_val); ?>" />
+						<br>
+						<small class="info">Auto-save interval in seconds (default:60) </small>
+					</td>
+				</tr>
+				<tr>
+					<?php
+					$wp_post_revisions_val = '';
+                    if ($config_transformer->exists('constant', 'WP_POST_REVISIONS')) {
+						$wp_post_revisions_const_val = $config_transformer->get_value('constant', 'WP_POST_REVISIONS');
+						if ($wp_post_revisions_const_val) {
+							$wp_post_revisions_val = 'true';
+						} else {
+							$wp_post_revisions_val = 'false';
+						}
+                    }
+					?>
+					<td>Post Revisions:</td>
+					<td>
+						<select name="wp_post_revisions" id="wp_post_revisions">
+							<option value="">Choose...</option>
+							<option value="true" <?php echo 'true' == $wp_post_revisions_val ? 'selected ' : '';?>>Yes</option>
+							<option value="false" <?php echo 'false' == $wp_post_revisions_val ? 'selected ' : '';?>>No</option>
+						</select>
+					</td>
+				</tr>
+				<tr><td colspan="2"><div class="hdr-sub3"><br/>Security</div></td></tr>
+				<tr>
+					<td>SSL:</td>
+					<?php
+					$force_ssl_admin_val = false;
+					if ($config_transformer->exists('constant', 'FORCE_SSL_ADMIN')) {
+						$force_ssl_admin_val = $config_transformer->get_value('constant', 'FORCE_SSL_ADMIN');
+					}
+					?>
+					<td>
+						<input type="checkbox" name="ssl_admin" id="ssl_admin" <?php SnapLibUIU::echoChecked($force_ssl_admin_val);?> /> <label for="ssl_admin">Enforce on Admin</label>
+					</td>
 				</tr>
 				<?php
-			}
-			?>
-			<tr>
-                <td>WP Debug:</td>
-                <td>
-                    <input type="checkbox" id="wp-debug" name="wp_debug" <?php SnapLibUIU::echoChecked($GLOBALS['DUPX_AC']->wp_debug);?> value="1">
-                    <label for="wp-debug">Define WP_DEBUG constant true in the wp-config.php file</label>
-                </td>
-            </tr>
-            <tr>
-                <td>WP Debug Log:</td>
-                <td>
-                    <input type="checkbox" id="wp-debug-log" name="wp_debug_log" <?php SnapLibUIU::echoChecked($GLOBALS['DUPX_AC']->wp_debug_log);?> value="1">
-                    <label for="wp-debug-log">Define WP_DEBUG_LOG constant true in the wp-config.php file</label>
-                </td>
-            </tr>
-		</table>
-		<br/><br/>
-
+				$licence_type = $GLOBALS['DUPX_AC']->getLicenseType();
+				if ($licence_type >= DUPX_LicenseType::Freelancer) : ?>
+					<tr>
+						<td>Auth Keys:</td>
+						<td>
+							<input type="checkbox" name="auth_keys_and_salts" id="auth_keys_and_salts" />
+							<label for="auth_keys_and_salts">Generate New Unique Authentication Keys and Salts</label>
+						</td>
+					</tr>
+				<?php else : ?>
+					<tr>
+						<td>Auth Keys:</td>
+						<td>
+							<i>Available only in Freelancer and above</i>
+						</td>
+					</tr>
+				<?php endif; ?>
+				<tr>
+					<td>Core Auto-Updates:</td>
+					<td>
+					<?php
+						$wp_auto_update_core_val = false;
+						if ($config_transformer->exists('constant', 'WP_AUTO_UPDATE_CORE')) {
+							$wp_auto_update_core_val = $config_transformer->get_value('constant', 'WP_AUTO_UPDATE_CORE');
+						}
+						?>
+						<select name="wp_auto_update_core" id="wp_auto_update_core">
+							<option value="">Choose...</option>
+							<option value="false" <?php echo 'false' == $wp_auto_update_core_val ? 'selected ' : '';?>>Disable all core updates</option>
+							<option value="true" <?php echo 'true' == $wp_auto_update_core_val ? 'selected ' : '';?>>Enable all core updates</option>
+							<option value="minor" <?php echo 'minor' == $wp_auto_update_core_val ? 'selected ' : '';?>>Enable only core minor updates - Default</option>
+						</select>
+					</td>
+				</tr>					
+				<tr><td colspan="2"><div class="hdr-sub3"><br/>System/General</div></td></tr>
+				<tr>
+					<td>Cache:</td>
+					<td>
+						<?php
+						$wp_cache_val = false;
+						if ($config_transformer->exists('constant', 'WP_CACHE')) {
+							$wp_cache_val = $config_transformer->get_value('constant', 'WP_CACHE');
+						}
+						?>
+						<input type="checkbox" name="cache_wp" id="cache_wp" <?php SnapLibUIU::echoChecked($wp_cache_val);?> /> <label for="cache_wp">Keep Enabled</label>
+						<br>
+						<?php
+						$wpcachehome_val = '';
+						if ($config_transformer->exists('constant', 'WPCACHEHOME')) {
+							$wpcachehome_val = $config_transformer->get_value('constant', 'WPCACHEHOME');
+						}
+						?>
+						<input type="checkbox" name="cache_path" id="cache_path" <?php SnapLibUIU::echoChecked($wpcachehome_val);?> /> <label for="cache_path">Keep Home Path</label>
+					</td>
+				</tr>
+				<tr id="wp_post_revisions_no_cont">
+					<?php
+					$wp_post_revisions_no = '';
+                    if (isset($wp_post_revisions_const_val) && intval($wp_post_revisions_const_val) > 0) {
+						$wp_post_revisions_no = intval($wp_post_revisions_const_val);
+                    }
+					?>
+					<td>Limit Revisions	<br />	Number:</td>
+					<td><input type="number" name="wp_post_revisions_no" id="wp_post_revisions_no" value="<?php echo DUPX_U::esc_attr($wp_post_revisions_no);?>" /></td>
+				</tr>
+				<?php
+				/* DEPRECATED
+				<tr>
+					<?php
+					$media_trash_val = '';
+                    if ($config_transformer->exists('constant', 'MEDIA_TRASH')) {
+						$media_trash_val = $config_transformer->get_value('constant', 'MEDIA_TRASH');
+                    }
+					?>
+					<td>Media Trash</td>
+					<td>
+						<input type="checkbox" name="media_trash" id="media_trash" <?php SnapLibUIU::echoChecked($media_trash_val);?> /> <label for="media_trash">Enable trash for media</label>
+					</td>
+				</tr>
+				*/
+				?>
+				<tr>
+					<td>WP Debug:</td>
+					<td>
+						<?php
+						$wp_debug_val = false;
+						if ($config_transformer->exists('constant', 'WP_DEBUG')) {
+							$wp_debug_val = $config_transformer->get_value('constant', 'WP_DEBUG');
+						}
+						?>
+						<input type="checkbox" id="wp-debug" name="wp_debug" <?php SnapLibUIU::echoChecked($wp_debug_val);?> value="1">
+						<label for="wp-debug">Display errors and warnings</label>
+					</td>
+				</tr>
+				<tr>
+					<td>WP Debug Log:</td>
+					<td>
+					<?php
+						$wp_debug_log_val = false;
+						if ($config_transformer->exists('constant', 'WP_DEBUG_LOG')) {
+							$wp_debug_log_val = $config_transformer->get_value('constant', 'WP_DEBUG_LOG');
+						}
+						?>
+						<input type="checkbox" id="wp-debug-log" name="wp_debug_log" <?php SnapLibUIU::echoChecked($wp_debug_log_val);?> value="1">
+						<label for="wp-debug-log">Log errors and warnings</label>
+					</td>
+				</tr>
+				<tr>
+					<td>WP Debug Display:</td>
+					<td>
+					<?php
+						$wp_debug_display_val = false;
+						if ($config_transformer->exists('constant', 'WP_DEBUG_DISPLAY')) {
+							$wp_debug_display_val = $config_transformer->get_value('constant', 'WP_DEBUG_DISPLAY');
+						}
+						?>
+						<input type="checkbox" id="wp_debug_display" name="wp_debug_display" <?php SnapLibUIU::echoChecked($wp_debug_display_val);?> value="1">
+						<label for="wp_debug_display">Display errors and warnings</label>
+					</td>
+				</tr>
+				<tr>
+					<td>Script Debug:</td>
+					<td>
+					<?php
+						$script_debug_val = false;
+						if ($config_transformer->exists('constant', 'SCRIPT_DEBUG')) {
+							$script_debug_val = $config_transformer->get_value('constant', 'SCRIPT_DEBUG');
+						}
+						?>
+						<input type="checkbox" id="script_debug" name="script_debug" <?php SnapLibUIU::echoChecked($script_debug_val);?> value="1">
+						<label for="script_debug">JavaScript or CSS errors</label>
+					</td>
+				</tr>
+				<tr>
+					<td>Save Queries:</td>
+					<td>
+					<?php
+						$savequeries_val = false;
+						if ($config_transformer->exists('constant', 'SAVEQUERIES')) {
+							$savequeries_val = $config_transformer->get_value('constant', 'SAVEQUERIES');
+						}
+						?>
+						<input type="checkbox" id="savequeries" name="savequeries" <?php SnapLibUIU::echoChecked($savequeries_val);?> value="1">
+						<label for="savequeries"><?php echo DUPX_U::esc_attr('Save database queries in an array ($wpdb->queries)'); ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td>Cookie Domain:</td>
+					<?php
+					$cookie_domain_val = '';
+					if ($config_transformer->exists('constant', 'COOKIE_DOMAIN')) {
+						$cookie_domain_val = $config_transformer->get_value('constant', 'COOKIE_DOMAIN');
+						if (!empty($cookie_domain_val)) {
+							$parsedUrlOld = parse_url($GLOBALS['DUPX_AC']->url_old);
+							$oldDomain = $parsedUrlOld['host'];
+							$newDomain = $_SERVER['HTTP_HOST'];
+							$cookie_domain_val = str_ireplace($oldDomain, $newDomain, $cookie_domain_val);
+						}
+					}
+					?>
+					<td>
+						<input type="text" name="cookie_domain" id="cookie_domain" value="<?php echo DUPX_U::esc_attr($cookie_domain_val); ?>" />
+						<br>
+						<small class="info">
+							Set <a href="http://www.askapache.com/htaccess/apache-speed-subdomains.html" target="_blank">different domain</a> for cookies.subdomain.example.com
+						</small>
+					</td>
+				</tr>
+				<tr>
+					<td>Memory Limit:</td>
+					<td>
+					<?php
+						$wp_memory_limit_val = false;
+						if ($config_transformer->exists('constant', 'WP_MEMORY_LIMIT')) {
+							$wp_memory_limit_val = $config_transformer->get_value('constant', 'WP_MEMORY_LIMIT');
+						}
+						?>
+						<input type="text" name="wp_memory_limit" id="wp_memory_limit" value="<?php echo DUPX_U::esc_attr($wp_memory_limit_val);?>" />
+						<br>
+						<small class="info">PHP memory limit (default:30M; multi-site default:64M)</small>
+					</td>
+				</tr>
+				<tr>
+					<td>Max Memory Limit:</td>
+					<td>
+					<?php
+						$wp_max_memory_limit_val = false;
+						if ($config_transformer->exists('constant', 'WP_MAX_MEMORY_LIMIT')) {
+							$wp_max_memory_limit_val = $config_transformer->get_value('constant', 'WP_MAX_MEMORY_LIMIT');
+						}
+						?>
+						<input type="text" name="wp_max_memory_limit" id="wp_max_memory_limit" value="<?php echo DUPX_U::esc_attr($wp_max_memory_limit_val);?>" />
+						<br>
+						<small class="info"> Maximum memory limit (default:256M)</small>
+					</td>
+				</tr>
+            <?php } else { ?>
+                <tr>
+                    <td>wp-config.php not found</td>
+                    <td>No action on the wp-config is possible.<br>
+                        After migration, be sure to insert a properly modified wp-config for correct wordpress operation.</td>
+                </tr>
+            <?php } ?>
+			</table>
+		</div>
+	</div>
+	<!--  END TABS  -->
 	</div>
 	<br/><br/><br/><br/>
-
 
 	<div class="footer-buttons">
 		<button id="s3-next" type="button"  onclick="DUPX.runUpdate()" class="default-btn"> Next <i class="fa fa-caret-right"></i> </button>
@@ -436,7 +724,15 @@ VIEW: STEP 3 - AJAX RESULT  -->
 		<div style="padding: 0px 10px 10px 10px;">
 			<div id="ajaxerr-data">An unknown issue has occurred with the update setup step.  Please see the installer-log.txt file for more details.</div>
 			<div style="text-align:center; margin:10px auto 0px auto">
-				<input type="button" onclick='DUPX.hideErrorResult2()' value="&laquo; Try Again"  class="default-btn" /><br/><br/>
+			<?php
+			$archive_config = DUPX_ArchiveConfig::getInstance();
+			?>
+				<input type="button" onclick='<?php 
+				if (0 == $archive_config->mu_mode) { ?>
+					DUPX.hideErrorResult2();
+				<?php } else { ?>
+					window.history.back();
+				<?php } ?>' value="&laquo; Try Again"  class="default-btn" /><br/><br/>
 				<i style='font-size:11px'>See online help for more details at <a href='https://snapcreek.com' target='_blank'>snapcreek.com</a></i>
 			</div>
 		</div>
@@ -517,7 +813,6 @@ DUPX.runUpdate = function()
 	$.ajax({
 		type: "POST",
 		timeout: 10000000,
-		dataType: "json",
 		url: window.location.href,
 		data: $('#s3-input-form').serialize(),
 		cache: false,
@@ -526,7 +821,23 @@ DUPX.runUpdate = function()
 			$('#s3-input-form').hide();
 			$('#s3-result-form').show();
 		},
-		success: function(data){
+		success: function(respData, textStatus, xHr){
+			try {
+                var data = DUPX.parseJSON(respData);
+            } catch(err) {
+                console.error(err);
+                console.error('JSON parse failed for response data: ' + respData);
+                var status  = "<b>Server Code:</b> "	+ xHr.status		+ "<br/>";
+				status += "<b>Status:</b> "			+ xHr.statusText	+ "<br/>";
+				status += "<b>Response:</b> "		+ xHr.responseText  + "<hr/>";
+				status += "<b>Additional Troubleshooting Tips:</b><br/>";
+				status += "- Check the <a href='<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]);?>' target='dup-installer'>installer-log.txt</a> file for warnings or errors.<br/>";
+				status += "- Check the web server and PHP error logs. <br/>";
+				status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
+				$('#ajaxerr-data').html(status);
+				DUPX.hideProgressBar();
+                return false;
+            }
 			if (typeof(data) != 'undefined' && data.step3.pass == 1) {
 				$("#ajax-url_new").val($("#url_new").val());
 				$("#ajax-subsite-id").val($("#subsite-id").val());
@@ -546,7 +857,7 @@ DUPX.runUpdate = function()
 			status += "<b>Status:</b> "			+ xhr.statusText	+ "<br/>";
 			status += "<b>Response:</b> "		+ xhr.responseText  + "<hr/>";
 			status += "<b>Additional Troubleshooting Tips:</b><br/>";
-			status += "- Check the <a href='<?php echo DUPX_U::esc_url('./'.$GLOBALS["LOG_FILE_NAME"]);?>' target='dup-installer'>installer-log.txt</a> file for warnings or errors.<br/>";
+			status += "- Check the <a href='<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]);?>' target='dup-installer'>installer-log.txt</a> file for warnings or errors.<br/>";
 			status += "- Check the web server and PHP error logs. <br/>";
 			status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
 			$('#ajaxerr-data').html(status);
@@ -640,8 +951,20 @@ DUPX.hideErrorResult2 = function()
 	$('#s3-input-form').show(200);
 };
 
+DUPX.showHideRevisionNo = function() {
+	var cont = $('#wp_post_revisions_no_cont');
+	if ('true' == $('#wp_post_revisions').val()) {
+		cont.show();
+	} else {
+		cont.hide();
+	}
+};
+
 //DOCUMENT LOAD
 $(document).ready(function() {
+	$("#tabs").tabs();
+	DUPX.showHideRevisionNo();
+	$('#wp_post_revisions').change(DUPX.showHideRevisionNo);
 	DUPX.getNewURL('url_new');
 	DUPX.getNewURL('siteurl');
 	$("*[data-type='toggle']").click(DUPX.toggleClick);

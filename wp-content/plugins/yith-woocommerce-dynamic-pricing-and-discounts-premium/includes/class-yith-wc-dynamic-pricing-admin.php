@@ -10,7 +10,7 @@ if ( !defined( 'ABSPATH' ) || !defined( 'YITH_YWDPD_VERSION' ) ) {
  * @class   YITH_WC_Dynamic_Pricing_Admin
  * @package YITH WooCommerce Dynamic Pricing and Discounts
  * @since   1.0.0
- * @author  Yithemes
+ * @author  YITH
  */
 if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
 
@@ -39,7 +39,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
         /**
          * @var string Premium version landing link
          */
-        protected $_premium_landing = 'http://yithemes.com/themes/plugins/yith-woocommerce-dynamic-pricing-and-discounts/';
+        protected $_premium_landing = 'https://yithemes.com/themes/plugins/yith-woocommerce-dynamic-pricing-and-discounts/';
 
         /**
          * @var string Panel page
@@ -49,7 +49,12 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
         /**
          * @var string Doc Url
          */
-        public $doc_url = 'https://yithemes.com/docs-plugins/yith-woocommerce-dynamic-pricing-and-discounts/';
+        public $doc_url = 'https://docs.yithemes.com/yith-woocommerce-dynamic-pricing-and-discounts/';
+
+        /**
+         * @var string Doc Url
+         */
+        public $post_type_name = 'ywdpd_discount';
 
         /**
          * Returns single instance of the class
@@ -63,6 +68,7 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
             }
             return self::$instance;
         }
+
 
         /**
          * Constructor
@@ -84,26 +90,318 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
             add_action( 'ywdpd_price_rules_tab', array( $this, 'rules_tab' ), 10, 2 );
             add_action( 'ywdpd_cart_rules_tab', array( $this, 'rules_tab' ), 10, 2 );
 
-            add_action( 'ywdpd_print_rules', array( $this, 'load_rules' ), 10 );
-
-            // save options
-            add_action('admin_init', array($this, 'save_options') );
-
             // panel type ajax action active
 	        /* ajax action */
 	        add_action( 'wp_ajax_ywdpd_admin_action', array( $this, 'ajax' ) );
 	        add_action( 'wp_ajax_nopriv_ywdpd_admin_action', array( $this, 'ajax' ) );
 
-
             //Add action links
-            add_filter( 'plugin_action_links_' . plugin_basename( YITH_YWDPD_DIR . '/' . basename( YITH_YWDPD_FILE ) ), array( $this, 'action_links' ) );
-            add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 4 );
+	        add_filter( 'plugin_action_links_' . plugin_basename( YITH_YWDPD_DIR . '/' . basename( YITH_YWDPD_FILE ) ), array( $this, 'action_links' ) );
+	        add_filter( 'yith_show_plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 5 );
 
             //custom styles and javascripts
-            add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ), 11);
+            add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles_scripts' ), 20);
 
+            //@since 1.4.0
+            add_action( 'admin_init', array( $this, 'change_url_to_sendback' ), 10 );
+	        add_action( 'admin_init', array($this, 'add_metabox'), 1);
+	        add_action( 'add_meta_boxes', array( $this, 'show_discount_action' ) );
+	        add_filter( 'yit_fw_metaboxes_type_args', array( $this, 'add_custom_type_metaboxes' ) );
+			add_action( 'edit_form_top', array($this, 'add_custom_type_type'));
+	        add_action( 'admin_menu', array( $this, 'remove_publish_box' ) );
+	        add_action( 'admin_init', array($this, 'check_post_type_action') );
+
+			// handle ajax actions
+	        add_action( 'wp_ajax_ywdpd_json_search_tags', array( $this, 'get_tags_via_ajax' ) );
+	        add_action( 'wp_ajax_ywdpd_json_search_categories', array( $this, 'get_categories_via_ajax' ) );
+	        add_action( 'wp_ajax_table_order_section', array( $this, 'table_order_section' ) );
 
         }
+
+		/**
+		 * Add metabox into ywdpd_discount editor page
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina
+		 */
+		public function add_metabox() {
+
+			if ( ywdpd_check_valid_admin_page( $this->post_type_name ) ) {
+				$type = false;
+
+				if ( isset( $_REQUEST['ywdpd_discount_type'] ) ) {
+					$type = $_REQUEST['ywdpd_discount_type'];
+				} elseif ( isset( $_REQUEST['yit_metaboxes']['_discount_type'] ) ) {
+					$type = $_REQUEST['yit_metaboxes']['_discount_type'];
+				} elseif ( isset( $_REQUEST['post'] ) ) {
+					$type = get_post_meta( $_REQUEST['post'], '_discount_type', true );
+				}
+
+				if (  $type ) {
+					$args = require_once( YITH_YWDPD_DIR . 'plugin-options/metabox/ywdpd_' . $type . '_discount.php' );
+					if ( ! function_exists( 'YIT_Metabox' ) ) {
+						require_once( 'plugin-fw/yit-plugin.php' );
+					}
+					$metabox = YIT_Metabox( 'ywdpd_'.$type.'_discount' );
+					$metabox->init( $args );
+
+				}
+
+			}
+		}
+
+		/**
+		 * Add the metabox to show the action of ywdpd_discount post type
+		 * @access public
+		 *
+		 * @return void
+		 * @since  1.0.0
+		 */
+		public function show_discount_action() {
+			add_meta_box( 'ywdpd-action-discount', __( 'Dynamic Action', 'ywdpd' ), array(
+				$this,
+				'show_discount_action_metabox'
+			), $this->post_type_name, 'side', 'high' );
+		}
+
+		/**
+		 * Metabox to show the action of the current discount
+		 * @access public
+		 *
+		 * @param object $post
+		 *
+		 * @return void
+		 * @since  1.4.0
+		 */
+		public function show_discount_action_metabox( $post ) {
+			wc_get_template( 'metabox_discount_action_content.php', array(), '', YITH_YWDPD_TEMPLATE_PATH . 'admin/metaboxes/');
+		}
+
+		/**
+		 * Add an hidden field into the form of post and a link to return to the discount list
+		 *
+		 * @param $post WP_Post
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function add_custom_type_type( $post ) {
+
+			$type = isset( $_REQUEST['ywdpd_discount_type'] ) ? $_REQUEST['ywdpd_discount_type'] : get_post_meta( $post->ID, '_discount_type', true );
+
+			if ( ywdpd_check_valid_admin_page( $this->post_type_name ) && ! empty( $type ) ) {
+				printf( '<input type="hidden" id="ywdpd_discount_type" name="ywdpd_discount_type" value="%s" />', esc_attr( $type ) );
+				printf( '<a href="%1$s" class="ywpdp_subtitle_link" title="%2$s">%2$s <img draggable="false" class="emoji" alt="⤴" src="https://s.w.org/images/core/emoji/2.3/svg/2934.svg"></a>', $this->get_panel_page_uri( $tab = $type ), __( 'Return to Discount List', 'ywdpd' ) );
+			}
+
+		}
+
+		/**
+		 * Returns the panel page URI
+		 * @param string $tab
+		 *
+		 * @return string
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function get_panel_page_uri( $tab = '' ){
+			$panel_uri = add_query_arg( 'page', $this->_panel_page, admin_url( 'admin.php' ) );
+			if( $tab ){
+				$panel_uri = add_query_arg( 'tab', $tab, $panel_uri );
+			}
+			return $panel_uri;
+		}
+
+		/**
+		 * Remove publish box from single page page of ywdpd_discount
+		 * @access public
+		 *
+		 * @return void
+		 * @since  1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function remove_publish_box() {
+			remove_meta_box( 'submitdiv', $this->post_type_name, 'side' );
+		}
+
+		/**
+		 * Shows custom metabox type
+		 *
+		 * @param $args
+		 * @return mixed
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function add_custom_type_metaboxes( $args ) {
+
+			if ( ywdpd_check_valid_admin_page( $this->post_type_name ) ) {
+
+				$custom_types = array(
+					'customers',
+					'products',
+					'categories',
+					'tags',
+					'quantity_discount',
+					'special_offer_discount',
+					'cart_discount',
+					'cart_discount_type',
+					'brands',
+					'vendors'
+				);
+
+				if ( in_array( $args['type'], $custom_types ) ) {
+					$args['basename'] = YITH_YWDPD_DIR;
+					$args['path']     = 'admin/metaboxes/types/';
+				}
+
+			}
+
+			return $args;
+		}
+
+		/**
+		 * Change url to send back in the ywdpd_discount post type
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function change_url_to_sendback(){
+	        global $pagenow;
+
+	        if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'ywdpd_discount' ) {
+		        wp_safe_redirect( admin_url( 'admin.php?page='.$this->_panel_page ) );
+		        exit;
+	        }
+        }
+
+		/**
+		 * Get Tags via Ajax for Discount Metabox
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function get_tags_via_ajax() {
+
+			check_ajax_referer( 'search-products', 'security' );
+
+			if ( ! current_user_can( 'edit_products' ) ) {
+				wp_die( - 1 );
+			}
+
+			if ( ! $search_text = wc_clean( stripslashes( $_GET['term'] ) ) ) {
+				wp_die();
+			}
+
+			$found_tags = array();
+			$args       = array(
+				'taxonomy'   => array( 'product_tag' ),
+				'orderby'    => 'id',
+				'order'      => 'ASC',
+				'hide_empty' => true,
+				'fields'     => 'all',
+				'name__like' => $search_text,
+			);
+
+			if ( $terms = get_terms( $args ) ) {
+				foreach ( $terms as $term ) {
+					$term->formatted_name .= $term->name . ' (' . $term->count . ')';
+
+					$found_tags[ $term->term_id ] = $term->formatted_name;
+				}
+			}
+
+			wp_send_json( apply_filters( 'ywdpd_json_search_found_tags', $found_tags ) );
+		}
+
+		/**
+		 * Get Category via Ajax for Discount Metabox
+		 *
+		 * @since 1.4.0
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function get_categories_via_ajax() {
+
+			check_ajax_referer( 'search-products', 'security' );
+
+			if ( ! current_user_can( 'edit_products' ) ) {
+				wp_die( - 1 );
+			}
+
+			if ( ! $search_text = wc_clean( stripslashes( $_GET['term'] ) ) ) {
+				wp_die();
+			}
+
+			$found_tags = array();
+			$args       = array(
+				'taxonomy'   => array( 'product_cat' ),
+				'orderby'    => 'id',
+				'order'      => 'ASC',
+				'hide_empty' => true,
+				'fields'     => 'all',
+				'name__like' => $search_text,
+			);
+
+			if ( $terms = get_terms( $args ) ) {
+				foreach ( $terms as $term ) {
+					$term->formatted_name .= $term->name . ' (' . $term->count . ')';
+
+					$found_tags[ $term->term_id ] = $term->formatted_name;
+				}
+			}
+
+			wp_send_json( apply_filters( 'ywdpd_json_search_found_categories', $found_tags ) );
+		}
+
+		/**
+		 * Change the url Move to trash to Delete the Discount definitely
+		 *
+		 * @since  1.4.0
+		 * @author Emanuela Castorina
+		 */
+		public function get_delete_post_link( $url, $post_id, $type ){
+
+			$post_type = get_post_type( $post_id );
+			if( $post_type != $this->post_type_name ){
+				return $url;
+			}
+
+			$action = 'delete';
+			$delete_link = add_query_arg( 'action', $action, admin_url( 'admin.php' ) );
+			$delete_link = add_query_arg( 'page', $this->_panel_page, $delete_link );
+			$delete_link = add_query_arg( 'tab', $type, $delete_link );
+			$delete_link = add_query_arg( 'post', $post_id, $delete_link );
+			$delete_link = wp_nonce_url( $delete_link, "$action-post_{$post_id}" );
+			return $delete_link;
+
+		}
+
+		/**
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		function check_post_type_action() {
+			if ( ! isset( $_REQUEST['post'] ) || ! isset( $_REQUEST['_wpnonce'] ) || ! isset( $_REQUEST['action'] ) ) {
+				return;
+			}
+
+			$post_id = $_REQUEST['post'];
+			$action  = $_REQUEST['action'];
+			if ( wp_verify_nonce( $_REQUEST['_wpnonce'], "$action-post_{$post_id}" ) ) {
+				$post = get_post( $post_id );
+
+				if ( ! ( $post && $post->post_type == $this->post_type_name ) ) {
+					return;
+				}
+
+				$post_type_object = get_post_type_object( $this->post_type_name );
+				if ( $action === 'delete' ) {
+					if ( current_user_can( $post_type_object->cap->delete_post, $post_id ) ) {
+						wp_delete_post( $post_id, true );
+					}
+				}
+			}
+		}
 
 		/**
 		 * Switch a ajax call
@@ -118,20 +416,60 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
 
 		}
 
-		public function ajax_section_clone(){
-			$global_option = get_option(YITH_WC_Dynamic_Pricing()->plugin_options);
-
-			$key     = uniqid();
-			$cloned_from = $_REQUEST['cloned_from'];
-			if( isset( $global_option['pricing-rules'][$cloned_from]) ){
-				$global_option['pricing-rules'][$key] = $global_option['pricing-rules'][$cloned_from];
-				update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-			}elseif( isset( $global_option['cart-rules'][$cloned_from]) ){
-				$global_option['cart-rules'][$key] = $global_option['cart-rules'][$cloned_from];
-				update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
+		/**
+		 * Order the meta on each rule
+		 * @author Emanuela Castorina <emanuela.castorina@yithemes.com>
+		 */
+		public function ajax_table_order_section(  ) {
+			if ( ! current_user_can( 'edit_products' ) ) {
+				wp_die( - 1 );
 			}
 
-			wp_send_json(array('key' => $key));
+			$roleid    = absint($_REQUEST['roleid']);
+			$previd = absint( isset( $_POST['previd'] ) ? $_POST['previd'] : 0 );
+			$nextid = absint( isset( $_POST['nextid'] ) ? $_POST['nextid'] : 0 );
+			$type       = $_REQUEST['type'];
+
+
+			$args = array(
+				'post_type' => 'ywdpd_discount',
+				'posts_per_page' => -1,
+				'meta_query' => array(
+					array(
+						'key'     => '_discount_type',
+						'value'   => $type,
+					),
+				),
+				'orderby'   => 'meta_value_num',
+				'meta_key'  => '_priority',
+				'order'     => 'ASC',
+			);
+
+			$posts = new WP_Query( $args );
+
+			$priority = array();
+			$index = 1;
+			foreach ( $posts->posts as $post ) {
+				if ( $roleid === $post->ID ) {
+					continue;
+				}
+
+				if ( $nextid && $nextid === $post->ID ) {
+					$priority[ $roleid ] = $index++;
+					$priority[ $nextid ]  = $index++;
+				}elseif( $previd && $previd === $post->ID ) {
+					$priority[ $previd ]  = $index++;
+					$priority[ $roleid ] = $index++;
+				} else {
+					$priority[ $post->ID ] = $index++;
+				}
+			}
+
+			foreach ( $priority as $post_id => $value ){
+				update_post_meta( $post_id, '_priority', $value);
+			}
+
+			die();
 
 		}
 
@@ -153,28 +491,32 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
          * @return void
          * @since 1.0.0
          */
-        public function enqueue_styles_scripts() {
-            wp_enqueue_script('jquery-ui-datepicker');
-            wp_enqueue_style( 'yith_ywdpd_backend', YITH_YWDPD_ASSETS_URL . '/css/backend.css', YITH_YWDPD_VERSION );
-	        wp_enqueue_script( 'ywdpd_timepicker', YITH_YWDPD_ASSETS_URL . '/js/jquery-ui-timepicker-addon.min.js', array( 'jquery' ), YITH_YWDPD_VERSION, true );
-            wp_enqueue_script( 'yith_ywdpd_admin', YITH_YWDPD_ASSETS_URL . '/js/ywdpd-admin' . YITH_YWDPD_SUFFIX . '.js', array( 'jquery','jquery-ui-sortable' ), YITH_YWDPD_VERSION, true );
-            wp_enqueue_script( 'jquery-blockui', YITH_YWDPD_ASSETS_URL . '/js/jquery.blockUI.min.js', array( 'jquery' ), false, true );
-            wp_enqueue_script( 'ajax-chosen', YITH_YWDPD_URL.'plugin-fw/assets/js/chosen/ajax-chosen.jquery'. YITH_YWDPD_SUFFIX . '.js', array( 'jquery' ), false, true );
-            wp_enqueue_script( 'ajax-chosen');
-            wp_enqueue_script( 'wc-enhanced-select' );
+		public function enqueue_styles_scripts() {
 
-            wp_localize_script( 'yith_ywdpd_admin', 'yith_ywdpd_admin', apply_filters( 'yith_ywdpd_admin_localize',array(
-                'ajaxurl'                 => WC()->ajax_url(),
-                'search_categories_nonce' => wp_create_nonce( 'search-categories' ),
-                'search_tags_nonce'       => wp_create_nonce( 'search-tags' ),
-                'search_products_nonce'   => wp_create_nonce( 'search-products' ),
-                'search_customers_nonce'  => wp_create_nonce( 'search-customers' ),
-                'block_loader'            => apply_filters( 'yith_ywdpd_block_loader_admin', YITH_YWDPD_ASSETS_URL . '/images/block-loader.gif' ),
-                'error_msg'               => apply_filters( 'yith_ywdpd_error_msg_admin', __( 'Please, add a description for the rule', 'ywdpd' ) ),
-                'del_msg'                 => apply_filters( 'yith_ywdpd_delete_msg_admin', __( 'Do you really want to delete this rule?', 'ywdpd' ) )
-            )));
+			if ( ywdpd_check_valid_admin_page( $this->post_type_name ) || ( isset( $_GET['page'] ) && $_GET['page'] == 'yith_woocommerce_dynamic_pricing_and_discounts' ) ) {
 
-        }
+				wp_enqueue_script( 'jquery-ui-datepicker' );
+				wp_enqueue_style( 'yith_ywdpd_backend', YITH_YWDPD_ASSETS_URL . '/css/backend.css', array( 'woocommerce_admin_styles' ), YITH_YWDPD_VERSION );
+				wp_enqueue_script( 'ywdpd_timepicker', YITH_YWDPD_ASSETS_URL . '/js/jquery-ui-timepicker-addon.min.js', array( 'jquery' ), YITH_YWDPD_VERSION, true );
+				wp_enqueue_script( 'yith_ywdpd_admin', YITH_YWDPD_ASSETS_URL . '/js/ywdpd-admin' . YITH_YWDPD_SUFFIX . '.js', array(
+					'jquery',
+					'jquery-ui-sortable'
+				), YITH_YWDPD_VERSION, true );
+				wp_enqueue_script( 'jquery-blockui', YITH_YWDPD_ASSETS_URL . '/js/jquery.blockUI.min.js', array( 'jquery' ), false, true );
+
+				if ( ! wp_script_is( 'selectWoo' ) ) {
+					wp_enqueue_script( 'selectWoo' );
+					wp_enqueue_script( 'wc-enhanced-select' );
+				}
+
+				wp_localize_script( 'yith_ywdpd_admin', 'yith_ywdpd_admin', apply_filters( 'yith_ywdpd_admin_localize', array(
+					'ajaxurl' => WC()->ajax_url(),
+					'del_msg' => apply_filters( 'yith_ywdpd_delete_msg_admin', __( 'Do you really want to delete this rule?', 'ywdpd' ) )
+				) ) );
+
+			}
+
+		}
 
         /**
          * Create Menu Items
@@ -212,29 +554,29 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
                 $admin_tabs['premium'] = __( 'Premium Version', 'ywdpd' );
             }
             else {
-                $admin_tabs['pricing'] = __( 'Price Rules', 'ywdpd' );
+	            $admin_tabs['pricing'] = __( 'Price Rules', 'ywdpd' );
                 $admin_tabs['cart']    = __( 'Cart Discounts', 'ywdpd' );
             }
 
             $args = array(
                 'create_menu_page' => true,
                 'parent_slug'      => '',
-                'page_title'       => __( 'Dynamic Pricing', 'ywdpd' ),
-                'menu_title'       => __( 'Dynamic Pricing', 'ywdpd' ),
+                'page_title'       => _x( 'Dynamic Pricing', 'Plugin name, do not translate', 'ywdpd' ),
+                'menu_title'       => _x( 'Dynamic Pricing', 'Plugin name, do not translate', 'ywdpd' ),
                 'capability'       => 'manage_options',
                 'parent'           => 'ywdpd',
-                'parent_page'      => 'yit_plugin_panel',
+                'parent_page'      => 'yith_plugin_panel',
                 'page'             => $this->_panel_page,
                 'admin-tabs'       => $admin_tabs,
                 'options-path'     => YITH_YWDPD_DIR . '/plugin-options'
             );
 
             //enable shop manager to set Dynamic Pricing Options
-            if(  YITH_WC_Dynamic_Pricing()->get_option('enable_shop_manager') == 'yes' ){
+	        $enable_shop_manager = YITH_WC_Dynamic_Pricing()->get_option('enable_shop_manager');
+            if(  ywdpd_is_true( $enable_shop_manager ) ){
                 add_filter( 'option_page_capability_yit_' . $args['parent'] . '_options', array($this,'change_capability') );
                 $args['capability'] = 'manage_woocommerce';
             }
-
 
             /* === Fixed: not updated theme  === */
             if ( !class_exists( 'YIT_Plugin_Panel' ) ) {
@@ -281,34 +623,17 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
 
             if( isset( $_GET['page'] ) && $_GET['page'] == $this->_panel_page
                 && isset( $_GET['tab'] ) && !empty($_GET['tab'])
-                && file_exists( YITH_YWDPD_TEMPLATE_PATH . '/admin/rules-panel.php' ) ) {
-                $type = $_GET['tab'];
-                include_once( YITH_YWDPD_TEMPLATE_PATH . '/admin/rules-panel.php' );
+                && file_exists( YITH_YWDPD_TEMPLATE_PATH . '/admin/discount-tab.php' ) ) {
+	            $type = $_GET['tab'];
+	            $title = 'pricing' == $type ? __('Pricing Discounts', 'ywdpd') : __('Cart Discounts', 'ywdpd');
+	            $this->cpt_obj_discount = new YWDPD_Discount_List_Table( array( 'type' => $type ) );
+
+	            $discount_tab = YITH_YWDPD_TEMPLATE_PATH . '/admin/discount-tab.php';
+
+	            if ( file_exists( $discount_tab ) ) {
+		            include_once( $discount_tab );
+	            }
             }
-        }
-
-        /**
-         * Add new pricing rules options section
-         *
-         * @since 1.0.0
-         * @access public
-         * @author Emanuela Castorina
-         */
-        public function ajax_add_section() {
-
-            if ( ! isset( $_REQUEST['section'] ) ) {
-                die();
-            }
-
-            $description = strip_tags( $_REQUEST['section'] );
-            $key     = uniqid();
-            $id      = $_REQUEST['id'];
-            $type    = $_REQUEST['type'];
-            $name    = $_REQUEST['name'];
-
-            include( YITH_YWDPD_TEMPLATE_PATH . 'admin/'.$type.'-rules-panel.php' );
-
-            die();
         }
 
         /**
@@ -324,196 +649,9 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
          * @return mixed
          * @use      plugin_action_links_{$plugin_file_name}
          */
-        public function action_links( $links ) {
-            $links[] = '<a href="' . admin_url( "admin.php?page={$this->_panel_page}" ) . '">' . __( 'Settings', 'ywdpd' ) . '</a>';
-            return $links;
-        }
-
-		/**
-		 * @param $type
-		 */
-		public function load_rules( $type ) {
-            if ( isset( $_GET['page'] ) && $_GET['page'] == $this->_panel_page
-                 && file_exists( YITH_YWDPD_TEMPLATE_PATH . '/admin/'.$type.'-rules-option.php' ) ) {
-                $db_value = YITH_WC_Dynamic_Pricing()->get_option($type.'-rules');
-
-                include_once( YITH_YWDPD_TEMPLATE_PATH . '/admin/'.$type.'-rules-option.php' );
-            }
-        }
-
-
-
-		public function save_options(){
-
-			if( ! isset( $_GET['page'] ) || $_GET['page'] != $this->_panel_page
-			    || ! isset( $_GET['tab'] ) || empty($_GET['tab'])
-			    || ! isset( $_POST['ywdpd-action'] ) || $_POST['ywdpd-action'] != 'save-options' ) {
-				return;
-			}
-			$global_option = get_option(YITH_WC_Dynamic_Pricing()->plugin_options);
-			$type = $_GET['tab'];
-			$section_key = $_REQUEST['section-key'];
-			if( isset( $_REQUEST[YITH_WC_Dynamic_Pricing()->plugin_options][$type.'-rules'][$section_key]) ){
-				if( isset( $global_option[$type.'-rules'] ) && is_array( $global_option[$type.'-rules'] ) ){
-					$global_option[$type.'-rules'][$section_key] = $_REQUEST[YITH_WC_Dynamic_Pricing()->plugin_options][$type.'-rules'][$section_key];
-				}
-				else {
-					$global_option[$type.'-rules'] = array( $section_key => $_REQUEST[YITH_WC_Dynamic_Pricing()->plugin_options][$type.'-rules'][$section_key] );
-				}
-				update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-			}
-
-		}
-
-		public function ajax_order_section() {
-			$keys          = $_POST['order_keys'];
-			$type          = $_POST['tab'];
-			$global_option = get_option( YITH_WC_Dynamic_Pricing()->plugin_options );
-			$new_array     = array();
-
-			foreach ( $keys as $key ) {
-				if ( isset( $global_option[ $type . '-rules' ][ $key ] ) ) {
-					$new_array[ $key ] = $global_option[ $type . '-rules' ][ $key ];
-				}
-			}
-
-			if ( $new_array ) {
-				$global_option[ $type . '-rules' ] = $new_array;
-				update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option );
-			}
-
-			die();
-
-		}
-
-		public function ajax_section_remove() {
-            $section_key = $_REQUEST['section'];
-
-            $global_option = get_option(YITH_WC_Dynamic_Pricing()->plugin_options);
-
-            if( isset( $global_option['pricing-rules'][$section_key]) ){
-                unset( $global_option['pricing-rules'][$section_key] );
-                update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-            } elseif( isset( $global_option['cart-rules'][$section_key]) ){
-		        unset( $global_option['cart-rules'][$section_key] );
-		        update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-	        }
-
-	        die();
-        }
-
-        public function ajax_section_active(  ) {
-            $section_key = $_REQUEST['section'];
-            $active = $_REQUEST['active'];
-            $global_option = get_option(YITH_WC_Dynamic_Pricing()->plugin_options);
-
-            if( isset( $global_option['pricing-rules'][$section_key]) ){
-                $global_option['pricing-rules'][$section_key]['active'] = $active;
-                update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-            } elseif( isset( $global_option['cart-rules'][$section_key]) ){
-		        $global_option['cart-rules'][$section_key]['active'] = $active;
-		        update_option( YITH_WC_Dynamic_Pricing()->plugin_options, $global_option);
-	        }
-
-            wp_send_json( $active );
-        }
-
-		/**
-		 * Json Search Category to load product categories in chosen selects
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 * @author Emanuela Castorina
-		 */
-		public function ajax_category_search( ) {
-			check_ajax_referer( 'search-categories', 'security' );
-
-			ob_start();
-
-			$term = (string) wc_clean( stripslashes( $_GET['term'] ) );
-
-			if ( empty( $term ) ) {
-				die();
-			}
-			global $wpdb;
-			$terms = $wpdb->get_results( 'SELECT name, slug, wpt.term_id FROM ' . $wpdb->prefix . 'terms wpt, ' . $wpdb->prefix . 'term_taxonomy wptt WHERE wpt.term_id = wptt.term_id AND wptt.taxonomy = "product_cat" and wpt.name LIKE "%'.$term.'%" ORDER BY name ASC;' );
-
-			$found_categories = array();
-
-			if ( $terms ) {
-				foreach ( $terms as $cat ) {
-					$found_categories[$cat->term_id] = ( $cat->name ) ? $cat->name : 'ID: ' . $cat->slug;
-				}
-			}
-
-			$found_categories = apply_filters( 'ywdpd_json_search_categories', $found_categories );
-			wp_send_json( $found_categories );
-
-		}
-
-		/**
-		 * Json Search Tag to load product tags in chosen selects
-		 *
-		 * @since 1.1.0
-		 * @access public
-		 * @author Emanuela Castorina
-		 */
-		public function ajax_tag_search( ) {
-			check_ajax_referer( 'search-tags', 'security' );
-
-			ob_start();
-			$term = (string) wc_clean( stripslashes( $_GET['term'] ) );
-			if ( empty( $term ) ) {
-				die();
-			}
-			global $wpdb;
-			$terms = $wpdb->get_results( 'SELECT name, slug, wpt.term_id FROM ' . $wpdb->prefix . 'terms wpt, ' . $wpdb->prefix . 'term_taxonomy wptt WHERE wpt.term_id = wptt.term_id AND wptt.taxonomy = "product_tag" and wpt.name LIKE "%'.$term.'%" ORDER BY name ASC;' );
-
-			$found_tags = array();
-
-			if ( $terms ) {
-				foreach ( $terms as $tag ) {
-					$found_tags[$tag->term_id] = ( $tag->name ) ? $tag->name : 'ID: ' . $tag->slug;
-				}
-			}
-
-			$found_tags = apply_filters( 'ywdpd_json_search_tags', $found_tags );
-			wp_send_json( $found_tags );
-
-		}
-
-		/**
-		 * Json Search Customer to load customers in chosen selects
-		 *
-		 * @since 1.0.0
-		 * @access public
-		 * @author Emanuela Castorina
-		 */
-		public function ajax_customers_search( ) {
-
-			check_ajax_referer( 'search-customers', 'security' );
-
-			ob_start();
-
-			$term = (string) wc_clean( stripslashes( $_GET['term'] ) );
-
-			if ( empty( $term ) ) {
-				die();
-			}
-			$user_query = new WP_User_Query( array( 'search' => '*'.$term.'*', 'search_columns' => array( 'user_login', 'user_email','user_nicename', 'user_email') ) );
-
-			$users = $user_query->get_results();
-
-			$found_user = array();
-			if( !empty($users)){
-				foreach ( $users as $user ) {
-					$found_user[$user->ID] = $user->data->user_email;
-				}
-			}
-
-			$found_user = apply_filters( 'ywdpd_json_search_customers', $found_user );
-			wp_send_json( $found_user );
-
+		public function action_links( $links ) {
+			$links = yith_add_action_links( $links, $this->_panel_page, true );
+			return $links;
 		}
 
 		/**
@@ -531,12 +669,13 @@ if ( !class_exists( 'YITH_WC_Dynamic_Pricing_Admin' ) ) {
 		 * @author   Andrea Grillo <andrea.grillo@yithemes.com>
 		 * @use      plugin_row_meta
 		 */
-		public function plugin_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ) {
-
-			if ( defined( 'YITH_YWDPD_INIT' ) && YITH_YWDPD_INIT == $plugin_file ) {
-				$plugin_meta[] = '<a href="' . $this->doc_url . '" target="_blank">' . __( 'Plugin Documentation', 'ywdpd' ) . '</a>';
+		public function plugin_row_meta( $new_row_meta_args, $plugin_meta, $plugin_file, $plugin_data, $status, $init_file = 'YITH_YWDPD_INIT' ) {
+			if ( defined( $init_file ) && constant( $init_file ) == $plugin_file ) {
+				$new_row_meta_args['slug'] = YITH_YWDPD_SLUG;
+				$new_row_meta_args['is_premium'] = true;
 			}
-			return $plugin_meta;
+
+			return $new_row_meta_args;
 		}
 
 		/**

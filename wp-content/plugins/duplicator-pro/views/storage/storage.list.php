@@ -114,20 +114,26 @@ TOOL-BAR -->
                         <?php if ($storage->editable) : ?>                                                
                             <a href="javascript:void(0);" onclick="DupPro.Storage.Edit('<?php echo $storage->id; ?>')"><b><?php echo $storage->name; ?></b></a>
                             <div class="sub-menu">
-                                <a href="javascript:void(0);" onclick="DupPro.Storage.Edit('<?php echo $storage->id; ?>')">Edit</a> |
-                                <a href="javascript:void(0);" onclick="DupPro.Storage.View('<?php echo $storage->id; ?>');">Quick View</a> |
-                                <a href="javascript:void(0);" onclick="DupPro.Storage.Delete('<?php echo $storage->id; ?>');">Delete</a>
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.Edit('<?php echo $storage->id; ?>')"><?php DUP_PRO_U::esc_html_e('Edit'); ?></a> |
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.View('<?php echo $storage->id; ?>');"><?php DUP_PRO_U::esc_html_e('Quick View'); ?></a> |
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.CopyEdit('<?php echo $storage->id; ?>');"><?php DUP_PRO_U::esc_html_e('Copy'); ?></a> |
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.Delete('<?php echo $storage->id; ?>');"><?php DUP_PRO_U::esc_html_e('Delete'); ?></a>
                             </div>
                         <?php else : ?>
                  			<a href="javascript:void(0);" onclick="DupPro.Storage.EditDefault()"><b><?php DUP_PRO_U::esc_html_e('Default'); ?></b></a>
                             <div class="sub-menu">
-								<a href="javascript:void(0);" onclick="DupPro.Storage.EditDefault()">Edit</a> |
-                                <a href="javascript:void(0);" onclick="DupPro.Storage.View('<?php echo $storage->id; ?>');">Quick View</a>
+								<a href="javascript:void(0);" onclick="DupPro.Storage.EditDefault()"><?php DUP_PRO_U::esc_html_e('Edit'); ?></a> |
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.CopyEdit('<?php echo $storage->id; ?>');"><?php DUP_PRO_U::esc_html_e('Copy'); ?></a> |
+                                <a href="javascript:void(0);" onclick="DupPro.Storage.View('<?php echo $storage->id; ?>');"><?php DUP_PRO_U::esc_html_e('Quick View'); ?></a>
                             </div>
                         <?php endif; ?>
                     </td>
                     <td><?php echo esc_html($store_type); ?></td>
                 </tr>
+                <?php
+                    ob_start();
+                    try {
+                    ?>
                 <tr id='quick-view-<?php echo intval($storage->id); ?>' class='<?php echo ($i % 2) ? 'alternate' : ''; ?> storage-detail'>
                     <td colspan="3">
                         <b><?php DUP_PRO_U::esc_html_e('QUICK VIEW') ?></b> <br/>
@@ -175,7 +181,7 @@ TOOL-BAR -->
                                 <?php case 'SFTP': ?>
                                 <div>
 									<label><?php DUP_PRO_U::esc_html_e('Server') ?>:</label>
-									<?php echo esc_html($storage->sftp_serve);r ?>:<?php echo esc_html($storage->sftp_port); ?> <br/>
+									<?php echo esc_html($storage->sftp_server); ?>:<?php echo esc_html($storage->sftp_port); ?> <br/>
                                     <label><?php DUP_PRO_U::esc_html_e('Location') ?>:</label>
 									<?php 
 										$url = $storage->get_storage_location_string();
@@ -205,7 +211,23 @@ TOOL-BAR -->
                         <button type="button" class="button" onclick="DupPro.Storage.View('<?php echo intval($storage->id); ?>');"><?php DUP_PRO_U::esc_html_e('Close') ?></button>
                     </td>
                 </tr>
-<?php endforeach; ?>
+                <?php
+                } catch (Exception $e) {
+                    ob_clean(); ?>
+                    <tr id='quick-view-<?php echo intval($storage->id); ?>' class='<?php echo ($i % 2) ? 'alternate' : ''; ?>'>
+                        <td colspan="3">
+                           <?php
+                           echo getDupProStorageErrorMsg($e);
+                           ?>
+                            <br><br>
+                           <button type="button" class="button" onclick="DupPro.Storage.View('<?php echo intval($storage->id); ?>');"><?php DUP_PRO_U::esc_html_e('Close') ?></button>
+                        </td>
+                    </tr>
+                    <?php
+                }
+                $rowStr = ob_get_clean();
+                echo $rowStr;
+        endforeach; ?>
         </tbody>
         <tfoot>
             <tr>
@@ -250,30 +272,45 @@ TOOL-BAR -->
 		//Shows detail view
         DupPro.Storage.EditDefault = function () {
             document.location.href = '<?php echo $edit_default_storage_url; ?>';
-        }
+        };
 		
         //Shows detail view
         DupPro.Storage.Edit = function (id) {
             document.location.href = '<?php echo "$edit_storage_url&storage_id="; ?>' + id;
-        }
+        };
+
+        //Copy and edit
+        DupPro.Storage.CopyEdit = function (id) {
+            <?php
+            $params = array(
+                'action=copy-storage',
+                '_wpnonce='.wp_create_nonce('duppro-storage-edit'),
+                'storage_id=-1',
+                'duppro-source-storage-id=' // last params get id from js param function
+            );
+            $edit_storage_url .= '&'.implode('&' , $params);
+            ?>
+            document.location.href = '<?php echo "$edit_storage_url"; ?>' + id;
+        };
 
         //Shows detail view
         DupPro.Storage.View = function (id) {
             $('#quick-view-' + id).toggle();
             $('#main-view-' + id).toggle();
-        }
+        };
 
         //Delets a single record
         DupPro.Storage.Delete = function (id) {
             <?php $confirm2->showConfirm(); ?>
             $("#<?php echo $confirm2->getID(); ?>-confirm").attr('data-id', id);
-            }
+        };
+
         DupPro.Storage.DeleteThis = function (e) {
             var id = $(e).attr('data-id');
             $("#dup-storage-form-action").val('delete');
             $("#dup-selected-storage").val(id);
             $("#dup-storage-form").submit();
-        }
+        };
 
         //	Creats a comma seperate list of all selected package ids
         DupPro.Storage.DeleteList = function ()
@@ -289,7 +326,7 @@ TOOL-BAR -->
             });
 
             return arr.join(',');
-        }
+        };
         // Bulk action
         DupPro.Storage.BulkAction = function () {
             var list = DupPro.Storage.DeleteList();
@@ -318,20 +355,20 @@ TOOL-BAR -->
                         break;
                 }
             }
-        }
+        };
 
         DupPro.Storage.BulkDelete = function ()
                         {
                             jQuery("#dup-storage-form-action").val('bulk-delete');
                             jQuery("#dup-storage-form").submit();
-        }
+        };
 
         //Sets all for deletion
         DupPro.Storage.SetAll = function (chkbox) {
             $('.item-chk').each(function () {
                 this.checked = chkbox.checked;
             });
-        }
+        };
 
         //Name hover show menu
         $("tr.storage-row").hover(

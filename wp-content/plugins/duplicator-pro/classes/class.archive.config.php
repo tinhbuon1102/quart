@@ -57,6 +57,10 @@ class DUP_PRO_Archive_Config
     //BRAND
     public $brand;
 
+    public $is_outer_root_wp_config_file;
+    public $is_outer_root_wp_content_dir;
+    public $wp_content_dir_base_name;
+
     function __construct()
     {
         $this->subsites = array();

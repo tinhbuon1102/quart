@@ -65,7 +65,7 @@ if (!class_exists('DUP_PRO_PHPSECLIB')) {
             DUP_PRO_LOG::trace("Connect to SFTP server $server");
             $sftp = $this->get_sftp_client($server,$port);
             DUP_PRO_LOG::trace("Login to SFTP server $server");
-            if($key) { 
+            if(isset($key) && $key) { 
                 DUP_PRO_LOG::trace("Login to SFTP using private key");
                 if ($sftp->login($username, $key)) {
                     DUP_PRO_LOG::trace('Successfully connected to server using private key');                    

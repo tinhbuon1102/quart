@@ -7,6 +7,8 @@
 	<?php if ($_REQUEST['action'] != 'display') : ?>
 		<?php if ($_REQUEST['action'] == 'installer') :
 
+            $remove_error = false;
+
 			delete_option("duplicator_pro_exe_safe_mode");
 			// Move installer log before cleanup
 			$installer_log_path = DUPLICATOR_PRO_ENHANCED_INSTALLER_DIRECTORY.'/dup-installer-log__'.DUPLICATOR_PRO_INSTALLER_HASH_PATTERN.'.txt';
@@ -48,9 +50,12 @@
 				}
 
 				if (!empty($file_path)) {
-					echo (file_exists($file_path))
-						? "<div class='failed'><i class='fa fa-exclamation-triangle'></i> {$txt_found} - ".esc_html($file_path)."  </div>"
-						: "<div class='success'> <i class='fa fa-check'></i> {$txt_not_found} - ".esc_html($file_path)."	</div>";
+                    if (file_exists($file_path)) {
+                        echo "<div class='failed'><i class='fa fa-exclamation-triangle'></i> {$txt_found} - ".esc_html($file_path)."  </div>";
+                        $remove_error = true;
+                    } else {
+                        echo "<div class='success'> <i class='fa fa-check'></i> {$txt_not_found} - ".esc_html($file_path)."	</div>";
+                    }
 				}
 			}
 			
@@ -95,18 +100,34 @@
 			?>
 
 			<div style="font-style: italic; max-width:900px; padding:10px 0 25px 0;">
-				<b><?php DUP_PRO_U::esc_html_e('Security Notes')?>:</b>
-				<?php DUP_PRO_U::esc_html_e('If the installer files do not successfully get removed with this action, then they WILL need to be removed manually through your '
-					 . 'hosts control panel, file system or FTP.  Please remove all installer files listed above if they exist to avoid leaving open security issues on your server.  '
-					 . 'The remove process will also look for other non-installer files and Duplicator Lite files that could be a security issue and removes them as well.'); ?>
-				<br/><br/>
+                <?php
+                echo '<b><i class="fa fa-shield"></i> ' . DUP_PRO_U::esc_html__('Security Notes') . ':</b>';
+				echo DUP_PRO_U::__(' If the installer files do not successfully get removed with this action, then they WILL need to be removed manually through your hosts control panel  '
+						 . 'or FTP.  Please remove all installer files to avoid any security issues on this site.').'<br>';
+                echo DUP_PRO_U::__('For more details please visit '
+						 . 'the FAQ link <a href="https://snapcreek.com/duplicator/docs/faqs-tech/#faq-installer-295-q" target="_blank">Which files need to be removed after an install?</a>');
+                echo '<br/><br/>';
 
-				<b><?php DUP_PRO_U::esc_html_e('Archive File')?>:</b>
+                if ($remove_error) {
+                    echo  DUP_PRO_U::__('Some of the installer files did not get removed, ').
+                        '<a href="#" onclick="DupPro.Tools.removeInstallerFiles(); return false;" >'.
+                         DUP_PRO_U::__('please retry the installer cleanup process').
+                        '</a>.'.
+                         DUP_PRO_U::__(' If this process continues please see the previous FAQ link.').
+                        '<br><br>';
+                }
+                ?>
+				<!--<b><?php // DUP_PRO_U::esc_html_e('Archive File')?>:</b> -->
 				<?php
-				echo ' ';
-				DUP_PRO_U::esc_html_e("The archive file has a unique hashed name when downloaded.  Leaving the archive file on your server does not impose a security"
-					. " risk if the file was not renamed.  It is still highly recommended to remove the archive file after install, especially if it was renamed.");
-				?>
+				//DUP_PRO_U::esc_html_e("The archive file has a unique hashed name when downloaded.  Leaving the archive file on your server does not impose a security"
+				//	. " risk if the file was not renamed.  It is still highly recommended to remove the archive file after install, especially if it was renamed.");
+				//echo '<br/><br/>';
+                
+                echo '<b><i class="fa fa-thumbs-o-up"></i> ' . DUP_PRO_U::esc_html__('Help Support Duplicator') . ':</b>&nbsp;';
+                echo DUP_PRO_U::__('The Duplicator team has worked many years to make moving a WordPress site a much easier process.  Show your support with a '
+						 . '<a href="https://wordpress.org/support/plugin/duplicator/reviews/?filter=5" target="_blank">5 star review</a>!  We would be thrilled if you could!');
+
+                ?>
 			</div>
 
 		<?php elseif ($_REQUEST['action'] == 'purge-orphans') :?>

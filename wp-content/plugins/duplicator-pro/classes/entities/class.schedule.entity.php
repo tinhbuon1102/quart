@@ -224,8 +224,6 @@ class DUP_PRO_Schedule_Entity extends DUP_PRO_JSON_Entity_Base
             $package->Installer->OptsDBHost = $template->installer_opts_db_host;
             $package->Installer->OptsDBName = $template->installer_opts_db_name;
             $package->Installer->OptsDBUser = $template->installer_opts_db_user;
-            $package->Installer->OptsCacheWP = $template->installer_opts_cache_wp;
-            $package->Installer->OptsCachePath = $template->installer_opts_cache_path;
             $package->Installer->OptsSecureOn = $template->installer_opts_secure_on;
             $package->Installer->OptsSecurePass = $template->installer_opts_secure_pass;
             $package->Installer->OptsSkipScan = $template->installer_opts_skip_scan;

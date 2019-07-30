@@ -4,7 +4,7 @@ defined("ABSPATH") or die("");
   Plugin Name: Duplicator Pro
   Plugin URI: http://snapcreek.com/
   Description: Create, schedule and transfer a copy of your WordPress files and database. Duplicate and move a site from one location to another quickly.
-  Version: 3.7.9
+  Version: 3.8.1
   Author: Snap Creek
   Author URI: http://snapcreek.com
   License: GPLv2 or later
@@ -27,12 +27,16 @@ defined("ABSPATH") or die("");
 
 require_once(dirname(__FILE__) . "/define.php");
 require_once(DUPLICATOR_PRO_PLUGIN_PATH  . '/lib/snaplib/snaplib.all.php');
+
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.string.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.date.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.zip.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.license.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.upgrade.php');
+require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.tree.files.php');
+require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.wp.php');
+
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/class.crypt.blowfish.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.system.global.entity.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.profilelogs.entity.php');
@@ -168,6 +172,45 @@ if (!function_exists('_sanitize_text_fields')) {
         }
 
         return $filtered;
+    }
+}
+
+if (!function_exists('wp_normalize_path')) {
+    /**
+     * Normalize a filesystem path.
+     *
+     * On windows systems, replaces backslashes with forward slashes
+     * and forces upper-case drive letters.
+     * Allows for two leading slashes for Windows network shares, but
+     * ensures that all other duplicate slashes are reduced to a single.
+     *
+     * @since 3.9.0
+     * @since 4.4.0 Ensures upper-case drive letters on Windows systems.
+     * @since 4.5.0 Allows for Windows network shares.
+     * @since 4.9.7 Allows for PHP file wrappers.
+     *
+     * @param string $path Path to normalize.
+     * @return string Normalized path.
+     */
+    function wp_normalize_path( $path ) {
+        $wrapper = '';
+        if ( wp_is_stream( $path ) ) {
+            list( $wrapper, $path ) = explode( '://', $path, 2 );
+            $wrapper .= '://';
+        }
+
+        // Standardise all paths to use /
+        $path = str_replace( '\\', '/', $path );
+
+        // Replace multiple slashes down to a singular, allowing for network shares having two slashes.
+        $path = preg_replace( '|(?<=.)/+|', '/', $path );
+
+        // Windows paths should uppercase the drive letter
+        if ( ':' === substr( $path, 1, 1 ) ) {
+            $path = ucfirst( $path );
+        }
+
+        return $wrapper . $path;
     }
 }
 
@@ -314,8 +357,8 @@ if (is_admin() === true) {
      */
     function duplicator_pro_activate_new_install()
     {
-        $global                      = DUP_PRO_Global_Entity::get_instance();
-  
+        $global = DUP_PRO_Global_Entity::get_instance();
+        $global->lock_mode = DUP_PRO_Global_Entity::get_lock_type();        
         $global->save();
     }
 
@@ -478,6 +521,17 @@ HTML;
      */
     function duplicator_pro_init()
     {
+        // Check post migration hook and take action of post migration
+        $is_migration = get_option('duplicator_pro_migration');
+        if ($is_migration) {
+            $global = DUP_PRO_Global_Entity::get_instance();
+            $global->lock_mode = DUP_PRO_Global_Entity::get_lock_type();
+            $global->ajax_protocol = DUP_PRO_Global_Entity::get_ajax_protocol();
+            $global->save();
+
+            delete_option('duplicator_pro_migration');
+        }
+
         // wp_doing_ajax introduced in WP 4.7
 		if (!function_exists('wp_doing_ajax') || ( ! wp_doing_ajax() ) ) {
 			// CSS
@@ -488,11 +542,13 @@ HTML;
 			wp_register_style('dup-pro-parsley', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/parsley.css', null, '2.0.6');
 			wp_register_style('dup-pro-jquery-qtip', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/jquery.qtip/jquery.qtip.min.css', null, '2.2.1');
 			wp_register_style('dup-pro-formstone', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/formstone/bundle.css', null, '1.3.1');
+            wp_register_style('dup-pro-jstree', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/jstree/themes/snap/style.css', null, '3.8.1');
 			//JS
 			wp_register_script('dup-pro-handlebars', DUPLICATOR_PRO_PLUGIN_URL . 'assets/js/handlebars.min.js', array('jquery'), '4.0.10');
 			wp_register_script('parsley', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/parsley.min.js', array('jquery'), '2.0.6');
 			wp_register_script('dup-pro-jquery-qtip', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/jquery.qtip/jquery.qtip.min.js', array('jquery'), '2.2.1');
 			wp_register_script('dup-pro-formstone', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/formstone/bundle.js', array('jquery'), '2.2.1');
+            wp_register_script('dup-pro-jstree', DUPLICATOR_PRO_PLUGIN_URL.'assets/js/jstree/jstree.min.js', array(), '3.3.7');
 		}
     }
 
@@ -610,8 +666,10 @@ HTML;
         wp_enqueue_script('jquery-ui-progressbar');
         wp_enqueue_script('jquery-ui-datepicker');
         wp_enqueue_script('parsley');
+        wp_enqueue_script('accordion');
         wp_enqueue_script('dup-pro-jquery-qtip');
 		wp_enqueue_script('dup-pro-formstone');
+        wp_enqueue_script('dup-pro-jstree');
     }
 
     /**
@@ -629,6 +687,7 @@ HTML;
         wp_enqueue_style('dup-pro-plugin-style');
         wp_enqueue_style('dup-pro-jquery-qtip');
 		wp_enqueue_style('dup-pro-formstone');
+        wp_enqueue_style('dup-pro-jstree');
     }
 
     /** ========================================================

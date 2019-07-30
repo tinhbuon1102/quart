@@ -117,9 +117,17 @@ jQuery(document).ready(function($)
 					$.ajax({
 						type: "POST",
 						url: ajaxurl,
-						dataType: "json",
 						data: input,
-						success: function(data) { DupPro.Debug.ProcessResult(data, $result) },
+						success: function(respData) {
+							try {
+								var data = DupPro.parseJSON(respData);								
+							} catch(err) {
+								console.error(err.message);
+								console.error('JSON parse failed for response data: ' + respData);
+								return false;
+							}
+							DupPro.Debug.ProcessResult(data, $result);
+						},
 						error: function(data) {},
 						done: function(data) {}
 					});

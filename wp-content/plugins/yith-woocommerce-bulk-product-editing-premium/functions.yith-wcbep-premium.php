@@ -62,6 +62,10 @@ if ( !function_exists( 'yith_wcbep_posts_filter_where' ) ) {
                     $compare = 'REGEXP';
                     $value   = $f_title_val . '$';
                     break;
+                case 'regex':
+                    $compare = 'REGEXP';
+                    $value   = $f_title_val;
+                    break;
             }
 
             $where .= " AND post_title {$compare} '{$value}'";
@@ -85,6 +89,10 @@ if ( !function_exists( 'yith_wcbep_posts_filter_where' ) ) {
                 case 'ends':
                     $compare = 'REGEXP';
                     $value   = $f_description_val . '$';
+                    break;
+                case 'regex':
+                    $compare = 'REGEXP';
+                    $value   = $f_description_val;
                     break;
             }
 

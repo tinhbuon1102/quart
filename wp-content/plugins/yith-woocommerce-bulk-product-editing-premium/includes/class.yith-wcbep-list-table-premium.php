@@ -396,6 +396,10 @@ if ( !class_exists( 'YITH_WCBEP_List_Table_Premium' ) ) {
                             $compare = 'REGEXP';
                             $value   = $f_sku_val . '$';
                             break;
+                        case 'regex':
+                            $compare = 'REGEXP';
+                            $value   = $f_sku_val;
+                            break;
                     }
 
                     $meta_query[] = array(

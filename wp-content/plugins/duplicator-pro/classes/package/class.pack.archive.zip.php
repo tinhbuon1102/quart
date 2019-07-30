@@ -213,7 +213,8 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 		if ($build_progress->next_archive_dir_index < count($scanReport->ARC->Dirs)) {
 			if ($zipArchive->open($zipPath, ZipArchive::CREATE)) {
 				foreach ($scanReport->ARC->Dirs as $dir) {
-					if (! $zipArchive->addEmptyDir(ltrim(str_replace($compressDir, '', $dir), '/'))) {
+					$emptyDir = $archive->getLocalDirPath($dir);
+					if (! $zipArchive->addEmptyDir($emptyDir)) {
 						if (strpos($dir, rtrim($compressDir, '/')) != 0) {
 							DUP_PRO_Log::infoTrace("WARNING: Unable to zip directory: '{$dir}'");
 						}
@@ -250,8 +251,13 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 
 			// Since we have to estimate progress in Single Thread mode
 			// set the status when we start archiving just like Shell Exec
+            do_action('duplicator_pro_package_before_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
+
 			$archive->Package->Status = DUP_PRO_PackageStatus::ARCSTART;
 			$archive->Package->update();
+
+            do_action('duplicator_pro_package_after_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
+
 			$total_file_size = 0;
 			$total_file_count_trip = ($scanReport->ARC->UFileCount + 1000);
 
@@ -277,7 +283,7 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 					}
 				}
 
-				$local_name	 = ltrim(str_replace($compressDir, '', $file), '/');
+				$local_name = $archive->getLocalFilePath($file);
 				if (! $zipArchive->addFile($file, $local_name)) {
 					// Assumption is that we continue?? for some things this would be fatal others it would be ok - leave up to user
 					DUP_PRO_Log::info("WARNING: Unable to zip file: {$file}");
@@ -487,7 +493,8 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 
             // profile ok
 			foreach ($scanReport->ARC->Dirs as $dir) {
-				if (! $zipArchive->addEmptyDir(ltrim(str_replace($compressDir, '', $dir), '/'))) {
+				$emptyDir = $archive->getLocalDirPath($dir);
+				if (! $zipArchive->addEmptyDir($emptyDir)) {
 					if (strpos($dir, rtrim($compressDir, '/')) != 0) {
 						DUP_PRO_Log::infoTrace("WARNING: Unable to zip directory: '{$dir}'");
 					}
@@ -573,7 +580,7 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 						continue;
 					}
 
-					$local_name = ltrim(str_replace($compressDir, '', $file), '/');
+					$local_name = $archive->getLocalFilePath($file);
 					$file_size  = filesize($file);
 
 					if (($file_size < DUP_PRO_Constants::ZIP_STRING_LIMIT)) {

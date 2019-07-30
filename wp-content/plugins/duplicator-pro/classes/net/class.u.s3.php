@@ -22,6 +22,8 @@ if (DUP_PRO_U::PHP53()) {
 
     class DUP_PRO_S3_Client_UploadInfo
     {
+        // S3 API LIMIT CAN'T BE LOWER OF 5120 KB
+        const UPLOAD_PART_MIN_SIZE_IN_K = 5120;
         const UploadPartSizeBytes = 2097152;
 
         public $next_offset      = 0;
@@ -188,11 +190,12 @@ if (DUP_PRO_U::PHP53()) {
 
                         return $s3_client_uploadinfo;
                     } catch (Exception $ex) {
-                        $message = sprintf(DUP_PRO_U::__("Problem starting multipart upload from %1$s to %2$s in bucket %3$s %4$s"), 
+                        $message = sprintf(DUP_PRO_U::__("Problem starting multipart upload from %1$s to %2$s in bucket %3$s (chunk_size_in_k %5$s) %4$s"),
                             $s3_client_uploadinfo->src_filepath,
                             $s3_client_uploadinfo->dest_directory,
                             $s3_client_uploadinfo->bucket,
-                            $ex->getMessage()
+                            $ex->getMessage(),
+                            $s3_client_uploadinfo->upload_part_size
                         );
 
                         DUP_PRO_LOG::trace($message);
@@ -374,14 +377,38 @@ if (DUP_PRO_U::PHP53()) {
             return $result;
         }
 
-        public static function get_s3_client($region, $access_key, $secret_key)
+        public static function get_s3_client($region, $access_key, $secret_key, $endpoint = '')
         {
-            $client = DuplicatorPro\Aws\S3\S3Client::factory(array(
-                    'version' => '2006-03-01',
-                    'region' => $region,
-                    'signature' => 'v4',
-                    'credentials' => array('key' => $access_key, 'secret' => $secret_key),
-            ));
+            $args = array(
+                'version' => '2006-03-01',
+                'region' => $region,
+                'signature' => 'v4',
+                'credentials' => array('key' => $access_key, 'secret' => $secret_key),
+            );
+
+            if ('' != $endpoint) {
+                if (!preg_match("~^(?:f|ht)tps?://~i", $endpoint)) {
+                    $endpoint = "https://" . $endpoint;
+                }
+                $args['endpoint'] = $endpoint;
+            }
+
+            $client = DuplicatorPro\Aws\S3\S3Client::factory($args);
+
+            $global = DUP_PRO_Global_Entity::get_instance();
+            $opts = array();
+            // $client->setSslVerification($ssl_ca_cert, $verify_peer, $verify_host);
+
+            $opts[CURLOPT_SSL_VERIFYPEER] = $global->ssl_disableverify ? false : true;
+            $opts[CURLOPT_SSL_VERIFYHOST] = $global->ssl_disableverify ? 0 : 2; 
+            if (!$global->ssl_useservercerts) {
+                $opts[CURLOPT_CAINFO] = DUPLICATOR_PRO_CERT_PATH;
+                $opts[CURLOPT_CAPATH] = DUPLICATOR_PRO_CERT_PATH;
+                $opts['ssl.certificate_authority'] = DUPLICATOR_PRO_CERT_PATH;
+            }
+            if ($global->ipv4_only) $opts[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+
+            $client->setConfig($opts);
 
             return $client;
         }

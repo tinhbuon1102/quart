@@ -246,7 +246,7 @@ HTACCESS;
 		} else {
 			DUPX_Log::info("- Successfully updated the .htaccess file setting.");
 		}
-		@chmod('.htaccess', 0644);		
+		@chmod("{$path}/.htaccess", 0644);		
 
 		
     }

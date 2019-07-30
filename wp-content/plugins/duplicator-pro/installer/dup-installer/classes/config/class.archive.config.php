@@ -60,14 +60,10 @@ class DUPX_ArchiveConfig
 	public $cpnl_dbname;
 	public $cpnl_dbuser;
 	//ADV OPTS
-	public $cache_wp;
-	public $cache_path;
 	public $wproot;
 	public $url_old;
 	public $opts_delete;
-	// WP DEBUG OPTS
-	public $wp_debug;
-	public $wp_debug_log;
+	
 	//MULTISITE
 	public $mu_mode;
     public $mu_generation;

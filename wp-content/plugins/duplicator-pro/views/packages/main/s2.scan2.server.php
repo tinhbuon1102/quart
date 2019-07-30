@@ -46,7 +46,7 @@ SYSTEM (PHP) SETTINGS -->
 		echo '<hr size="1" /><span id="data-srv-php-openbase"></span>&nbsp;<b>'.DUP_PRO_U::__('PHP Open Base Dir').":</b>&nbsp; '{$test}' <br/>";
 		echo '<small>';
 		DUP_PRO_U::esc_html_e('Issues might occur when [open_basedir] is enabled. Work with your server admin to disable this value in the php.ini file if you’re having issues building a package.');
-		echo "&nbsp;<i><a href='http://www.php.net/manual/en/ini.core.php#ini.open-basedir' target='_blank'>[".DUP_PRO_U::__('details')."]</a></i><br/>";
+		echo "&nbsp;<i><a href='http://php.net/manual/en/ini.core.php#ini.open-basedir' target='_blank'>[".DUP_PRO_U::__('details')."]</a></i><br/>";
 		echo '</small>';
 
 		//MAX_EXECUTION_TIME

@@ -55,11 +55,12 @@ if (isset($_REQUEST['action'])) {
 	}
 }
 
+/*
 if (!empty($_GET['_wpnonce'])) {
 	if (!wp_verify_nonce($_GET['_wpnonce'], 'edit-template')) {
 		die('Security issue');
 	}
-}
+}*/
 
 $installer_pass = (base64_decode($package_template->installer_opts_secure_pass)) ? base64_decode($package_template->installer_opts_secure_pass) : '';
 $installer_cpnldbaction = isset($package_template->installer_opts_cpnl_db_action) ? $package_template->installer_opts_cpnl_db_action : 'create';

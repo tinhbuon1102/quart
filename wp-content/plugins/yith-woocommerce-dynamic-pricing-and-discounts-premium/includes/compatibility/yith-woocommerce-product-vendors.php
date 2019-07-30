@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) || ! defined( 'YITH_YWDPD_VERSION' ) ) {
  * @class   YWDPD_Multivendor
  * @package YITH WooCommerce Dynamic Pricing and Discounts
  * @since   1.0.0
- * @author  Yithemes
+ * @author  YITH
  */
 if ( ! class_exists( 'YWDPD_Multivendor' ) ) {
 
@@ -56,6 +56,7 @@ if ( ! class_exists( 'YWDPD_Multivendor' ) ) {
 			add_filter('yit_ywdpd_pricing_rules_options', array($this, 'add_pricing_rule_option'));
 			add_filter('yit_ywdpd_cart_rules_options', array($this, 'add_cart_rule_option'));
 			add_filter('yith_ywdpd_admin_localize', array($this, 'add_localize_params'));
+			add_filter('ywdpd_pricing_discount_metabox_options', array( $this, 'add_vendor_pricing_options') );
 
 			// panel type category search
 			add_action( 'wp_ajax_ywdpd_vendor_search', array( $this, 'json_search_vendors' ) );
@@ -125,7 +126,8 @@ if ( ! class_exists( 'YWDPD_Multivendor' ) ) {
 
 		public function json_search_vendors(  ) {
 
-			check_ajax_referer( 'search-vendor', 'security' );
+			check_ajax_referer( 'search-products', 'security' );
+
 
 			ob_start();
 
@@ -147,6 +149,68 @@ if ( ! class_exists( 'YWDPD_Multivendor' ) ) {
 
 
 			wp_send_json( $found_vendors );
+		}
+
+		public function add_vendor_pricing_options( $pricing_options ) {
+
+			$start = $pricing_options['tabs']['settings']['fields'];
+			$position = array_search( 'apply_to_tags_list_excluded', array_keys( $start ) );
+			$begin        = array_slice( $start, 0, $position+1 );
+			$end          = array_slice( $start, $position );
+			$vendor_items = array(
+				'apply_to_vendors_list'          => array(
+					'label'       => __( 'Search for a vendor', 'ywdpd' ),
+					'type'        => 'vendors',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a vendor', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_to',
+						'values' => 'vendor_list'
+					)
+				),
+				'apply_to_vendors_list_excluded' => array(
+					'label'       => __( 'Search for a vendor', 'ywdpd' ),
+					'type'        => 'vendors',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a vendor', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_to',
+						'values' => 'vendor_list_excluded'
+					)
+				)
+			);
+
+			$start = $begin + $vendor_items + $end;
+			$position = array_search( 'apply_adjustment_tags_list', array_keys( $start ) );
+			$begin        = array_slice( $start, 0, $position+1 );
+			$end          = array_slice( $start, $position );
+			$vendor_items = array(
+				'apply_adjustment_vendor_list'          => array(
+					'label'       => __( 'Search for a vendor', 'ywdpd' ),
+					'type'        => 'vendors',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a vendor', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_adjustment',
+						'values' => 'vendor_list'
+					)
+				),
+				'apply_adjustment_vendor_list_excluded' => array(
+					'label'       => __( 'Search for a vendor', 'ywdpd' ),
+					'type'        => 'vendors',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a vendor', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_adjustment',
+						'values' => 'vendor-list-excluded'
+					)
+				)
+			);
+
+			$pricing_options['tabs']['settings']['fields'] = $begin + $vendor_items + $end;
+
+			return $pricing_options;
+
 		}
 
 	}

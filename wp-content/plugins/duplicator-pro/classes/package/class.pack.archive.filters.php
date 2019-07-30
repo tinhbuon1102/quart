@@ -1,5 +1,6 @@
 <?php
 defined("ABSPATH") or die("");
+
 /**
  * Defines the scope from which a filter item was created/retrieved from
  * @package DupicatorPro\classes
@@ -66,8 +67,10 @@ class DUP_PRO_Archive_Filter_Info
         $this->Dirs  = new DUP_PRO_Archive_Filter_Scope_Directory();
         $this->Files = new DUP_PRO_Archive_Filter_Scope_File();
         $this->Exts  = new DUP_PRO_Archive_Filter_Scope_Base();
-				$this->TreeSize = array();
-		$this->TreeWarning = array();
+
+		$this->TreeSize = new DUP_PRO_Tree_files(ABSPATH);
+		$this->TreeWarning = new DUP_PRO_Tree_files(ABSPATH);
     }
+    
 }
 

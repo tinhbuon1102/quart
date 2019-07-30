@@ -1,7 +1,7 @@
 /*
  * @package YITH WooCommerce Dynamic Pricing and Discounts Premium
  * @since   1.1.7
- * @author  YITHEMES
+ * @author  YITH
  */
 
 jQuery(document).ready( function($) {

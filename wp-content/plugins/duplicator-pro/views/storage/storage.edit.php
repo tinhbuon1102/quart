@@ -19,6 +19,7 @@ $storage_id = isset($_REQUEST['storage_id']) ? intval($_REQUEST['storage_id']) :
 $storage = ($storage_id == -1) ? new DUP_PRO_Storage_Entity() : DUP_PRO_Storage_Entity::get_by_id($storage_id);
 
 $_REQUEST['_sftp_storage_folder'] = isset($_REQUEST['_sftp_storage_folder']) ? sanitize_text_field($_REQUEST['_sftp_storage_folder']) : '';
+$_REQUEST['duppro-source-storage-id'] = isset($_REQUEST['duppro-source-storage-id']) ? $_REQUEST['duppro-source-storage-id'] : -1;
 
 
 if (isset($_REQUEST['action'])) {
@@ -220,9 +221,11 @@ if (isset($_REQUEST['action'])) {
     }
 }
 
-if (!empty($_GET['_wpnonce']) && !wp_verify_nonce($_GET['_wpnonce'], 'edit-storage')) {
+/*
+ Nonce proble with copy action from storages lists.
+if (!empty($_GET['_wpnonce']) && (!wp_verify_nonce($_GET['_wpnonce'], 'edit-storage'))  ) {
     die('Security issue');
-}
+}*/
 
 if ($storage->dropbox_authorization_state == DUP_PRO_Dropbox_Authorization_States::Authorized) {
     $dropbox = $storage->get_dropbox_client();
@@ -303,9 +306,9 @@ $txt_auth_note = DUP_PRO_U::__('Note: Clicking the button below will open a new 
     <table class="dpro-edit-toolbar">
         <tr>
             <td>
-<?php if ($storage_count > 0) : ?>
+				<?php if ($storage_count > 0) : ?>
                     <select name="duppro-source-storage-id">
-                        <option value="-1" selected="selected"><?php _e("Copy From"); ?></option>
+                        <option value="-1" selected="selected" disabled="true"><?php _e("Copy From"); ?></option>
                     <?php
                     foreach ($storages as $copy_storage) {
                         echo ($copy_storage->id != $storage->id) ? "<option value='".intval($copy_storage->id)."'>".esc_html($copy_storage->name)."</option>" : '';
@@ -314,14 +317,14 @@ $txt_auth_note = DUP_PRO_U::__('Note: Clicking the button below will open a new 
                     </select>
                     <input type="button" class="button action" value="<?php DUP_PRO_U::esc_attr_e("Apply") ?>" onclick="DupPro.Storage.Copy()">
                     <?php else : ?>
-                    <select disabled="disabled"><option value="-1" selected="selected"><?php _e("Copy From"); ?></option></select>
+                    <select disabled="disabled"><option value="-1" selected="selected" disabled="true"><?php _e("Copy From"); ?></option></select>
                     <input type="button" class="button action" value="<?php DUP_PRO_U::esc_attr_e("Apply") ?>" disabled="disabled">
                 <?php endif; ?>
             </td>
             <td>
                 <div class="btnnav">
                     <a href="<?php echo $storage_tab_url; ?>" class="add-new-h2"> <i class="fa fa-database"></i> <?php DUP_PRO_U::esc_html_e('Providers'); ?></a>
-<?php if ($storage_id == -1) : ?>
+					<?php if ($storage_id == -1) : ?>
                         <span><?php DUP_PRO_U::esc_html_e('Add New') ?></span>
                     <?php else : 
                         $add_storage_url = admin_url('admin.php?page=duplicator-pro-storage&tab=storage&inner_page=edit');
@@ -340,14 +343,14 @@ $txt_auth_note = DUP_PRO_U::__('Note: Clicking the button below will open a new 
 <?php
 if ($was_updated) {
     if ($gdrive_error_message != NULL) {
-        echo "<div id='message' class='notice notice-error is-dismissible'><p><i class='fa fa-exclamation-triangle'></i> $gdrive_error_message </p></div>";
+        echo "<div id='message' class='notice error is-dismissible'><p><i class='fa fa-exclamation-triangle'></i> $gdrive_error_message </p></div>";
     } else if ($local_folder_created) {
         $update_message = sprintf(DUP_PRO_U::__('Storage Provider Updated - Folder %1$s was created'), $storage->local_storage_folder);
         echo "<div class='notice notice-success is-dismissible dpro-wpnotice-box'><p>$update_message</p></div>";
     } else {
         if ($local_folder_creation_error) {
             $update_message = sprintf(DUP_PRO_U::__('Storage Provider Updated - Unable to create folder %1$s'), $storage->local_storage_folder);
-            echo "<div class='notice notice-success is-dismissible dpro-wpnotice-box'><p><i class='fa fa-exclamation-triangle'></i> ".esc_html($update_message)." </p></div>";
+            echo "<div class='notice error is-dismissible dpro-wpnotice-box'><p><i class='fa fa-exclamation-triangle'></i> ".esc_html($update_message)." </p></div>";
         } else {
             $update_message = DUP_PRO_U::__('Storage Provider Updated');
             echo "<div class='notice notice-success is-dismissible dpro-wpnotice-box'><p>".esc_html($update_message)."</p></div>";
@@ -372,8 +375,8 @@ if ($was_updated) {
             <th scope="row"><label><?php DUP_PRO_U::esc_html_e("Type"); ?></label></th>
             <td>
                 <select id="change-mode" name="storage_type" onchange="DupPro.Storage.ChangeMode()">
-<?php if (DUP_PRO_U::PHP53()) : ?>
-                        <option <?php DUP_PRO_UI::echoSelected($storage->storage_type == DUP_PRO_Storage_Types::S3); ?> value="<?php echo esc_attr(DUP_PRO_Storage_Types::S3); ?>"><?php DUP_PRO_U::esc_html_e("Amazon S3"); ?></option>
+                    <?php if (DUP_PRO_U::PHP53() && DUP_PRO_U::isCurlExists()) : ?>
+                        <option <?php DUP_PRO_UI::echoSelected($storage->storage_type == DUP_PRO_Storage_Types::S3); ?> value="<?php echo esc_attr(DUP_PRO_Storage_Types::S3); ?>"><?php DUP_PRO_U::esc_html_e("Amazon S3 (or Compatible)"); ?></option>
                     <?php endif; ?>
                     <option <?php DUP_PRO_UI::echoSelected($storage->storage_type == DUP_PRO_Storage_Types::Dropbox); ?> value="<?php echo esc_attr(DUP_PRO_Storage_Types::Dropbox); ?>"><?php DUP_PRO_U::esc_html_e("Dropbox"); ?></option>
                     <option <?php DUP_PRO_UI::echoSelected($storage->storage_type == DUP_PRO_Storage_Types::FTP); ?> value="<?php echo esc_attr(DUP_PRO_Storage_Types::FTP); ?>"><?php DUP_PRO_U::esc_html_e("FTP"); ?></option>
@@ -391,7 +394,10 @@ if ($was_updated) {
                 <small class="dpro-store-type-notice">
                     <?php
                     if (DUP_PRO_U::PHP53() == false) {
-                        echo sprintf(DUP_PRO_U::esc_html__('Google Drive &amp; Amazon S3 requires PHP 5.3.2+. This server is running PHP (%s).'), PHP_VERSION) . '<br/>';
+                        echo sprintf(DUP_PRO_U::esc_html__('Google Drive &amp; Amazon S3 (or Compatible) requires PHP 5.3.2+. This server is running PHP (%s).'), PHP_VERSION) . '<br/>';
+                    }
+                    if (DUP_PRO_U::PHP53() && !DUP_PRO_U::isCurlExists()) {
+                        echo DUP_PRO_U::esc_html__("Amazon S3  (or Compatible) requires PHP cURL extension. This server hasn't PHP cURL extension.").'<br/>';
                     }
                     if (DUP_PRO_U::PHP55() == false) {
                         echo sprintf(DUP_PRO_U::esc_html__('SFTP requires PHP 5.5.2+. This server is running PHP (%s).'), PHP_VERSION) . '<br/>';
@@ -461,9 +467,41 @@ if ($was_updated) {
             </td>
         </tr>
         <tr>
+            <th scope="row"><label for="s3_provider"><?php DUP_PRO_U::esc_html_e("S3 storage provider"); ?></label></th>
+            <td>
+                <label>
+                    <input type="radio" name="s3_provider" value="amazon" <?php checked($storage->s3_provider, 'amazon'); ?> ><?php DUP_PRO_U::esc_html_e("Amazon S3"); ?>
+                </label>
+                &nbsp;&nbsp;&nbsp;
+                <label>
+                    <input type="radio" name="s3_provider" value="other" <?php checked($storage->s3_provider, 'other'); ?> ><?php DUP_PRO_U::esc_html_e("Other"); ?>
+                    <p><i><?php DUP_PRO_U::esc_html_e("Choose 'Other' for S3-compatible storage other than Amazon (Wasabi, Digital Ocean, Dreamhost, Minio, etc...)"); ?></i></p>
+                   <!-- <p>
+                        <i>                        
+                            <?php
+//                            $examples = array(
+//                                'https://wasabi.com/' => DUP_PRO_U::esc_html__("Wasabi"),
+//                                'https://www.digitalocean.com/' => DUP_PRO_U::esc_html__("DigitalOcean Spaces"),
+//                                'https://www.dreamhost.com/' => DUP_PRO_U::esc_html__("Dreamhost"),
+//                                'https://www.minio.io/' => DUP_PRO_U::esc_html__("Minio"),
+//                            );
+//                            $anchors = array();
+//                            foreach ($examples as $url=>$name) {
+//                                $anchors[] = '<a href="'.$url.'" target="_blank">'.$name.'</a>';
+//                            }
+//                            DUP_PRO_U::esc_html_e("Other S3 provider example: ");
+//                            echo implode(', ', $anchors);
+//                            DUP_PRO_U::esc_html_e(" and many more");
+                            ?>
+                        </i>
+                    </p>-->
+                </label>
+            </td>
+        </tr>
+        <tr class="s3_amazon_tr">
             <th scope="row"><label for="s3_region"><?php DUP_PRO_U::esc_html_e("Region"); ?></label></th>
             <td>
-                <select id="s3_region" name="s3_region">
+                <select name="s3_region">
                     <option <?php DUP_PRO_UI::echoSelected($storage->s3_region == 'us-east-1'); ?> value="us-east-1"><?php DUP_PRO_U::esc_html_e("US East (N. Virginia)"); ?></option>
                     <option <?php DUP_PRO_UI::echoSelected($storage->s3_region == 'us-east-2'); ?> value="us-east-2"><?php DUP_PRO_U::esc_html_e("US East (Ohio)"); ?></option>
                     <option <?php DUP_PRO_UI::echoSelected($storage->s3_region == 'us-west-1'); ?> value="us-west-1"><?php DUP_PRO_U::esc_html_e("US West (N. California)"); ?></option>
@@ -484,6 +522,19 @@ if ($was_updated) {
                 </select>
             </td>
         </tr>
+        <tr class="s3_other_tr">
+            <th scope="row"><label for="s3_region"><?php DUP_PRO_U::esc_html_e("Region"); ?></label></th>
+            <td>
+                <input type="text" name="s3_region" value="<?php echo ('other' == $storage->s3_provider) ? esc_attr($storage->s3_region) : ''; ?>">
+                <p><i><?php DUP_PRO_U::esc_html_e("Please fill s3 bucket region slug. Space is not allowed."); ?></i></p>
+            </td>
+        </tr>
+        <tr class="s3_other_tr">
+            <th scope="row"><label for="s3_endpoint"><?php DUP_PRO_U::esc_html_e("Endpoint URL"); ?></label></th>
+            <td>
+                <input type="text" id="s3_endpoint"  name="s3_endpoint" value="<?php echo esc_attr($storage->s3_endpoint); ?>">
+            </td>
+        </tr>
         <tr>
             <th scope="row"><label for="_s3_storage_folder"><?php DUP_PRO_U::esc_html_e("Storage Folder"); ?></label></th>
             <td>
@@ -491,7 +542,7 @@ if ($was_updated) {
                 <p><i><?php DUP_PRO_U::esc_html_e("Folder where packages will be stored. This should be unique for each web-site using Duplicator."); ?></i></p>
             </td>
         </tr>
-        <tr>
+        <tr class="s3_amazon_tr">
             <th scope="row"><label for="s3_storage_class"><?php DUP_PRO_U::esc_html_e("Storage Class"); ?></label></th>
             <td>
                 <select id="s3_storage_class" name="s3_storage_class">
@@ -772,7 +823,12 @@ if ($was_updated) {
         <tr>
             <th scope="row"><label for="ftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("Timeout"); ?></label></th>
             <td>
-                <input id="ftp_timeout" name="ftp_timeout_in_secs" data-parsley-errors-container="#ftp_timeout_error_container" type="text" value="<?php echo absint($storage->ftp_timeout_in_secs); ?>"> <label for="ftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("seconds"); ?></label>
+
+                <label for="ftp_timeout_in_secs">
+                        <input id="ftp_timeout" name="ftp_timeout_in_secs" data-parsley-errors-container="#ftp_timeout_error_container" type="text" value="<?php echo absint($storage->ftp_timeout_in_secs); ?>"> <label for="ftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("seconds"); ?></label>
+                        <br>
+                        <i><?php DUP_PRO_U::esc_html_e("Do not modify this setting unless you know the expected result or have talked to support."); ?></i>
+                </label>
                 <div id="ftp_timeout_error_container" class="duplicator-error-container"></div>
             </td>
         </tr>
@@ -846,7 +902,7 @@ if ($was_updated) {
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="sftp_private_key"><?php DUP_PRO_U::esc_html_e("Private Key"); ?></label></th>
+                <th scope="row"><label for="sftp_private_key"><?php DUP_PRO_U::esc_html_e("Private Key (PuTTY)"); ?></label></th>
                 <td>
                     <input id="sftp_private_key_file" name="sftp_private_key_file" onchange="DupPro.Storage.SFTP.ReadPrivateKey(this);" type="file"  accept="ppk" value="" data-parsley-errors-container="#sftp_private_key_error_container" /><br/>
                     <input type="hidden" name="sftp_private_key" id="sftp_private_key" value="<?php echo esc_attr($storage->sftp_private_key); ?>" />
@@ -893,7 +949,11 @@ if ($was_updated) {
             <tr>
                 <th scope="row"><label for="sftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("Timeout"); ?></label></th>
                 <td>
-                    <input id="sftp_timeout" name="sftp_timeout_in_secs" data-parsley-errors-container="#sftp_timeout_error_container" type="text" value="<?php echo absint($storage->sftp_timeout_in_secs); ?>"> <label for="sftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("seconds"); ?></label>
+                    <label for="sftp_timeout_in_secs">
+                        <input id="sftp_timeout" name="sftp_timeout_in_secs" data-parsley-errors-container="#sftp_timeout_error_container" type="text" value="<?php echo absint($storage->sftp_timeout_in_secs); ?>"> <label for="sftp_timeout_in_secs"><?php DUP_PRO_U::esc_html_e("seconds"); ?></label>
+                        <br>
+                        <i><?php DUP_PRO_U::esc_html_e("Do not modify this setting unless you know the expected result or have talked to support."); ?></i>
+                    </label>
                     <div id="sftp_timeout_error_container" class="duplicator-error-container"></div>
                 </td>
             </tr>
@@ -1032,7 +1092,47 @@ if ($storage->id == -1 || (($storage->storage_type == DUP_PRO_Storage_Types::GDr
                 </label>
             </th>
             <td>
-                <input data-parsley-errors-container="#_local_storage_folder_error_container" data-parsley-required="true"  type="text" id="_local_storage_folder" name="_local_storage_folder" data-parsley-pattern=".*" value="<?php echo esc_attr($storage->local_storage_folder); ?>" />
+                <input data-parsley-errors-container="#_local_storage_folder_error_container" data-parsley-required="true"  type="text" id="_local_storage_folder" name="_local_storage_folder" data-parsley-pattern=".*" data-parsley-not-core-paths="true" value="<?php echo esc_attr($storage->local_storage_folder); ?>" />
+                <script>
+                    window.Parsley
+                    .addValidator('notCorePaths', {
+                        requirementType: 'string',
+                        validateString: function(value) {
+                            <?php
+                            $home_path = get_home_path();
+                            $wp_upload_dir = wp_upload_dir();
+                            $wp_upload_dir_basedir = str_replace('\\', '/', $wp_upload_dir['basedir']);
+                            ?>
+                            var corePaths = [
+                                        "<?php echo $home_path;?>",
+                                        "<?php echo untrailingslashit($home_path);?>",
+
+                                        "<?php echo $home_path.'wp-content';?>",
+                                        "<?php echo $home_path.'wp-content/';?>",
+
+                                        "<?php echo $home_path.'wp-admin';?>",
+                                        "<?php echo $home_path.'wp-admin/';?>",
+
+                                        "<?php echo $home_path.'wp-includes';?>",
+                                        "<?php echo $home_path.'wp-includes/';?>",
+
+                                        "<?php echo $wp_upload_dir_basedir;?>",
+                                        "<?php echo trailingslashit($wp_upload_dir_basedir);?>"
+                                    ];
+                            // console.log(value);
+
+                            for (var i = 0; i < corePaths.length; i++) {
+                                if (value === corePaths[i]) {
+                                    return false;
+                                }
+                            }                            
+                            return true;                            
+                        },
+                        messages: {
+                            en: "<?php echo DUP_PRO_U::__('Storage Folder should not be root directory path, content directory path and upload directory path'); ?>"
+                        }
+                    });
+                </script>
                 <p>
                     <i>
                     <?php
@@ -1243,6 +1343,13 @@ $alert17->initAlert();
                     $('#s3_access_key').attr('data-parsley-required', 'true');
                     $('#s3_secret_key').attr('data-parsley-required', 'true');
                     $('#s3_bucket').attr('data-parsley-required', 'true');
+
+                    var s3Provider = $("input[name=s3_provider]:radio:checked").val();
+                    if ('other' == s3Provider) {
+                        $('input[name=s3_region]').attr('data-parsley-required', 'true');
+                        $('input[name=s3_region]').attr('data-parsley-pattern', '\[0-9-a-z-_]+');
+                        $('#s3_endpoint').attr('data-parsley-required', 'true');
+                    }
                     break;
 
             }
@@ -1287,9 +1394,17 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        alert("<?php DUP_PRO_U::esc_html_e('Unable to get OneDrive authentication URL.'); ?>");    
+                        return false;
+                    }
+
                     if (data['status'] == 0) {
                         $(".onedrive-auth-container").show();
                         $("#onedrive-is-business").val(isBusiness);
@@ -1324,7 +1439,7 @@ $alert17->initAlert();
             if ($('#onedrive-auth-code').val().length > 5) {
                 $("#dup-storage-form").submit();
             } else {
-<?php $alert5->showAlert(); ?>
+				<?php $alert5->showAlert(); ?>
             }
         }
 
@@ -1338,9 +1453,18 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test Onedrive Connection"); ?>');
+<?php $alert17->showAlert(); ?>
+                        console.log(respData);
+                        return false;
+                    }
                     $test_button.html('<i class="fa fa-cloud-upload"></i> <?php DUP_PRO_U::esc_html_e("Test Onedrive Connection"); ?>');
                     if (typeof (data.success) !== 'undefined') {
 <?php $alert15->showAlert(); ?>
@@ -1380,9 +1504,17 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        <?php $alert2->showAlert(); ?>
+                        return false;
+                    }
+
                     // Success
                     if (data['status'] == 0) {
                         DupPro.Storage.Dropbox.AuthUrl = data['dropbox_auth_url'];
@@ -1466,9 +1598,19 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test Dropbox Connection"); ?>');
+    <?php $alert4->showAlert(); ?>
+                        console.log(respData);
+                        return false;
+                    }
+
                     $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test Dropbox Connection"); ?>');
                     if (typeof (data.success) !== 'undefined') {
 <?php $alert15->showAlert(); ?>
@@ -1538,9 +1680,17 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        <?php $alert9->showAlert(); ?>
+                        return false;
+                    }
+
                     if (data['status'] == 0) {
                         DupPro.Storage.GDrive.AuthUrl = data['gdrive_auth_url'];
                         $('#dpro-gdrive-connect-btn-area').hide();
@@ -1577,9 +1727,19 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i> <?php DUP_PRO_U::esc_html_e("Test Google Drive Connection"); ?>');
+                        <?php $alert10->showAlert(); ?>
+                        console.log(data);
+                        return false;
+                    }
+
                     $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test Google Drive Connection"); ?>');
                     if (typeof (data.success) !== 'undefined') {
 <?php $alert13->showAlert(); ?>
@@ -1619,13 +1779,24 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i> <?php DUP_PRO_U::esc_html_e('Test FTP Connection'); ?>');
+<?php $alert11->showAlert(); ?>
+                        console.log(respData);
+                        return false;
+                    }
+
                     if (typeof (data.success) !== 'undefined') {
 <?php $alert14->showAlert(); ?>
                         $("#<?php echo $alert14->getID(); ?>_message").html(data.success);
                     } else {
+                        $("#<?php echo $alert11->getID(); ?>_message").html(data.error);
 <?php $alert11->showAlert(); ?>
                         console.log(data);
                     }
@@ -1660,9 +1831,19 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i> <?php DUP_PRO_U::esc_html_e('Test SFTP Connection'); ?>');
+                        alert("<?php DUP_PRO_U::esc_html_e('Send SFTP file test failed. Be sure the full storage path exists.') ?>");
+                        console.log(respData);
+                        return false;
+                    }
+                    
                     if (typeof (data.success) !== 'undefined') {
                         alert(data.success)
                     } else {
@@ -1697,13 +1878,50 @@ $alert17->initAlert();
         //=========================================================================
         //AMAZON S3 SPECIFIC
         //=========================================================================
+        $("input[name=s3_provider]:radio").change(function() {
+            var selectedVal = $("input[name=s3_provider]:radio:checked").val();
+            if ('other' == selectedVal) {
+                // textbox
+                $('input[name=s3_region]').prop('disabled', false);
+                // select box
+                $('select[name=s3_region]').prop('disabled', 'disabled');
+
+                $('.s3_other_tr th, .s3_other_tr td').slideDown();
+                $('.s3_amazon_tr th, .s3_amazon_tr td').slideUp();
+
+                $('#s3_storage_class').val('STANDARD');
+            } else { // Amazon
+                // textbox
+                $('input[name=s3_region]').prop('disabled', 'disabled');
+                // select box
+                $('select[name=s3_region]').prop('disabled', false);
+
+                $('.s3_other_tr th, .s3_other_tr td').slideUp();
+                $('.s3_amazon_tr th, .s3_amazon_tr td').slideDown();
+            }
+
+            var mode = $("#change-mode option:selected").val();
+            DupPro.Storage.BindParsley(mode);
+        });
+
+        $("input[name=s3_provider]:radio:first").trigger('change');
+
+
         DupPro.Storage.S3.SendFileTest = function () {
             var current_storage_folder = $('#_s3_storage_folder').val();
             var current_bucket = $('#s3_bucket').val();
-            var current_region = $('#s3_region').val();
+            
+            var s3_provider = $("input[name=s3_provider]:radio:checked").val();
+            if ('other' == s3_provider) {
+                var current_region = $('input[name=s3_region]').val();
+            } else {
+                var current_region = $('select[name=s3_region]').val();
+            }
+            
             var current_storage_class = $('#s3_storage_class').val();
             var current_access_key = $('#s3_access_key').val();
             var current_secret_key = $('#s3_secret_key').val();
+            var current_endpoint = $('#s3_endpoint').val();
 
             var data = {
                 action: 'duplicator_pro_s3_send_file_test',
@@ -1711,6 +1929,7 @@ $alert17->initAlert();
                 bucket: current_bucket,
                 storage_class: current_storage_class,
                 region: current_region,
+                endpoint: current_endpoint,
                 access_key: current_access_key,
                 secret_key: current_secret_key,
                 nonce: '<?php echo wp_create_nonce('duplicator_pro_s3_send_file_test'); ?>'
@@ -1722,13 +1941,26 @@ $alert17->initAlert();
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                dataType: "json",
                 data: data,
-                success: function (data) {
+                success: function (respData) {
+                    try {
+                        var data = DupPro.parseJSON(respData);
+                    } catch(err) {
+                        console.error(err);
+                        console.error('JSON parse failed for response data: ' + respData);
+                        $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test S3 Connection"); ?>');
+<?php $alert12->showAlert(); ?>
+                        console.log(respData);
+                        return false;
+                    }
                     $test_button.html('<i class="fa fa-cloud-upload"></i>	<?php DUP_PRO_U::esc_html_e("Test S3 Connection"); ?>');
                     if (typeof (data.success) !== 'undefined') {
 <?php $alert16->showAlert(); ?>
                         $("#<?php echo $alert16->getID(); ?>_message").html(data.success);
+                    } else if (typeof (data.error) !== 'undefined') {
+                        $("#<?php echo $alert12->getID(); ?>_message").html(data.error);
+                        <?php $alert12->showAlert(); ?>
+                        console.log(data);
                     } else {
 <?php $alert12->showAlert(); ?>
                         console.log(data);

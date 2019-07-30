@@ -57,12 +57,7 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
     public $installer_opts_cpnl_db_user = '';
     //Brand
     public $installer_opts_brand = -2;
-    //Adv Opts
-    public $installer_opts_cache_wp;		
-    public $installer_opts_cache_path;
-
-
-
+    
 
     public $is_default = false;
     public $is_manual = false;
@@ -125,10 +120,6 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $instance->installer_opts_cpnl_db_name = $template_data->installer_opts_cpnl_db_name;
         $instance->installer_opts_cpnl_db_user = $template_data->installer_opts_cpnl_db_user;
 
-        //Adv Opts
-        $instance->installer_opts_cache_wp = $template_data->installer_opts_cache_wp;		// K??
-        $instance->installer_opts_cache_path = $template_data->installer_opts_cache_path;		// ??
-
         $instance->is_default = $template_data->is_default;
         $instance->is_manual = $template_data->is_manual;
 
@@ -188,8 +179,6 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
                 $template->database_filter_tables = $temp_package->Database->FilterTables;
                 $template->database_compatibility_modes = $temp_package->Database->Compatible;
 
-                $template->installer_opts_cache_path = $temp_package->Installer->OptsCachePath;
-                $template->installer_opts_cache_wp = $temp_package->Installer->OptsCacheWP;
                 $template->installer_opts_db_host = $temp_package->Installer->OptsDBHost;
                 $template->installer_opts_db_name = $temp_package->Installer->OptsDBName;
                 $template->installer_opts_db_user = $temp_package->Installer->OptsDBUser;
@@ -231,9 +220,7 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $this->set_checkbox_variable($post, '_installer_opts_secure_on', 'installer_opts_secure_on');
         $this->set_checkbox_variable($post, '_installer_opts_skip_scan', 'installer_opts_skip_scan');
         $this->set_checkbox_variable($post, '_installer_opts_cpnl_enable', 'installer_opts_cpnl_enable');         
-        $this->set_checkbox_variable($post, '_installer_opts_cache_wp', 'installer_opts_cache_wp');
-        $this->set_checkbox_variable($post, '_installer_opts_cache_path', 'installer_opts_cache_path');         
-
+        
         $post_installer_opts_secure_pass = sanitize_text_field($post['_installer_opts_secure_pass']);
         $this->installer_opts_secure_pass = base64_encode($post_installer_opts_secure_pass);
 
@@ -278,8 +265,6 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $this->database_filter_tables = $source_template->database_filter_tables;
         $this->database_compatibility_modes = $source_template->database_compatibility_modes;
 
-        $this->installer_opts_cache_path = $source_template->installer_opts_cache_path;
-        $this->installer_opts_cache_wp = $source_template->installer_opts_cache_wp;
         $this->installer_opts_db_host = $source_template->installer_opts_db_host;
         $this->installer_opts_db_name = $source_template->installer_opts_db_name;
         $this->installer_opts_db_user = $source_template->installer_opts_db_user;
@@ -324,9 +309,7 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $this->installer_opts_db_host = sanitize_text_field($post['dbhost']);
         $this->installer_opts_db_name = sanitize_text_field($post['dbname']);
         $this->installer_opts_db_user = sanitize_text_field($post['dbuser']);
-        $this->installer_opts_cache_wp = (isset($post['cache-wp']) && 1 == $post['cache-wp']) ? 1 : 0;
-        $this->installer_opts_cache_path = (isset($post['cache-path']) && 1 == $post['cache-path']) ? 1 : 0;
-
+        
         //CPANEL
         $this->installer_opts_cpnl_host = sanitize_text_field($post['installer_opts_cpnl_host']);
         $this->installer_opts_cpnl_user = sanitize_text_field($post['installer_opts_cpnl_user']);

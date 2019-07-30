@@ -16,6 +16,11 @@ a.grey-icon i.fa {color:#777}
 /*a.gift-icon i.fa {color: #AF5E52 !important}*/
 a.upgrade-link {color:maroon; font-style: italic}
 
+/* UTILS CLASSES */
+.no_display {
+    display: none;
+}
+
 /*TABS*/
 ul.category-tabs li {cursor: pointer}
 
@@ -96,4 +101,33 @@ div.qtip-content {line-height:16px}
 
 .hidden, .js .closed .inside, .js .hide-if-js, .js .wp-core-ui .hide-if-js, .js.wp-core-ui .hide-if-js, .no-js .hide-if-no-js, .no-js .wp-core-ui .hide-if-no-js, .no-js.wp-core-ui .hide-if-no-js {
     display: none;
+}
+
+/* TESTS CHECKS */
+.tests_result .test-check {
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 5px;
+}
+
+.tests_result .test-check.fail {
+     background: rgba(255,0,0,0.3);
+}
+
+.tests_result .test-check.pass,
+.tests_result .test-check.info {
+    background: rgba(0,255,0,0.3);
+}
+
+.tests_result .test-check.warning,
+.tests_result .test-check.wait {
+    background: rgba(255,255,0,0.3);
+}
+
+.tests_result fieldset {
+    border: 1px solid black;
+    padding: 10px;
+    margin-bottom: 10px;
 }

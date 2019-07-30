@@ -66,7 +66,7 @@ class DUP_PRO_Dup_Archive extends DUP_PRO_Archive
                 $profileEventFunction = 'DUP_PRO_LOG::profile';
             }
 
-            DupArchiveEngine::init(new DUP_PRO_Dup_Archive_Logger(), $profileEventFunction);
+            DupArchiveEngine::init(new DUP_PRO_Dup_Archive_Logger(), $profileEventFunction, $archive);
 
             $archive->Package->safe_tmp_cleanup(true);
 
@@ -197,11 +197,26 @@ class DUP_PRO_Dup_Archive extends DUP_PRO_Archive
 
                     $totalFileCount = count($scanReport->ARC->Files);
                     DUP_PRO_Log::trace("Total file count ".$totalFileCount);
-                    $archive->Package->Status = SnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::ARCSTART, DUP_PRO_PackageStatus::ARCVALIDATION, $totalFileCount, $createState->currentFileIndex);
+                    
+                    $status = SnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::ARCSTART, DUP_PRO_PackageStatus::ARCVALIDATION, $totalFileCount, $createState->currentFileIndex);
+                    
+                    if ($status == DUP_PRO_PackageStatus::ARCSTART) {
+                        do_action('duplicator_pro_package_before_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
+                    } elseif ($status == DUP_PRO_PackageStatus::ARCVALIDATION) {
+                        do_action('duplicator_pro_package_before_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCVALIDATION);
+                    }
+
+                    $archive->Package->Status = $status;
 
                     $buildProgress->retries = 0;
 
                     $createState->save();
+
+                    if ($status == DUP_PRO_PackageStatus::ARCSTART) {
+                        do_action('duplicator_pro_package_after_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCSTART);
+                    } elseif ($status == DUP_PRO_PackageStatus::ARCVALIDATION) {
+                        do_action('duplicator_pro_package_after_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCVALIDATION);
+                    }
 
                     DUP_PRO_LOG::traceObject("Stored Create State", $createState);
                     DUP_PRO_LOG::traceObject('Stored build_progress', $archive->Package->build_progress);
@@ -291,6 +306,12 @@ class DUP_PRO_Dup_Archive extends DUP_PRO_Archive
                         $totalFileCount = count($scanReport->ARC->Files);
                         $archiveSize    = @filesize($expandState->archivePath);
 
+                        $status = SnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::ARCVALIDATION, DUP_PRO_PackageStatus::ARCDONE, $archiveSize, $expandState->archiveOffset);
+
+                        if ($status == DUP_PRO_PackageStatus::ARCDONE) {
+                            do_action('duplicator_pro_package_before_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCDONE);
+                        }
+
                         $archive->Package->Status = SnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::ARCVALIDATION, DUP_PRO_PackageStatus::ARCDONE, $archiveSize, $expandState->archiveOffset);
                     } catch (Exception $ex) {
                         DUP_PRO_LOG::traceError('Exception:'.$ex->getMessage().':'.$ex->getTraceAsString());
@@ -330,6 +351,11 @@ class DUP_PRO_Dup_Archive extends DUP_PRO_Archive
                         $archive->Package->update();
 
                         $done = true;
+
+                        if ($status == DUP_PRO_PackageStatus::ARCDONE) {
+                            do_action('duplicator_pro_package_after_set_status' , $archive->Package , DUP_PRO_PackageStatus::ARCDONE);
+                        }
+                        
                     } else {
                         $expandState->save();
                     }

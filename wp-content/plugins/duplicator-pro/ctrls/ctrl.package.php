@@ -50,8 +50,17 @@ class DUP_PRO_CTRL_Package extends DUP_PRO_CTRL_Base
             // 2) Temporary package is used during this build - keeps all the settings/storage information.  Will be inserted into the package table after they ok the scan results.
 			$template = DUP_PRO_Package_Template_Entity::get_manual_template();
 
-			$template->archive_filter_dirs = DUP_PRO_Archive::parseDirectoryFilter("{$template->archive_filter_dirs};".sanitize_textarea_field($post['dir_paths']));
-			$template->archive_filter_files = DUP_PRO_Archive::parseFileFilter("{$template->archive_filter_files};".sanitize_textarea_field($post['file_paths']));
+			$template->archive_filter_dirs = ($template->archive_filter_on)
+												? DUP_PRO_Archive::parseDirectoryFilter("{$template->archive_filter_dirs};".sanitize_textarea_field($post['dir_paths']))
+												: sanitize_textarea_field($post['dir_paths']);
+			$template->archive_filter_files = ($template->archive_filter_on)
+												? DUP_PRO_Archive::parseFileFilter("{$template->archive_filter_files};".sanitize_textarea_field($post['file_paths']))
+												: sanitize_textarea_field($post['file_paths']);
+			
+			if (!$template->archive_filter_on) {
+				$template->archive_filter_exts = '';
+			}
+
             $template->archive_filter_on = 1;
 		
             $template->save();
@@ -110,6 +119,10 @@ class DUP_PRO_CTRL_Package extends DUP_PRO_CTRL_Base
 
 			//OUTPUT: Installer, Archive, SQL File
             if ($is_binary) {
+				@session_write_close();
+				// @ob_flush();
+				// @flush();
+
                 header("Pragma: public");
                 header("Expires: 0");
                 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -119,24 +132,24 @@ class DUP_PRO_CTRL_Package extends DUP_PRO_CTRL_Base
                 if ($file_path != null) {
                     $fp = fopen($file_path, 'rb');
                     if ($fp !== false) {
-
-                        if ($which == DUP_PRO_Package_File_Type::Installer) {
+						if ($which == DUP_PRO_Package_File_Type::Installer) {
                             $file_name = $global->installer_base_name;
                         } else {
                             $file_name = basename($file_path);
                         }
-
+						
                         header("Content-Type: application/octet-stream");
 						header("Content-Disposition: attachment; filename=\"{$file_name}\";");
 
-                        @ob_end_clean(); // required or large files wont work
                         DUP_PRO_LOG::trace("streaming $file_path");
+						
+						while(!feof($fp)) {					
+							$buffer = fread($fp, 2048);
+							print $buffer;
+						}
 
-                        if (fpassthru($fp) === false) {
-							DUP_PRO_LOG::trace("Error with fpassthru for {$file_path}");
-                        }
                         fclose($fp);
-						die(); //Supress additional ouput
+						exit;
                     } else {
                         header("Content-Type: text/plain");
                         header("Content-Disposition: attachment; filename=\"error.txt\";");
@@ -192,8 +205,6 @@ class DUP_PRO_CTRL_Package extends DUP_PRO_CTRL_Base
 	{
 		DUP_PRO_LOG::trace("switch duparchive notice");
 		$post = $this->postParamMerge();
-
-		
 
 		$nonce = sanitize_text_field($post['nonce']);
 		if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Package_switchDupArchiveNotice')) {

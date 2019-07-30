@@ -3,8 +3,8 @@
 Contributors: yithemes
 Tags: woocommerce bulk pricing, woocommerce discounts, woocommerce dynamic discounts, woocommerce dynamic pricing, woocommerce prices, woocommerce pricing, woocommerce wholesale pricing, woocommerce cart discount, pricing, dynamic pricing, cart discount, special offers, bulk price
 Requires at least: 3.5.1
-Tested up to: 4.5.1
-Stable tag: 1.2.5
+Tested up to: 5.0
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,10 +25,123 @@ Important: First of all, you have to download and activate WooCommerce plugin, w
 
 = Configuration =
 YITH WooCommerce Dynamic Pricing and Discounts will add a new tab called "Dynamic Pricing" in "YIT Plugins" menu item.
-There, you will find all Yithemes plugins with quick access to plugin setting page.
+There, you will find all YITH plugins with quick access to plugin setting page.
 
 
 == Changelog ==
+= 1.4.9 - Released on Dec 05, 2018 =
+New: Support to WordPress 5.0
+Dev: New filter 'ywdpd_apply_discount_current_difference' and 'ywdpd_validate_apply_to_discount'
+Dev: New filter 'ywdpd_get_variable_prices' and 'ywdpd_include_shipping_on_totals'
+Dev: New filter 'ywdpd_check_cart_coupon'
+Update: Plugin Core 3.1.5
+Update: Language files
+Fix: discount percentage on Cart discounts when amount is "1"
+Fix: check include taxes with wc_prices_include_tax() rather than WC()->cart->tax_display_cart
+Fix: fixed loop when the coupon is not added via ajax
+Fix: issue with exclusion list
+Fix: guest coupon code
+
+= 1.4.8 - Released on Oct 23, 2018 =
+Update: Plugin Core 3.0.27
+Update: Language files
+Fix: Fix on get_maximum price for variable product
+
+= 1.4.7 - Released on Oct 16, 2018 =
+New: Support to WooCommerce 3.5.0 RC2
+Update: Plugin Core 3.0.25
+Fix: Timezone issue
+
+= 1.4.6 - Released on Sep 26, 2018 =
+Dev: New filter 'ywdpd_table_custom_hook'
+Update: Plugin Core 3.0.23
+Update: Language files
+Fix: Fixed schedule timezone issue
+Fix: Fix some issue with PHP 7.2.x
+Fix: Fix integration with YITH WooCommerce Added to cart Popup and Special Offers
+
+
+= 1.4.5 - Released on May 17, 2018 =
+New: Support to WordPress 4.9.6 RC2
+New: Support to WooCommerce 3.4.0 RC1
+New: Search rules on backend
+New: Persian Language
+New: Integration with YITH WooCommerce Added to Cart Popup Premium
+Dev: New filter 'ywdpd_check_if_single_page'
+Dev: New filter 'ywdpd_show_minimum_price_for_simple'
+Update: Plugin Core 3.0.15
+Update: Language files
+Fix: Price table
+
+= 1.4.4 - Released on Jan 29, 2018 =
+New: Support to WooCommerce 3.3 RC2
+Fix: Subtotal calculation after price disc rule applied
+Fix: Integration with YITH WooCommerce Membership
+Fix: Issue product on sale
+Update: Plugin Core 3.0.10
+
+= 1.4.3 - Released on Jan 08, 2018 =
+Dev: Added action 'ywdpd_before_replace_cart_item_price'
+Dev: Added condition for load scripts on plugin pages only
+Dev: Added filter ywdpd_round_total_price
+Fix: Issue when the discount starts from 1 with 100% off
+Fix: For minimum price
+Fix: Php notice in backend
+Fix: On Off issue
+Update: Plugin Core 3.0.6
+
+= 1.4.2 - Released on Dec 15, 2017 =
+Fix: Search taxonomies error in rules
+Fix: Metabox on-off on save options
+
+= 1.4.1 - Released on Dec 13, 2017 =
+Fix: Priority field in Cart Discount
+Fix: Stylesheet backend
+Update: Plugin Core 3.0.1
+
+= 1.4.0 - Released on Dec 11, 2017 =
+New: Restyling Plugin Panel
+Tweak: Better performances
+Update: Plugin Core 3.0
+Fix: Table price issue when any variation is selected as default
+
+= 1.3.0 - Released: Oct 27, 2017 =
+New: Support to WooCommerce 3.2 RC2
+Fix: Issue with price table and cart item price for variable products
+Fix: Issue with YITH WooCommerce Color and Label Variations
+Update: Plugin Core
+
+= 1.2.9 - Released: Sept 27, 2017 =
+Fix: discount missed in single product page
+Fix: variation display prices when a single the variation is on-sale
+
+= 1.2.8 - Released: Sept 20, 2017 =
+New: Cart Discount option 'Maximum number of orders required'
+New: Cart Discount option 'Maximum past expense required'
+New: German Translation
+New: Dutch Translation
+Dev: Added filter ywdpd_apply_discount
+Dev: Added filter ywdpd_dynamic_category_list
+Dev: Added filter ywdpd_dynamic_exclude_category_list
+Dev: Added filter ywcdp_product_is_on_sale
+Fix: Conflict with plugin WooCommerce Point of Sale
+Fix: Issue between Dynamic and Points and Rewards on product variable
+Fix: Issue between Dynamic and YITH WooCommerce Added to Cart Popup
+Fix: Min variation regular price
+Fix: Coupon issues
+Update: Plugin Core
+
+
+= 1.2.7 - Released: Jun 09, 2017 =
+New: Support to WooCommerce 3.0.8
+New: Support to WordPress 4.8
+Fix: Cart Discount with other coupon
+Update: Plugin Core
+
+= 1.2.6 - Released: May 26, 2017 =
+Fix: Coupons for Cart Discount
+Fix: Notice for sale price
+
 = 1.2.5 - Released: May 18, 2017 =
 Fix: Fatal error with the plugin WooCommerce Points of Sale
 Fix: Multiple coupons

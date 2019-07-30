@@ -153,7 +153,7 @@ class Client
         if ($this->_sslVerify && $this->_sslCaPath) {
             $defaultOptions[CURLOPT_CAINFO] = $this->_sslCaPath;
         }
-        $defaultOptions['CURLOPT_TIMEOUT'] = 1000;
+        $defaultOptions[CURLOPT_TIMEOUT] = 1000;
 
 
         // See http://php.net/manual/en/function.array-merge.php for a
@@ -620,6 +620,7 @@ class Client
         } else {
             $url = $path;
         }
+
         $url =
             $url . '?access_token=' . urlencode(
                 $this->_state->token->data->access_token

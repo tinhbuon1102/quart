@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div id="wrap" class="plugin-option yit-admin-panel-container">
-	<div class="yit-admin-panel-content-wrap yit-admin-panel-content-wrap-full yit-admin-panel-content-wrap-full" data-type="<?php echo $type ?>">
+	<div class="yit-admin-panel-content-wrap yit-admin-panel-content-wrap-full yit-admin-panel-content-wrap-full ywdpd_table_list" data-type="<?php echo $type ?>">
 		<table class="form-table">
 			<tbody>
 			<tr>

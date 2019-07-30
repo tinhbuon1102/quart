@@ -188,12 +188,6 @@ class DUP_PRO_Server
      */
     public static function hasInstallFiles() {
         $global = DUP_PRO_Global_Entity::get_instance();
-
-        // Just deleting the installer bak and database.sql since failing shell exec will leave that around and cause problems		
-        if ($global != null) {
-            DUP_PRO_IO::deleteFile(DUPLICATOR_PRO_WPROOTPATH . $global->get_installer_backup_filename());
-        }
-
         $files = self::getInstallerFiles();
         
         foreach ($files as $file => $path) {

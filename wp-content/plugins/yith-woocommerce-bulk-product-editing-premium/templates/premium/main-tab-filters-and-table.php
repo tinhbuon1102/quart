@@ -30,6 +30,7 @@ $current_language = !empty( $sitepress ) ? $sitepress->get_current_language() : 
                                 <option value="notcont"><?php _e( 'Does not contain', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="starts"><?php _e( 'Starts with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="ends"><?php _e( 'Ends with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
+                                <option value="regex"><?php _e( 'Regular Expression', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                             </select>
                             <input type="text" id="yith-wcbep-title-filter-value" name="yith-wcbep-title-filter-value"
                                    class="yith-wcbep-minifield is_resetable">
@@ -46,6 +47,7 @@ $current_language = !empty( $sitepress ) ? $sitepress->get_current_language() : 
                                 <option value="notcont"><?php _e( 'Does not contain', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="starts"><?php _e( 'Starts with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="ends"><?php _e( 'Ends with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
+                                <option value="regex"><?php _e( 'Regular Expression', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                             </select>
                             <input type="text" id="yith-wcbep-description-filter-value" name="yith-wcbep-description-filter-value"
                                    class="yith-wcbep-minifield is_resetable">
@@ -62,6 +64,7 @@ $current_language = !empty( $sitepress ) ? $sitepress->get_current_language() : 
                                 <option value="notcont"><?php _e( 'Does not contain', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="starts"><?php _e( 'Starts with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                                 <option value="ends"><?php _e( 'Ends with', 'yith-woocommerce-bulk-product-editing' ) ?></option>
+                                <option value="regex"><?php _e( 'Regular Expression', 'yith-woocommerce-bulk-product-editing' ) ?></option>
                             </select>
                             <input type="text" id="yith-wcbep-sku-filter-value" name="yith-wcbep-sku-filter-value"
                                    class="yith-wcbep-minifield is_resetable">

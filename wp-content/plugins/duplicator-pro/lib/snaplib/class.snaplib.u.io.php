@@ -230,7 +230,7 @@ class SnapLibIOU
         }
     }
 
-    static function rrmdir($dir)
+    public static function rrmdir($dir)
     {
         if (is_dir($dir)) {
             $objects = scandir($dir);

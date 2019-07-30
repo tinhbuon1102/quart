@@ -16,33 +16,44 @@ $edit_default_storage_url = SnapLibURLU::appendQueryValue($storage_tab_url, 'inn
 
 $inner_page = isset($_REQUEST['inner_page']) ? sanitize_text_field($_REQUEST['inner_page']) : 'storage';
 
+/**
+ * 
+ * @param Exception $e
+ * @return string
+ */
+function getDupProStorageErrorMsg($e)
+{
+    $storage_error_msg = '<div class="error-txt" style="margin:10px 0 20px 0; max-width:750px">';
+    $storage_error_msg .= DUP_PRO_U::esc_html__('An error has occurred while trying to read a storage item!  ');
+    $storage_error_msg .= DUP_PRO_U::esc_html__('To resolve this issue please delete the storage item and re-enter its information.  ');
+    $storage_error_msg .= DUP_PRO_U::esc_html__('If the problem persists please contact the support team.');
+    $storage_error_msg .= '</div>';
+    $storage_error_msg .= '<a href="javascript:void(0)" onclick="jQuery(\'#dup-store-err-details\').toggle();">';
+    $storage_error_msg .= DUP_PRO_U::esc_html__('Show Details');
+    $storage_error_msg .= '</a>';
+    $storage_error_msg .= '<div id="dup-store-err-details" >'.esc_html($e->getMessage()).
+        "<br/><br/><small>".
+        esc_html($e->getTraceAsString()) .
+        "</small></div>";
+    return $storage_error_msg;
+}
+
 try {
-  
     switch ($inner_page) {
         case 'storage':
+            // I left the global try catch for security but the exceptions should be managed inside the list.
             include('storage.list.php');
             break;
-
         case 'edit':
             include('storage.edit.php');
             break;
-
         case 'edit-default':
             include('storage.edit.default.php');
             break;
     }
 } 
 catch (Exception $e) {
-    echo '<div class="error-txt" style="margin:10px 0 20px 0; max-width:750px">';
-        DUP_PRO_U::esc_html_e('An error has occurred while trying to read a storage item!  ');
-        DUP_PRO_U::esc_html_e('To resolve this issue please delete the storage item and re-enter its information.  ');
-        DUP_PRO_U::esc_html_e('If the problem persists please contact the support team.');
-    echo '</div>';
-    echo '<a href="javascript:void(0)" onclick="jQuery(\'#dup-store-err-details\').toggle();">';
-        DUP_PRO_U::esc_html_e('Show Details');
-    echo '</a>';
-    echo '<div id="dup-store-err-details">' . $e->getMessage() 
-            .  "<br/><br/><small>". $e->getTraceAsString(); "</small></div>";
+    echo getDupProStorageErrorMsg($e);
 }
 
 

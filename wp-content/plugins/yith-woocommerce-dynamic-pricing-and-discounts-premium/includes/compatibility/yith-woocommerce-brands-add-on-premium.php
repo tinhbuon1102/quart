@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) || ! defined( 'YITH_YWDPD_VERSION' ) ) {
  * @class   YWDPD_Brands
  * @package YITH WooCommerce Dynamic Pricing and Discounts
  * @since   1.1.7
- * @author  Yithemes
+ * @author  YITH
  */
 if ( ! class_exists( 'YWDPD_Brands' ) ) {
 
@@ -59,6 +59,7 @@ if ( ! class_exists( 'YWDPD_Brands' ) ) {
 			add_action( 'wp_ajax_ywdpd_brand_search', array( $this, 'json_search_brands' ) );
 			add_action( 'wp_ajax_nopriv_ywdpd_brand_search', array( $this, 'json_search_brands' ) );
 
+			add_filter('ywdpd_pricing_discount_metabox_options', array( $this, 'add_brands_pricing_options') );
 			//helper class filters
 			add_filter( 'ywdpd_is_in_exclusion_rule', array( $this, 'is_in_exclusion_rule' ), 10, 5 );
 			add_filter( 'ywdpd_validate_apply_to', array( $this, 'is_validate_apply_to' ), 10, 5 );
@@ -69,6 +70,7 @@ if ( ! class_exists( 'YWDPD_Brands' ) ) {
 
 
 		}
+
 
 		/**
 		 * @param $excluded
@@ -263,7 +265,7 @@ if ( ! class_exists( 'YWDPD_Brands' ) ) {
 		 */
 		public function json_search_brands(  ) {
 
-			check_ajax_referer( 'search-brand', 'security' );
+			check_ajax_referer( 'search-products', 'security' );
 
 			ob_start();
 
@@ -286,6 +288,68 @@ if ( ! class_exists( 'YWDPD_Brands' ) ) {
 
 
 			wp_send_json( $found_brands );
+		}
+
+		public function add_brands_pricing_options( $pricing_options ) {
+
+			$start = $pricing_options['tabs']['settings']['fields'];
+			$position = array_search( 'apply_to_tags_list_excluded', array_keys( $start ) );
+			$begin        = array_slice( $start, 0, $position+1 );
+			$end          = array_slice( $start, $position );
+			$brands_items = array(
+				'apply_to_brands_list'          => array(
+					'label'       => __( 'Search for a brand', 'ywdpd' ),
+					'type'        => 'brands',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a brand', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_to',
+						'values' => 'brand_list'
+					)
+				),
+				'apply_to_brands_list_excluded' => array(
+					'label'       => __( 'Search for a brand', 'ywdpd' ),
+					'type'        => 'brands',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a branch', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_to',
+						'values' => 'brand_list_excluded'
+					)
+				)
+			);
+
+			$start = $begin + $brands_items + $end;
+			$position = array_search( 'apply_adjustment_tags_list', array_keys( $start ) );
+			$begin        = array_slice( $start, 0, $position+1 );
+			$end          = array_slice( $start, $position );
+			$brands_items = array(
+				'apply_adjustment_brands_list'          => array(
+					'label'       => __( 'Search for a brand', 'ywdpd' ),
+					'type'        => 'brands',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a brand', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_adjustment',
+						'values' => 'brand_list'
+					)
+				),
+				'apply_adjustment_brands_list_excluded' => array(
+					'label'       => __( 'Search for a brand', 'ywdpd' ),
+					'type'        => 'brands',
+					'desc'        => '',
+					'placeholder' => __( 'Search for a branch', 'ywdpd' ),
+					'deps'        => array(
+						'ids'    => '_apply_adjustment',
+						'values' => 'brand_list_excluded'
+					)
+				)
+			);
+
+			$pricing_options['tabs']['settings']['fields'] = $begin + $brands_items + $end;
+
+			return $pricing_options;
+
 		}
 
 	}
