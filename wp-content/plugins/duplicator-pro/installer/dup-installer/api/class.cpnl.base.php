@@ -1,5 +1,4 @@
 <?php
-defined("DUPXABSPATH") or die("");
 /**
  * cPanel XMLAPI Client Class
  *
@@ -65,6 +64,8 @@ defined("DUPXABSPATH") or die("");
  * @link http://twiki.cpanel.net/twiki/bin/view/AllDocumentation/AutomationIntegration/XmlApi
  * @since Class available since release 0.1
  * */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 if (!class_exists('CPNL_API'))
 {
 	class CPNL_API

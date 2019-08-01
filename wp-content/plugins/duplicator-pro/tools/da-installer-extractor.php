@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /*
   Duplicator Pro Website Installer Bootstrap
   Copyright (C) 2017, Snap Creek LLC
@@ -37,7 +38,7 @@
 
 class DupArchive_Installer_Extractor
 {
-		const VERSION			 = '3.8.1';
+		const VERSION			 = '3.8.4.1';
 
 	/**
 	 * Instantiate the Bootstrap Object
@@ -371,7 +372,7 @@ class DupArchiveMiniGlobHeader //extends HeaderBase
         fread($archiveHandle, 4);
 
         if ($skipGlob) {
-          //  SnapLibIOU::fseek($archiveHandle, $instance->storedSize, SEEK_CUR);
+          //  DupProSnapLibIOU::fseek($archiveHandle, $instance->storedSize, SEEK_CUR);
 		    if(fseek($archiveHandle, $instance->storedSize, SEEK_CUR) === -1)
 			{
                 throw new Exception("Can't fseek when skipping glob at location:".ftell($archiveHandle));

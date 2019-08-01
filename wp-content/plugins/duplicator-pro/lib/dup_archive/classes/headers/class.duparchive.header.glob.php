@@ -1,4 +1,6 @@
 <?php
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+    die("");
 require_once(dirname(__FILE__).'/../util/class.duparchive.util.php');
 require_once(dirname(__FILE__).'/class.duparchive.header.u.php');
 
@@ -40,7 +42,7 @@ class DupArchiveGlobHeader //extends HeaderBase
         fread($archiveHandle, 4);
         
         if ($skipGlob) {
-            SnapLibIOU::fseek($archiveHandle, $instance->storedSize, SEEK_CUR);
+            DupProSnapLibIOU::fseek($archiveHandle, $instance->storedSize, SEEK_CUR);
         }
 
         return $instance;
@@ -52,7 +54,7 @@ class DupArchiveGlobHeader //extends HeaderBase
 
         $headerString = '<G><OS>'.$this->originalSize.'</OS><SS>'.$this->storedSize.'</SS><HA>'.$this->hash.'</HA></G>';
 
-        //SnapLibIOU::fwrite($archiveHandle, $headerString);
+        //DupProSnapLibIOU::fwrite($archiveHandle, $headerString);
         $bytes_written = @fwrite($archiveHandle, $headerString);
 
         if ($bytes_written === false) {

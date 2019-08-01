@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\Message;
+
+defined("ABSPATH") or die("");
 
 /**
  * HTTP message parser interface used to parse HTTP messages into an array

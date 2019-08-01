@@ -1,0 +1,72 @@
+********************************************************************************
+DUPLICATOR PRO PACKAGE-LOG: 2019-07-31 10:54:45
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	3.8.4.1
+WORDPRESS:	4.9.8
+PHP INFO:	7.2.17 | SAPI: cgi-fcgi
+SERVER:		Apache 
+ARCHITECTURE:	64-bit 
+CLIENT KICKOFF: on 
+PHP TIME LIMIT: [7200] not allowed 
+PHP MAX MEMORY: 4294967296 (300M default) 
+RUN TYPE:	Manual
+MEMORY STACK:	4MB
+ARCHIVE ENGINE: Shell Zip
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   MYSQLDUMP (query limit - 131072)
+MYSQLDUMP:    Is Supported
+MYSQLTIMEOUT: 5000
+SQL CREATED: 20190731_lquartet_ed1a3f990b71839e5352_20190731105434_database.sql
+SQL FILE SIZE: 15.34MB
+SQL FILE TIME: 2019-07-31 10:54:46
+SQL RUNTIME: 0.534 sec.
+MEMORY STACK: 4MB
+
+********************************************************************************
+ARCHIVE  Type=ZIP Mode=Shell
+********************************************************************************
+ARCHIVE DIR:  /home/lquartet/l-quartet.com/public_html/wp
+ARCHIVE FILE: 20190731_lquartet_ed1a3f990b71839e5352_20190731105434_archive.zip
+FILTERS: *ON*
+DIRS:  /home/lquartet/l-quartet.com/public_html/wp/wp-content/cache
+	/home/lquartet/l-quartet.com/public_html/wp/.git
+EXTS:  avi;mov;mp4;mpeg;mpg;swf;wmv;aac;m3u;mp3;mpa;wav;wma;zip;rar;tar;gz;bz2;7z;git;
+FILES:  not set
+----------------------------------------
+COMPRESSING
+SIZE:	0B
+STATS:	Dirs 0 | Files 0 | Total 0
+[PHP ERR][WARN] MSG:filesize(): stat failed for /home/lquartet/l-quartet.com/public_html/wp/wp-content/backups-dup-pro/tmp/20190731_lquartet_ed1a3f990b71839e5352_20190731105434_archive.zip [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/package/class.pack.archive.shellzip.php|LINE:314]
+COMPRESSED SIZE: 0B
+ARCHIVE RUNTIME: 0.002 sec.
+MEMORY STACK: 4MB
+[PHP ERR][WARN] MSG:filesize(): stat failed for /home/lquartet/l-quartet.com/public_html/wp/wp-content/backups-dup-pro/tmp/20190731_lquartet_ed1a3f990b71839e5352_20190731105434_archive.zip [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/package/class.pack.archive.php|LINE:158]
+[PHP ERR][WARN] MSG:filesize(): stat failed for /home/lquartet/l-quartet.com/public_html/wp/wp-content/backups-dup-pro/tmp/20190731_lquartet_ed1a3f990b71839e5352_20190731105434_archive.zip [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/package/class.pack.installer.php|LINE:134]
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/l-quartet.com/public_html/wp/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+
+********************************************************************************
+STORAGE:
+********************************************************************************
+LOCAL: Default, /home/lquartet/l-quartet.com/public_html/wp/wp-content/backups-dup-pro
+
+********************************************************************************
+INTEGRITY CHECKS:
+********************************************************************************
+SQL FILE: 15.34MB
+INSTALLER FILE: 59.08KB
+ARCHIVE FILE: 2.93MB 
+EXPECTED FILE/DIRECTORY COUNT: 0
+ACTUAL FILE/DIRECTORY COUNT: 2
+
+********************************************************************************
+RECORD ID:[9]
+TOTAL PROCESS RUNTIME: 59.995 sec.
+PEAK PHP MEMORY USED: 20MB
+DONE PROCESSING => 20190731_lquartet 2019-07-31 10:55:45
+

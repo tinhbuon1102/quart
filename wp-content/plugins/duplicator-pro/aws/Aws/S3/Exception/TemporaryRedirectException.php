@@ -16,6 +16,9 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
+
 /**
  * You are being redirected to the bucket while DNS updates.
  */

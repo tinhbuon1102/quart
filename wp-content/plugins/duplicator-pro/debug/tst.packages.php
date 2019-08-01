@@ -52,6 +52,7 @@ D:/path2/path/test2.txt;
 	<?php
 		$CTRL['Title']   = 'DUP_PRO_CTRL_Package_toggleGiftFeatureButton';
 		$CTRL['Action']  = 'DUP_PRO_CTRL_Package_toggleGiftFeatureButton';
+		$CTRL['nonce']   = wp_create_nonce('DUP_PRO_CTRL_Package_toggleGiftFeatureButton');
 		$CTRL['Test']	 = true;
 		DUP_PRO_DEBUG_TestSetup($CTRL);
 	?>

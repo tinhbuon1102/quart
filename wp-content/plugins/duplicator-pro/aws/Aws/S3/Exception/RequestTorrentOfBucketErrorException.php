@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * Requesting the torrent file of a bucket is not permitted.
  */

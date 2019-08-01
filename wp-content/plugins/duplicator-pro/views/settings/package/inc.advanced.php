@@ -14,45 +14,38 @@ if ($max_worker_cap_in_sec > 180) {
 
 //SAVE RESULTS
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
-	check_admin_referer($nonce_action);
+    check_admin_referer($nonce_action);
 
-    $scan_mode						     = isset($_REQUEST['_scan_mode']) && $_REQUEST['_scan_mode'] == DUP_PRO_Scan_Mode::Multithreaded ? 0 : 1;
-    
-	//ADVANCED
-	$global->lock_mode			= (int) $_REQUEST['lock_mode'];
-	$global->json_mode			= (int) $_REQUEST['json_mode'];
+    $scan_mode = isset($_REQUEST['_scan_mode']) && $_REQUEST['_scan_mode'] == DUP_PRO_Scan_Mode::Multithreaded ? 0 : 1;
 
-	$global->ajax_protocol		= $_REQUEST['ajax_protocol'];
-	$global->custom_ajax_url	= $_REQUEST['custom_ajax_url'];
-	$global->clientside_kickoff	= isset($_REQUEST['_clientside_kickoff']);
+    //ADVANCED
+    $global->lock_mode          = (int) $_REQUEST['lock_mode'];
+    $global->json_mode          = (int) $_REQUEST['json_mode'];
+    $global->ajax_protocol      = $_REQUEST['ajax_protocol'];
+	$global->custom_ajax_url    = $_REQUEST['custom_ajax_url'];
+	$global->server_kick_off_sslverify    = (isset($_REQUEST['server_kick_off_sslverify']) && $_REQUEST['server_kick_off_sslverify']) ? true : false;
+    $global->setClientsideKickoff(isset($_REQUEST['_clientside_kickoff']));
 
-    // Auto setting the max package runtime in case of client kickoff is turned off and
-	// the max package runtime is less than 480 minutes - 8 hours
-	if($global->clientside_kickoff && $global->max_package_runtime_in_min < 480 ) {
-		$global->max_package_runtime_in_min = 480;
-	}
+    $global->basic_auth_enabled = isset($_REQUEST['_basic_auth_enabled']) ? 1 : 0;
+    if ($global->basic_auth_enabled == true) {
+        $global->basic_auth_user      = trim($_REQUEST['basic_auth_user']);
+        $sglobal->basic_auth_password = $_REQUEST['basic_auth_password'];
+    } else {
+        $global->basic_auth_user      = '';
+        $sglobal->basic_auth_password = '';
+    }
+    $global->basic_auth_enabled         = isset($_REQUEST['_basic_auth_enabled']) ? 1 : 0;
+    $global->installer_base_name        = isset($_REQUEST['_installer_base_name']) ? $_REQUEST['_installer_base_name'] : 'installer.php';
+    $global->chunk_size                 = isset($_REQUEST['_chunk_size']) ? $_REQUEST['_chunk_size'] : 2048;
+    $global->skip_archive_scan          = isset($_REQUEST['_skip_archive_scan']);
+    $global->php_max_worker_time_in_sec = $_REQUEST['php_max_worker_time_in_sec'];
+    $global->package_scan_mode          = $scan_mode;
+    $global->package_scan_size          = isset($_REQUEST['_scan_multithread_size']) && $global->package_scan_mode == DUP_PRO_Scan_Mode::Multithreaded ? (int) $_REQUEST['_scan_multithread_size'] : 10 * 1024
+        * 1024;
+    $action_updated                     = $global->save();
 
-    $global->basic_auth_enabled	= isset($_REQUEST['_basic_auth_enabled']) ? 1 : 0;
-	if ($global->basic_auth_enabled == true) {
-		$global->basic_auth_user = trim($_REQUEST['basic_auth_user']);
-		$sglobal->basic_auth_password = $_REQUEST['basic_auth_password'];
-	} else {
-		$global->basic_auth_user	  = '';
-		$sglobal->basic_auth_password = '';
-	}
-	$global->basic_auth_enabled	 = isset($_REQUEST['_basic_auth_enabled']) ? 1 : 0;
-	$global->installer_base_name = isset($_REQUEST['_installer_base_name']) ? $_REQUEST['_installer_base_name'] : 'installer.php';
-    $global->chunk_size = isset($_REQUEST['_chunk_size']) ? $_REQUEST['_chunk_size'] : 2048;
-
-  	$global->php_max_worker_time_in_sec	 = $_REQUEST['php_max_worker_time_in_sec'];
-
-    $global->package_scan_mode           = $scan_mode;
-    $global->package_scan_size           = isset($_REQUEST['_scan_multithread_size']) && $global->package_scan_mode == DUP_PRO_Scan_Mode::Multithreaded ? (int)$_REQUEST['_scan_multithread_size'] : 10*1024*1024;
-
-
-	$action_updated = $global->save();
     $sglobal->save();
-	$global->adjust_settings_for_system();
+    $global->adjust_settings_for_system();
 }
 ?>
 
@@ -101,7 +94,9 @@ ADVANCED SETTINGS -->
 		<div id="php_max_worker_time_in_sec_error_container" class="duplicator-error-container"></div>
 		<p class="description">
 			<?php
-			DUP_PRO_U::esc_html_e("Lower is more reliable but slower. Recommended max is $max_worker_cap_in_sec sec based on PHP setting 'max_execution_time'.");
+            printf(DUP_PRO_U::esc_html__('Lower is more reliable but slower. Recommended max is %1$s sec based on PHP setting %2$s.'),
+                    $max_worker_cap_in_sec,
+                    $max_execution_time);
 			?>
 		</p>
 	</td>
@@ -132,7 +127,28 @@ ADVANCED SETTINGS -->
 			<label for="ajax_protocol_4"><?php DUP_PRO_U::esc_html_e("Custom URL"); ?></label> <br/>
             <input style="width:600px" type="<?php echo ($global->ajax_protocol == 'custom' ? 'text' : 'hidden'); ?>" id="custom_ajax_url" name="custom_ajax_url" placeholder="<?php DUP_PRO_U::esc_attr_e('Consult support before changing.'); ?>" value="<?php echo $global->custom_ajax_url; ?>" /> <span id="custom_ajax_url_error" style="color: maroon; text-weight: bold; display: none"><?php DUP_PRO_U::esc_html_e("Bad URL!"); ?></span>
 			<p class="description">
-				<?php DUP_PRO_U::esc_html_e("Used to kick off build worker. Only change if packages get stuck at start of build."); 	?>
+				<?php DUP_PRO_U::esc_html_e("Used to kick off build worker. Only change if packages get stuck at the start of a build."); 	?>
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("SSL Verify"); ?></label></th>
+		<td>			
+			<input type="checkbox" id="server_kick_off_sslverify" name="server_kick_off_sslverify" class="ajax_protocol" value="1" <?php echo DUP_PRO_UI::echoChecked($global->server_kick_off_sslverify); ?> />
+			<label for="server_kick_off_sslverify"><?php DUP_PRO_U::esc_html_e("Enabled") ?> </label>
+			<p class="description">
+				<?php DUP_PRO_U::esc_html_e("If checked, cURL kick-off does verify server's SSL certificate. Only change if packages get stuck at the start of a build."); ?>
+			</p>
+		</td>
+	</tr>
+    <tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e('Scan File Checks'); ?></label></th>
+		<td>
+			<input type="checkbox" name="_skip_archive_scan" id="_skip_archive_scan" <?php DUP_PRO_UI::echoChecked($global->skip_archive_scan); ?> />
+			<label for="_skip_archive_scan"><?php DUP_PRO_U::esc_html_e("Skip") ?> </label><br/>
+			<p class="description">
+				<?php DUP_PRO_U::esc_html_e('If enabled all files check on scan will be skipped before package creation. In some cases, this option can be beneficial if the '
+					. 'scan process is having issues running or returning errors.'); ?>
 			</p>
 		</td>
 	</tr>

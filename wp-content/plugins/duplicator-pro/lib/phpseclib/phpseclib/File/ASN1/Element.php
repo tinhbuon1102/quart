@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pure-PHP ASN.1 Parser
  *
@@ -13,7 +14,7 @@
  */
 
 namespace phpseclib\File\ASN1;
-
+defined("ABSPATH") or die("");
 /**
  * ASN.1 Element
  *

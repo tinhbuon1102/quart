@@ -193,8 +193,8 @@ $license_key = get_option(DUP_PRO_Constants::LICENSE_KEY_OPTION_NAME, '');
 
 function DUP_PRO_Type_Viewer($opts)
 {
-	$opts['mu1'] = '<i class="fa fa-check-square-o"></i>';
-	$opts['mu2'] = $opts['mu2'] == 1 ? '<i class="fa fa-check-square-o"></i>' : '<i class="fa fa-square-o"></i>';
+	$opts['mu1'] = '<i class="far fa-check-square"></i>  ';
+	$opts['mu2'] = $opts['mu2'] == 1 ? '<i class="far fa-check-square"></i>  ' : '<i class="far fa-square"></i>  ';
 
 	$txt_lic_hdr = DUP_PRO_U::__('Site Licenses');
 	$txt_lic_msg = DUP_PRO_U::__('Number of site licenses indicates the number of sites the plugin can be active on at any one time. At any point you may deactivate/uninstall the plugin to free up the license and use the plugin elsewhere if needed.');
@@ -205,7 +205,7 @@ function DUP_PRO_Type_Viewer($opts)
 
 	//ARRAY:
 	echo '<div>';
-	echo "<i class='fa fa-check-square-o'></i>{$txt_lic_hdr} ({$opts['lic']}) <i class='fa fa-question-circle' data-tooltip-title='{$txt_lic_hdr}' data-tooltip='{$txt_lic_msg}'></i><br/>";
+	echo "<i class='far fa-check-square'></i>  {$txt_lic_hdr} ({$opts['lic']}) <i class='fa fa-question-circle' data-tooltip-title='{$txt_lic_hdr}' data-tooltip='{$txt_lic_msg}'></i><br/>";
 	echo $opts['mu1'] . "{$txt_mu1_hdr} <i class='fa fa-question-circle' data-tooltip-title='{$txt_mu1_hdr}' data-tooltip='{$txt_mu1_msg}'></i><br/>";
 	echo $opts['mu2'] . "{$txt_mu2_hdr} <i class='fa fa-question-circle' data-tooltip-title='{$txt_mu2_hdr}' data-tooltip='{$txt_mu2_msg}'></i><br/>";
 	echo '</div>';
@@ -251,7 +251,7 @@ function DUP_PRO_Type_Viewer($opts)
 						DUP_PRO_Type_Viewer(array('mu2' => 0, 'lic' => $global->license_limit));
 						break;
 					case DUP_PRO_License_Type::BusinessGold:
-						DUP_PRO_U::esc_html_e("Business");
+						DUP_PRO_U::esc_html_e("Business/Gold");
 						DUP_PRO_Type_Viewer(array('mu2' => 1, 'lic' => 'Unlimited'));
 						break;
 					default:

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The specified bucket is not valid.
  */

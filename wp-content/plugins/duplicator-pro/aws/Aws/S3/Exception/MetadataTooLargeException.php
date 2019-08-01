@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * Your metadata headers exceed the maximum allowed metadata size.
  */

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Enum;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Enum;
 
 /**

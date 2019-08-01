@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Enum\DateFormat;
 use DuplicatorPro\Aws\S3\S3Client;
 use DuplicatorPro\Guzzle\Common\Collection;

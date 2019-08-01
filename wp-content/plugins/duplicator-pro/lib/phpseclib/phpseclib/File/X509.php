@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP X.509 Parser
  *
@@ -25,7 +24,7 @@
  */
 
 namespace phpseclib\File;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Hash;
 use phpseclib\Crypt\RSA;
 use phpseclib\Crypt\Random;

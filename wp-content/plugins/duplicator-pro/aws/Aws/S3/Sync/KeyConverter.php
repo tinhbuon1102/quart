@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Sync;
 
+defined("ABSPATH") or die("");
+
 /**
  * Converts filenames from one system to another
  */

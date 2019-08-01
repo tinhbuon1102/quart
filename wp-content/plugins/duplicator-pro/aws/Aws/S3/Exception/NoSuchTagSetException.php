@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * There is no TagSet associated with the bucket.
  */

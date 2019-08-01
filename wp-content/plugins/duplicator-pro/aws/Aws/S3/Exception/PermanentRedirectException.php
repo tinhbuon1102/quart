@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.
  */

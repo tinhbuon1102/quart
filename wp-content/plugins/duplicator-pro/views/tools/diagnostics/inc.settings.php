@@ -18,7 +18,7 @@ defined("ABSPATH") or die("");
 SERVER SETTINGS -->
 <div class="dup-box">
 	<div class="dup-box-title">
-		<i class="fa fa-tachometer"></i>
+		<i class="fas fa-tachometer-alt"></i>
 		<?php DUP_PRO_U::esc_html_e("Server Settings") ?>
 		<div class="dup-box-arrow"></div>
 	</div>

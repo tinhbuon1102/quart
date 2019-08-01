@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP ASN.1 Parser
  *
@@ -22,7 +21,7 @@
  */
 
 namespace phpseclib\File;
-
+defined("ABSPATH") or die("");
 use phpseclib\File\ASN1\Element;
 use phpseclib\Math\BigInteger;
 

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Client;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Enum\ClientOptions as Options;
 use DuplicatorPro\Guzzle\Common\Collection;
 

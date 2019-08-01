@@ -33,20 +33,38 @@ class DUP_PRO_Installer
     public $OptsCPNLDBName   = '';
     public $OptsCPNLDBUser   = '';
     //PROTECTED
+
+    /**
+     *
+     * @var DUP_PRO_Package
+     */
     protected $Package;
 
     public $numFilesAdded = 0;
     public $numDirsAdded = 0;
 
-    //CONSTRUCTOR
+    /**
+     *
+     * @param DUP_PRO_Package $package
+     */
     function __construct($package)
     {
         $this->Package = $package;
     }
+    
+    function __destruct()
+    {
+        $this->Package = null;
+    }
 
     public function get_safe_filepath()
     {
-        return DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH."/{$this->File}");
+        $file_path = apply_filters('duplicator_pro_installer_file_path', DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH."/{$this->File}"));
+        return $file_path;
+    }
+
+    public function get_orig_filename() {
+        return $this->File;
     }
 
     public function get_url()
@@ -91,12 +109,14 @@ class DUP_PRO_Installer
         $success = true;
 
 		$archive_filepath        = DUP_PRO_U::safePath("{$this->Package->StorePath}/{$this->Package->Archive->File}");
-        $installer_filepath     = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_{$global->installer_base_name}";
+        $installer_filepath     = apply_filters('duplicator_pro_installer_file_path', DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_{$global->installer_base_name}");
         $template_filepath      = DUPLICATOR_PRO_PLUGIN_PATH.'/installer/installer.tpl';
+        // $csrf_class_filepath    = DUPLICATOR_PRO_PLUGIN_PATH.'/installer/dup-installer/classes/class.csrf.php';
         $mini_expander_filepath = DUPLICATOR_PRO_PLUGIN_PATH.'/lib/dup_archive/classes/class.duparchive.mini.expander.php';
 
         // Replace the @@ARCHIVE@@ token
         $installer_contents = file_get_contents($template_filepath);
+        // $csrf_class_contents = file_get_contents($csrf_class_filepath);
 
         if ($this->Package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::DupArchive) {
             $mini_expander_string = file_get_contents($mini_expander_filepath);
@@ -129,6 +149,7 @@ class DUP_PRO_Installer
     }
 
     /* Create archive.txt file */
+
     private function create_archive_config_file()
     {
         global $wpdb;
@@ -138,8 +159,8 @@ class DUP_PRO_Installer
         $archive_config_filepath = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_archive.txt";
         $ac                      = new DUP_PRO_Archive_Config();
         $extension               = strtolower($this->Package->Archive->Format);
-		$hasher					 = new DUP_PRO_PasswordHash(8, FALSE);
-		$pass_hash				 = $hasher->HashPassword($this->Package->Installer->OptsSecurePass);
+        $hasher                  = new DUP_PRO_PasswordHash(8, FALSE);
+        $pass_hash               = $hasher->HashPassword($this->Package->Installer->OptsSecurePass);
 
         //READ-ONLY: COMPARE VALUES
         $ac->created     = $this->Package->Created;
@@ -151,38 +172,38 @@ class DUP_PRO_Installer
         $ac->dbInfo      = $this->Package->Database->info;
 
         //READ-ONLY: GENERAL
-        $ac->installer_base_name  = $global->installer_base_name;
-        $ac->package_name         = "{$this->Package->NameHash}_archive.{$extension}";
-        $ac->package_hash         = $this->Package->get_package_hash();
+        $ac->installer_base_name = $global->installer_base_name;
+        $ac->package_name        = "{$this->Package->NameHash}_archive.{$extension}";
+        $ac->package_hash        = $this->Package->get_package_hash();
 
         $ac->package_notes        = $this->Package->Notes;
         $ac->url_old              = get_option('siteurl');
-        $ac->opts_delete          = json_encode($GLOBALS['DUPLICATOR_PRO_OPTS_DELETE']);
+        $ac->opts_delete          = DupProSnapJsonU::wp_json_encode($GLOBALS['DUPLICATOR_PRO_OPTS_DELETE']);
         $ac->blogname             = sanitize_text_field(get_option('blogname'));
         $ac->wproot               = DUPLICATOR_PRO_WPROOTPATH;
         $ac->relative_content_dir = str_replace(ABSPATH, '', WP_CONTENT_DIR);
         $ac->relative_plugins_dir = str_replace(ABSPATH, '', WP_PLUGIN_DIR);
-        $ac->relative_plugins_dir = str_replace($ac->wproot,'',$ac->relative_plugins_dir);
+        $ac->relative_plugins_dir = str_replace($ac->wproot, '', $ac->relative_plugins_dir);
         $ac->relative_theme_dirs  = get_theme_roots();
-        if(is_array($ac->relative_theme_dirs)){
-            foreach ($ac->relative_theme_dirs as $key=>$dir){
-                if(strpos($dir,$ac->wproot) === false){
+        if (is_array($ac->relative_theme_dirs)) {
+            foreach ($ac->relative_theme_dirs as $key => $dir) {
+                if (strpos($dir, $ac->wproot) === false) {
                     $ac->relative_theme_dirs[$key] = $ac->relative_content_dir.$dir;
-                }else{
-                    $ac->relative_theme_dirs[$key] = str_replace($ac->wproot,'',$dir);
+                } else {
+                    $ac->relative_theme_dirs[$key] = str_replace($ac->wproot, '', $dir);
                 }
             }
-        }else{
+        } else {
             $ac->relative_theme_dirs = array();
-            $dir = get_theme_roots();
-            if(strpos($dir,$ac->wproot) === false){
+            $dir                     = get_theme_roots();
+            if (strpos($dir, $ac->wproot) === false) {
                 $ac->relative_theme_dirs[] = $ac->relative_content_dir.$dir;
-            }else{
-                $ac->relative_theme_dirs[] = str_replace($ac->wproot,'',$dir);
+            } else {
+                $ac->relative_theme_dirs[] = str_replace($ac->wproot, '', $dir);
             }
         }
-		$ac->exportOnlyDB		  = $this->Package->Archive->ExportOnlyDB;
-		$ac->wplogin_url		  = wp_login_url();
+        $ac->exportOnlyDB = $this->Package->Archive->ExportOnlyDB;
+        $ac->wplogin_url  = wp_login_url();
 
         //PRE-FILLED: GENERAL
         $ac->secure_on   = $this->Package->Installer->OptsSecureOn;
@@ -192,7 +213,7 @@ class DUP_PRO_Installer
         $ac->dbname      = $this->Package->Installer->OptsDBName;
         $ac->dbuser      = $this->Package->Installer->OptsDBUser;
         $ac->dbpass      = '';
-        
+
         //PRE-FILLED: CPANEL
         $ac->cpnl_host     = $this->Package->Installer->OptsCPNLHost;
         $ac->cpnl_user     = $this->Package->Installer->OptsCPNLUser;
@@ -205,10 +226,10 @@ class DUP_PRO_Installer
         $ac->cpnl_dbuser   = $this->Package->Installer->OptsCPNLDBUser;
 
         //MULTISITE
-        $ac->mu_mode = DUP_PRO_MU::getMode();
+        $ac->mu_mode        = DUP_PRO_MU::getMode();
         $ac->wp_tableprefix = $wpdb->base_prefix;
-        
-        $ac->mu_generation = DUP_PRO_MU::getGeneration();
+
+        $ac->mu_generation  = DUP_PRO_MU::getGeneration();
         $ac->mu_is_filtered = !empty($this->Package->Multisite->FilterSites) ? true : false;
 
         $ac->subsites = DUP_PRO_MU::getSubsites($this->Package->Multisite->FilterSites);
@@ -218,16 +239,16 @@ class DUP_PRO_Installer
         $ac->main_site_id = DUP_PRO_MU::get_main_site_id();
 
         //BRAND
-        $ac->brand   = $this->the_brand_setup($this->Package->Brand_ID);
+        $ac->brand = $this->the_brand_setup($this->Package->Brand_ID);
 
         //LICENSING
         $ac->license_limit = $global->license_limit;
 
-        $ac->is_outer_root_wp_config_file = (!file_exists(DUPLICATOR_PRO_WPROOTPATH . 'wp-config.php')) ? true : false;
+        $ac->is_outer_root_wp_config_file = (!file_exists(DUPLICATOR_PRO_WPROOTPATH.'wp-config.php')) ? true : false;
         $ac->is_outer_root_wp_content_dir = $this->Package->Archive->isOuterWPContentDir();
         if ($ac->is_outer_root_wp_content_dir && DUP_PRO_Archive_Build_Mode::Shell_Exec == $this->Package->build_progress->current_build_mode) {
             $wpContentDirNormalizePath = $this->Package->Archive->wpContentDirNormalizePath();
-            $wpContentDirBase = basename($wpContentDirNormalizePath);
+            $wpContentDirBase          = basename($wpContentDirNormalizePath);
             if ('wp-content' == $wpContentDirBase) {
                 $ac->wp_content_dir_base_name = '';
             } else {
@@ -236,9 +257,8 @@ class DUP_PRO_Installer
         } else {
             $ac->wp_content_dir_base_name = '';
         }
-        
-        
-        $json = json_encode($ac);
+
+        $json = DupProSnapJsonU::wp_json_encode_pprint($ac);
 
         DUP_PRO_LOG::traceObject('json', $json);
 
@@ -307,7 +327,7 @@ class DUP_PRO_Installer
     {
         $success                 = false;
         $global                  = DUP_PRO_Global_Entity::get_instance();
-        $installer_filepath      = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_{$global->installer_base_name}";
+        $installer_filepath      = apply_filters('duplicator_pro_installer_file_path', DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_{$global->installer_base_name}");
         $scan_filepath           = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_scan.json";
         $file_list_filepath      = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_files.txt";
         $dir_list_filepath       = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP)."/{$this->Package->NameHash}_dirs.txt";
@@ -414,7 +434,14 @@ class DUP_PRO_Installer
 
 			if(file_exists($wpconfig_filepath)) {
                 $conf_ark_file_path = $this->getWPConfArkFilePath();
-                DupArchiveEngine::addRelativeFileToArchiveST($archive_filepath, $wpconfig_filepath, $conf_ark_file_path);
+                $temp_conf_ark_file_path = $this->getTempWPConfArkFilePath();
+                if (copy($wpconfig_filepath, $temp_conf_ark_file_path)) {
+                    $this->cleanTempWPConfArkFilePath($temp_conf_ark_file_path);
+                    DupArchiveEngine::addRelativeFileToArchiveST($archive_filepath, $temp_conf_ark_file_path, $conf_ark_file_path);
+                    @unlink($temp_conf_ark_file_path);
+                } else {
+                    DupArchiveEngine::addRelativeFileToArchiveST($archive_filepath, $wpconfig_filepath, $conf_ark_file_path);
+                }                
 				$this->numFilesAdded++;
 			}
 
@@ -434,16 +461,9 @@ class DUP_PRO_Installer
         $global                    = DUP_PRO_Global_Entity::get_instance();
         $installer_backup_filename = $global->get_installer_backup_filename();
 
-		$installer_backup_filepath = dirname($installer_filepath) . "/{$installer_backup_filename}";
-
         DUP_PRO_LOG::trace('Adding enhanced installer files to archive using DupArchive');
 
-		SnapLibIOU::copy($installer_filepath, $installer_backup_filepath);
-
-		DupArchiveEngine::addFileToArchiveUsingBaseDirST($archive_filepath, dirname($installer_backup_filepath), $installer_backup_filepath);
-
-		SnapLibIOU::rm($installer_backup_filepath);
-
+        DupArchiveEngine::addRelativeFileToArchiveST($archive_filepath, $installer_filepath, $installer_backup_filename);
         $this->numFilesAdded++;
 
         $base_installer_directory = DUPLICATOR_PRO_PLUGIN_PATH.'installer';
@@ -463,6 +483,12 @@ class DUP_PRO_Installer
         $duparchive_lib_counts = DupArchiveEngine::addDirectoryToArchiveST($archive_filepath, $duparchive_lib_directory, DUPLICATOR_PRO_PLUGIN_PATH, true, 'dup-installer/');
         $this->numFilesAdded += $duparchive_lib_counts->numFilesAdded;
         $this->numDirsAdded += $duparchive_lib_counts->numDirsAdded;
+
+        // Include config tranformer classes
+        $config_lib_directory = DUPLICATOR_PRO_PLUGIN_PATH.'lib/config';
+        $config_lib_counts = DupArchiveEngine::addDirectoryToArchiveST($archive_filepath, $config_lib_directory, DUPLICATOR_PRO_PLUGIN_PATH, true, 'dup-installer/');
+        $this->numFilesAdded += $config_lib_counts->numFilesAdded;
+        $this->numDirsAdded += $config_lib_counts->numDirsAdded;
 
         // Include snaplib
         $snaplib_directory = DUPLICATOR_PRO_PLUGIN_PATH.'lib/snaplib';
@@ -492,9 +518,16 @@ class DUP_PRO_Installer
 				DUP_PRO_Zip_U::addFileToZipArchive($zipArchive, $htaccess_filepath, DUPLICATOR_PRO_HTACCESS_ORIG_FILENAME, $is_compressed);
 			}
 
+            $temp_conf_ark_file_path = '';
 			if(file_exists($wpconfig_filepath)) {
                 $conf_ark_file_path = $this->getWPConfArkFilePath();
-                DUP_PRO_Zip_U::addFileToZipArchive($zipArchive, $wpconfig_filepath, $conf_ark_file_path, $is_compressed);
+                $temp_conf_ark_file_path = $this->getTempWPConfArkFilePath();
+                if (copy($wpconfig_filepath, $temp_conf_ark_file_path)) {
+                    $this->cleanTempWPConfArkFilePath($temp_conf_ark_file_path);
+                    DUP_PRO_Zip_U::addFileToZipArchive($zipArchive, $temp_conf_ark_file_path, $conf_ark_file_path, $is_compressed);
+                } else {
+                    DUP_PRO_Zip_U::addFileToZipArchive($zipArchive, $wpconfig_filepath, $conf_ark_file_path, $is_compressed);
+                }
 			}
             
             $embedded_scan_ark_file_path = $this->getEmbeddedScanFilePath();
@@ -526,6 +559,10 @@ class DUP_PRO_Installer
                 $success = false;
             }
 
+            if (!empty($temp_conf_ark_file_path)) {
+                @unlink($temp_conf_ark_file_path);
+            }
+
             DUP_PRO_LOG::trace('After ziparchive close when adding installer');
         }
 
@@ -545,8 +582,11 @@ class DUP_PRO_Installer
 
         $snaplib_source_directory        = DUPLICATOR_PRO_LIB_PATH.'/snaplib';
         $fileops_source_directory        = DUPLICATOR_PRO_LIB_PATH.'/fileops';
+        $config_source_directory         = DUPLICATOR_PRO_LIB_PATH.'/config';
+        
         $extras_snaplib_directory        = $extras_installer_directory.'/lib/snaplib';
         $extras_fileops_directory        = $extras_installer_directory.'/lib/fileops';
+        $extras_config_directory         = $extras_installer_directory.'/lib/config';
 
         $installer_backup_filepath = "$extras_directory/".$global->get_installer_backup_filename();
 
@@ -620,7 +660,8 @@ class DUP_PRO_Installer
 
 		if(file_exists($wpconfig_filepath)) {
 			DUP_PRO_LOG::trace("{$wpconfig_filepath} exists so copying to {$dest_wpconfig_ark_filepath}");
-			@copy($wpconfig_filepath, $dest_wpconfig_ark_filepath);
+            @copy($wpconfig_filepath, $dest_wpconfig_ark_filepath);
+            $this->cleanTempWPConfArkFilePath($dest_wpconfig_ark_filepath);
 		}
 
         $one_stage_add = strtoupper($global->get_installer_extension()) == 'PHP';
@@ -650,6 +691,11 @@ class DUP_PRO_Installer
 
             if (DUP_PRO_IO::copyDir($fileops_source_directory, $extras_fileops_directory) === false) {
                 DUP_PRO_Log::error("Error copying installer fileops directory to extras directory", "Couldn't copy $fileops_source_directory to $extras_fileops_directory", false);
+                return false;
+            }
+
+            if (DUP_PRO_IO::copyDir($config_source_directory, $extras_config_directory) === false) {
+                DUP_PRO_Log::error("Error copying installer config directory to extras directory", "Couldn't copy $fileops_source_directory to $extras_fileops_directory", false);
                 return false;
             }
         }
@@ -720,7 +766,9 @@ class DUP_PRO_Installer
 		if(file_exists($extras_directory)) {
 			try
 			{
-				SnapLibIOU::rrmdir($extras_directory);
+				if (!DupProSnapLibIOU::rrmdir($extras_directory)) {
+                    throw Exception('Failed to delete: '.$extras_directory);
+                }
 			}
 			catch(Exception $ex)
 			{
@@ -756,14 +804,18 @@ class DUP_PRO_Installer
 
                     $snaplib_directory = DUPLICATOR_PRO_PLUGIN_PATH . 'lib/snaplib';
                     $fileops_directory = DUPLICATOR_PRO_PLUGIN_PATH . 'lib/fileops';
+                    $config_directory = DUPLICATOR_PRO_PLUGIN_PATH . 'lib/config';
 
                     //DupArchiveEngine::addDirectoryToArchiveST($archive_filepath, $snaplib_directory, DUPLICATOR_PRO_PLUGIN_PATH, true, 'dup-installer/');
-                    if (DUP_PRO_Zip_U::addDirWithZipArchive($zip_archive, $snaplib_directory, true, 'dup-installer/lib/', $is_compressed) &&
-                        DUP_PRO_Zip_U::addDirWithZipArchive($zip_archive, $fileops_directory, true, 'dup-installer/lib/', $is_compressed)) {
-
+                    if (DUP_PRO_Zip_U::addDirWithZipArchive($zip_archive, $snaplib_directory, true, 'dup-installer/lib/', $is_compressed)
+                        &&
+                        DUP_PRO_Zip_U::addDirWithZipArchive($zip_archive, $fileops_directory, true, 'dup-installer/lib/', $is_compressed) 
+                        &&
+                        DUP_PRO_Zip_U::addDirWithZipArchive($zip_archive, $config_directory, true, 'dup-installer/lib/', $is_compressed)
+                    ) {
                         $success = true;
                     } else {
-                        DUP_PRO_Log::error("Error adding directory {$snaplib_directory} or {$fileops_directory} to zipArchive", '', false);
+                        DUP_PRO_Log::error("Error adding directory {$snaplib_directory} or {$fileops_directory} or {$config_directory} to zipArchive", '', false);
                     }
                 } else {
                     DUP_PRO_Log::error("Error adding $archive_config_filepath to zipArchive", '', false);
@@ -788,6 +840,32 @@ class DUP_PRO_Installer
         return $conf_ark_file_path;
     }
 
+    /**
+     * Get temp wp-config.php file path along with name in temp folder
+     */
+    private function getTempWPConfArkFilePath()
+    {
+        $temp_conf_ark_file_path = DUP_PRO_U::safePath(DUPLICATOR_PRO_SSDIR_PATH_TMP).'/'.$this->Package->NameHash.'_wp-config.txt';
+        return $temp_conf_ark_file_path;
+    }
+
+    /**
+     * Clear out sensitive database connection information
+     *
+     * @param $temp_conf_ark_file_path Temp config file path
+     */
+    private static function cleanTempWPConfArkFilePath($temp_conf_ark_file_path) {
+        if (function_exists('token_get_all')) {
+            require_once(DUPLICATOR_PRO_PLUGIN_PATH . 'lib/config/class.wp.config.tranformer.php');
+            $transformer = new WPConfigTransformer($temp_conf_ark_file_path);
+            $constants = array('DB_NAME', 'DB_USER', 'DB_PASSWORD', 'DB_HOST');
+            foreach ($constants as $constant) {
+                if ($transformer->exists('constant', $constant)) {
+                    $transformer->update('constant', $constant, '');
+                }
+            }
+        }
+    }
 
      private function getEmbeddedScanFileList() {
         $package_hash = $this->Package->get_package_hash();

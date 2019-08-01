@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Client;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Credentials\CredentialsInterface;
 use DuplicatorPro\Aws\Common\Signature\SignatureInterface;
 use DuplicatorPro\Aws\Common\Waiter\WaiterFactoryInterface;

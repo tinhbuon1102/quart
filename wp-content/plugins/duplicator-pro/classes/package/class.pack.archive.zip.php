@@ -22,20 +22,20 @@ if (!defined('DUPLICATOR_PRO_VERSION')) exit; // Exit if accessed directly
 class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 {
 	private $global;
-	private $optServerThrottleOn	 = false;
 	private $optMaxBuildTimeOn		 = true;
 	private $maxBuildTimeFileSize	 = 100000;
-	private $urlFAQ;
+	private $urlFAQ ='';
+    private $throttleDelayInUs = 0;
 
 	public function __construct()
-	{
-		$this->global				 = DUP_PRO_Global_Entity::get_instance();
-		$this->optServerThrottleOn	 = ($this->global->server_load_reduction != DUP_PRO_Server_Load_Reduction::None);
-		$this->optMaxBuildTimeOn	 = ($this->global->max_package_runtime_in_min > 0);
-		$this->urlFAQ                = 'https://snapcreek.com/duplicator/docs/faqs-tech';
-	}
+    {
+        $this->global            = DUP_PRO_Global_Entity::get_instance();
+        $this->optMaxBuildTimeOn = ($this->global->max_package_runtime_in_min > 0);
+        $this->urlFAQ            = 'https://snapcreek.com/duplicator/docs/faqs-tech';
+        $this->throttleDelayInUs        = $this->global->getMicrosecLoadReduction();
+    }
 
-	/**
+    /**
      * Creates the zip file and adds the SQL file to the archive
 	 *
 	 * @param object $archive A copy of the current archive object
@@ -261,12 +261,6 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 			$total_file_size = 0;
 			$total_file_count_trip = ($scanReport->ARC->UFileCount + 1000);
 
-			if($this->optServerThrottleOn) {
-                $host_delay_in_us = DUP_PRO_Server_Load_Reduction::microseconds_from_reduction($this->global->server_load_reduction);
-            } else {
-                $host_delay_in_us = 0;
-            }
-
 			foreach ($scanReport->ARC->Files as $file) {
 				
 				//NON-ASCII check
@@ -284,7 +278,13 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 				}
 
 				$local_name = $archive->getLocalFilePath($file);
-				if (! $zipArchive->addFile($file, $local_name)) {
+				$file_size = filesize($file);
+				if ($file_size < DUP_PRO_Constants::ZIP_STRING_LIMIT) {
+					if (!$zipArchive->addFromString($local_name, file_get_contents($file))) {
+						DUP_PRO_Log::info("WARNING: Unable to zip file: {$file}");
+						continue;
+					}
+				} elseif (!$zipArchive->addFile($file, $local_name)) {
 					// Assumption is that we continue?? for some things this would be fatal others it would be ok - leave up to user
 					DUP_PRO_Log::info("WARNING: Unable to zip file: {$file}");
 					continue;
@@ -297,8 +297,8 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 				$total_file_size += filesize($file);
 				
 				//ST: SERVER THROTTLE
-				if ($host_delay_in_us !== 0) {
-					usleep($host_delay_in_us);
+				if ($this->throttleDelayInUs !== 0) {
+					usleep($this->throttleDelayInUs);
 				}
 
 				//Prevent Overflow
@@ -549,14 +549,7 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 			$incremental_file_size			 = 0;
 			$used_zip_file_descriptor_count	 = 0;
 			$total_file_count = empty($scanReport->ARC->UFileCount) ? 0 : $scanReport->ARC->UFileCount;
-
-            if($this->optServerThrottleOn) {
-                $host_delay_in_us = DUP_PRO_Server_Load_Reduction::microseconds_from_reduction($this->global->server_load_reduction);
-            }
-            else {
-                $host_delay_in_us = 0;
-            }
-
+            
 			foreach ($scanReport->ARC->Files as $file) {
 				if ($zip_is_open || ($countFiles == $build_progress->next_archive_file_index)) {
 	
@@ -633,8 +626,8 @@ class DUP_PRO_ZipArchive extends DUP_PRO_Archive
 					}
 
                     //MT: SERVER THROTTLE
-                    if ($host_delay_in_us !== 0) {
-                        usleep($host_delay_in_us);
+                    if ($this->throttleDelayInUs !== 0) {
+                        usleep($this->throttleDelayInUs);
                     }
 
                     //MT: MAX WORKER TIME (SECS)

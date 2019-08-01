@@ -13,12 +13,12 @@ class DUP_PRO_CTRL_Schedule extends DUP_PRO_Web_Services
 
     function duplicator_pro_schedule_bulk_delete()
     {
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('duplicator_pro_schedule_bulk_delete', 'nonce');
         DUP_PRO_U::hasCapability('export');
         try {
             $json = array();
             $post = stripslashes_deep($_POST);
-
-            check_ajax_referer('duplicator_pro_schedule_bulk_delete', 'nonce');
 
             $postIDs  = isset($post['duplicator_pro_delid']) ? $post['duplicator_pro_delid'] : null;
             $list     = explode(",", $postIDs);
@@ -48,11 +48,8 @@ class DUP_PRO_CTRL_Schedule extends DUP_PRO_Web_Services
     // { schedule_id, is_running=true|false, last_ran_string}
     function get_schedule_infos()
     {
-        $nonce = sanitize_text_field($_POST['nonce']);
-        if (!wp_verify_nonce( $nonce, 'duplicator_pro_get_schedule_infos')) {
-            die( 'Security check' );
-        }
-
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('duplicator_pro_get_schedule_infos', 'nonce');
         DUP_PRO_U::hasCapability('export');
         $schedules      = DUP_PRO_Schedule_Entity::get_all();
         $schedule_infos = array();
@@ -83,15 +80,11 @@ class DUP_PRO_CTRL_Schedule extends DUP_PRO_Web_Services
 
     function run_schedule_now()
     {
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('duplicator_pro_run_schedule_now', 'nonce');
         DUP_PRO_U::hasCapability('export');
+        
         DUP_PRO_LOG::trace("enter");
-
-        $nonce = sanitize_text_field($_POST['nonce']);
-		if (!wp_verify_nonce($nonce, 'duplicator_pro_run_schedule_now')) {
-			DUP_PRO_LOG::trace('Security issue');
-			die('Security issue');
-		}
-
         $schedule_id = (int) $_POST['schedule_id'];
         $schedule    = DUP_PRO_Schedule_Entity::get_by_id($schedule_id);
 

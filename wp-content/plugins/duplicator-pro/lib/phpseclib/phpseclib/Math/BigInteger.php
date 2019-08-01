@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP arbitrary precision integer arithmetic library.
  *
@@ -49,7 +48,7 @@
  */
 
 namespace phpseclib\Math;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Random;
 
 /**

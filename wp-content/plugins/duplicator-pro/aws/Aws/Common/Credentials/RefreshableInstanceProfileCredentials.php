@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\InstanceMetadata\InstanceMetadataClient;
 use DuplicatorPro\Aws\Common\Exception\InstanceProfileCredentialsException;
 

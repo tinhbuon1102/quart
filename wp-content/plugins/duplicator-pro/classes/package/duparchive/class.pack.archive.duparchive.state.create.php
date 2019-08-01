@@ -1,10 +1,5 @@
 <?php
 defined("ABSPATH") or die("");
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 require_once (DUPLICATOR_PRO_PLUGIN_PATH.'lib/dup_archive/classes/states/class.duparchive.state.create.php');
 
@@ -12,6 +7,13 @@ class DUP_PRO_Dup_Archive_Create_State extends DupArchiveCreateState
 {
     /* @var $package DUP_PRO_Package */
     private $package;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $global = DUP_PRO_Global_Entity::get_instance();
+        $this->throttleDelayInUs = $global->getMicrosecLoadReduction();
+    }
 
     public function setPackage(&$package)
     {

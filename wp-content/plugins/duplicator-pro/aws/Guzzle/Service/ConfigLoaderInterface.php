@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service;
+
+defined("ABSPATH") or die("");
 
 /**
  * Interface used for loading configuration data (service descriptions, service builder configs, etc)

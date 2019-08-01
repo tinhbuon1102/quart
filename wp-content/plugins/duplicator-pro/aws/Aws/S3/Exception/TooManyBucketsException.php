@@ -16,6 +16,9 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
+
 /**
  * You have attempted to create more buckets than allowed.
  */

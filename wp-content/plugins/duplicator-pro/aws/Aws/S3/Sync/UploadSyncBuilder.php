@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Sync;
 
+defined("ABSPATH") or die("");
+
 use FilesystemIterator as FI;
 use DuplicatorPro\Aws\Common\Model\MultipartUpload\AbstractTransfer;
 use DuplicatorPro\Aws\S3\Model\Acp;

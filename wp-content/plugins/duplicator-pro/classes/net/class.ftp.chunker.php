@@ -167,7 +167,7 @@ class DUP_PRO_FTP_Chunker
         return (($this->ftp_connection_id != false) && ($this->ftp_login_result == true));
     }
 
-    public function upload_file($source_filepath, $storage_folder)
+    public function upload_file($source_filepath, $storage_folder, $dest_filename = '')
     {
         $uploaded = false;
         
@@ -185,7 +185,7 @@ class DUP_PRO_FTP_Chunker
                 DUP_PRO_LOG::trace("file calling upload chunk offset=$offset");
 
                 /* @var $ftp_upload_info DUP_PRO_FTP_UploadInfo */
-                $ftp_upload_info = $this->upload_chunk($source_filepath, $storage_folder, $timeout, $offset);
+                $ftp_upload_info = $this->upload_chunk($source_filepath, $storage_folder, $timeout, $offset, 0, $dest_filename);
 
                 DUP_PRO_LOG::trace("after upload chunk file");
 
@@ -220,7 +220,7 @@ class DUP_PRO_FTP_Chunker
         return $uploaded;
     }
 
-    public function upload_chunk($source_filepath, $storage_folder, $max_upload_time_in_sec = 15, $offset = 0, $server_load_delay = 0)
+    public function upload_chunk($source_filepath, $storage_folder, $max_upload_time_in_sec = 15, $offset = 0, $server_load_delay = 0,  $dest_filename = '')
     {
 		DUP_PRO_LOG::trace("FTP CHUNK OFFSET IN=$offset");
         /* @var $ftp_upload_info DUP_PRO_FTP_UploadInfo */
@@ -251,7 +251,7 @@ class DUP_PRO_FTP_Chunker
                     return $ftp_upload_info;
                 }
 
-                $filename = basename($source_filepath);
+                $filename = !empty($dest_filename) ? $dest_filename : basename($source_filepath);
                 $dest_filepath = "$storage_folder/$filename";
 				
 				if($offset == 0)
@@ -263,7 +263,14 @@ class DUP_PRO_FTP_Chunker
 
                 $time_passed = time() - $start_time;               
 
-                $ret = ftp_nb_fput($this->ftp_connection_id, $dest_filepath, $local_file_handle, FTP_BINARY, $offset);
+                // $ret = ftp_nb_fput($this->ftp_connection_id, $dest_filepath, $local_file_handle, FTP_BINARY, $offset);
+                if ($offset == 0) {
+                    $ret = ftp_nb_fput($this->ftp_connection_id, $dest_filepath, $local_file_handle, FTP_BINARY);
+                } else {
+                    $ftp_size = ftp_size($this->ftp_connection_id, $dest_filepath);
+                    $ret = ftp_nb_fput($this->ftp_connection_id, $dest_filepath, $local_file_handle, FTP_BINARY, $ftp_size);
+                }
+                
 
                 $next_offset = $offset;
                 				
@@ -316,6 +323,11 @@ class DUP_PRO_FTP_Chunker
                     $ftp_size = ftp_size($this->ftp_connection_id, $dest_filepath);
                     $local_size = filesize($source_filepath);
                     
+                    /*
+                    error_log('$ftp_size -> '.$ftp_size);
+                    error_log('$local_size -> '.$local_size);
+                    */
+
 					// rsr temp
 			//		$ftp_size = 1;
 					

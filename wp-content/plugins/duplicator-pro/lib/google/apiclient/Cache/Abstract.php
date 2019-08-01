@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /*
  * Copyright 2008 Google Inc.
  *

@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 class DUP_PRO_PHP_Log
 {
     /*
@@ -93,7 +93,7 @@ class DUP_PRO_PHP_Log
 
         try {
             // Good old shell can solve this in less of second
-            if(!SnapLibOSU::$isWindows) {
+            if(!DupProSnapLibOSU::isWindows()) {
                 if(is_callable('shell_exec') && is_callable('shell_exec') && false === stripos(ini_get('disable_functions'), 'shell_exec')){
                     $contents = shell_exec("tail -{$limit} {$path}");
                 }

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Sync;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\S3\S3Client;
 use DuplicatorPro\Guzzle\Common\AbstractHasDispatcher;
 use DuplicatorPro\Guzzle\Common\Collection;

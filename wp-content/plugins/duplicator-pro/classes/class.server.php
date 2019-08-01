@@ -1,5 +1,4 @@
 <?php
-
 defined("ABSPATH") or die("");
 if (!defined('DUPLICATOR_PRO_VERSION'))
     exit; // Exit if accessed directly
@@ -104,6 +103,7 @@ class DUP_PRO_Server
         $php_test7 = DUP_PRO_U::PHP53() ? true : false;
 
         $checks['SRV']['Brand'] = DUP_PRO_Package::is_active_brand_prepared();
+        $checks['SRV']['HOST'] = DUP_PRO_Custom_Host_Manager::getInstance()->getActiveHostings();
 
         $checks['SRV']['PHP']['websrv'] = $php_test0;
         $checks['SRV']['PHP']['openbase'] = $php_test1;
@@ -206,64 +206,70 @@ class DUP_PRO_Server
      * Returns an array with stats about the orphaned files
      * @return array   The full path of the orphaned file
      */
-    public static function getOrphanedPackageFiles() {
+    public static function getOrphanedPackageFiles()
+    {
+        /* @var $global DUP_PRO_Global_Entity */
+        $global    = DUP_PRO_Global_Entity::get_instance();
         $filepaths = array();
-        $orphans = array();
+        $orphans   = array();
 
-        if (defined('GLOB_BRACE')) {
-            /* @var $global DUP_PRO_Global_Entity */
-            $global = DUP_PRO_Global_Entity::get_instance();
+        $endPackagesFile = array(
+            'archive.daf',
+            'archive.zip',
+            'database.sql',
+            'dirs.txt',
+            'files.txt',
+            'log.txt',
+            'scan.json'
+        );
 
-            $packages = DUP_PRO_Package::get_all();
-            $installer_base_name = $global->installer_base_name;
+        $endPackagesFile[] = $global->installer_base_name;
+        $endPackagesFile   = array_map("preg_quote", $endPackagesFile);
+        $regexMatch        = '/('.implode('|', $endPackagesFile).')$/';
 
-            $filepaths = glob(DUPLICATOR_PRO_SSDIR_PATH . "/" . "*_{archive,database,scan,$installer_base_name}*", GLOB_BRACE);
+        $numPackages = DUP_PRO_Package::count_by_status();
+        $numPerPage  = 100;
+        $pages       = floor($numPackages / $numPerPage) + 1;
 
-            if ($filepaths !== false) {
-                //	DUP_PRO_LOG::traceObject("orphaned filepaths", $filepaths);
-                $log_filepaths = glob(DUPLICATOR_PRO_SSDIR_PATH . "/" . '*.log');
-                $dup_log_filepaths = glob(DUPLICATOR_PRO_SSDIR_PATH . "/" . 'dup_pro*.log');
+        $skipStart = array(
+            'dup_pro'
+        );
+        for ($page = 0; $page < $pages; $page ++) {
+            $offset       = $page * $numPerPage;
+            $pagePackages = DUP_PRO_Package::get_row_by_status(array(), $numPerPage, $offset);
+            foreach ($pagePackages as $cPack) {
+                $skipStart[] = $cPack->name.'_'.$cPack->hash;
+            }
+        }
+        $pagePackages = null;
+        $fileTimeSkipInSec = (max(DUP_PRO_Constants::DEFAULT_MAX_PACKAGE_RUNTIME_IN_MIN , $global->max_package_runtime_in_min) + DUP_PRO_Constants::ORPAHN_CLEANUP_DELAY_MAX_PACKAGE_RUNTIME) * 60;
 
-                $log_filepaths = array_diff($log_filepaths, $dup_log_filepaths);
+        if (file_exists(DUPLICATOR_PRO_SSDIR_PATH) && ($handle = opendir(DUPLICATOR_PRO_SSDIR_PATH)) !== false) {
+            while (false !== ($fileName = readdir($handle))) {
+                if ($fileName == '.' && $fileName == '..') {
+                    continue;
+                }
+                
+                $fileFullPath = DUPLICATOR_PRO_SSDIR_PATH.'/'.$fileName;
 
-                $filepaths = array_merge($filepaths, $log_filepaths);
-
-                foreach ($filepaths as $filepath) {
-                    $is_orphan = true;
-                    $filename = basename($filepath);
-                    // If it doesn't start with any of the hashes it's an orphan
-                    foreach ($packages as $package) {
-                       
-                        $default_storage_present = false;
-
-                        foreach ($package->upload_infos as $upload_info) {
-                            if (($upload_info->storage_id == DUP_PRO_Virtual_Storage_IDs::Default_Local) && $upload_info->has_completed(true)) {
-                                $default_storage_present = true;
-                                break;
-                            }
-                        }
-
-                        if (DUP_PRO_STR::startsWith($filename, $package->NameHash) && ($default_storage_present || ($package->Status > 0 && $package->Status < 100))) {
-                            $is_orphan = false;
-                            break;
-                        } else if (DUP_PRO_STR::startsWith($filename, $package->NameHash) && DUP_PRO_STR::endsWith($filename, '.log')) {
-                            // We keep the log files around even if local storage isn't present
-                            $is_orphan = false;
-                            break;
-                        }
-                    }
-
-                    if ($is_orphan) {
-                        DUP_PRO_LOG::trace("$filename is an orphan");
-                        // This is a bogus file
-                        array_push($orphans, $filepath);
+                if (is_dir($fileFullPath)) {
+                    continue;
+                }
+                if (time() - filemtime($fileFullPath) < $fileTimeSkipInSec) {
+                    // file younger than 2 hours skip for security
+                    continue;
+                }
+                if (!preg_match($regexMatch, $fileName)) {
+                    continue;
+                }
+                foreach ($skipStart as $skip) {
+                    if (strpos($fileName, $skip) === 0) {
+                        continue 2;
                     }
                 }
-            } else {
-                DUP_PRO_LOG::trace("orphaned filepaths == false");
+                $orphans[] = $fileFullPath;
             }
-        } else {
-            DUP_PRO_LOG::trace("Glob brace not defined");
+            closedir($handle);
         }
         return $orphans;
     }

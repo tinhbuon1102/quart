@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Plugin\Backoff;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Event;
 use DuplicatorPro\Guzzle\Common\AbstractHasDispatcher;

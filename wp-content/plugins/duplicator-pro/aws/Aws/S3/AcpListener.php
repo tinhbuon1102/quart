@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\InvalidArgumentException;
 use DuplicatorPro\Aws\S3\Model\Acp;
 use DuplicatorPro\Guzzle\Common\Event;

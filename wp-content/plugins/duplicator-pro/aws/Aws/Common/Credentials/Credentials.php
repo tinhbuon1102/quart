@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Enum\ClientOptions as Options;
 use DuplicatorPro\Aws\Common\Exception\InvalidArgumentException;
 use DuplicatorPro\Aws\Common\Exception\RequiredExtensionNotLoadedException;

@@ -73,8 +73,8 @@ class DUP_PRO_UI_Alert
         if(($system_global !== null) && ($system_global->schedule_failed)) {
 
            // $clear_url = self_admin_url()."admin.php?page=".DUP_PRO_Constants::$SCHEDULES_SUBMENU_SLUG.'&dup_pro_clear_schedule_failure=1';
-			$clear_url = SnapLibURLU::getCurrentUrl();
-			$clear_url = SnapLibURLU::appendQueryValue($clear_url, 'dup_pro_clear_schedule_failure', 1);
+			$clear_url = DupProSnapLibURLU::getCurrentUrl();
+			$clear_url = DupProSnapLibURLU::appendQueryValue($clear_url, 'dup_pro_clear_schedule_failure', 1);
 
             echo "<div style='padding-bottom:10px;' class='dpro-admin-notice error'><p><img src='".esc_url($img_url)."' style='float:left; padding:0 10px 0 5px' />".
             sprintf(DUP_PRO_U::esc_html__('%sWarning! A Duplicator Pro scheduled backup has failed.%s'),'<b>','</b> <br/>') .
@@ -162,11 +162,27 @@ class DUP_PRO_UI_Alert
         ."<img src='".esc_url($img_url)."' style='margin-top:15px;'>"
         .'<p style="font-size:1.5em; line-height:1.4em;">'
         .'<b>The Bad News:</b> Your Duplicator Pro License is Invalid. <br/>'
-        .'<b>The Good News:</b> You Can Get 30% Off Duplicator Pro Today! </p>'
+        .'<b>The Good News:</b> You Can Get 10% Off Duplicator Pro Today! </p>'
         ."The Duplicator Pro plugin has been running for at least 30 days without a valid license.<br/>"
         .'...which means you don\'t have access to <b>security updates</b>, <i>bug fixes</i>, <b>support requests</b> or <i>new features</i>.<br/>'
         ."<p style='font-size:1.5rem'><a href='".esc_url($licensing_tab_url)."'>Activate Your License Now...</a> <br/> - OR - <br/> "
         ."<a target='_blank' href='https://snapcreek.com/duplicator/pricing?discount=SUPERN_10_F2'>Purchase and Get 10% Off!*</a></p>"
         .'<p style="text-align:center; font-size:1rem"><small>*Discount appears in cart at checkout time.</small></p></div>';
+    }
+
+    /**
+     * Shows the scheduled failed alert
+     */
+    public static function phpUpgrade() {
+        if (false !== strpos($GLOBALS['hook_suffix'], 'duplicator-pro') && version_compare(PHP_VERSION, '5.3.0') < 0) {
+            echo '<div class="dpro-admin-notice error"><p>';
+            
+            echo '<b>';
+            printf(DUP_PRO_U::esc_html__('Your system is running a very old version of PHP (%s) and Duplicator Pro will no longer support it in the near future.'), PHP_VERSION);            
+            echo '&nbsp&nbsp</b>';
+            
+            printf(DUP_PRO_U::esc_html__('Please ask your host to upgrade to PHP v5.6 or greater'));            
+            echo '</p></div>';
+        }
     }
 }

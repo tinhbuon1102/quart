@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http;
+
+defined("ABSPATH") or die("");
 
 /**
  * Provides mappings of file extensions to mimetypes

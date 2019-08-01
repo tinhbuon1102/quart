@@ -1,14 +1,14 @@
 <?php
-defined("ABSPATH") or die("");
-
 /**
  * @copyright 2016 Snap Creek LLC
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 class DUP_PRO_Verifier_Base
 {
-    protected $error_text;
+    protected $error_text = '';
 
-    function __construct($error_text)
+    function __construct($error_text = '')
     {
         $this->error_text = $error_text;
     }
@@ -25,10 +25,10 @@ class DUP_PRO_Verifier_Base
  */
 class DUP_PRO_Range_Verifier extends DUP_PRO_Verifier_Base
 {
-    private $min = 0;
-    private $max = 0;
+    protected $min = 0;
+    protected $max = 0;
 
-    function __construct($min, $max, $error_text)
+    function __construct($min = 0, $max = 0, $error_text = '')
     {
         parent::__construct($error_text);
 
@@ -54,9 +54,9 @@ class DUP_PRO_Range_Verifier extends DUP_PRO_Verifier_Base
  */
 class DUP_PRO_Length_Verifier extends DUP_PRO_Verifier_Base
 {
-    private $max_length = 0;
+    protected $max_length = 0;
 
-    function __construct($max_length, $error_text)
+    function __construct($max_length = 0, $error_text = '')
     {
         parent::__construct($error_text);
         $this->max_length = $max_length;
@@ -74,15 +74,14 @@ class DUP_PRO_Length_Verifier extends DUP_PRO_Verifier_Base
     }
 }
 
-
 /**
  * @copyright 2016 Snap Creek LLC
  */
 class DUP_PRO_Email_Verifier extends DUP_PRO_Verifier_Base
 {
-    private $allow_blank = false;
+    protected $allow_blank = false;
 
-    function __construct($allow_blank, $error_text)
+    function __construct($allow_blank = false, $error_text = '')
     {
         parent::__construct($error_text);
         $this->allow_blank = $allow_blank;
@@ -105,13 +104,13 @@ class DUP_PRO_Email_Verifier extends DUP_PRO_Verifier_Base
     }
 }
 
-
 /**
  * @copyright 2016 Snap Creek LLC
  */
 class DUP_PRO_Required_Verifier extends DUP_PRO_Verifier_Base
 {
-    function __construct($error_text)
+
+    function __construct($error_text = '')
     {
         parent::__construct($error_text);
     }
@@ -127,16 +126,15 @@ class DUP_PRO_Required_Verifier extends DUP_PRO_Verifier_Base
     }
 }
 
-
 /**
  * @copyright 2016 Snap Creek LLC
  */
 class DUP_PRO_Regex_Verifier extends DUP_PRO_Verifier_Base
 {
-    private $regex       = 0;
+    private $regex       = '';
     private $allow_blank = false;
 
-    function __construct($regex, $error_text, $allow_blank = false)
+    function __construct($regex = '', $error_text = '', $allow_blank = false)
     {
         parent::__construct($error_text);
         $this->regex       = $regex;

@@ -1,5 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
 /**
  * Secure Global Entity. Used to store settings requiring encryption.
  *
@@ -13,6 +12,8 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/entities/class.json.entity.base.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/class.crypt.blowfish.php');
 
@@ -43,9 +44,14 @@ class DUP_PRO_Secure_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public function save()
     {
         $result = false;
-        $this->encrypt();
+        $global = DUP_PRO_Global_Entity::get_instance();  
+        if ($global->crypt) {
+            $this->encrypt();
+        }
         $result = parent::save();
-        $this->decrypt();   // Whenever its in memory its unencrypted
+        if ($global->crypt) {
+            $this->decrypt();   // Whenever its in memory its unencrypted
+        }
         return $result;
     }
 
@@ -79,7 +85,10 @@ class DUP_PRO_Secure_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
             if (count($sglobals) > 0) {
                 $sglobal = $sglobals[0];
-                $sglobal->decrypt();
+                $global = DUP_PRO_Global_Entity::get_instance();   
+                if ($global->crypt) {
+                    $sglobal->decrypt();
+                }
             } else {
                 DUP_PRO_LOG::traceError("Secure Global entity is null!");
             }

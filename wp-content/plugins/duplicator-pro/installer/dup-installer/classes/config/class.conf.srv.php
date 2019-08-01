@@ -1,6 +1,4 @@
 <?php
-defined("DUPXABSPATH") or die("");
-
 /**
  * Class used to update and edit web server configuration files
  * for .htaccess, web.config and user.ini
@@ -11,6 +9,8 @@ defined("DUPXABSPATH") or die("");
  * @package SC\DUPX\ServerConfig
  *
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 class DUPX_ServerConfig
 {
 	/* @var $GLOBALS['DUPX_AC'] DUPX_ArchiveConfig */
@@ -41,10 +41,35 @@ class DUPX_ServerConfig
 		DUPX_Log::info("\nWEB SERVER CONFIGURATION FILE STATUS:");
 
 		//Apache
+		$overwrite_htaccess	= "{$path}/.htaccess";
+		$backup_overwrite_htaccess	= $path.'/.htaccess-'.$GLOBALS['DUPX_AC']->package_hash.'.orig';
+
+		$status = false;
+		if (file_exists($backup_overwrite_htaccess)) {
+			@unlink($backup_overwrite_htaccess);
+		}
+		if (file_exists($overwrite_htaccess)) {
+			if (copy($overwrite_htaccess, $backup_overwrite_htaccess)) {
+				$status = @unlink($overwrite_htaccess);					
+			}
+		}
+
+		if ($status) {
+			DUPX_Log::info("- .htaccess was reset and a backup made to .htaccess-[HASH].orig");
+			$htacess_content = "#This file has been reset by Duplicator Pro. See .htaccess-".$GLOBALS['DUPX_AC']->package_hash." for the original file";
+			$htacess_content .= self::getOldHtaccessAddhandlerLine($path);
+			file_put_contents("{$path}/.htaccess", $htacess_content);
+			DupProSnapLibIOU::chmod("{$path}/.htaccess", 0644);
+		} else {
+			DUPX_Log::info("- .htaccess file was not reset or backed up.");
+		}
+
+		/*
 		if (self::runReset($path, '.htaccess')) {
 			file_put_contents("{$path}/.htaccess", "#This file has been reset by Duplicator Pro. See .htaccess-{$time}.orig for the original file");
-			@chmod("{$path}/.htaccess", 0644);
+			DupProSnapLibIOU::chmod("{$path}/.htaccess", 0644);
 		}
+		*/
 		
 		//.user.ini - For WordFence
 		self::runReset($path, '.user.ini');
@@ -60,6 +85,29 @@ class DUPX_ServerConfig
 		}
 
 	}
+
+	/**
+     * Get AddHadler line from existing WP .htaccess file
+     *
+     * @param $path string root path
+     * @return string
+     */
+    private static function getOldHtaccessAddhandlerLine($path)
+    {
+        $backupHtaccessPath = $path.'/.htaccess-'.$GLOBALS['DUPX_AC']->package_hash.'.orig';
+        if (file_exists($backupHtaccessPath)) {
+            $htaccessContent = file_get_contents($backupHtaccessPath);
+            if (!empty($htaccessContent)) {
+                // match and trim non commented line  "AddHandler application/x-httpd-XXXX .php" case insenstive
+                $re      = '/^[\s\t]*[^#]?[\s\t]*(AddHandler[\s\t]+.+\.php[ \t]?.*?)[\s\t]*$/mi';
+                $matches = array();
+                if (preg_match($re, $htaccessContent, $matches)) {
+                    return "\n".$matches[1];
+                }
+            }
+        }
+        return '';
+    }
 
     /**
      * Copies the code in htaccess.orig to .htaccess
@@ -99,7 +147,7 @@ class DUPX_ServerConfig
 		$newpath = DUPX_U::addSlash(isset($newdata['path']) ? $newdata['path'] : "");
 		$update_msg  = "# This file was updated by Duplicator Pro on {$timestamp}.\n";
 		$update_msg .= (file_exists("{$path}/.htaccess")) ? "# See htaccess.orig for the .htaccess original file."	: "";
-
+		$update_msg .= self::getOldHtaccessAddhandlerLine($path);
 
 		//===============================================
 		//BASIC SITE NO MU
@@ -246,7 +294,7 @@ HTACCESS;
 		} else {
 			DUPX_Log::info("- Successfully updated the .htaccess file setting.");
 		}
-		@chmod("{$path}/.htaccess", 0644);		
+		DupProSnapLibIOU::chmod("{$path}/.htaccess", 0644);
 
 		
     }

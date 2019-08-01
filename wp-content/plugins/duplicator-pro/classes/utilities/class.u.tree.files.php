@@ -40,11 +40,15 @@ class DUP_PRO_Tree_files
      *
      * @param string $rootPath
      */
-    public function __construct($rootPath)
+    public function __construct($rootPath, $addAllChilds = true)
     {
-        $rootPath       = rtrim(str_replace("\\", '/', $rootPath), '/');
-        $this->tree     = new DUP_PRO_Tree_files_node($rootPath);
-        $this->tree->addAllChilds();
+        $rootPath   = rtrim(str_replace("\\", '/', $rootPath), '/');
+        $this->tree = new DUP_PRO_Tree_files_node($rootPath);
+
+        if ($addAllChilds) {
+            $this->tree->addAllChilds();
+        }
+
         $this->rootPath = $rootPath;
     }
 
@@ -69,6 +73,9 @@ class DUP_PRO_Tree_files
  */
 class DUP_PRO_Tree_files_node
 {
+    const MAX_CHILDS_FOR_FOLDER = 250;
+    const MAX_TREE_NODES        = 5000;
+
     /**
      * All props must be public for json encode
      */
@@ -128,18 +135,30 @@ class DUP_PRO_Tree_files_node
 
     /**
      *
+     * @var int if can't add a child increment exceeede count
+     */
+    private $nodesExceeded = 0;
+
+    /**
+     *
+     * @var int
+     */
+    private $numTreeNodes = 1;
+
+    /**
+     *
      * @param string $path // file path
      * @param string $id // current level unique id
      * @param string $parent_id // parent id
      */
     public function __construct($path, $id = '0', $parent_id = '')
     {
-        $path           = rtrim(str_replace("\\", '/', $path), '/');
+        $safePath       = rtrim(str_replace("\\", '/', $path), '/');
         $this->id       = (strlen($parent_id) == 0 ? '' : $parent_id.'_').$id;
         $this->parentId = $parent_id;
-        $this->name     = basename($path);
-        $this->fullPath = $path;
-        $this->isDir    = is_dir($this->fullPath);
+        $this->name     = basename($safePath);
+        $this->fullPath = $safePath;
+        $this->isDir    = @is_dir($this->fullPath);
         $this->haveChildrenCheck();
     }
 
@@ -158,30 +177,24 @@ class DUP_PRO_Tree_files_node
             return false;
         }
 
-        $path = rtrim(str_replace("\\", '/', $path), '/');
+        $safePath = rtrim(str_replace("\\", '/', $path), '/');
 
         if ($fullPath) {
-            if (strpos($path, $this->fullPath) !== 0) {
-                throw new Exception('Can\'t add no child on tree; file: "'.$path.'" || fullpath: "'.$this->fullPath.'"');
+            if (strpos($safePath, $this->fullPath) !== 0) {
+                throw new Exception('Can\'t add no child on tree; file: "'.$safePath.'" || fullpath: "'.$this->fullPath.'"');
             }
-            $child_path = substr($path, strlen($this->fullPath));
+            $childPath = substr($safePath, strlen($this->fullPath));
         } else {
-            $child_path = $path;
+            $childPath = $safePath;
         }
 
-        $tree_list = explode('/', $child_path);
-
+        $tree_list = explode('/', $childPath);
         if (empty($tree_list[0])) {
             array_shift($tree_list);
         }
 
-        if (!array_key_exists($tree_list[0], $this->childs)) {
-            $childPath = $this->fullPath.'/'.$tree_list[0];
-            $child     = new DUP_PRO_Tree_files_node($childPath, count($this->childs), $this->id);
-
-            $this->childs[$tree_list[0]] = $child;
-        } else {
-            $child = $this->childs[$tree_list[0]];
+        if (($child = $this->checkAndAddChild($tree_list[0])) === false) {
+            return false;
         }
 
         if ($loadTraverse) {
@@ -190,7 +203,10 @@ class DUP_PRO_Tree_files_node
 
         if (count($tree_list) > 1) {
             array_shift($tree_list);
-            return $child->addChild(implode('/', $tree_list), false, $loadTraverse);
+            $nodesBefore        = $child->getNumTreeNodes();
+            $result             = $child->addChild(implode('/', $tree_list), false, $loadTraverse);
+            $this->numTreeNodes += $child->getNumTreeNodes() - $nodesBefore;
+            return $result;
         } else {
             return $child;
         }
@@ -204,13 +220,13 @@ class DUP_PRO_Tree_files_node
         if ($this->traversed === false) {
             $this->traversed = true;
 
-            if ($this->isDir && ($childs = @scandir($this->fullPath)) !== false) {
-                $childs = array_slice($childs, 2);
-
-                foreach ($childs as $child_name) {
-                    if (!isset($this->childs[$child_name])) {
-                        $childPath                 = $this->fullPath.'/'.$child_name;
-                        $this->childs[$child_name] = new DUP_PRO_Tree_files_node($childPath, count($this->childs), $this->id);
+            if ($this->isDir) {
+                if ($dh = @opendir($this->fullPath)) {
+                    while (($childName = readdir($dh)) !== false) {
+                        if ($childName == '.' || $childName == '..') {
+                            continue;
+                        }
+                        $this->checkAndAddChild($childName);
                     }
                 }
             }
@@ -232,6 +248,26 @@ class DUP_PRO_Tree_files_node
                 closedir($dh);
             }
         }
+    }
+
+    /**
+     *
+     * @param string $name child name
+     * @return boolean|DUP_PRO_Tree_files_node if notes exceeded return false
+     */
+    private function checkAndAddChild($name)
+    {
+        if (!array_key_exists($name, $this->childs)) {
+            if ($this->numTreeNodes > self::MAX_TREE_NODES || count($this->childs) >= self::MAX_CHILDS_FOR_FOLDER) {
+                $this->nodesExceeded ++;
+                return false;
+            } else {
+                $child               = new DUP_PRO_Tree_files_node($this->fullPath.'/'.$name, count($this->childs), $this->id);
+                $this->childs[$name] = $child;
+                $this->numTreeNodes ++;
+            }
+        }
+        return $this->childs[$name];
     }
 
     /**
@@ -270,5 +306,19 @@ class DUP_PRO_Tree_files_node
         }
 
         call_user_func($callback, $this);
+    }
+
+    /**
+     *
+     * @return int
+     */
+    public function getNodesExceeded()
+    {
+        return $this->nodesExceeded;
+    }
+
+    public function getNumTreeNodes()
+    {
+        return $this->numTreeNodes;
     }
 }

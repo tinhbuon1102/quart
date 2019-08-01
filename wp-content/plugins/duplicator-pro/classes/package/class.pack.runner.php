@@ -354,8 +354,8 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                     add_action('admin_enqueue_scripts', 'DUP_PRO_Package_Runner::add_kickoff_worker_javascript');
                 } else {
                     // Server-side kickoff
-                    $ajax_url = SnapLibURLU::appendQueryValue($ajax_url, 'action', 'duplicator_pro_process_worker');
-                    $ajax_url = SnapLibURLU::appendQueryValue($ajax_url, 'now', time());
+                    $ajax_url = DupProSnapLibURLU::appendQueryValue($ajax_url, 'action', 'duplicator_pro_process_worker');
+                    $ajax_url = DupProSnapLibURLU::appendQueryValue($ajax_url, 'now', time());
                     
                     // $duplicator_pro_process_worker_nonce = wp_create_nonce('duplicator_pro_process_worker');
                     //require_once(ABSPATH.'wp-includes/pluggable.php');
@@ -367,11 +367,16 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
 
                     if ($global->basic_auth_enabled) {
                         $sglobal = DUP_PRO_Secure_Global_Entity::getInstance();
-
-                        wp_remote_get($ajax_url, array('blocking' => false, 'headers' => array('Authorization' => 'Basic ' . base64_encode($global->basic_auth_user . ':' . $sglobal->basic_auth_password))));
+                        $args = array('blocking' => false, 'headers' => array('Authorization' => 'Basic ' . base64_encode($global->basic_auth_user . ':' . $sglobal->basic_auth_password)));
                     } else {
-                        wp_remote_get($ajax_url, array('blocking' => false));
+                        $args = array('blocking' => false);
                     }
+                    if ($global->server_kick_off_sslverify) {
+                        $args['sslverify'] = true;
+                    } else {
+                        $args['sslverify'] = false;
+                    }
+                    wp_remote_get($ajax_url, $args);
                 }
 
                 DUP_PRO_LOG::trace("after sent kickoff request");
@@ -385,13 +390,16 @@ if (!class_exists('DUP_PRO_Package_Runner')) {
                 define('WP_MAX_MEMORY_LIMIT', '512M');
             }
 
-			@ini_set('memory_limit', WP_MAX_MEMORY_LIMIT);
+            if (DupProSnapLibUtil::wp_is_ini_value_changeable('memory_limit'))
+			    @ini_set('memory_limit', WP_MAX_MEMORY_LIMIT);
 
             @set_time_limit(7200);
 
             @ignore_user_abort(true);
-            @ini_set( 'pcre.backtrack_limit', PHP_INT_MAX );
-            @ini_set('default_socket_timeout', 7200); // 2 Hours
+            if (DupProSnapLibUtil::wp_is_ini_value_changeable('pcre.backtrack_limit'))
+                @ini_set( 'pcre.backtrack_limit', PHP_INT_MAX );
+            if (DupProSnapLibUtil::wp_is_ini_value_changeable('default_socket_timeout'))
+                @ini_set('default_socket_timeout', 7200); // 2 Hours
 
             /* @var $global DUP_PRO_Global_Entity */
             $global = DUP_PRO_Global_Entity::get_instance();

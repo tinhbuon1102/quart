@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.
  */

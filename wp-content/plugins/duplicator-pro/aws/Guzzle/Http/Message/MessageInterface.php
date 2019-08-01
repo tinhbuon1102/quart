@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http\Message;
+
+defined("ABSPATH") or die("");
 
 /**
  * Request and response message interface

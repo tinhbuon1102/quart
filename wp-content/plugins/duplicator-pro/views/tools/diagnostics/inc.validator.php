@@ -25,7 +25,7 @@ THICK-BOX DIALOGS: -->
 SCAN VALIDATOR -->
 <div class="dup-box">
 	<div class="dup-box-title">
-		<i class="fa fa-check-square-o"></i>
+		<i class="far fa-check-square"></i>
 		<?php DUP_PRO_U::esc_html_e("Scan Validator"); ?>
 		<div class="dup-box-arrow"></div>
 	</div>
@@ -122,7 +122,7 @@ jQuery(document).ready(function($)
 		var data = {action : 'DUP_PRO_CTRL_Tools_runScanValidator', nonce: '<?php echo $ajax_nonce; ?>', 'scan-recursive': true};
 
 		$('#hb-result').html('<?php DUP_PRO_U::esc_html_e("Scanning Environment... This may take a few minutes."); ?>');
-		$('#scan-run-btn').html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Running Please Wait...');
+		$('#scan-run-btn').html('<i class="fas fa-circle-notch fa-spin fa-fw"></i> Running Please Wait...');
 
 		$.ajax({
 			type: "POST",

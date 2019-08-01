@@ -53,9 +53,9 @@ function wp_get_attachment( $attachment_id ) {
 			}
 			?>
 <?php if($image_caption=="mobile") { ?>
-    <link href="http://l-quartet.com/zoom/pdp-style.css" rel="stylesheet" type="text/css"  media="all"  />
+    <link href="https://l-quartet.com/zoom/pdp-style.css" rel="stylesheet" type="text/css"  media="all"  />
  <!-- may be appended here or inside the 'head' section -->
-    <script type="text/javascript" src="http://l-quartet.com/zoom/mediatypechecker.js"></script>
+    <script type="text/javascript" src="https://l-quartet.com/zoom/mediatypechecker.js"></script>
     <style>
 	 @media (min-width: 768px) and (max-width: 1800px){
               
@@ -73,7 +73,7 @@ function wp_get_attachment( $attachment_id ) {
 <div id="pdp-image-wrapper" style="background-image:url(<?php echo $firstimage ?>); ">
 				 <a id="pdp-tooltip">CLICK TO ZOOM</a>
 				 <a  href="<?php echo $firstimage ?>" class ='cloud-zoom' id='pdp-zoom' rel="position: 'inside', adjustX: 0, adjustY:0, smoothMove:3, showTitle:false">
-					 <img src="http://l-quartet.com/zoom/img_spacer0696.png" class="image" id="pdp-placeholder-img"  />
+					 <img src="https://l-quartet.com/zoom/img_spacer0696.png" class="image" id="pdp-placeholder-img"  />
 				 </a>
 </div>
 <?php do_action( 'woocommerce_product_thumbnails' ); ?>
@@ -175,8 +175,8 @@ figure.show{
 </div>  
 
 
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.touchswipe/1.6.4/jquery.touchSwipe.js"></script>
-    <script src="http://l-quartet.com/zoom/simple-slideshow-jquery.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.touchswipe/1.6.4/jquery.touchSwipe.js"></script>
+    <script src="https://l-quartet.com/zoom/simple-slideshow-jquery.js"></script>
       
 
       
@@ -198,7 +198,7 @@ figure.show{
 	  });
 		
 	</script>
-<script src="http://l-quartet.com/zoom/main.min0696.js" type="text/javascript"></script>
+<script src="https://l-quartet.com/zoom/main.min0696.js" type="text/javascript"></script>
 <?php } ?>
 <?php
 

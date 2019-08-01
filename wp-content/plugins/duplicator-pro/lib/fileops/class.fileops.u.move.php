@@ -1,4 +1,6 @@
 <?php
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+    die("");
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,18 +14,18 @@ class FileOpsMoveU
     // returns: array with list of failures
     public static function move($directories, $files, $excludedFiles, $destination)
     {
-        SnapLibLogger::logObject('directories', $directories);
-        SnapLibLogger::logObject('files', $files);
-        SnapLibLogger::logObject('excludedFiles', $excludedFiles);
-        SnapLibLogger::logObject('destination', $destination);
+        DupProSnapLibLogger::logObject('directories', $directories);
+        DupProSnapLibLogger::logObject('files', $files);
+        DupProSnapLibLogger::logObject('excludedFiles', $excludedFiles);
+        DupProSnapLibLogger::logObject('destination', $destination);
 
         $failures = array();
 
 
-        $directoryFailures = SnapLibIOU::massMove($directories, $destination, null, false);
-        SnapLibLogger::log('done directories');
-        $fileFailures = SnapLibIOU::massMove($files, $destination, $excludedFiles, false);
-        SnapLibLogger::log('done files');
+        $directoryFailures = DupProSnapLibIOU::massMove($directories, $destination, null, false);
+        DupProSnapLibLogger::log('done directories');
+        $fileFailures = DupProSnapLibIOU::massMove($files, $destination, $excludedFiles, false);
+        DupProSnapLibLogger::log('done files');
         return array_merge($directoryFailures, $fileFailures);
     }
 }

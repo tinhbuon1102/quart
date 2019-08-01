@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The source object of the COPY operation is not in the active tier and is only stored in Amazon Glacier.
  */

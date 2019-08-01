@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Inflection;
+
+defined("ABSPATH") or die("");
 
 /**
  * Inflector interface used to convert the casing of words

@@ -17,18 +17,7 @@ class DUP_PRO_IO
      */
     public static function changeMode($file , $mode)
     {
-        if (! file_exists($file))
-            return false;
-
-        if (@chmod($file , $mode) === false)
-        {
-        //	DUP_PRO_LOG::traceError("Error chaning the mode on: {$file}.");
-        //	$bt = debug_backtrace();
-
-        //	DUP_PRO_LOG::traceObject('backtrace', $bt);
-            return false;
-        }
-        return true;
+        return DupProSnapLibIOU::chmod($file, $mode);
     }
 
 
@@ -59,10 +48,11 @@ class DUP_PRO_IO
      * @param string $source_file       The full filepath to the file to copy
      * @param string $dest_dir			The full path to the destination directory were the file will be copied
      * @param string $delete_first		Delete file before copying the new one
+     * @param string $dest_filename		Destination filename
      *
-     *  @return TRUE on success or if file does not exist. FALSE on failure
+     * @return TRUE on success or if file does not exist. FALSE on failure
      */
-    public static function copyFile($source_file, $dest_dir, $delete_first = false)
+    public static function copyFile($source_file, $dest_dir, $delete_first = false, $dest_filename = '')
     {
         //Create directory
         if (file_exists($dest_dir) == false)
@@ -75,7 +65,7 @@ class DUP_PRO_IO
         }
 
         //Remove file with same name before copy
-        $filename = basename($source_file);
+        $filename = !empty($dest_filename) ? $dest_filename : basename($source_file);
         $dest_filepath = $dest_dir . "/$filename";
         if($delete_first)
         {

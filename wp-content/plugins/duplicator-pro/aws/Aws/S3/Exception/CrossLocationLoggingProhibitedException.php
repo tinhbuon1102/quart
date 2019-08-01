@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * Cross location logging not allowed. Buckets in one geographic location cannot log information to a bucket in another location.
  */

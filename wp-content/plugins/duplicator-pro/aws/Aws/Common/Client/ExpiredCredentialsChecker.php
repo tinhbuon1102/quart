@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Client;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Credentials\AbstractRefreshableCredentials;
 use DuplicatorPro\Aws\Common\Client\AwsClientInterface;
 use DuplicatorPro\Aws\Common\Exception\Parser\ExceptionParserInterface;

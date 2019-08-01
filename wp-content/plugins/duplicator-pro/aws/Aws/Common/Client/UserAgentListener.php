@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Client;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Guzzle\Common\Event;
 use DuplicatorPro\Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Inflection;
+
+defined("ABSPATH") or die("");
 
 /**
  * Decorator used to add memoization to previously inflected words

@@ -1,7 +1,7 @@
 <?php
 
 namespace DuplicatorPro\Krizalys\Onedrive;
-
+defined("ABSPATH") or die("");
 // The Onedrive SDK autoloader.  You probably shouldn't be using this.  Instead,
 // use a global autoloader, like the Composer autoloader.
 //

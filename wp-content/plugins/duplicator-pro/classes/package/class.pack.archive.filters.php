@@ -8,10 +8,10 @@ defined("ABSPATH") or die("");
 class DUP_PRO_Archive_Filter_Scope_Base
 {
     //All internal storage items that we decide to filter
-    public $Core = array();
+    public $Core     = array();
     //TODO: Enable with Settings UI
     //Global filter items added from settings
-    public $Global = array();
+    public $Global   = array();
     //Items when creating a package or template
     public $Instance = array();
 
@@ -24,7 +24,7 @@ class DUP_PRO_Archive_Filter_Scope_Base
 class DUP_PRO_Archive_Filter_Scope_Directory extends DUP_PRO_Archive_Filter_Scope_Base
 {
     // Items that are not readable
-    public $Warning = array();
+    public $Warning    = array();
     // Items that are not readable
     public $Unreadable = array();
     // Directories containing other WordPress installs
@@ -39,11 +39,11 @@ class DUP_PRO_Archive_Filter_Scope_Directory extends DUP_PRO_Archive_Filter_Scop
 class DUP_PRO_Archive_Filter_Scope_File extends DUP_PRO_Archive_Filter_Scope_Base
 {
     // Items that are not readable
-    public $Warning = array();
+    public $Warning    = array();
     // Items that are not readable
     public $Unreadable = array();
     //Items that are too large
-    public $Size = array();
+    public $Size       = array();
 
 }
 
@@ -59,18 +59,29 @@ class DUP_PRO_Archive_Filter_Info
     public $Files;
     //Contains all extensions filter info
     public $Exts;
-	public $TreeSize;
-	public $TreeWarning;
+    public $TreeSize;
+    public $TreeWarning;
 
     public function __construct()
+    {
+        $this->reset(true);
+    }
+
+    /**
+     * reset and clean all object
+     */
+    public function reset($initTreeObjs = false)
     {
         $this->Dirs  = new DUP_PRO_Archive_Filter_Scope_Directory();
         $this->Files = new DUP_PRO_Archive_Filter_Scope_File();
         $this->Exts  = new DUP_PRO_Archive_Filter_Scope_Base();
 
-		$this->TreeSize = new DUP_PRO_Tree_files(ABSPATH);
-		$this->TreeWarning = new DUP_PRO_Tree_files(ABSPATH);
+        if ($initTreeObjs) {
+            $this->TreeSize    = new DUP_PRO_Tree_files(ABSPATH);
+            $this->TreeWarning = new DUP_PRO_Tree_files(ABSPATH);
+        } else {
+            $this->TreeSize    = null;
+            $this->TreeWarning = null;
+        }
     }
-    
 }
-

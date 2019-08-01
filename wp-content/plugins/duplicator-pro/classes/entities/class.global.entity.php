@@ -1,5 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
 /**
  * Global Entity Layer
  *
@@ -12,6 +11,8 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/entities/class.json.entity.base.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/class.crypt.blowfish.php');
 
@@ -59,6 +60,7 @@ abstract class DUP_PRO_Archive_Build_Mode
 
 class DUP_PRO_Server_Load_Reduction
 {
+
     const None  = 0;
     const A_Bit = 1;
     const More  = 2;
@@ -68,14 +70,12 @@ class DUP_PRO_Server_Load_Reduction
     {
         switch ($reduction) {
             case self::A_Bit:
-                return 9000;
-
+                return 20;
             case self::More:
-                return 29000;
-
+                return 100;
             case self::A_Lot:
-                return 92000;
-
+                return 500;
+            case self::None:
             default:
                 return 0;
         }
@@ -122,6 +122,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public $uninstall_settings; // no longer used
     public $uninstall_packages;  // no longer used
     public $uninstall_tables; // no longer used
+    public $crypt = true;
     public $wpfront_integrate;
 
     //PACKAGES::Visual
@@ -131,8 +132,9 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public $package_mysqldump;
     public $package_mysqldump_path;
 	public $package_phpdump_mode = DUP_PRO_PHPDump_Mode::Multithreaded;
-    public $package_phpdump_qrylimit;
+    public $package_phpdump_qrylimit = DUP_PRO_Constants::DEFAULT_PHP_DUMP_CHUNK_SIZE;
 	public $package_php_chunking; // Not actively used but required for upgrade
+    public $package_mysqldump_qrylimit = DUP_PRO_Constants::DEFAULT_MYSQL_DUMP_CHUNK_SIZE;
 
 	//PACKAGES::Basic::Archive
     public $archive_build_mode;
@@ -146,21 +148,23 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
 	//PACKAGES::Basic::Processing
 	public $server_load_reduction;
-    public $max_package_runtime_in_min;
+    public $max_package_runtime_in_min = DUP_PRO_Constants::DEFAULT_MAX_PACKAGE_RUNTIME_IN_MIN;
     public $php_max_worker_time_in_sec;
 
 	//PACKAGES::Adanced
-	public $lock_mode;
+    public $lock_mode;
     public $json_mode;
     public $ajax_protocol;
     public $custom_ajax_url;
+    public $server_kick_off_sslverify = true;
     public $clientside_kickoff;
     public $basic_auth_enabled;
     public $basic_auth_user;  // Not actively used but required for upgrade
     public $basic_auth_password;
     public $installer_base_name = 'installer.php';
-    public $chunk_size = 2048;
-
+    public $chunk_size          = 2048;
+    public $skip_archive_scan   = false;
+    
     //SCHEDULES
     public $send_email_on_build_mode;
     public $notification_email_address;
@@ -205,20 +209,17 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     
     public $dupHidePackagesGiftFeatures;
 
-	//NOTICES
-	//public $notices;
-    //public $dupArchiveSwitchNotice =
-    
     public static function initialize_plugin_data()
     {
         $globals = parent::get_by_type(get_class());
 
         if (count($globals) == 0) {
-
+            update_option('duplicator_pro_reset_user_settings_required', 1);
             $global = new DUP_PRO_Global_Entity();
 
             $global->InitializeSystemSettings();
-            $global->ResetUserSettings();
+            // called from admin_init based on the `duplicator_pro_reset_user_settings_required` option flag
+            // $global->ResetUserSettings();
 
             // Default local selected by default
             array_push($global->manual_mode_storage_ids, -2);
@@ -262,9 +263,10 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
         //PACKAGES::Basic::Database
         $this->package_mysqldump           = false;
+        $this->package_mysqldump_qrylimit  = DUP_PRO_Constants::DEFAULT_MYSQL_DUMP_CHUNK_SIZE;
         $this->package_phpdump_mode        = DUP_PRO_PHPDump_Mode::Multithreaded;
         $this->package_mysqldump_path      = '';
-        $this->package_phpdump_qrylimit    = 500;
+        $this->package_phpdump_qrylimit    = DUP_PRO_Constants::DEFAULT_PHP_DUMP_CHUNK_SIZE;
 
 		//PACKAGES::Basic::Archive
         $this->archive_build_mode          = DUP_PRO_Archive_Build_Mode::Unconfigured;
@@ -278,7 +280,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
 		 //PACKAGES::Basic::Processing
 		$this->server_load_reduction       = DUP_PRO_Server_Load_Reduction::None;
-		$this->max_package_runtime_in_min  = 90;
+		$this->max_package_runtime_in_min  = DUP_PRO_Constants::DEFAULT_MAX_PACKAGE_RUNTIME_IN_MIN;
         $this->php_max_worker_time_in_sec  = 18;
 
 		//PACKAGES::Advanced
@@ -286,12 +288,14 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->json_mode                   = DUP_PRO_JSON_Mode::PHP;
         $this->ajax_protocol               = self::get_ajax_protocol();
         $this->custom_ajax_url             = "";
+        $this->server_kick_off_sslverify = self::get_server_kick_sslverify_flag();
         $this->clientside_kickoff          = false;
         $this->basic_auth_enabled          = false;
         $this->basic_auth_user             = '';  // Not actively used but required for upgrade
         $this->basic_auth_password         = '';
         $this->installer_base_name         = 'installer.php';
         $this->chunk_size                  = 2048;
+        $this->skip_archive_scan           = false;
 
         //SCHEDULES
         $this->send_email_on_build_mode   = DUP_PRO_Email_Build_Mode::Email_On_Failure;
@@ -304,7 +308,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->purge_default_package_record   = false;
         $this->dropbox_upload_chunksize_in_kb = 2000;
         $this->dropbox_transfer_mode          = DUP_PRO_Dropbox_Transfer_Mode::Unconfigured;
-        $this->gdrive_upload_chunksize_in_kb  = 2000;  // Not exposed through the UI (yet)
+        $this->gdrive_upload_chunksize_in_kb  = 1000;  // Not exposed through the UI (yet)
         $this->s3_upload_part_size_in_kb      = 6000;   // Not exposed through the UI (yet)
 
         $this->ssl_useservercerts             = true;
@@ -338,12 +342,22 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
             $this->php_max_worker_time_in_sec = 18;
         }
 
+        $storages = DUP_PRO_Storage_Entity::get_all();
+        $sglobal = DUP_PRO_Secure_Global_Entity::getInstance();
+
+        $test_str = 'aaa';
+        $encrypted_str = DUP_PRO_Crypt_Blowfish::encrypt($test_str);
+        $decrypted_str = DUP_PRO_Crypt_Blowfish::decrypt($encrypted_str);
+        $this->crypt = ($test_str == $decrypted_str) ? true : false;
+
         $this->set_build_mode();
 
+        foreach ($storages as $storage) {
+			$storage->save();
+        }
+        $sglobal->save();
+
         $this->custom_ajax_url         = admin_url('admin-ajax.php', 'http');
-
-        set_transient('duplicator_pro_settings_message', DUP_PRO_U::__('Settings reset to defaults successfully'), 60);
-
     }
 
     public static function get_ajax_protocol()
@@ -364,25 +378,34 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         if (DUP_PRO_U::getSqlLock(DUPLICATOR_PRO_TEST_SQL_LOCK_NAME)) {
             $url = admin_url('admin-ajax.php?action=duplicator_pro_try_to_lock_test_sql&nonce='.$nonce);
             $args = array(
-                'timeout' => 5,
+                'timeout' => 8,
                 'method' => 'POST',
                 'sslverify' => $sslverify,
             );
             $res = wp_remote_request($url,$args);
-            if (!is_wp_error($res)) {
+            $res_code = wp_remote_retrieve_response_code($res);
+            if (!is_wp_error($res) && 200 == $res_code) {
                 $body = wp_remote_retrieve_body($res);
-                // Getting new sql locl fail (means SQL lock is working file)
+                // Getting new sql lock fail (means SQL lock is working file)
                 if($body == DUP_PRO_Sql_Lock_Check::Sql_Fail){
                     $lock_type = DUP_PRO_Thread_Lock_Mode::SQL_Lock;
                 }
-            } else{
+            } elseif (is_wp_error($res)) {
                 $wp_error = $res->get_error_message();
                 $error_msg = 'Could not check system for file lock support. wp_remote_request failed. Error: '.$wp_error;
                 DUP_PRO_LOG::trace($error_msg);
                 error_log($error_msg);
-                if (false !== stripos($wp_error, 'SSL certificate')) {
+                if ($sslverify && false !== stripos($wp_error, 'SSL certificate')) {
+                    $error_msg = 'Trying again to get lock type with disabling sslverify';
+                    DUP_PRO_LOG::trace($error_msg);
+                    error_log($error_msg);
                     return self::get_lock_type(false);
                 }
+            } else {
+                $res_message = wp_remote_retrieve_response_message($res);
+                $error_msg = 'Could not check system for sql lock support. Bad response status code. Response code:'.$res_code.', Response message: '.$res_message;
+                DUP_PRO_LOG::trace($error_msg);
+                error_log($error_msg);
             }
         }
 
@@ -391,6 +414,21 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         DUP_PRO_U::releaseSqlLock(DUPLICATOR_PRO_TEST_SQL_LOCK_NAME);
 
         return $lock_type;
+    }
+
+    public static function get_server_kick_sslverify_flag() {
+        $ajaxurl = admin_url('admin-ajax.php');
+        $res = wp_remote_get($ajaxurl);
+        if (!is_wp_error($res)) {
+            return true;
+        } else{
+            $wp_error = $res->get_error_message();
+            if (false !== stripos($wp_error, 'SSL certificate')) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 
     public function set_from_data($global_data)
@@ -404,6 +442,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         //PACKAGES::Processing
         $this->package_mysqldump           = $global_data->package_mysqldump;
         $this->package_mysqldump_path      = $global_data->package_mysqldump_path;
+        $this->package_mysqldump_qrylimit  = $global_data->package_mysqldump_qrylimit;
         $this->package_phpdump_qrylimit    = $global_data->package_phpdump_qrylimit;
 
         $this->archive_build_mode          = $global_data->archive_build_mode;
@@ -428,6 +467,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         $this->basic_auth_user             = $global_data->basic_auth_user;
         $this->installer_base_name         = $global_data->installer_base_name;
         $this->chunk_size                  = $global_data->chunk_size;
+        $this->skip_archive_scan           = $global_data->skip_archive_scan;
         $this->ssl_useservercerts          = isset($global_data->ssl_useservercerts) 
                                                 ? $global_data->ssl_useservercerts
                                                 : true;
@@ -479,15 +519,31 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
     public function set_build_mode()
     {
         $is_shellexec_zip_available = (DUP_PRO_Zip_U::getShellExecZipPath() != null);
+        $is_ziparchive_available = apply_filters('duplicator_pro_is_ziparchive_available', class_exists('ZipArchive'));
 
        // If unconfigured go with auto logic for shell exec verify that mode exists otherwise slam it back
         if ($this->archive_build_mode == DUP_PRO_Archive_Build_Mode::Unconfigured) {
-			$this->archive_build_mode = ($is_shellexec_zip_available)
+            $archive_build_mode = ($is_shellexec_zip_available)
 				? DUP_PRO_Archive_Build_Mode::Shell_Exec
-				: DUP_PRO_Archive_Build_Mode::ZipArchive;
+                : DUP_PRO_Archive_Build_Mode::ZipArchive;
+            
+            if ($is_shellexec_zip_available) {
+                $archive_build_mode = DUP_PRO_Archive_Build_Mode::Shell_Exec;
+            } elseif ($is_ziparchive_available) {
+                $archive_build_mode = DUP_PRO_Archive_Build_Mode::ZipArchive;
+            } else {
+                $archive_build_mode = DUP_PRO_Archive_Build_Mode::DupArchive;
+            }
+            
+			$this->archive_build_mode = apply_filters('duplicator_pro_default_archive_build_mode', $archive_build_mode);
         } else if ($this->archive_build_mode == DUP_PRO_Archive_Build_Mode::Shell_Exec) {
             if (!$is_shellexec_zip_available) {
-                $this->archive_build_mode = DUP_PRO_Archive_Build_Mode::ZipArchive;
+                if ($is_ziparchive_available) {
+                    $archive_build_mode = apply_filters('duplicator_pro_default_archive_build_mode', DUP_PRO_Archive_Build_Mode::ZipArchive);
+                } else {
+                    $archive_build_mode = DUP_PRO_Archive_Build_Mode::DupArchive;
+                }
+                $this->archive_build_mode = apply_filters('duplicator_pro_default_archive_build_mode', $archive_build_mode);
 
 				if(DUP_PRO_U::PHP70() === false) {
 					$this->archive_compression = true;
@@ -515,9 +571,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
     public function get_auto_zip_mode()
     {
-        $build_mode;
-
-        if (($this->archive_build_mode === DUP_PRO_Archive_Build_Mode::Shell_Exec) || ($this->archive_build_mode === DUP_PRO_Archive_Build_Mode::ZipArchive)) {
+        if (($this->archive_build_mode == DUP_PRO_Archive_Build_Mode::Shell_Exec) || ($this->archive_build_mode == DUP_PRO_Archive_Build_Mode::ZipArchive)) {
 			// Don't override, just use what is configured
 			$build_mode = $this->archive_build_mode;
 		} else {
@@ -533,13 +587,132 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 		return $build_mode;
     }
 
+    /**
+     *
+     * @return int microsenconds
+     */
+    public function getMicrosecLoadReduction()
+    {
+        return DUP_PRO_Server_Load_Reduction::microseconds_from_reduction($this->server_load_reduction);
+    }
+
+    /**
+     * set db mode ant all related params.
+     * check mysqldump
+     *
+     * @param null|string $dbMode               if null get INPUT_POST
+     * @param null|int $phpDumpMode             if null get INPUT_POST
+     * @param null|int $dbPhpQueryLimit         if null get INPUT_POST
+     * @param null|string $packageMysqldumpPath if null get INPUT_POST
+     */
+    public function setDbMode($dbMode = null, $phpDumpMode = null, $dbPhpQueryLimit = null, $packageMysqldumpPath = null, $dbMysqlDumpQueryLimit = null)
+    {
+        //DATABASE
+        $dbMode               = is_null($dbMode) ? filter_input(INPUT_POST, '_package_dbmode', FILTER_SANITIZE_STRING,
+                array('options' => array(
+                    'default' => ''
+                ))
+            ) : $dbMode;
+        $phpDumpMode          = is_null($phpDumpMode) ? filter_input(INPUT_POST, '_phpdump_mode', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'default' => 0,
+                    'min_range' => 0,
+                    'max_range' => 1
+                ))
+            ) : $phpDumpMode;
+        $dbPhpQueryLimit      = is_null($dbPhpQueryLimit) ? filter_input(INPUT_POST, '_package_phpdump_qrylimit', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'default' => DUP_PRO_Constants::DEFAULT_PHP_DUMP_CHUNK_SIZE,
+                    'min_range' => 20,
+                    'max_range' => 2000
+                ))
+            ) : $dbPhpQueryLimit;
+         $dbMysqlDumpQueryLimit      = is_null($dbMysqlDumpQueryLimit) ? filter_input(INPUT_POST, '_package_mysqldump_qrylimit', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'default' => DUP_PRO_Constants::DEFAULT_MYSQL_DUMP_CHUNK_SIZE,
+                    'min_range' => DUP_PRO_Constants::MYSQL_DUMP_CHUNK_SIZE_MIN_LIMIT,
+                    'max_range' => DUP_PRO_Constants::MYSQL_DUMP_CHUNK_SIZE_MAX_LIMIT
+                ))
+            ) : $dbMysqlDumpQueryLimit;
+
+        $packageMysqldumpPath = is_null($packageMysqldumpPath) ? filter_input(INPUT_POST, '_package_mysqldump_path', FILTER_SANITIZE_STRING,
+                array('options' => array(
+                    'default' => ''
+                ))
+            ) : $packageMysqldumpPath;
+        $packageMysqldumpPath = trim(sanitize_text_field($packageMysqldumpPath));
+
+        $mysqlDumpPath = empty($packageMysqldumpPath) ? DUP_PRO_DB::getMySqlDumpPath() : $packageMysqldumpPath;
+        if ($dbMode == 'mysql' && empty($mysqlDumpPath)) {
+            $dbMode = 'php';
+        }
+
+        $this->package_mysqldump          = $dbMode == 'mysql' ? 1 : 0;
+        $this->package_phpdump_mode       = $phpDumpMode;
+        $this->package_phpdump_qrylimit   = $dbPhpQueryLimit;
+        $this->package_mysqldump_path     = $packageMysqldumpPath;
+        $this->package_mysqldump_qrylimit = $dbMysqlDumpQueryLimit;
+    }
+
+    public function setArchiveMode($archiveBuildMode = null, $zipArchiveMode = null, $archiveCompression = null, $ziparchiveValidation = null, $ziparchiveChunkSizeInMb = null)
+    {
+        $isZipAvailable = (DUP_PRO_Zip_U::getShellExecZipPath() != null);
+
+        $prelimBuildMode                   = is_null($archiveBuildMode) ? filter_input(INPUT_POST, 'archive_build_mode', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'min_range' => 1,
+                    'max_range' => 3
+                ))
+            ) : $archiveBuildMode;
+        // Something has changed which invalidates Shell exec so move it to ZA
+        $this->archive_build_mode          = (!$isZipAvailable && ($prelimBuildMode == DUP_PRO_Archive_Build_Mode::Shell_Exec)) ? DUP_PRO_Archive_Build_Mode::ZipArchive : $prelimBuildMode;
+        $this->ziparchive_mode             = is_null($zipArchiveMode) ? filter_input(INPUT_POST, 'ziparchive_mode', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'default' => 0,
+                    'min_range' => 0,
+                    'max_range' => 1
+                ))
+            ) : $zipArchiveMode;
+        $this->archive_compression         = is_null($archiveCompression) ? filter_input(INPUT_POST, 'archive_compression', FILTER_VALIDATE_BOOLEAN) : $archiveCompression;
+        $this->ziparchive_validation       = is_null($ziparchiveValidation) ? filter_input(INPUT_POST, 'ziparchive_validation', FILTER_VALIDATE_BOOLEAN) : $ziparchiveValidation;
+        $this->ziparchive_chunk_size_in_mb = is_null($ziparchiveChunkSizeInMb) ? filter_input(INPUT_POST, 'ziparchive_chunk_size_in_mb', FILTER_VALIDATE_INT,
+                array('options' => array(
+                    'default' => 6,
+                    'min_range' => 1
+                ))
+            ) : $ziparchiveChunkSizeInMb;
+    }
+
+
+    public function setClientsideKickoff($enable) {
+        if ($this->clientside_kickoff != $enable) {
+            $this->clientside_kickoff = $enable;
+        
+           
+            if ($this->clientside_kickoff) {
+                // Auto setting the max package runtime in case of client kickoff is turned on and
+                // the max package runtime is less than 480 minutes - 8 hours
+                $this->max_package_runtime_in_min = max(480, $this->max_package_runtime_in_min);
+                $this->setDbMode('mysql');
+                
+                // RSR 4/29/19 not setting archive mode for now - too risky
+               // $mode = (DUP_PRO_Zip_U::getShellExecZipPath() != null) ? DUP_PRO_Archive_Build_Mode::Shell_Exec : DUP_PRO_Archive_Build_Mode::DupArchive;
+               // $this->setArchiveMode($mode);
+            }
+        }
+    }
+
     // Important: Even though we are no longer using the encrypted lkp and basic_auth_user fields we still need them for upgrade purposes
     public function save()
     {
         $result = false;
-        $this->encrypt();
+        if ($this->crypt) {
+            $this->encrypt();
+        }        
         $result = parent::save();
-        $this->decrypt();   // Whenever its in memory its unencrypted
+        if ($this->crypt) {
+            $this->decrypt();   // Whenever its in memory its unencrypted
+        }
         return $result;
     }
 
@@ -574,6 +747,10 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
         }
     }
 
+    /**
+     *
+     * @return DUP_PRO_Global_Entity
+     */
     public static function &get_instance()
     {
         if (isset($GLOBALS[self::GLOBAL_NAME]) == false) {
@@ -582,7 +759,9 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 
             if (count($globals) > 0) {
                 $global = $globals[0];
-                $global->decrypt();
+                if ($global->crypt) {
+                    $global->decrypt();
+                }
             } else {
                 DUP_PRO_LOG::trace("Global entity is null!");
             }
@@ -655,7 +834,7 @@ class DUP_PRO_Global_Entity extends DUP_PRO_JSON_Entity_Base
 	public function get_archive_extension_type()
     {
 		$mode = 'zip';
-		if ($this->archive_build_mode === DUP_PRO_Archive_Build_Mode::DupArchive) {
+		if ($this->archive_build_mode == DUP_PRO_Archive_Build_Mode::DupArchive) {
 			$mode = 'daf';
 		}
 		return $mode;

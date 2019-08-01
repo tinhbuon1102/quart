@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception\Parser;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\Parser\DefaultXmlExceptionParser;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;
 use DuplicatorPro\Guzzle\Http\Message\Response;

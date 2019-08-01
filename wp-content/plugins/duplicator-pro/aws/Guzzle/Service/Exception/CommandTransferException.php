@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Exception;
 
 use DuplicatorPro\Guzzle\Http\Exception\MultiTransferException;

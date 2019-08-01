@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Stream;
 
 /**

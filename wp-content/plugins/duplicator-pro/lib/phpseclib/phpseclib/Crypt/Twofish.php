@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of Twofish.
  *
@@ -36,7 +35,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Base;
 
 /**

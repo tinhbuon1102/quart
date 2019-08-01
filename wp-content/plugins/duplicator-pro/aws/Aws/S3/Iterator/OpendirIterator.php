@@ -13,8 +13,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace DuplicatorPro\Aws\S3\Iterator;
+
+defined("ABSPATH") or die("");
 
 /**
  * Provides an iterator around an opendir resource. This is useful when you need to provide context to an opendir so

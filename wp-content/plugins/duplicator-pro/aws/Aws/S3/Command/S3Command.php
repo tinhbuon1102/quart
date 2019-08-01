@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Command;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Guzzle\Service\Command\OperationCommand;
 use DuplicatorPro\Guzzle\Service\Resource\Model;
 use DuplicatorPro\Guzzle\Common\Event;

@@ -1,5 +1,6 @@
 <?php
 namespace DuplicatorPro\Krizalys\Onedrive;
+defined("ABSPATH") or die("");
 include_once "ResumableUploader.php";
 
 use Monolog\Handler\StreamHandler;

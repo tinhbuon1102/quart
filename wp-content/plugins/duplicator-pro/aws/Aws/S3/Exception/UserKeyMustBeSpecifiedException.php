@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The bucket POST must contain the specified field name. If it is specified, please check the order of the fields.
  */

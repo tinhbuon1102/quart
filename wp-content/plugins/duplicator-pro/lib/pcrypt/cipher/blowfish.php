@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 // +----------------------------------------------------------------------+
 // | Perfect Scripts                                         blowfish.php |
 // | Brazilian Organization                                               |

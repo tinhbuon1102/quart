@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http\Curl;
+
+defined("ABSPATH") or die("");
 
 /**
  * Class used for querying curl_version data

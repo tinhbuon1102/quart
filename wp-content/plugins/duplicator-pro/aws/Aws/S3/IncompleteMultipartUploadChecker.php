@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Aws\S3;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Http\Exception\HttpException;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;

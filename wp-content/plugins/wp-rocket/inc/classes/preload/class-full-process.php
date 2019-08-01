@@ -42,6 +42,9 @@ class Full_Process extends \WP_Background_Process {
 	 * @return null
 	 */
 	protected function task( $item ) {
+		$count = get_transient( 'rocket_preload_running' );
+		set_transient( 'rocket_preload_running', $count + 1 );
+
 		if ( $this->is_already_cached( $item ) ) {
 			return false;
 		}
@@ -58,13 +61,10 @@ class Full_Process extends \WP_Background_Process {
 			'timeout'    => 0.01,
 			'blocking'   => false,
 			'user-agent' => 'WP Rocket/Preload',
-			'sslverify'  => apply_filters( 'https_local_ssl_verify', true ),
+			'sslverify'  => apply_filters( 'https_local_ssl_verify', false ),
 		] );
 
 		wp_remote_get( esc_url_raw( $item ), $args );
-
-		$count = get_transient( 'rocket_preload_running' );
-		set_transient( 'rocket_preload_running', $count + 1 );
 
 		usleep( absint( get_rocket_option( 'sitemap_preload_url_crawl', 500000 ) ) );
 

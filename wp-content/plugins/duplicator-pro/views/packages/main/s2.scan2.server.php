@@ -3,7 +3,7 @@
 SERVER
 ================================================================ -->
 <div class="details-title">
-	<i class="fa fa-hdd-o"></i> <?php DUP_PRO_U::esc_html_e("Setup"); ?>
+	<i class="far fa-hdd fa-sm"></i> <?php DUP_PRO_U::esc_html_e("Setup"); ?>
 	<div class="dup-more-details" title="<?php DUP_PRO_U::esc_attr_e('Show Diagnostics'); ?>">
 		<a href="?page=duplicator-pro-tools&tab=diagnostics" target="_blank"><i class="fa fa-microchip"></i></a>
 	</div>
@@ -102,7 +102,10 @@ WP SETTINGS -->
 <div class="scan-item scan-item-last">
 	<?php
 	if (!$archive_export_onlydb && isset($_POST['filter-on'])) {
-		$file_filter_data		 = array('filter-dir' => $_POST['filter-dirs'], 'filter-files' => $_POST['filter-files']);
+		$file_filter_data		 = array(
+            'filter-dir' => DUP_PRO_Archive::parsePathFilter(DupProSnapLibUtil::sanitize_non_stamp_chars($_POST['filter-dirs'])),
+            'filter-files' => DUP_PRO_Archive::parsePathFilter(DupProSnapLibUtil::sanitize_non_stamp_chars($_POST['filter-files']))
+            );
 		$_SESSION['filter_data'] = $file_filter_data;
 	} else {
 		if (isset($_SESSION['filter_data'])) {
@@ -118,9 +121,8 @@ WP SETTINGS -->
 	$core_file_notice	 = false;
 
 	if (!$archive_export_onlydb && isset($_POST['filter-on']) && isset($_POST['filter-dirs'])) {
-
 		//findout matched core directories
-		$filter_dirs = explode(";", trim($_POST['filter-dirs']));
+		$filter_dirs =  DUP_PRO_Archive::parsePathFilter(DupProSnapLibUtil::sanitize_non_stamp_chars($_POST['filter-dirs']),true);
 
 		// clean possible blank spaces before and after the paths
 		for ($i = 0; $i < count($filter_dirs); $i++) {
@@ -132,7 +134,7 @@ WP SETTINGS -->
 
 
 		//find out core files
-		$filter_files = explode(";", trim($_POST['filter-files']));
+		$filter_files = DUP_PRO_Archive::parsePathFilter(DupProSnapLibUtil::sanitize_non_stamp_chars($_POST['filter-files']), true);
 
 		// clean possible blank spaces before and after the paths
 		for ($i = 0; $i < count($filter_files); $i++) {
@@ -234,9 +236,10 @@ else {
 		$license_type_text = DUP_PRO_U::__('Freelancer');
 	}
 
-	echo '<hr size="1" /><span><div class="dup-scan-warn"><i class="fa fa-exclamation-triangle"></i></div></span>&nbsp;<b>'.DUP_PRO_U::__('Multisite: Detected')."</b> <br/>";
+	echo '<hr size="1" /><span><div class="dup-scan-warn"><i class="fa fa-exclamation-triangle fa-sm"></i></div></span>&nbsp;<b>'.DUP_PRO_U::__('Multisite: Detected')."</b> <br/>";
 	echo '<small>';
-	DUP_PRO_U::esc_html_e("Duplicator Pro is at the {$license_type_text} license level which permits backing up or migrating an entire Multisite network.<br/><br/>");
+	DUP_PRO_U::esc_html_e("Duplicator Pro is at the {$license_type_text} license level which permits backing up or migrating an entire Multisite network.");
+	echo "<br/>";
 	DUP_PRO_U::esc_html_e('If you wish add the ability to install a subsite as a standalone site then the license must be upgraded to Business or Gold before building a package. ');
 	echo "&nbsp;<i><a href='https://snapcreek.com/dashboard/' target='_blank'>[".DUP_PRO_U::__('upgrade')."]</a></i>";
 	echo '</small>';

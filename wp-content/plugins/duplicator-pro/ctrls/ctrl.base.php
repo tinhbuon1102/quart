@@ -89,7 +89,8 @@ class DUP_PRO_CTRL_Result
 
 	function __construct(DUP_PRO_CTRL_Base $CTRL_OBJ)
 	{
-		DUP_PRO_U::hasCapability('read');
+		// DUP_PRO_U::hasCapability('read');
+		DUP_PRO_U::hasCapability('export');
 		$this->timeStart = $this->microtimeFloat();
 		$this->CTRL		 = $CTRL_OBJ;
 

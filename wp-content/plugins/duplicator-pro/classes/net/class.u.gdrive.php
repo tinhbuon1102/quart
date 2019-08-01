@@ -219,7 +219,7 @@ if (DUP_PRO_U::PHP53())
 
         // Upload a file all in one shot
         // returns null if error, Duplicator_Pro_Google_Service_Drive_DriveFile if success
-        public static function upload_file($google_client, $src_file_path, $parent_file_id)
+        public static function upload_file($google_client, $src_file_path, $parent_file_id, $dest_file_name = '')
         {
             /* @var $google_Client Duplicator_Pro_Google_Client */
 
@@ -234,7 +234,10 @@ if (DUP_PRO_U::PHP53())
 
                 $upload_file = new Duplicator_Pro_Google_Service_Drive_DriveFile();
                 //$upload_file->setTitle(basename($src_file_path));
-                $upload_file->setName(basename($src_file_path));
+                if (empty($dest_file_name)) {
+                    $dest_file_name = basename($src_file_path);
+                }
+                $upload_file->setName($dest_file_name);
 
                 $upload_file->setMimeType($mime_type);
                 $upload_file->setParents(array($parent_file_id));

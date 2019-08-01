@@ -40,8 +40,8 @@ if ($package_found) {
     $err_link_ticket	= '<a target="_blank" href="https://snapcreek.com/ticket/">' . DUP_PRO_U::__('Help Ticket') . '</a>';
 
 	$packages_url = DUP_PRO_U::getMenuPageURL(DUP_PRO_Constants::$PACKAGES_SUBMENU_SLUG, false);
-	$packages_tab_url = SnapLibURLU::appendQueryValue($packages_url, 'tab', 'packages');
-    $edit_package_url = SnapLibURLU::appendQueryValue($packages_tab_url, 'inner_page', 'new1');
+	$packages_tab_url = DupProSnapLibURLU::appendQueryValue($packages_url, 'tab', 'packages');
+    $edit_package_url = DupProSnapLibURLU::appendQueryValue($packages_tab_url, 'inner_page', 'new1');
     $edit_package_url = wp_nonce_url($edit_package_url, 'new1-package');
   	$active_package_present = DUP_PRO_Package::is_active_package_present();
 }
@@ -74,7 +74,7 @@ if ($package_found) {
 	<a <?php if($enable_transfer_tab === false) { echo 'onclick="DupPro.Pack.TransferDisabled(); return false;"';} ?> href="?page=duplicator-pro&action=detail&tab=transfer&id=<?php echo absint($package_id); ?>" class="nav-tab <?php echo ($current_tab == 'transfer') ? 'nav-tab-active' : '' ?>"> <?php DUP_PRO_U::esc_html_e('Transfer'); ?></a> 		
 </h2>
 <div class="all-packages">
-	<a href="?page=duplicator-pro" class="add-new-h2"><i class="fa fa-archive"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
+	<a href="?page=duplicator-pro" class="add-new-h2"><i class="fa fa-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
 	<a id="dup-pro-create-new" onclick="return DupPro.Pack.CreateNew(this);" href="<?php echo $edit_package_url; ?>" class="add-new-h2 <?php echo ($active_package_present ? 'disabled' : ''); ?>"><?php DUP_PRO_U::esc_html_e('Create New'); ?></a>
 </div>
 

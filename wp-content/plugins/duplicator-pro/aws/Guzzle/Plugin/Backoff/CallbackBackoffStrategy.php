@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Plugin\Backoff;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Exception\InvalidArgumentException;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;

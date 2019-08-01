@@ -63,7 +63,7 @@ div#dpro-dd-available-packages table tbody tr:nth-child(odd) {background: #f9f9f
 			<ol>
 				<li><?php DUP_PRO_U::esc_html_e("Upload a Duplicator zip/daf archive file below."); ?></li>
 				<li><?php DUP_PRO_U::esc_html_e("Click the Launch Installer button and proceed with the install wizard."); ?></li>
-				<li><?php DUP_PRO_U::esc_html_e("After install this site will be <u>overwritten</u> with the uploaded archive files contents."); ?></li>
+				<li><?php echo wp_kses(DUP_PRO_U::esc_html__("After install this site will be <u>overwritten</u> with the uploaded archive files contents."), array('u')); ?></li>
 			</ol>
             <p style="color:maroon">
             <?php echo wp_kses(DUP_PRO_U::__("<b>Important:</b> This feature is intended for empty or newly installed WordPress sites.  It is not recommend for use on production sites."), array(
@@ -84,28 +84,28 @@ div#dpro-dd-available-packages table tbody tr:nth-child(odd) {background: #f9f9f
 
 				<!-- ERROR MESSAGES:  -->
 				<div id="dpro-step-10" class="step-state step-err">
-					<i class="fa fa-warning"></i>
+                    <i class="fas fa-exclamation-triangle fa-sm"></i>
 					<?php DUP_PRO_U::esc_html_e("Only file types .zip &amp; .daf are supported!");?>
                     <br/> 
                     <?php DUP_PRO_U::esc_html_e("Please try again!"); ?>
 				</div>
 
 				<div id="dpro-step-11" class="step-state step-err">
-					<i class="fa fa-warning"></i>
+                    <i class="fas fa-exclamation-triangle fa-sm"></i>
 					<?php DUP_PRO_U::esc_html_e("Upload request aborted by user!");?>
                     <br/> 
                     <?php DUP_PRO_U::esc_html_e("Please try again!"); ?>
 				</div>
                 
                 <div id="dpro-step-12" class="step-state step-err">
-					<i class="fa fa-warning"></i>
+                    <i class="fas fa-exclamation-triangle fa-sm"></i>
 					<?php DUP_PRO_U::esc_html_e("Error uploading file!"); ?>
                     <br/> 
                     <?php DUP_PRO_U::esc_html_e("Please try again!"); ?>
 				</div>
                                 
                 <div id="dpro-step-20" class="step-state step-err">
-					<i class="fa fa-warning"></i>
+                    <i class="fas fa-exclamation-triangle fa-sm"></i>
 					<?php printf(wp_kses(DUP_PRO_U::__("Archive you upload is not supported in version %s!<br> Please upload archive from version %s and above.<br> Archive version you upload is %s."), array('br' => array())), esc_html(DUPLICATOR_PRO_VERSION), esc_html(DUPLICATOR_PRO_LIMIT_UPLOAD_VERSION), '<span id="error-archive-version">'.esc_html(DUPLICATOR_PRO_LIMIT_UPLOAD_VERSION).'</span>'); ?>
 				</div>
 				<input id="dpro-step-1-btn" type="button" class="button button-large" name="dpro-files" id="dpro-daf-upload-btn" value="<?php DUP_PRO_U::esc_attr_e("Select File"); ?>">
@@ -133,7 +133,7 @@ div#dpro-dd-available-packages table tbody tr:nth-child(odd) {background: #f9f9f
                         <td style="text-align: center">'.esc_html($list_archive->date).'</td>
                         <td style="text-align: right">
 
-                            <a href="javascript:void(0);" data-id="#dpro-dd-archive-' . absint($i) . '" data-path="'.esc_attr($list_archive->path).'" data-name="'.esc_attr($list_archive->name).'" data-type="install" class="dpro-dd-archive-action"><i class="fa fa-bolt"></i> ' . DUP_PRO_U::esc_html__('Launch Installer') . '</a>&nbsp;&nbsp; | &nbsp;&nbsp;
+                            <a href="javascript:void(0);" data-id="#dpro-dd-archive-' . absint($i) . '" data-path="'.esc_attr($list_archive->path).'" data-name="'.esc_attr($list_archive->name).'" data-type="install" class="dpro-dd-archive-action"><i class="fa fa-bolt fa-sm"></i> ' . DUP_PRO_U::esc_html__('Launch Installer') . '</a>&nbsp;&nbsp; | &nbsp;&nbsp;
                             <a href="javascript:void(0);" data-id="#dpro-dd-archive-' . $i . '" data-path="'.esc_attr($list_archive->path).'" data-type="delete" class="dpro-dd-archive-action" style="color:orangered"><i class="fa fa-ban"></i> Remove</a>
                         </td>
                     </tr>';
@@ -225,7 +225,7 @@ div#dpro-dd-available-packages table tbody tr:nth-child(odd) {background: #f9f9f
 					<?php  echo wp_kses(DUP_PRO_U::__("The files and database of the site you're logged into will be <u>overwritten</u> with the contents of the uploaded archive.  Check box to confirm you understand this."), array( 'u'  => array())); ?>
 				</label><br/><br/>
 				<button id="dpro-launch-btn" type="button" class="button button-large button-primary" title="<?php DUP_PRO_U::esc_attr_e("Check box above to enable button."); ?>">
-					<i class="fa fa-bolt"></i> <?php DUP_PRO_U::esc_html_e("Launch Installer"); ?>
+					<i class="fa fa-bolt fa-sm"></i> <?php DUP_PRO_U::esc_html_e("Launch Installer"); ?>
 				</button>
 			</div>
 
@@ -302,7 +302,7 @@ jQuery(document).ready(function ($)
         {
             if(confirm("The site you're currently logged into will be overwritten with the contents of the uploaded archive. Both the files and database will be overwritten. Continue?"))
             {
-                $this.html('<i class="fa fa-circle-o-notch fa-spin"></i> <?php DUP_PRO_U::esc_html_e('Please Wait...'); ?>');
+                $this.html('<i class="fas fa-circle-notch fa-spin"></i> <?php DUP_PRO_U::esc_html_e('Please Wait...'); ?>');
                 DupPro.Tools.lastArchiveUploaded = $name;
                 DupPro.Tools.prepArchive();
             }
@@ -645,7 +645,7 @@ jQuery(document).ready(function ($)
         var data = {action : 'DUP_PRO_CTRL_Tools_prepareArchiveForImport', nonce: '<?php echo wp_create_nonce('DUP_PRO_CTRL_Tools_prepareArchiveForImport'); ?>', 'archive-filename': DupPro.Tools.lastArchiveUploaded};
         console.log(ajaxurl);
         
-        $(this).html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <span>Launching Installer, Please wait..</span>').prop('disabled',true);
+        $(this).html('<i class="fas fa-circle-notch fa-spin fa-fw"></i> <span>Launching Installer, Please wait..</span>').prop('disabled',true);
         setTimeout(function(){
             var ajax = $.ajax({
                     type: "POST",

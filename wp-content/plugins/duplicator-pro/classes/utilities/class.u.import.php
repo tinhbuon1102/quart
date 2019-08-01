@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 class DUP_PRO_Import_U
 {
     public static function PurgeOldImports() 

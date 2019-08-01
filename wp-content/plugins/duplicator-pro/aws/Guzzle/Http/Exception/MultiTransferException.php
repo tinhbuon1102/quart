@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http\Exception;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Exception\ExceptionCollection;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;

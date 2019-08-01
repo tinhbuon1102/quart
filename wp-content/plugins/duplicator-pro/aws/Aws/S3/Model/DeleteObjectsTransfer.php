@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Client\AwsClientInterface;
 use DuplicatorPro\Aws\Common\Exception\OverflowException;
 use DuplicatorPro\Aws\Common\Enum\UaString as Ua;

@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Resource;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\AbstractHasDispatcher;
 use DuplicatorPro\Guzzle\Batch\BatchBuilder;

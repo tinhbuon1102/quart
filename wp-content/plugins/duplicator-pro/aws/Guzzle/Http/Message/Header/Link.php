@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http\Message\Header;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Http\Message\Header;
 

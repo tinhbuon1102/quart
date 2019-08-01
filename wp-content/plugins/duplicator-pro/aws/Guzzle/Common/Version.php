@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Common;
+
+defined("ABSPATH") or die("");
 
 /**
  * Guzzle version information

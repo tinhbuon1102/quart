@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\S3\Enum\Group;
 use DuplicatorPro\Aws\S3\Enum\GranteeType;
 use DuplicatorPro\Aws\Common\Exception\InvalidArgumentException;

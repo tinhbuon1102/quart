@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 // Let's make impossible - do TinyMCE textarea required
 add_action('the_editor', 'DUP_PRO_TinyMCE_Editor_Brand_Required');
 if ( ! function_exists( 'DUP_PRO_TinyMCE_Editor_Brand_Required' ) ){
@@ -71,7 +72,7 @@ switch ($_REQUEST['action']) {
 		$was_updated	 = true;
 		$brand			 = new DUP_PRO_Brand_Entity();
 		$brand->id      = DUP_PRO_U::setVal($_POST['id'], '-1');
-        $brand->name	 = DUP_PRO_U::setVal($_POST['name'], 'New Brand');
+        $brand->name	 = DUP_PRO_U::setVal($_POST['name'], DUP_PRO_U::__('New Brand'));
         $brand->active	 = DUP_PRO_U::isEmpty((isset($_POST['active']) ? true : false), false);
         $brand->attachments( DUP_PRO_U::isEmpty((isset($_POST['attachments']) ? $_POST['attachments'] : array()), array()) );
 		$brand->notes	 = DUP_PRO_U::setVal($_POST['notes'], '');
@@ -129,7 +130,7 @@ TOOL-BAR -->
 		<td></td>
 		<td>
 			<div class="btnnav">
-				<a href="<?php echo $brand_list_url; ?>" class="add-new-h2"> <i class="fa fa-photo"></i> <?php DUP_PRO_U::esc_html_e('Brands'); ?></a>
+				<a href="<?php echo $brand_list_url; ?>" class="add-new-h2"> <i class="far fa-image"></i> <?php DUP_PRO_U::esc_html_e('Brands'); ?></a>
 				<?php if ($_REQUEST['action'] == 'new') : ?>
 					<span><?php DUP_PRO_U::esc_html_e('Add New'); ?></span>
 				<?php else: ?>
@@ -230,7 +231,7 @@ TOOL-BAR -->
 					</div>
 					<div class="preview-version">
 						<?php DUP_PRO_U::esc_html_e("version: "); echo DUPLICATOR_PRO_VERSION; ?> <br/>
-						» <a href="javascript:void(0)"><?php DUP_PRO_U::esc_html_e("info"); ?></a> » <a href="javascript:void(0)"><?php DUP_PRO_U::esc_html_e("help"); ?></a> <i class="fa fa-question-circle"></i>
+						» <a href="javascript:void(0)"><?php DUP_PRO_U::esc_html_e("info"); ?></a> » <a href="javascript:void(0)"><?php DUP_PRO_U::esc_html_e("help"); ?></a> <i class="fas fa-question-circle fa-sm"></i>
 					</div>
 				</div>
 				<div class="preview-content">
@@ -442,13 +443,13 @@ THICK-BOX DIALOGS: -->
                     if($(e.currentTarget).hasClass('preview-area')) $debounce = 200;
                 }
 
-            //    $button.find('.fa-circle-o-notch').remove();
-            //    if(!$(e.currentTarget).hasClass('button')) $button.prop('disabled',true).prepend('<i class="fa fa-circle-o-notch fa-spin"></i> ');
+            //    $button.find('.fa-circle-notch').remove();
+            //    if(!$(e.currentTarget).hasClass('button')) $button.prop('disabled',true).prepend('<i class="fas fa-circle-notch fa-spin"></i> ');
 
                 DupPro.Settings.Debounce = setTimeout(function() {
                     var $value = $this.val();
 
-                //    $button.prop('disabled',false).find('.fa-circle-o-notch').remove();
+                //    $button.prop('disabled',false).find('.fa-circle-notch').remove();
                     $this.val(strip_tags($value,'<a><i><b><u><em><ins><div><img><span><strong>'));
 
                     // Do preview

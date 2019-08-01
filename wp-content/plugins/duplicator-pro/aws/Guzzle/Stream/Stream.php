@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Stream;
 
 use DuplicatorPro\Guzzle\Common\Exception\InvalidArgumentException;

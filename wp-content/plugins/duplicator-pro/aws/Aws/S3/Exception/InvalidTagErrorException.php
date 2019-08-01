@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * The Tag provided was not a valid tag. This can occur if the Tag did not pass input validation. See the
  * CostAllocation docs for a description of valid tags.

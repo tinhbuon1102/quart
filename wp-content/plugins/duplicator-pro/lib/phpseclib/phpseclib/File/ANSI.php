@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP ANSI Decoder
  *
@@ -19,7 +18,7 @@
  */
 
 namespace phpseclib\File;
-
+defined("ABSPATH") or die("");
 /**
  * Pure-PHP ANSI Decoder
  *

@@ -1,23 +1,21 @@
 <?php
-defined("ABSPATH") or die("");
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 /**
  * Used to generate a thick box inline dialog such as an alert or confirm pop-up
  *
+ *
  * Standard: PSR-2
  * @link http://www.php-fig.org/psr/psr-2
  *
- * @package DUP_PRO
+ * @package Duplicator
  * @subpackage classes/ui
  * @copyright (c) 2017, Snapcreek LLC
- * @license	https://opensource.org/licenses/GPL-3.0 GNU Public License
- * @since 3.7.9
- *
  */
+
 class DUP_PRO_UI_Messages
 {
-    
-    const UNIQUE_ID_PREFIX = 'dup_pro_ui_msg_';
+    const UNIQUE_ID_PREFIX = 'dup_ui_msg_';
     const NOTICE           = 'updated';
     const WARNING          = 'update-nag';
     const ERROR            = 'error';
@@ -29,6 +27,10 @@ class DUP_PRO_UI_Messages
     public $wrap_cont_tag     = 'p';
     public $hide_on_init      = true;
     public $is_dismissible    = false;
+    /**
+     *
+     * @var int delay in milliseconds
+     */
     public $auto_hide_delay   = 0;
     public $callback_on_show  = null;
     public $callback_on_hide  = null;
@@ -60,7 +62,7 @@ class DUP_PRO_UI_Messages
         return trim(implode(' ', $result));
     }
 
-    public function initMessage()
+    public function initMessage($jsBodyAppend = false)
     {
         $classes = array();
         if ($this->hide_on_init) {
@@ -68,17 +70,23 @@ class DUP_PRO_UI_Messages
         }
 
         $this->wrap_tag = empty($this->wrap_tag) ? 'p' : $this->wrap_tag;
-        echo '<div id="'.$this->id.'" class="'.$this->get_notice_classes($classes).'">'.
-        '<'.$this->wrap_cont_tag.' class="msg-content">'.
-        $this->content.
-        '</'.$this->wrap_cont_tag.'>'.
-        '</div>';
+        $result         = '<div id="'.$this->id.'" class="'.$this->get_notice_classes($classes).'">'.
+            '<'.$this->wrap_cont_tag.' class="msg-content">'.
+            $this->content.
+            '</'.$this->wrap_cont_tag.'>'.
+            '</div>';
+
+        if ($jsBodyAppend) {
+            echo '$("body").append('.DupProSnapJsonU::wp_json_encode($result).');';
+        } else {
+            echo $result;
+        }
     }
 
     public function updateMessage($jsVarName, $echo = true)
     {
         $result = 'jQuery("#'.$this->id.' > .msg-content").html('.$jsVarName.');';
-        
+
         if ($echo) {
             echo $result;
         } else {
@@ -89,7 +97,9 @@ class DUP_PRO_UI_Messages
     public function showMessage($echo = true)
     {
         $callStr = !empty($this->callback_on_show) ? $this->callback_on_show.';' : '';
-        $result  = 'jQuery("#'.$this->id.'").fadeIn( "slow", function() { $(this).removeClass("no_display");'.$callStr.' });';
+        $result = '$("body, html").animate({ scrollTop: 0 }, 500 );';
+        $result .= 'jQuery("#'.$this->id.'").fadeIn( "slow", function() { $(this).removeClass("no_display");'.$callStr.' });';
+
         if ($this->auto_hide_delay > 0) {
             $result .= 'setTimeout(function () { '.$this->hideMessage(false).' }, '.$this->auto_hide_delay.');';
         }

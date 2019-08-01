@@ -15,7 +15,7 @@ function _DuplicatorPro_Logging_Page_CustomSort($a, $b) {
 
 if ($logs != false && count($logs)) {
 	usort($logs, '_DuplicatorPro_Logging_Page_CustomSort');
-	@chmod(DUP_PRO_U::safePath($logs[0]), 0644);
+	DupProSnapLibIOU::chmod(DUP_PRO_U::safePath($logs[0]), 0644);
 }
 
 $logname = (isset($_GET['logname'])) ? trim($_GET['logname']) : "";

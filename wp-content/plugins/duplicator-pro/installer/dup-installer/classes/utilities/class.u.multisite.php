@@ -1,5 +1,5 @@
 <?php
-defined("DUPXABSPATH") or die("");
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 require_once($GLOBALS['DUPX_INIT'].'/classes/class.db.php');
 require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.archive.config.php');
 
@@ -17,7 +17,7 @@ class DUPX_MU
 
     public static function convertSubsiteToStandalone($subsite_id, $dbh, $ac, $wp_content_dir, $remove_redundant = false)
     {
-        DUPX_Log::info("#### Convert subsite to standalone {$subsite_id}");
+        DUPX_Log::info("STANDALONE: Convert to standalone subsite id ".DUPX_Log::varToString($subsite_id));
         $base_prefix = $ac->wp_tableprefix;
         //Had to move this up, so we can update the active_plugins option before it gets moved.
         self::makeSubsiteFilesStandalone($subsite_id, $wp_content_dir, $dbh, $ac, $remove_redundant);
@@ -27,36 +27,53 @@ class DUPX_MU
     // Convert subsite tables to be standalone by proper renaming (both core and custom subsite table)
     public static function renameSubsiteTablesToStandalone($subsite_id, $dbh, $base_prefix)
     {
+        $s3Funcs = DUPX_S3_Funcs::getInstance();
+        $nManager = DUPX_NOTICE_MANAGER::getInstance();
+
+        // For non-main subsite we need to move around some tables and files
+        $subsite_prefix = "{$base_prefix}{$subsite_id}_";
+        $subsite_table_names = self::getSubsiteTables($subsite_id, $dbh, $base_prefix);
+
+        $all_table_names = DUPX_DB::queryColumnToArray($dbh, "SHOW TABLES");
+        DUPX_Log::info("STANDALONE: rename tables");
+        DUPX_Log::incIndent();
+        DUPX_Log::info("all table names \n".print_r($all_table_names, true)."----------------------------", DUPX_Log::LV_DETAILED);
+        DUPX_Log::info("subsite tables to standalone. table names\n".print_r($subsite_table_names, true)."----------------------------", DUPX_Log::LV_DETAILED);
+
+        foreach ($subsite_table_names as $table_name) {
+            $new_table_name = str_ireplace($subsite_prefix, $base_prefix, $table_name);
+            if (DUPX_DB::tableExists($dbh, $new_table_name, $all_table_names)) {
+                // If a table with that name already exists just back it up
+                $backup_table_name = "{$new_table_name}_orig";
+                $msg = "table ".$new_table_name.' already exists so renaming to '.$backup_table_name;
+                DUPX_Log::info($msg);
+
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => 'table already exists so renaming',
+                    'longMsg' => $msg,
+                    'level' => DUPX_NOTICE_ITEM::NOTICE,
+                    'sections' => array('database'),
+                ));
+                $nManager->saveNotices();
+
+                DUPX_DB::renameTable($dbh, $new_table_name, $backup_table_name, true);
+            }
+            DUPX_DB::renameTable($dbh, $table_name, $new_table_name);
+            $s3Funcs->addTable($new_table_name);
+            DUPX_Log::info("table ".$table_name.' renamed to '.$new_table_name);
+        }
+        DUPX_Log::resetIndent();
+    }
+
+    public static function getSubsiteTables($subsite_id, $dbh, $base_prefix) {
         // For non-main subsite we need to move around some tables and files
         $subsite_prefix = "{$base_prefix}{$subsite_id}_";
 
         $escaped_subsite_prefix = self::escSQLSimple($subsite_prefix);
 
-        $all_table_names     = DUPX_DB::queryColumnToArray($dbh, "SHOW TABLES");
         $subsite_table_names = DUPX_DB::queryColumnToArray($dbh, "SHOW TABLES LIKE '{$escaped_subsite_prefix}%'");
 
-        DUPX_Log::info("####rename subsite tables to standalone. table names = ".print_r($subsite_table_names, true));
-
-        foreach ($subsite_table_names as $table_name) {
-            DUPX_Log::info("####considering table $table_name");
-            $new_table_name = str_ireplace($subsite_prefix, $base_prefix, $table_name);
-
-            DUPX_Log::info("####does $new_table_name exist?");
-            if (DUPX_DB::tableExists($dbh, $new_table_name, $all_table_names)) {
-                DUPX_Log::info("####yes it does");
-                // If a table with that name already exists just back it up
-                $backup_table_name = "{$new_table_name}_orig";
-
-                DUPX_Log::info("A table named $new_table_name already exists so renaming to $backup_table_name.");
-
-                DUPX_DB::renameTable($dbh, $new_table_name, $backup_table_name, true);
-            } else {
-                DUPX_Log::info("####no it doesn't");
-            }
-
-            DUPX_DB::renameTable($dbh, $table_name, $new_table_name);
-            DUPX_Log::info("####renamed $table_name $new_table_name");
-        }
+        return $subsite_table_names;
     }
 
     // <editor-fold defaultstate="collapsed" desc="PRIVATE METHODS">
@@ -65,17 +82,17 @@ class DUPX_MU
     {
         $success = true;
         $archive_config = DUPX_ArchiveConfig::getInstance();
+        $nManager = DUPX_NOTICE_MANAGER::getInstance();
+
         $is_old_mu = $archive_config->mu_generation === 1 ? true : false;
         $subsite_blogs_dir = $wp_content_dir.'/blogs.dir';
         $uploads_dir       = $wp_content_dir.'/uploads';
         $uploads_sites_dir = $is_old_mu ? $subsite_blogs_dir : $uploads_dir.'/sites';
         $subsite_id = (int)$subsite_id;
 
-        DUPX_Log::info("#### Make subsite files standalone for {$subsite_id} in content dir {$wp_content_dir}");
-
+        DUPX_Log::info("STANDALONE: wp content dir ".DUPX_Log::varToString($wp_content_dir),DUPX_Log::LV_DETAILED);
         if ($subsite_id === 1) {
             try {
-                DUPX_Log::info("#### Since subsite is one deleting the entire upload sites dir");
                 if(!$is_old_mu){
                     DUPX_U::deleteDirectory($uploads_sites_dir, true);
                 }
@@ -84,28 +101,30 @@ class DUPX_MU
                 }
             } catch (Exception $ex) {
                 //RSR TODO: Technically it can complete but this should be brought to their attention more than just writing info
-                DUPX_Log::info("Problem deleting $uploads_sites_dir. {$ex->getMessage()}");
+                DUPX_Log::info("STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_sites_dir)." MSG: ".$ex->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => 'Problem deleting sites directory',
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_sites_dir)."\nMSG: ".$ex->getMessage(),
+                    'sections' => 'files'
+                    ));
             }
         } else {
             $subsite_uploads_dir = $is_old_mu? "{$uploads_sites_dir}/{$subsite_id}/files" :"{$uploads_sites_dir}/{$subsite_id}";
-
-            DUPX_Log::info("#### Subsites uploads dir={$subsite_uploads_dir}");
+            DUPX_Log::info("STANDALONE: uploads dir ".DUPX_Log::varToString($subsite_uploads_dir));
 
             try {
-                DUPX_Log::info("#### Recursively deleting $uploads_dir except subdirectory sites");
-
                 // Get a list of all files/subdirectories within the core uploads dir. For all 'non-sites' directories do a recursive delete. For all files, delete.
-
                 if (file_exists($uploads_dir)) {
                     $filenames = array_diff(scandir($uploads_dir), array('.', '..'));
                     foreach ($filenames as $filename) {
                         $full_path = "$uploads_dir/$filename";
                         if (is_dir($full_path)) {
-                            DUPX_Log::info("#### Recursively deleting $full_path");
                             if ($filename != 'sites' || $is_old_mu) {
+                                DUPX_Log::info("STANDALONE: Recursively deleting ".DUPX_Log::varToString($full_path),DUPX_Log::LV_DETAILED);
                                 DUPX_U::deleteDirectory($full_path, true);
                             } else {
-                                DUPX_Log::info("#### Skipping $full_path");
+                                DUPX_Log::info("STANDALONE: Skipping ".DUPX_Log::varToString($full_path),DUPX_Log::LV_DETAILED);
                             }
                         } else {
                             $success = @unlink($full_path);
@@ -113,38 +132,59 @@ class DUPX_MU
                     }
                 }
             } catch (Exception $ex) {
-                // Technically it can complete but this should be brought to their attention
-                DUPX_Log::error("Problem deleting $uploads_dir");
+                DUPX_Log::info("STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_dir)." MSG: ".$ex->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => 'Problem deleting sites directory',
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_dir)."\nMSG: ".$ex->getMessage(),
+                    'sections' => 'files'
+                    ));
             }
 
-            DUPX_Log::info("#### Recursively copying {$subsite_uploads_dir} to {$uploads_dir}");
+            DUPX_Log::info("STANDALONE: copy ".DUPX_Log::varToString($subsite_uploads_dir).' TO '.DUPX_Log::varToString($uploads_dir));
             // Recursively copy files in /wp-content/uploads/sites/$subsite_id to /wp-content/uploads
             DUPX_U::copyDirectory($subsite_uploads_dir, $uploads_dir);
 
             try {
-                DUPX_Log::info("#### Recursively deleting $uploads_sites_dir");
+                DUPX_Log::info("STANDALONE: Recursively deleting ".DUPX_Log::varToString($uploads_sites_dir),DUPX_Log::LV_DETAILED);
                 // Delete /wp-content/uploads/sites (will get rid of all subsite directories)
                 DUPX_U::deleteDirectory($uploads_sites_dir, true);
             } catch (Exception $ex) {
-                // Technically it can complete but this should be brought to their attention
-                DUPX_Log::error("Problem deleting $uploads_sites_dir");
+                DUPX_Log::info("STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_sites_dir)." MSG: ".$ex->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => 'Problem deleting sites directory',
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE ERROR : Problem deleting ".DUPX_Log::varToString($uploads_sites_dir)."\nMSG: ".$ex->getMessage(),
+                    'sections' => 'files'
+                    ));
             }
         }
         if($remove_redundant){
+            DUPX_Log::info("STANDALONE: remove rendundant");
             try {
-                DUPX_Log::info("#### Set retain plugins");
                 self::setRetainPlugins($subsite_id, $dbh, $ac);
             } catch (Exception $ex) {
-                // Technically it can complete but this should be brought to their attention
                 DUPX_Log::error("Problem setting retain plugins");
+                DUPX_Log::info("STANDALONE ERROR : Problem setting retain plugins MSG: ".$ex->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => ' Problem setting retain plugins',
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE ERROR : Problem setting retain plugins MSG: ".$ex->getMessage(),
+                    'sections' => 'files'
+                    ));
             }
 
             try {
-                DUPX_Log::info("#### Set retain themes");
                 self::setRetainThemes($subsite_id, $dbh, $ac);
             } catch (Exception $ex) {
-                // Technically it can complete but this should be brought to their attention
                 DUPX_Log::error("Problem setting retain themes");
+                DUPX_Log::info("STANDALONE ERROR : Problem setting retain plugins MSG: ".$ex->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => ' Problem setting retain themes',
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE ERROR : Problem setting retain themes MSG: ".$ex->getMessage(),
+                    'sections' => 'files'
+                    ));
             }
         }
 
@@ -216,11 +256,9 @@ class DUPX_MU
     // If necessary, removes extra tables and renames
     public static function makeSubsiteDatabaseStandalone($subsite_id, $dbh, $base_prefix, $remove_redundant)
     {
-        DUPX_Log::info("#### make subsite_database_standalone {$subsite_id}");
         $subsite_id = (int)$subsite_id;
         self::purgeOtherSubsiteTables($subsite_id, $dbh, $base_prefix);
         self::purgeRedundantData($subsite_id, $dbh, $base_prefix, $remove_redundant);
-
         if ($subsite_id !== 1) {
             // RSR DO THIS??		self::copy_data_to_subsite_table($subsite_id, $dbh, $base_prefix);
             self::renameSubsiteTablesToStandalone($subsite_id, $dbh, $base_prefix);
@@ -282,25 +320,23 @@ class DUPX_MU
         }
 
         /* -- Purge from usermeta data -- */
+        DUPX_Log::info("STANDALONE: Purge from usermeta data");
         foreach ($subsite_ids as $subsite_id) {
             $subsite_prefix = self::getSubsitePrefix($subsite_id, $base_prefix);
-
             $escaped_subsite_prefix = self::escSQLSimple($subsite_prefix);
-
-            DUPX_Log::info("#### purging redundant data. Considering {$subsite_prefix}");
+            DUPX_Log::info("STANDALONE: purging redundant data. Considering ".DUPX_Log::varToString($subsite_prefix));
 
             // RSR TODO: remove records that mention
             if ($subsite_id != $retained_subsite_id) {
                 $sql = "DELETE FROM $usermeta_table_name WHERE meta_key like '{$escaped_subsite_prefix}%'";
 
-                DUPX_Log::info("#### {$subsite_id} != {$retained_subsite_id} so executing {$sql}");
-
+                DUPX_Log::info("STANDALONE: {$subsite_id} != {$retained_subsite_id} so executing {$sql}",DUPX_Log::LV_DEBUG);
                 DUPX_DB::queryNoReturn($dbh, $sql);
 
                 //$sql = "SELECT * FROM $usermeta_table_name WHERE meta_key like '{$escaped_subsite_prefix}%'";
-                //DUPX_Log::info("#### {$subsite_id} != {$retained_subsite_id} so executing {$sql}");
+                //DUPX_Log::info("{$subsite_id} != {$retained_subsite_id} so executing {$sql}");
                 //$ret_val = DUPX_DB::queryToArray($dbh, $sql);
-                //DUPX_Log::info("#### return value = " . print_r($ret_val, true));
+                //DUPX_Log::info("return value = " . print_r($ret_val, true));
             }
         }
 
@@ -321,15 +357,15 @@ class DUPX_MU
 			// Delete the option name if it already exists
 			$purge_sql = "DELETE FROM {$options_table_name} WHERE option_name='{$new_option_name}'";
 
-			DUPX_Log::Info("#### executing purge_sql {$purge_sql}");
+			DUPX_Log::Info("\nSTANDALONE: executing purge_sql ".DUPX_Log::varToString($purge_sql));
 			DUPX_DB::queryNoReturn($dbh, $purge_sql);
 
-			DUPX_Log::Info("#### executing option rename $sql");
+            DUPX_Log::Info("\nSTANDALONE: executing option rename ".DUPX_Log::varToString($sql));
             DUPX_DB::queryNoReturn($dbh, $sql);
 
 
             //	$sql = "DELETE FROM $usermeta_table_name WHERE meta_key LIKE '$escaped_base_prefix%' AND meta_key NOT LIKE '$escaped_retained_subsite_prefix%'";
-            //	DUPX_Log::info("#### Subsite {$retained_subsite_id} != 1 so deleting all data with base_prefix and not like retained prefix. SQL= {$sql}");
+            //	DUPX_Log::info("Subsite {$retained_subsite_id} != 1 so deleting all data with base_prefix and not like retained prefix. SQL= {$sql}");
             //	DUPX_DB::queryNoReturn($dbh, $sql);
         }
     }
@@ -379,42 +415,42 @@ class DUPX_MU
     {
         // termmeta table introduced in WP 4.4
         $common_table_names = array('commentmeta', 'comments', 'links', 'options', 'postmeta', 'posts', 'terms', 'termmeta','term_relationships', 'term_taxonomy');
-
+        $nManager = DUPX_NOTICE_MANAGER::getInstance();
+        
         $subsite_ids = self::getSubsiteIDs($dbh, $base_prefix);
 
         $escaped_base_prefix = self::escSQLSimple($base_prefix);
 
-        DUPX_Log::info("#### retained subsite id={$retained_subsite_id}");
-        DUPX_Log::info("#### subsite ids=".print_r($subsite_ids, true));
+        DUPX_Log::info('STANDALONE: subsite ids: '.implode(', ',$subsite_ids), DUPX_Log::LV_DETAILED);
 
         // Purge all tables belonging to other subsites
         foreach ($subsite_ids as $subsite_id) {
             if (($subsite_id != $retained_subsite_id) && ($subsite_id > 1)) {
-                DUPX_Log::info("#### deleting subsite $subsite_id");
+                DUPX_Log::info('STANDALONE: deleting subsite '.DUPX_Log::varToString($subsite_id), DUPX_Log::LV_DETAILED);
                 $subsite_prefix = "{$base_prefix}{$subsite_id}_";
-
                 $escaped_subsite_prefix = self::escSQLSimple($subsite_prefix);
 
-                DUPX_Log::info("#### subsite prefix {$subsite_prefix} escaped prefix={$escaped_subsite_prefix}");
-
+                DUPX_Log::info("STANDALONE: subsite prefix ".DUPX_Log::varToString($subsite_prefix)." escaped prefix ".DUPX_Log::varToString($escaped_subsite_prefix), DUPX_Log::LV_DETAILED);
                 $subsite_table_names = DUPX_DB::queryColumnToArray($dbh, "SHOW TABLES LIKE '{$escaped_subsite_prefix}%'");
 
-                DUPX_Log::infoObject("#### subsite table names for $subsite_id", $subsite_table_names);
-
-                //foreach($common_table_names as $common_table_name)
                 foreach ($subsite_table_names as $subsite_table_name) {
                     //$subsite_table_name = "{$subsite_prefix}{$common_table_name}";
 
-                    DUPX_Log::info("#### subsite table name $subsite_table_name");
                     try {
+                        DUPX_Log::info("STANDALONE: drop table ".DUPX_Log::varToString($subsite_table_name));
                         DUPX_DB::dropTable($dbh, $subsite_table_name);
-                    } catch (Exception $ex) {
-                        //RSR TODO Non catostrophic but should be brought to their attention - put in final report
-                        DUPX_Log::info("Error dropping table $subsite_table_name");
+                    } catch (Exception $e) {
+                        DUPX_Log::info("STANDALONE: Error dropping table ".DUPX_Log::varToString($subsite_table_name).' MSG:'.$e->getMessage());
+                        $nManager->addFinalReportNotice(array(
+                            'shortMsg' => 'Error dropping table '.$subsite_table_name,
+                            'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                            'longMsg' => "STANDALONE: Error dropping table ".DUPX_Log::varToString($subsite_table_name)."\nMSG:".$e->getMessage(),
+                            'sections' => 'database'
+                        ));
                     }
                 }
             } else {
-                DUPX_Log::info("#### skipping subsite $subsite_id");
+                DUPX_Log::info('STANDALONE: skipping subsite '.DUPX_Log::varToString($subsite_id), DUPX_Log::LV_DETAILED);
             }
         }
 
@@ -431,7 +467,8 @@ class DUPX_MU
     // Purge all subsite tables other than the one indicated by $retained_subsite_id
     private static function purgeMultisiteTables($dbh, $base_prefix)
     {
-        $multisite_table_names = array('blogs', 'blog_versions', 'registration_log', 'signups', 'site', 'sitemeta');
+        $multisite_table_names = array('blogs', 'blog_versions', 'blogmeta', 'registration_log', 'signups', 'site', 'sitemeta');
+        $nManager = DUPX_NOTICE_MANAGER::getInstance();
 
         // Remove multisite specific tables
         foreach ($multisite_table_names as $multisite_table_name) {
@@ -439,9 +476,14 @@ class DUPX_MU
 
             try {
                 DUPX_DB::dropTable($dbh, $full_table_name);
-            } catch (Exception $ex) {
-                //RSR TODO Non catostrophic but should be brought to their attention - put in final report
-                DUPX_Log::info("Error dropping table $full_table_name");
+            } catch (Exception $e) {
+                DUPX_Log::info("STANDALONE: Error dropping table ".DUPX_Log::varToString($full_table_name).' MSG:'.$e->getMessage());
+                $nManager->addFinalReportNotice(array(
+                    'shortMsg' => 'Error dropping table '.$full_table_name,
+                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg' => "STANDALONE: Error dropping table ".DUPX_Log::varToString($full_table_name)."\nMSG:".$e->getMessage(),
+                    'sections' => 'database'
+                ));
             }
         }
     }

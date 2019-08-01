@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 if (!class_exists('Duplicator_Pro_Google_Client')) {
   require_once dirname(__FILE__) . '/autoload.php';
 }

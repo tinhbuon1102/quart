@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 /**
  * Abstract decorator to provide a foundation for refreshable credentials
  */

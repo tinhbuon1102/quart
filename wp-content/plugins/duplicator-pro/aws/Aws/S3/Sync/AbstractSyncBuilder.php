@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Sync;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\RuntimeException;
 use DuplicatorPro\Aws\Common\Exception\UnexpectedValueException;
 use DuplicatorPro\Aws\S3\S3Client;

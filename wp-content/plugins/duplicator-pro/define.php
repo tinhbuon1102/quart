@@ -1,10 +1,15 @@
 <?php
-
-defined("ABSPATH") or die("");
+defined('ABSPATH') || exit;
 
 //Prevent directly browsing to the file
 if (function_exists('plugin_dir_url')) {
-    define('DUPLICATOR_PRO_VERSION', '3.8.1');
+
+    // For compatibility to an older WP
+    if (!defined('KB_IN_BYTES'))  define('KB_IN_BYTES', 1024);
+    if (!defined('MB_IN_BYTES'))  define('MB_IN_BYTES', 1024 * KB_IN_BYTES);
+    if (!defined('GB_IN_BYTES'))  define('GB_IN_BYTES', 1024 * MB_IN_BYTES);
+
+    define('DUPLICATOR_PRO_VERSION', '3.8.4.1');
     define('DUPLICATOR_PRO_LIMIT_UPLOAD_VERSION', '3.3.0.0'); // Limit Drag & Drop`
     define('DUPLICATOR_PRO_GIFT_THIS_RELEASE', false); // Display Gift - should be true for new features OR if we want them to fill out survey
     define('DUPLICATOR_PRO_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -45,7 +50,7 @@ if (function_exists('plugin_dir_url')) {
     define('DUPLICATOR_PRO_CERT_PATH', apply_filters('duplicator_pro_certificate_path', DUPLICATOR_PRO_LIB_PATH.'/certificates/cacert.pem'));
 
     //RESTRAINT CONSTANTS
-    define("DUPLICATOR_PRO_PHP_MAX_MEMORY", '5000M');
+    if (!defined('DUPLICATOR_PRO_PHP_MAX_MEMORY'))  define('DUPLICATOR_PRO_PHP_MAX_MEMORY', 4096 * MB_IN_BYTES);
     define("DUPLICATOR_PRO_DB_MAX_TIME", 5000);
     define("DUPLICATOR_PRO_DB_EOF_MARKER", 'DUPLICATOR_PRO_MYSQLDUMP_EOF');
     define("DUPLICATOR_PRO_SCAN_SITE_ZIP_ARCHIVE_WARNING_SIZE", 367001600); //350MB
@@ -65,11 +70,6 @@ if (function_exists('plugin_dir_url')) {
 
     define("DUPLICATOR_PRO_SCAN_MIN_WP", "4.6.0");
 
-    // For compatibility to an older WP
-    if (!defined('KB_IN_BYTES'))  define('KB_IN_BYTES', 1024);
-    if (!defined('MB_IN_BYTES'))  define('MB_IN_BYTES', 1024 * KB_IN_BYTES);
-    if (!defined('GB_IN_BYTES'))  define('GB_IN_BYTES', 1024 * MB_IN_BYTES);
-
     $GLOBALS['DUPLICATOR_PRO_SERVER_LIST'] = array('Apache', 'LiteSpeed', 'Nginx', 'Lighttpd', 'IIS', 'WebServerX', 'uWSGI');
     $GLOBALS['DUPLICATOR_PRO_OPTS_DELETE'] = array('duplicator_pro_ui_view_state', 'duplicator_pro_package_active', 'duplicator_pro_settings');
 
@@ -81,8 +81,9 @@ if (function_exists('plugin_dir_url')) {
     $_dup_pro_wp_root = rtrim(DUPLICATOR_PRO_WPROOTPATH, '/');
     $_dup_pro_wp_content = str_replace("\\", "/", WP_CONTENT_DIR);
     $_dup_pro_wp_content_upload = "{$_dup_pro_wp_content}/{$_dup_pro_upload_dir}";
+    
     $GLOBALS['DUPLICATOR_PRO_GLOBAL_FILE_FILTERS_ON'] = true;
-    $GLOBALS['DUPLICATOR_PRO_GLOBAL_FILE_FILTERS'] = array(
+    $GLOBALS['DUPLICATOR_PRO_GLOBAL_FILE_FILTERS']    = array(
         'error_log',
         'error.log',
         'debug_log',
@@ -90,41 +91,41 @@ if (function_exists('plugin_dir_url')) {
         'dbcache',
         'pgcache',
         'objectcache',
-		'.DS_Store'
+        '.DS_Store'
     );
-
-    $GLOBALS['DUPLICATOR_PRO_GLOBAL_DIR_FILTERS_ON'] = true;
-    $GLOBALS['DUPLICATOR_PRO_GLOBAL_DIR_FILTERS'] = array(
+    $GLOBALS['DUPLICATOR_PRO_GLOBAL_DIR_FILTERS_ON']  = true;
+    $GLOBALS['DUPLICATOR_PRO_GLOBAL_DIR_FILTERS']     = array(
         //WP-ROOT
-        $_dup_pro_wp_root . '/wp-snapshots',
+        $_dup_pro_wp_root.'/wp-snapshots',
+        $_dup_pro_wp_root.'/.opcache',
         //WP-CONTENT
-        $_dup_pro_wp_content . '/ai1wm-backups',
-        $_dup_pro_wp_content . '/backupwordpress',
-        $_dup_pro_wp_content . '/content/cache',
-        $_dup_pro_wp_content . '/contents/cache',
-        $_dup_pro_wp_content . '/infinitewp/backups',
-        $_dup_pro_wp_content . '/managewp/backups',
-        $_dup_pro_wp_content . '/old-cache',
-        $_dup_pro_wp_content . '/plugins/all-in-one-wp-migration/storage',
-        $_dup_pro_wp_content . '/updraft',
-        $_dup_pro_wp_content . '/wishlist-backup',
-        $_dup_pro_wp_content . '/wfcache',
-        $_dup_pro_wp_content . '/plugins/really-simple-captcha/tmp',
-        $_dup_pro_wp_content . '/plugins/wordfence/tmp',
-        $_dup_pro_wp_content . '/cache',
+        $_dup_pro_wp_content.'/ai1wm-backups',
+        $_dup_pro_wp_content.'/backupwordpress',
+        $_dup_pro_wp_content.'/content/cache',
+        $_dup_pro_wp_content.'/contents/cache',
+        $_dup_pro_wp_content.'/infinitewp/backups',
+        $_dup_pro_wp_content.'/managewp/backups',
+        $_dup_pro_wp_content.'/old-cache',
+        $_dup_pro_wp_content.'/plugins/all-in-one-wp-migration/storage',
+        $_dup_pro_wp_content.'/updraft',
+        $_dup_pro_wp_content.'/wishlist-backup',
+        $_dup_pro_wp_content.'/wfcache',
+        $_dup_pro_wp_content.'/plugins/really-simple-captcha/tmp',
+        $_dup_pro_wp_content.'/plugins/wordfence/tmp',
+        $_dup_pro_wp_content.'/cache',
         //WP-CONTENT-UPLOADS
-        $_dup_pro_wp_content_upload . '/aiowps_backups',
-        $_dup_pro_wp_content_upload . '/backupbuddy_temp',
-        $_dup_pro_wp_content_upload . '/backupbuddy_backups',
-        $_dup_pro_wp_content_upload . '/ithemes-security/backups',
-        $_dup_pro_wp_content_upload . '/mainwp/backup',
-        $_dup_pro_wp_content_upload . '/pb_backupbuddy',
-        $_dup_pro_wp_content_upload . '/snapshots',
-        $_dup_pro_wp_content_upload . '/sucuri',
-        $_dup_pro_wp_content_upload . '/wp-clone',
-        $_dup_pro_wp_content_upload . '/wp_all_backup',
-        $_dup_pro_wp_content_upload . '/wpbackitup_backups',
-        $_dup_pro_wp_content_upload . '/backup-guard'
+        $_dup_pro_wp_content_upload.'/aiowps_backups',
+        $_dup_pro_wp_content_upload.'/backupbuddy_temp',
+        $_dup_pro_wp_content_upload.'/backupbuddy_backups',
+        $_dup_pro_wp_content_upload.'/ithemes-security/backups',
+        $_dup_pro_wp_content_upload.'/mainwp/backup',
+        $_dup_pro_wp_content_upload.'/pb_backupbuddy',
+        $_dup_pro_wp_content_upload.'/snapshots',
+        $_dup_pro_wp_content_upload.'/sucuri',
+        $_dup_pro_wp_content_upload.'/wp-clone',
+        $_dup_pro_wp_content_upload.'/wp_all_backup',
+        $_dup_pro_wp_content_upload.'/wpbackitup_backups',
+        $_dup_pro_wp_content_upload.'/backup-guard'
     );
 } else {
     error_reporting(0);

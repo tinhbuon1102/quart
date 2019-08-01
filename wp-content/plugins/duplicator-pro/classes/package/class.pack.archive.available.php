@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 class DUP_PRO_Archive_Available{
 
     private $memory_usage = 1024; // Default on many PHP settings is 131072

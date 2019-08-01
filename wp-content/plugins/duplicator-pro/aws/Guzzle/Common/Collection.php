@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Common;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Exception\InvalidArgumentException;
 use DuplicatorPro\Guzzle\Common\Exception\RuntimeException;

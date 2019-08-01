@@ -32,8 +32,8 @@ $openbase	= ini_get("open_basedir");
 $datetime1	= $GLOBALS['DUPX_AC']->created;
 $datetime2	= date("Y-m-d H:i:s");
 $fulldays	= round(abs(strtotime($datetime1) - strtotime($datetime2))/86400);
-$root_path	= SnapLibIOU::safePath($GLOBALS['DUPX_ROOT'], true);
-$archive_path = SnapLibIOU::safePath($GLOBALS['FW_PACKAGE_PATH'], true);
+$root_path	= DupProSnapLibIOU::safePath($GLOBALS['DUPX_ROOT'], true);
+$archive_path = DupProSnapLibIOU::safePath($GLOBALS['FW_PACKAGE_PATH'], true);
 $wpconf_path = "{$root_path}/wp-config.php";
 $max_time_zero = ($GLOBALS['DUPX_ENFORCE_PHP_INI']) ? false : @set_time_limit(0);
 $max_time_size = 314572800;  //300MB
@@ -68,6 +68,13 @@ if ($GLOBALS['DUPX_AC']->exportOnlyDB) {
 						? 'Good' 
 						: 'Warn';
 }
+
+$space_free = @disk_free_space($GLOBALS['DUPX_ROOT']); 
+$archive_size = filesize($GLOBALS['FW_PACKAGE_PATH']);
+$notice['100'] = ($space_free && $archive_size > $space_free) 
+                    ? 'Warn'
+                    : 'Good';
+
 $all_notice = in_array('Warn', $notice) ? 'Warn' : 'Good';
 
 //SUMMATION
@@ -85,17 +92,18 @@ $archive_config			= DUPX_ArchiveConfig::getInstance();
 //MULTISITE
 $show_multisite = ($archive_config->mu_mode !== 0) && (count($archive_config->subsites) > 0);
 $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::BusinessGold);
+
 ?>
 
 <form id="s1-input-form" method="post" class="content-form">
     <input type="hidden" name="view" value="step1" />
-    <input type="hidden" name="csrf_token" value="<?php echo DUPX_CSRF::generate('step1'); ?>">
+    <input type="hidden" name="csrf_token" value="<?php echo DUPX_U::esc_attr(DUPX_CSRF::generate('step1')); ?>">
     <input type="hidden" name="secure-pass" value="<?php echo DUPX_U::esc_attr($_POST['secure-pass']); ?>" />
     <input type="hidden" name="bootloader" value="<?php echo DUPX_U::esc_attr($GLOBALS['BOOTLOADER_NAME']); ?>" />
 	<input type="hidden" name="archive" value="<?php echo DUPX_U::esc_attr($GLOBALS['FW_PACKAGE_PATH']); ?>" />    
 	<input type="hidden" name="ctrl_action" value="ctrl-step1" />
     <input type="hidden" name="ctrl_csrf_token" value="<?php echo DUPX_CSRF::generate('ctrl-step1'); ?>"> 
-    <input type="hidden" id="s1-input-form-extra-data" name="extra_data" />
+    <input type="hidden" id="s1-input-dawn-status" name="dawn_status" />
 
     <div class="hdr-main">
         Step <span class="step">1</span> of 4: Deployment
@@ -385,10 +393,9 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
 		<div class="info" id="s1-notice45">
 			<?php
                 $cssStyle   = $notice['45'] == 'Good' ? 'color:green' : 'color:red';
-				echo "<b style='{$cssStyle}'>You are migrating site from the PHP {$packagePHP} to the PHP {$currentPHP}</b>.<br/>"
-                    ."If the PHP version of your website PHP is different to the PHP version of your package 
-                    it might cause problems with proper functioning of your website and 
-                    may cause issues with some applications.<br/>";
+				echo "<b style='{$cssStyle}'>You are migrating site from PHP {$packagePHP} to PHP {$currentPHP}</b>.<br/>"
+                    ."If the PHP version of your website is different than the PHP version of your package 
+                    it MAY cause problems with the functioning of your website.<br/>";
                 ?>
             </div>
 
@@ -399,8 +406,8 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
 			<b>Open BaseDir:</b> <i><?php echo $notice['50'] == 'Good' ? "<i class='dupx-pass'>Disabled</i>" : "<i class='dupx-fail'>Enabled</i>"; ?></i>
 			<br/><br/>
 
-                If <a href="http://php.net/manual/en/ini.core.php#ini.open-basedir" target="_blank">open_basedir</a> is enabled and your
-                having issues getting your site to install properly; please work with your host and follow these steps to prevent issues:
+                If <a href="http://php.net/manual/en/ini.core.php#ini.open-basedir" target="_blank">open_basedir</a> is enabled and you're
+                having issues getting your site to install properly please work with your host and follow these steps to prevent issues:
                 <ol style="margin:7px; line-height:19px">
                     <li>Disable the open_basedir setting in the php.ini file</li>
                     <li>If the host will not disable, then add the path below to the open_basedir setting in the php.ini<br/>
@@ -449,18 +456,29 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
 		<div class="status <?php echo ($notice['80'] == 'Good') ? 'pass' : 'fail' ?>"><?php echo DUPX_U::esc_html($notice['80']); ?></div>
 		<div class="title" data-type="toggle" data-target="#s1-notice80"><i class="fa fa-caret-right"></i> wp-config.php file location</div>
 		<div class="info" id="s1-notice80">
-			The wp-config.php file have moved up one level and out of the wordpress root folder in package creation site. 
+			When this item shows a warning, it indicates the wp-config.php file was detected in the directory above the WordPress root folder on the source site. 
 			<br/><br/>
-			Duplicator Installer will place this wp-config.php file in the wordpress setup root folder of this installation site. It will not break anything in your installation site. It is just for your information.
+			The Duplicator Installer will place the wp-config.php file in the root folder of the WordPress installation. This will not affect operation of the site.
 		</div>
 
 		<!-- NOTICE 90 -->
 		<div class="status <?php echo ($notice['90'] == 'Good') ? 'pass' : 'fail' ?>"><?php echo DUPX_U::esc_html($notice['90']); ?></div>
 		<div class="title" data-type="toggle" data-target="#s1-notice90"><i class="fa fa-caret-right"></i> wp-content directory location</div>
 		<div class="info" id="s1-notice90">
-			The wp-content directory was out of the wordpress root folder in package creation site. 
+			When this item shows a warning, it indicates the wp-content directory was not in the WordPress root folder on the source site.
 			<br/><br/>
-			Duplicator Installer will place this wp-content directory in the wordpress setup root folder of this installation site. It will not break anything in your installation site. It is just for your information.
+			The Duplicator Installer will place the wp-content directory in the WordPress root folder of the WordPress installation. This will not affect operation of the site.
+		</div>
+
+        <!-- NOTICE 100 -->
+		<div class="status <?php echo ($notice['100'] == 'Good') ? 'pass' : 'fail' ?>"><?php echo DUPX_U::esc_html($notice['100']); ?></div>
+		<div class="title" data-type="toggle" data-target="#s1-notice100"><i class="fa fa-caret-right"></i> Sufficient disk space</div>
+		<div class="info" id="s1-notice100">
+        <?php
+        echo ($notice['100'] == 'Good')
+                ? 'You have sufficient disk space in your machine to extract the archive.'
+                : 'You don’t have sufficient disk space in your machine to extract the archive. Ask your host to increase disk space.'
+        ?>
 		</div>
         </div>
     </div>
@@ -479,7 +497,7 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
                 <label for="full-network">Restore entire multisite network</label><br/>
                 <input <?php if($multisite_disabled) {echo 'disabled';} ?> id="multisite-install-type" onclick="DUPX.enableSubsiteList(true);" type="radio" name="multisite-install-type" value="1">
                 <label for="multisite-install-type">Convert subsite
-                    <select id="subsite-id" name="subsite-id" style="width:200px" disabled>
+                    <select id="subsite-id" name="subsite_id" style="width:200px" disabled>
                         <?php foreach($archive_config->subsites as $subsite) :
                             if (property_exists($subsite, 'blogname')) {
                                 $label = $subsite->blogname.' ('.$subsite->name.')';
@@ -494,7 +512,7 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
                 </label>
             <?php else: ?>
                 Convert subsite
-                <select id="subsite-id" name="subsite-id" style="width:200px" <?php if($multisite_disabled) { echo 'disabled';}?>>
+                <select id="subsite-id" name="subsite_id" style="width:200px" <?php if($multisite_disabled) { echo 'disabled';}?>>
                     <?php foreach($archive_config->subsites as $subsite) : 
                         if (property_exists ( $subsite , 'blogname')) {
                             $label = $subsite->blogname.' ('.$subsite->name.')';
@@ -545,7 +563,7 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
     </div>
     <div id="s1-area-adv-opts" style="display:none">
         <div class="help-target">
-            <a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH']); ?>#help-s1" target="_blank"><i class="fa fa-question-circle"></i></a>
+            <?php DUPX_View_Funcs::helpIconLink('step1'); ?>
         </div><br/>
 
 	<div class="hdr-sub3">General</div>
@@ -553,34 +571,37 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
         <tr>
             <td>Extraction:</td>
             <td>
-                <?php $num_selections = ($archive_config->isZipArchive() ? 3 : 2); ?>
+                <?php 
+                $options = array();
+                $options[] = '<option '.($is_wpconfarc_present ? '' : 'disabled').' value="manual">Manual Archive Extraction '.($is_wpconfarc_present ? '' : '*').'</option>';
+                if ($archive_config->isZipArchive()) {
+                    //ZIP-ARCHIVE
+                    if ($zip_archive_enabled) {
+                        $options[] = '<option value="ziparchive">PHP ZipArchive</option>';
+                        $options[] = '<option value="ziparchivechunking" selected="true">PHP ZipArchive Chunking</option>';
+                    } else {
+                        $options[] = '<option value="ziparchive" disabled="true">PHP ZipArchive (not detected on server)</option>';
+                    }
+                    //SHELL-EXEC UNZIP
+                    if ($shell_exec_unzip_enabled) {
+                        if ($zip_archive_enabled) {
+                            $options[] = '<option value="shellexec_unzip" >Shell Exec Unzip</option>';
+                        } else {
+                            $options[] = '<option value="shellexec_unzip" selected="true">Shell Exec Unzip</option>';
+                        }
+                    } else {
+                        $options[] = '<option value="shellexec_unzip" disabled="true">Shell Exec Unzip (not detected on server)</option>';
+                    }
+                } else {
+                    $options[] = '<option value="duparchive" selected="true">DupArchive</option>';
+                }
+                $num_selections = count($options);
+                ?>
                 <select id="archive_engine" name="archive_engine" size="<?php echo $num_selections; ?>">
-					<option <?php echo ($is_wpconfarc_present ? '' : 'disabled'); ?> value="manual">Manual Archive Extraction <?php echo ($is_wpconfarc_present ? '' : '*'); ?></option>
                     <?php
-                        if($archive_config->isZipArchive()){
-
-                            //ZIP-ARCHIVE
-                            if ($zip_archive_enabled){
-                                echo '<option value="ziparchive">PHP ZipArchive</option>';
-                                echo '<option value="ziparchivechunking" selected="true">PHP ZipArchive Chunking</option>';
-                            } else {
-                                echo '<option value="ziparchive" disabled="true">PHP ZipArchive (not detected on server)</option>';
-                            }
-                            
-                            //SHELL-EXEC UNZIP
-                            if ($shell_exec_unzip_enabled) {
-                                 if($zip_archive_enabled) {
-                                    echo '<option value="shellexec_unzip" >Shell Exec Unzip</option>';
-                                 } else {
-                                    echo '<option value="shellexec_unzip" selected="true">Shell Exec Unzip</option>';
-                                 }
-                            } else {
-                                echo '<option value="shellexec_unzip" disabled="true">Shell Exec Unzip (not detected on server)</option>';
-                            }
-                    }
-                    else {
-                        echo '<option value="duparchive" selected="true">DupArchive</option>';
-                    }
+                        foreach($options as $opt) {
+                            echo $opt;
+                        }
                     ?>
                 </select><br/>
 				<?php if(!$is_wpconfarc_present) :?>
@@ -595,9 +616,9 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
 			<td>Permissions:</td>
 			<td>
 				<input type="checkbox" name="set_file_perms" id="set_file_perms" value="1" onclick="jQuery('#file_perms_value').prop('disabled', !jQuery(this).is(':checked'));"/>
-				<label for="set_file_perms">All Files</label><input name="file_perms_value" id="file_perms_value" style="width:30px; margin-left:7px;" value="644" disabled> &nbsp;
+				<label for="set_file_perms">All Files</label><input name="file_perms_value" id="file_perms_value" style="width:45px; margin-left:7px;" value="644" disabled> &nbsp;
 				<input type="checkbox" name="set_dir_perms" id="set_dir_perms" value="1" onclick="jQuery('#dir_perms_value').prop('disabled', !jQuery(this).is(':checked'));"/>
-				<label for="set_dir_perms">All Directories</label><input name="dir_perms_value" id="dir_perms_value" style="width:30px; margin-left:7px;" value="755" disabled>
+				<label for="set_dir_perms">All Directories</label><input name="dir_perms_value" id="dir_perms_value" style="width:45px; margin-left:7px;" value="755" disabled>
 			</td>
 		</tr>
 	</table><br/><br/>
@@ -633,9 +654,10 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
             <tr>
                 <td>Logging:</td>
                 <td>
-                    <input type="radio" name="logging" id="logging-light" value="1" checked="true"> <label for="logging-light" class="radio">Light</label> &nbsp;
-                    <input type="radio" name="logging" id="logging-detailed" value="2"> <label for="logging-detailed" class="radio">Detailed</label> &nbsp;
-                    <input type="radio" name="logging" id="logging-debug" value="3"> <label for="logging-debug" class="radio">Debug</label>
+                    <input type="radio" name="logging" id="logging-light" value="<?php echo DUPX_Log::LV_DEFAULT; ?>" checked="true"> <label for="logging-light" class="radio">Light</label> &nbsp;
+                    <input type="radio" name="logging" id="logging-detailed" value="<?php echo DUPX_Log::LV_DETAILED; ?>"> <label for="logging-detailed" class="radio">Detailed</label> &nbsp;
+                    <input type="radio" name="logging" id="logging-debug" value="<?php echo DUPX_Log::LV_DEBUG; ?>"> <label for="logging-debug" class="radio">Debug</label> &nbsp;
+                    <input type="radio" name="logging" id="logging-h-debug" value="<?php echo DUPX_Log::LV_HARD_DEBUG; ?>"> <label for="logging-h-debug" class="radio">Hard debug</label>
                 </td>
             </tr>
             <?php if(!$archive_config->isZipArchive()): ?>
@@ -646,10 +668,7 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
                         <label for="clientside_kickoff" style="font-weight: normal">Browser drives the archive engine.</label>
                     </td>
                 </tr>
-            <?php endif;
-            $licence_type = $GLOBALS['DUPX_AC']->getLicenseType();
-            if ($licence_type >= DUPX_LicenseType::Freelancer) {
-            ?>
+            <?php endif; ?>
             <tr id="remove-redundant-row" <?php if ($GLOBALS['DUPX_AC']->exportOnlyDB) {?>style="display:none;"<?php } ?>>
                 <td>Inactive Plugins<br> and Themes:</td>
                 <td>
@@ -663,24 +682,16 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
                     <?php } ?>                    
                 </td>
             </tr>
-            <?php
-            }
-            ?>
         </table>
     </div><br/>
 
-    <?php include ('view.s1.terms.php') ;?>
-
-    <div id="s1-warning-check">
-        <input id="accept-warnings" name="accpet-warnings" type="checkbox" onclick="DUPX.acceptWarning()" />
-        <label for="accept-warnings">I have read and accept all <a href="javascript:void(0)" onclick="DUPX.viewTerms()">terms &amp; notices</a> <small style="font-style:italic">(required to continue)</small></label><br/>
-    </div>
-    <br/><br/>
-    <br/><br/>
-
+    <?php
+    $req_counts = array_count_values($req);
+    $is_only_permission_issue = (isset($req_counts['Fail']) && 1 == $req_counts['Fail'] && 'Fail' == $req[10] && 'Fail' == $all_req && 'Fail' != $arcCheck);
+    ?>
 
     <?php if (!$req_success || $arcCheck == 'Fail') : ?>
-        <div class="s1-err-msg">
+        <div class="s1-err-msg" <?php if ($is_only_permission_issue) { ?>style="padding: 0 0 20px 0;"<?php } ?>>
             <i>
                 This installation will not be able to proceed until the archive and validation sections both pass. Please adjust your servers settings or contact your
                 server administrator, hosting provider or visit the resources below for additional help.
@@ -690,12 +701,37 @@ $multisite_disabled = ($archive_config->getLicenseType() != DUPX_LicenseType::Bu
                 &raquo; <a href="https://snapcreek.com/support/docs/" target="_blank">Online Documentation</a> <br/>
             </div>
         </div>
-    <?php else : ?>
-        <div class="footer-buttons" >
+    <?php
+        $is_next_btn_html = false;
+    else :
+        $is_next_btn_html = true;
+    endif;
+    
+    if ($is_only_permission_issue) { ?>
+        <div class="s1-accept-check">
+            <input id="accept-perm-error" name="accept-perm-error" type="checkbox" onclick="DUPX.showHideNextBtn(this)" />
+            <label for="accept-perm-error" style="color: #AF0000;">I would like to proceed with my own risk despite the permission error</label><br/>
+        </div>
+    <?php
+    }
+
+    include ('view.s1.terms.php'); ?>
+
+    <div class="s1-accept-check">
+        <input id="accept-warnings" name="accpet-warnings" type="checkbox" onclick="DUPX.acceptWarning()" />
+        <label for="accept-warnings">I have read and accept all <a href="javascript:void(0)" onclick="DUPX.viewTerms()">terms &amp; notices</a> <small style="font-style:italic">(required to continue)</small></label><br/>
+    </div>
+    <br/><br/>
+    <br/><br/>
+    <?php
+    if ($is_next_btn_html || $is_only_permission_issue) {
+    ?>
+        <div class="footer-buttons" <?php if ($is_only_permission_issue) { ?>style="display: none;"<?php } ?>>
             <button id="s1-deploy-btn" type="button" title="<?php echo $agree_msg; ?>" onclick="DUPX.processNext()"  class="default-btn"> Next <i class="fa fa-caret-right"></i> </button>
         </div>
-    <?php endif; ?>
-
+    <?php
+    }
+    ?>
 </form>
 
 
@@ -704,8 +740,7 @@ VIEW: STEP 1 - AJAX RESULT
 Auto Posts to view.step2.php
 ========================================= -->
 <form id='s1-result-form' method="post" class="content-form" style="display:none">
-
-    <div class="dupx-logfile-link"><a href="<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]);?>" target="dup-installer">installer-log.txt</a></div>
+    <div class="dupx-logfile-link"><?php DUPX_View_Funcs::installerLogLink(); ?></div>
     <div class="hdr-main">
         Step <span class="step">1</span> of 4: Extraction
     </div>
@@ -722,7 +757,7 @@ Auto Posts to view.step2.php
         <input type="hidden" name="archive_name" value="<?php echo DUPX_U::esc_attr($GLOBALS['FW_PACKAGE_NAME']); ?>" />
         <input type="hidden" name="retain_config" id="ajax-retain-config" />
         <input type="hidden" name="exe_safe_mode" id="exe-safe-mode"  value="0" />
-        <input type="hidden" name="subsite-id" id="ajax-subsite-id" value="-1" />
+        <input type="hidden" name="subsite_id" id="ajax-subsite-id" value="-1" />
         <input type="hidden" name="remove_redundant" id="ajax-remove-redundant" value="0" />
         <input type="hidden" name="json" id="ajax-json" />
         <textarea id='ajax-json-debug' name='json_debug_view'></textarea>
@@ -732,7 +767,7 @@ Auto Posts to view.step2.php
     <!--  PROGRESS BAR -->
     <div id="progress-area">
         <div style="width:500px; margin:auto">
-            <div class="progress-text"><i class="fa fa-circle-o-notch fa-spin"></i> Extracting Archive Files<span id="progress-pct"></span></div>
+            <div class="progress-text"><i class="fas fa-circle-notch fa-spin"></i> Extracting Archive Files<span id="progress-pct"></span></div>
             <div id="secondary-progress-text"></div>
             <div id="progress-notice"></div>
             <div id="progress-bar"></div>
@@ -746,7 +781,7 @@ Auto Posts to view.step2.php
     <div id="ajaxerr-area" style="display:none">
         <p>Please try again an issue has occurred.</p>
         <div style="padding: 0px 10px 10px 0px;">
-            <div id="ajaxerr-data">An unknown issue has occurred with the file and database setup process.  Please see the installer-log.txt file for more details.</div>
+            <div id="ajaxerr-data">An unknown issue has occurred with the file and database setup process.  Please see the <?php DUPX_View_Funcs::installerLogLink(); ?> file for more details.</div>
             <div style="text-align:center; margin:10px auto 0px auto">
                 <input type="button" class="default-btn" onclick="DUPX.hideErrorResult()" value="&laquo; Try Again" /><br/><br/>
                 <i style='font-size:11px'>See online help for more details at <a href='https://snapcreek.com/ticket' target='_blank'>snapcreek.com</a></i>
@@ -793,7 +828,7 @@ DUPX.getManaualArchiveOpt = function ()
     DUPX.startExtraction = function()
     {
         var isManualExtraction = ($("#archive_engine").val() == "manual");
-        var zipEnabled = <?php echo SnapLibStringU::boolToString($archive_config->isZipArchive()); ?>;
+        var zipEnabled = <?php echo DupProSnapLibStringU::boolToString($archive_config->isZipArchive()); ?>;
         var chunkingEnabled  = ($("#archive_engine").val() == "ziparchivechunking");
 
         $("#operation-text").text("Extracting Archive Files");
@@ -1180,7 +1215,7 @@ DUPX.finalizeDupArchiveExtraction = function(dawsStatus)
 {
 	console.log("finalizeDupArchiveExtraction:start");
 	var $form = $('#s1-input-form');
-	$("#s1-input-form-extra-data").val(JSON.stringify(dawsStatus));
+	$("#s1-input-dawn-status").val(JSON.stringify(dawsStatus));
 	console.log("finalizeDupArchiveExtraction:after stringify dawsstatus");
 	var formData = $form.serialize();
 
@@ -1443,6 +1478,18 @@ DUPX.hideErrorResult = function ()
 }
 
 /**
+ * show next button */
+DUPX.showHideNextBtn = function (evtSrc)
+{
+    var target = $(".footer-buttons");
+    if (evtSrc.checked) {
+        target.slideDown();
+    } else {
+        target.slideUp();
+    }
+};
+
+/**
  * Accetps Usage Warning */
 DUPX.acceptWarning = function ()
 {
@@ -1473,7 +1520,7 @@ DUPX.onSafeModeSwitch = function ()
 $(document).ready(function ()
 {
 	DUPX.DAWS = new Object();
-	DUPX.DAWS.Url = document.URL.substr(0,document.URL.lastIndexOf('/')) + '/lib/dup_archive/daws/daws.php';
+	DUPX.DAWS.Url = window.location.href + '?is_daws=1&daws_csrf_token=<?php echo urlencode(DUPX_CSRF::generate('daws'));?>';
 	DUPX.DAWS.StatusPeriodInMS = 10000;
 	DUPX.DAWS.PingWorkerTimeInSec = 9;
 	DUPX.DAWS.KickoffWorkerTimeInSec = 6; // Want the initial progress % to come back quicker
@@ -1491,8 +1538,7 @@ $(document).ready(function ()
 	DUPX.acceptWarning();
 
     <?php
-    $isWindows = DUPX_U::isWindows();
-    if (!$isWindows) {
+    if (!DupProSnapLibOSU::isWindows()) {
     ?>
         $('#set_file_perms').trigger("click");
         $('#set_dir_perms').trigger("click");

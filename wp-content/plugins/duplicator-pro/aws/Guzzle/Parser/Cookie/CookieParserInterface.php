@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\Cookie;
+
+defined("ABSPATH") or die("");
 
 /**
  * Cookie parser interface

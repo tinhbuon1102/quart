@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Command\Factory;
 
 use DuplicatorPro\Guzzle\Inflection\InflectorInterface;

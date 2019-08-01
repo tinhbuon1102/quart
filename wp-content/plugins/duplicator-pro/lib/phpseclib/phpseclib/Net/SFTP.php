@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of SFTP.
  *
@@ -36,7 +35,7 @@
  */
 
 namespace phpseclib\Net;
-
+defined("ABSPATH") or die("");
 use phpseclib\Net\SSH2;
 
 /**

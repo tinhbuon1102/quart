@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Common;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Symfony\Component\EventDispatcher\Event as SymfonyEvent;
 

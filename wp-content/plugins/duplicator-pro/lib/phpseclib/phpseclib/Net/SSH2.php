@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of SSHv2.
  *
@@ -48,7 +47,7 @@
  */
 
 namespace phpseclib\Net;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Base;
 use phpseclib\Crypt\Blowfish;
 use phpseclib\Crypt\Hash;

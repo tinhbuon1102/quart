@@ -1,5 +1,4 @@
 <?php
-defined("DUPXABSPATH") or die("");
 /**
  * Class used to control values about the package meta data
  *
@@ -9,6 +8,7 @@ defined("DUPXABSPATH") or die("");
  * @package SC\DUPX\ArchiveConfig
  *
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 abstract class DUPX_LicenseType
 {

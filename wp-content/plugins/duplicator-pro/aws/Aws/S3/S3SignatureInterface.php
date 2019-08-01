@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -15,6 +16,8 @@
  */
 
 namespace DuplicatorPro\Aws\S3;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Aws\Common\Signature\SignatureInterface;
 

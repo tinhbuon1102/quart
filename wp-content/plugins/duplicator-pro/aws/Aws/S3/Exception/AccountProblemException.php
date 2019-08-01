@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * There is a problem with your AWS account that prevents the operation from completing successfully. Please use Contact Us.
  */

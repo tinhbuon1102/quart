@@ -59,16 +59,11 @@ class DUP_PRO_ScanValidator
     protected $limitReached = false;
 
     /**
-     *  Is the server running on Windows
-     */
-    private $isWindows = false;
-
-    /**
      *  Init this instance of the object
      */
     function __construct()
     {
-       $this->isWindows = defined('PHP_WINDOWS_VERSION_BUILD');
+
     }
 
     /**
@@ -108,7 +103,7 @@ class DUP_PRO_ScanValidator
 								|| preg_match('/[^\x20-\x7f]/', $name);
 
 							if ($invalid_test) {
-								if (! DUP_PRO_U::$PHP7_plus && DUP_PRO_U::isWindows()) {
+								if (! DUP_PRO_U::$PHP7_plus && DupProSnapLibOSU::isWindows()) {
 									$this->nameTestFiles[] = utf8_decode($path);
 								} else {
 									$this->nameTestFiles[] = $path;
@@ -136,7 +131,7 @@ class DUP_PRO_ScanValidator
 								|| preg_match('/[^\x20-\x7f]/', $path);
 
 							if ($invalid_test) {
-								if (! DUP_PRO_U::$PHP7_plus && DUP_PRO_U::isWindows()) {
+								if (! DUP_PRO_U::$PHP7_plus && DupProSnapLibOSU::isWindows()) {
 									$this->nameTestDirs[] = utf8_decode($path);
 								} else {
 									$this->nameTestDirs[] = $path;
@@ -161,9 +156,9 @@ class DUP_PRO_ScanValidator
      */
     private function isLink($target)
     {
-		//Currently Windows does not support sym-link detection
-        if ($this->isWindows) {
-           return false;
+        //Currently Windows does not support sym-link detection
+        if (DupProSnapLibOSU::isWindows()) {
+            return false;
         } elseif (is_link($target)) {
             return true;
         }

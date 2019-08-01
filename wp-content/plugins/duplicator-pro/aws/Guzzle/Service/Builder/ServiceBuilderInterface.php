@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Builder;
 
 use DuplicatorPro\Guzzle\Service\Exception\ServiceNotFoundException;

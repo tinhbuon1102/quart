@@ -68,11 +68,11 @@ TOOL-BAR -->
             </select>
             <input type="button" class="button action" value="<?php DUP_PRO_U::esc_attr_e("Apply") ?>" onclick="DupPro.Storage.BulkAction()">
 			<span class="btn-separator"></span>
-			<a href="admin.php?page=duplicator-pro-settings&tab=storage" class="button grey-icon" title="<?php DUP_PRO_U::esc_attr_e("Settings") ?>"><i class="fa fa-gear"></i></a>
+			<a href="admin.php?page=duplicator-pro-settings&tab=storage" class="button grey-icon" title="<?php DUP_PRO_U::esc_attr_e("Settings") ?>"><i class="fa fa-cog"></i></a>
         </td>
         <td>
 			<div class="btnnav">
-				<span><i class="fa fa-database"></i> <?php DUP_PRO_U::esc_html_e("Providers"); ?></span>
+				<span><i class="fas fa-database fa-sm"></i> <?php DUP_PRO_U::esc_html_e("Providers"); ?></span>
 				<a href="<?php echo esc_url($edit_storage_url); ?>" class="add-new-h2"><?php DUP_PRO_U::esc_html_e('Add New'); ?></a>
 			</div>
         </td>
@@ -252,7 +252,7 @@ TOOL-BAR -->
 
 	$confirm1 = new DUP_PRO_UI_Dialog();
 	$confirm1->title			 = DUP_PRO_U::__('Delete Storage?');
-	$confirm1->message			 = DUP_PRO_U::__('Are you sure, you want to delete the selected storage(s)?');
+	$confirm1->message			 = DUP_PRO_U::__('Are you sure you want to delete the selected storage(s)?');
 	$confirm1->message			.= '<br/>';
 	$confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action removes all storages.</i></small>');
 	$confirm1->progressText      = DUP_PRO_U::__('Removing Storages, Please Wait...');
@@ -261,7 +261,7 @@ TOOL-BAR -->
 
     $confirm2 = new DUP_PRO_UI_Dialog();
     $confirm2->title            = $confirm1->title;
-	$confirm2->message          = DUP_PRO_U::__('Are you sure, you want to delete this storage?');
+	$confirm2->message          = DUP_PRO_U::__('Are you sure you want to delete this storage?');
     $confirm2->progressText     = $confirm1->progressText;
 	$confirm2->jsCallback		= 'DupPro.Storage.DeleteThis(this)';
 	$confirm2->initConfirm();

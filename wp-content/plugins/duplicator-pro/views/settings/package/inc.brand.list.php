@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /* @var $global DUP_PRO_Brand_Entity */
 
 // let's setup active brand
@@ -113,7 +114,7 @@ TOOL-BAR -->
         </td>
         <td>
 			<div class="btnnav">
-				<span><i class="fa fa-photo"></i> <?php DUP_PRO_U::esc_html_e("Brands"); ?></span>
+				<span><i class="far fa-image fa-lg"></i> <?php DUP_PRO_U::esc_html_e("Brands"); ?></span>
 				<a href="javascript:void(0)" onclick="DupPro.Settings.Brand.AddNew()" class="add-new-h2"><?php DUP_PRO_U::esc_html_e('Add New'); ?></a>
 			</div>
         </td>
@@ -184,7 +185,7 @@ LIST ALL STORAGE -->
 				</td>
 				<td>
 					<?php if ($brand->active) : ?>
-						<span class="fa fa-bolt" style="color:green;"></span> <?php echo DUP_PRO_U::esc_html_e('Enabled'); ?>
+						<span class="fa fa-bolt fa-xs" style="color:green;"></span> <?php echo DUP_PRO_U::esc_html_e('Enabled'); ?>
 					<?php endif; ?>
 
 				</td>
@@ -235,7 +236,7 @@ LIST ALL STORAGE -->
                 </div>
             </td>
             <td>
-                <?php if($is_default_active) echo '<span class="fa fa-bolt" style="color:green;"></span> '.DUP_PRO_U::__('Enabled'); ?>
+                <?php if($is_default_active) echo '<span class="fa fa-bolt fa-xs" style="color:green;"></span> '.DUP_PRO_U::__('Enabled'); ?>
             </td>
         </tr>
         <tr id="quick-view-<?php echo $brands[0]->id ?>" class="brand-detail">
@@ -288,7 +289,7 @@ THICK-BOX DIALOGS: -->
 
 	$confirm1 = new DUP_PRO_UI_Dialog();
 	$confirm1->title			 = DUP_PRO_U::__('Delete Brand?');
-	$confirm1->message			 = DUP_PRO_U::__('Are you sure, you want to delete the selected brand(s)?');
+	$confirm1->message			 = DUP_PRO_U::__('Are you sure you want to delete the selected brand(s)?');
 	$confirm1->message			.= '<br/>';
 	$confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action removes all brands.</i></small>');
 	$confirm1->progressText      = DUP_PRO_U::__('Removing Brands, Please Wait...');
@@ -297,7 +298,7 @@ THICK-BOX DIALOGS: -->
 
     $confirm2 = new DUP_PRO_UI_Dialog();
 	$confirm2->title			 = DUP_PRO_U::__('Delete Brand?');
-	$confirm2->message			 = DUP_PRO_U::__('Are you sure, you want to delete the selected brand(s)?');
+	$confirm2->message			 = DUP_PRO_U::__('Are you sure you want to delete the selected brand(s)?');
 	$confirm2->progressText      = DUP_PRO_U::__('Removing Brands, Please Wait...');
 	$confirm2->jsCallback		 = 'DupPro.Settings.Brand.DeleteThis(this)';
 	$confirm2->initConfirm();

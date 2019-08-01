@@ -25,7 +25,7 @@ if ($schedule_id == -1) {
 $license_type = DUP_PRO_License_U::getLicenseType();
 
 $min_frequency = 0;
-$max_frequency = (($license_type === DUP_PRO_License_Type::Freelancer) || ($license_type === DUP_PRO_License_Type::BusinessGold)) 
+$max_frequency = (($license_type === DUP_PRO_License_Type::Freelancer) || ($license_type === DUP_PRO_License_Type::BusinessGold))
 				? DUP_PRO_Schedule_Repeat_Types::Hourly
 				: DUP_PRO_Schedule_Repeat_Types::Monthly;
 
@@ -45,7 +45,7 @@ if (isset($_REQUEST['action'])) {
                 $_REQUEST['run_every'] = $_REQUEST['_run_every_hours'];
                 DUP_PRO_LOG::trace("run every hours: ".$_REQUEST['_run_every_hours']);
                 break;
-            
+
             case DUP_PRO_Schedule_Repeat_Types::Daily:
                 $_REQUEST['run_every'] = $_REQUEST['_run_every_days'];
                 DUP_PRO_LOG::trace("run every days: ".$_REQUEST['_run_every_days']);
@@ -68,7 +68,7 @@ if (isset($_REQUEST['action'])) {
         $schedule->next_run_time = $schedule->get_next_run_time();
         $schedule->save();
         $was_updated = true;
-		
+
     } else if ($_REQUEST['action'] == 'copy-schedule') {
         $source_id = $_REQUEST['duppro-source-schedule-id'];
 
@@ -92,12 +92,16 @@ $schedule_count = count($schedules);
     .ui-datepicker-trigger {border:none;  background:none;}
     div#repeat-daily-area {display:none}
     div#repeat-weekly-area {display:none; width:480px; height:78px; padding-left:5px; margin-left:-5px;}
-    div#repeat-monthly-area {display:none}    
+    div#repeat-monthly-area {display:none}
     div#repeat-weekly-area table td {padding-left:0px;}
     div.repeater-area {margin:3px 0 0 3px; line-height: 35px; min-height: 42px}
+	table.package-template {padding:0 !important; margin: 0 !important}
+	table.package-template td {padding:0 !important; margin: 0 !important; vertical-align: top}
 
     #schedule-name, #schedule-template {width: 350px}
+	select#schedule-template {margin-left:-1px}
     .weekday-div { float:left; margin-right:15px; width:105px; }
+	a.pack-temp-btns {margin-top:2px  !important; font-size:12px !important; line-height: 24px !important; height: 26px  !important;  }
 </style>
 
 
@@ -130,7 +134,7 @@ TOOL-BAR -->
         </td>
         <td>
 			<div class="btnnav">
-				<a href="<?php echo $schedules_tab_url; ?>" class="add-new-h2"> <i class="fa fa-clock-o"></i> <?php DUP_PRO_U::esc_html_e('Schedules'); ?></a>
+				<a href="<?php echo $schedules_tab_url; ?>" class="add-new-h2"> <i class="far fa-clock fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Schedules'); ?></a>
 				<?php if ($schedule_id == -1) : ?>
 					<span><?php DUP_PRO_U::esc_html_e('Add New') ?></span>
 				<?php else : ?>
@@ -140,7 +144,7 @@ TOOL-BAR -->
         </td>
     </tr>
 </table>
-<hr class="dpro-edit-toolbar-divider"/>	
+<hr class="dpro-edit-toolbar-divider"/>
 
 
 <?php if ($was_updated) : ?>
@@ -155,34 +159,54 @@ TOOL-BAR -->
         <td>
             <input type="text" id="schedule-name" name="name" value="<?php echo $schedule->name; ?>" required  data-parsley-group="standard" autocomplete="off">
         </td>
-    </tr>	
+    </tr>
     <tr valign="top">
         <th scope="row"><label><?php _e("Package Template"); ?></label></th>
         <td>
-            <select id="schedule-template" name="template_id" required>
-            <?php
-            $templates = DUP_PRO_Package_Template_Entity::get_all();
-            if (count($templates) == 0) {
-                $no_templates = __('No Templates Found');
-                echo "<option value=''>$no_templates</option>";
-            } else {
-                foreach ($templates as $template) { ?>
-                    <option <?php DUP_PRO_UI::echoSelected($schedule->template_id == $template->id); ?> value="<?php echo $template->id; ?>">
-                        <?php echo $template->name; ?>
-                    </option>
-                    <?php
-                }
-            }
-            ?>
-            </select>
-			<a href="javascript:void(0)" onclick="DupPro.Schedule.EditTemplate()" style="margin-top:2px" class="button button-small" title="<?php DUP_PRO_U::esc_attr_e("Edit Selected Template") ?>">
-				<i class="fa fa-pencil-square-o"></i>
-			</a>
-			<a href="admin.php?page=duplicator-pro-tools&tab=templates" style="margin-top:2px" class="button button-small" title="<?php DUP_PRO_U::esc_attr_e("List All Templates") ?>" target="edit-template">
-				<i class="fa fa-clone"></i>
-			</a>
+			<table class="package-template">
+				<tr>
+					<td>
+						<select id="schedule-template" name="template_id" required>
+						<?php
+						$templates = DUP_PRO_Package_Template_Entity::get_all();
+						if (count($templates) == 0) {
+							$no_templates = __('No Templates Found');
+							echo "<option value=''>$no_templates</option>";
+						} else {
+							echo "<option value='' selected='true'>" . DUP_PRO_U::esc_html__("&lt;Choose A Template&gt;") . "</option>";
+							foreach ($templates as $template) { ?>
+								<option <?php DUP_PRO_UI::echoSelected($schedule->template_id == $template->id); ?> value="<?php echo $template->id; ?>">
+									<?php echo $template->name; ?>
+								</option>
+								<?php
+							}
+						}
+						?>
+						</select><br/>
+						<small><a href="admin.php?page=duplicator-pro-tools&tab=templates" target="edit-template">[<?php DUP_PRO_U::esc_attr_e("Show All Templates") ?>]</a></small>
+					</td>
+					<td>
+						<a id="schedule-template-edit-btn" href="javascript:void(0)" onclick="DupPro.Schedule.EditTemplate()" style="display:none" class="pack-temp-btns button button-small" title="<?php DUP_PRO_U::esc_attr_e("Edit Selected Template") ?>">
+							<i class="far fa-edit"></i>
+						</a>
+						<a id="schedule-template-add-btn" href="admin.php?page=duplicator-pro-tools&tab=templates&inner_page=edit" class="pack-temp-btns button button-small" title="<?php DUP_PRO_U::esc_attr_e("Add New Template") ?>" target="edit-template">
+							<i class="far fa-plus-square"></i>
+						</a>
+						<a id="schedule-template-sync-btn" href="javascript:window.location.reload()" class="pack-temp-btns button button-small" title="<?php DUP_PRO_U::esc_attr_e("Refresh Template List") ?>">
+							<i class="fas fa-sync-alt"></i>
+						</a>
+
+
+						<i class="fas fa-question-circle fa-sm"
+						data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Template Details"); ?>"
+						data-tooltip="<?php DUP_PRO_U::esc_attr_e('The template specifies which files and database tables should be included in the '
+							. 'archive.<br/><br/>  Choose from an existing template or create a new one by clicking '
+							. 'the "Add New Template" button. To edit a template, select it and then click the "Edit Selected Template" button.'); ?>"></i>
+					</td>
+				</tr>
+			</table>
         </td>
-    </tr>	
+    </tr>
     <tr>
         <th scope="row"><label><?php _e("Storage"); ?></label></th>
         <td>
@@ -254,7 +278,7 @@ TOOL-BAR -->
                 <?php endforeach; ?>
                 </tbody>
             </table>
-            <div id="schedule_storage_error_container" class="duplicator-error-container"></div>      
+            <div id="schedule_storage_error_container" class="duplicator-error-container"></div>
         </td>
     </tr>
     <tr valign="top">
@@ -267,32 +291,32 @@ TOOL-BAR -->
                 <option <?php DUP_PRO_UI::echoSelected($schedule->repeat_type == DUP_PRO_Schedule_Repeat_Types::Monthly) ?> value="<?php echo DUP_PRO_Schedule_Repeat_Types::Monthly; ?>"><?php DUP_PRO_U::esc_html_e("Monthly"); ?></option>
             </select>
         </td>
-    </tr>	
+    </tr>
     <tr>
         <th></th>
         <td style="padding-top:0px; padding-bottom:10px;">
             <!-- ===============================
             DAILY -->
             <div id="repeat-hourly-area" class="repeater-area">
-                <?php _e("Every"); 
+                <?php _e("Every");
 				 $hour_intervals = array(1, 2, 4, 6, 12);
                 ?>
-                
+
                 <select name="_run_every_hours" data-parsley-ui-enabled="false">
                     <?php
-                
+
                     foreach($hour_intervals as $hour_interval) {
-                    
+
                         $hour_interval_selected_string = DUP_PRO_UI::getSelected($hour_interval == (int) $schedule->run_every);
                         echo "<option $hour_interval_selected_string>{$hour_interval}</option>";
                     }
                     ?>
-                </select> 
+                </select>
                 <?php _e("hours"); ?>
-                <i class="fa fa-question-circle" data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Frequency Note:"); ?>" data-tooltip="<?php echo DUP_PRO_U::__('Package will build every x hours starting at 00:00.') . '<br/><br/>' . $frequency_note; ?>"></i>
+                <i class="fas fa-question-circle fa-sm" data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Frequency Note:"); ?>" data-tooltip="<?php echo DUP_PRO_U::__('Package will build every x hours starting at 00:00.') . '<br/><br/>' . $frequency_note; ?>"></i>
                 <br/>
             </div>
-            
+
             <!-- ===============================
             DAILY -->
             <div id="repeat-daily-area" class="repeater-area">
@@ -304,9 +328,9 @@ TOOL-BAR -->
                         echo "<option $day_selected_string>{$i}</option>";
                     }
                     ?>
-                </select> 
+                </select>
                 <?php _e("days"); ?>
-                <i class="fa fa-question-circle" data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Frequency Note:"); ?>" data-tooltip="<?php $frequency_note ?>"></i>
+                <i class="fas fa-question-circle fa-sm" data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Frequency Note:"); ?>" data-tooltip="<?php $frequency_note ?>"></i>
                 <br/>
             </div>
 
@@ -336,7 +360,7 @@ TOOL-BAR -->
                             echo "<option $day_of_month_selected_string>{$i}</option>";
                         }
                         ?>
-                    </select>                         
+                    </select>
                 </div>
 
                 <div style="display:inline-block">
@@ -348,7 +372,7 @@ TOOL-BAR -->
                             echo "<option $month_selected_string>{$i}</option>";
                         }
                         ?>
-                    </select> 
+                    </select>
                     <?php _e("month(s)"); ?>
                 </div>
             </div>
@@ -366,7 +390,7 @@ TOOL-BAR -->
 
                 //Add setting to use 24 hour vs AM/PM
                 // the interval for hours is '1'
-                for ($hours = 0; $hours < 24; $hours++) { 
+                for ($hours = 0; $hours < 24; $hours++) {
                     $selected_string = '';
                     if (($hours == $start_hour)) {
                         $selected_string = 'selected';
@@ -380,8 +404,8 @@ TOOL-BAR -->
                 <?php DUP_PRO_U::esc_html_e("Current Server Time Stamp is"); ?>&nbsp;
                 <?php echo DUP_PRO_DATE::getlocalTimeInFormat('Y-m-d H:i:s'); ?>
             </i>
-        </td>            
-    </tr>                
+        </td>
+    </tr>
     <tr>
         <td>
         </td>
@@ -397,7 +421,7 @@ TOOL-BAR -->
                                 'target' => array()
                             )
                     )); ?>
-				 
+
 
 			</p>
         </td>
@@ -405,20 +429,21 @@ TOOL-BAR -->
     <tr valign="top">
         <th scope="row"><label for="schedule-active"><?php _e("Activated"); ?></label></th>
         <td>
-            <input name="_active" id="schedule-active" type="checkbox" <?php DUP_PRO_UI::echoChecked($schedule->active); ?>> 
+            <input name="_active" id="schedule-active" type="checkbox" <?php DUP_PRO_UI::echoChecked($schedule->active); ?>>
             <label for="schedule-active"><?php DUP_PRO_U::esc_html_e('Enable This Schedule'); ?></label><br/>
-            <i class="dpro-edit-info"> <?php _e("When checked this schedule will run"); ?></i> 
+            <i class="dpro-edit-info"> <?php _e("When checked this schedule will run"); ?></i>
         </td>
-    </tr>	
+    </tr>
 </table><br/>
 <button class="button button-primary" type="submit" onclick="return DupPro.Schedule.Validate();"><?php DUP_PRO_U::esc_html_e('Save Schedule'); ?></button>
 
 </form>
 
 <script>
-    jQuery(document).ready(function ($) {
+    jQuery(document).ready(function ($)
+	{
         DupPro.Schedule.Validate = function(){
-            
+
         };
 
         DupPro.Schedule.ChangeMode = function () {
@@ -450,7 +475,7 @@ TOOL-BAR -->
                     $('#repeat-hourly-area').show(animate);
                     $('#start-time-row').hide(animate);
                     break;
-                
+
             }
         }
 
@@ -471,13 +496,27 @@ TOOL-BAR -->
             window.open(url, 'edit-template');
         };
 
+        DupPro.Schedule.ToggleTemplateEditBtn = function ()
+		{
+			$('#schedule-template-edit-btn, #schedule-template-add-btn, #schedule-template-sync-btn').hide();
+			if ($("#schedule-template").val() > 0) {
+				$('#schedule-template-edit-btn').show();
+			} else {
+				$('#schedule-template-add-btn, #schedule-template-sync-btn').show();
+			}
+		}
+
+		//INIT
         $('#dup-schedule-form').parsley({
             excluded: ':disabled'
         });
 
         $("#repeat-daily-date, #repeat-daily-on-date").datepicker({showOn: "both", buttonText: "<i class='fa fa-calendar'></i>"});
         DupPro.Schedule.ChangeMode();
-		jQuery('#schedule-name').focus();
+		jQuery('#schedule-name').focus().select();
+		DupPro.Schedule.ToggleTemplateEditBtn();
+		$("#schedule-template").change(function() {DupPro.Schedule.ToggleTemplateEditBtn()});
+
 
     });
 </script>

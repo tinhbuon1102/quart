@@ -115,7 +115,7 @@ class DUP_PRO_U_Test_result
                 $result .= 'Warn';
                 break;
             case self::TEST_WAIT:
-                $result .= '<i class="fa fa-circle-o-notch fa-spin"></i> Wait';
+                $result .= '<i class="fas fa-circle-notch fa-spin"></i> Wait';
                 break;
             case self::TEST_FAIL:
             default:

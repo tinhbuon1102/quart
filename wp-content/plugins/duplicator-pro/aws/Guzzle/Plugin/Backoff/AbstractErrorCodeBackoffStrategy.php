@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Plugin\Backoff;
+
+defined("ABSPATH") or die("");
 
 /**
  * Strategy used to retry when certain error codes are encountered

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Sync;
 
+defined("ABSPATH") or die("");
+
 /**
  * Iterator used to filter an internal iterator to only yield files that do not exist in the target iterator or files
  * that have changed

@@ -82,7 +82,7 @@ $package_template_count = count($package_templates);
             </td>
             <td>
 				<div class="btnnav">
-					<span><i class="fa fa-clone"></i> <?php DUP_PRO_U::esc_html_e("Templates"); ?></span>
+					<span><i class="far fa-clone"></i> <?php DUP_PRO_U::esc_html_e("Templates"); ?></span>
 					<a href="<?php echo esc_url($edit_template_url); ?>" class="add-new-h2"><?php DUP_PRO_U::esc_html_e('Add New'); ?></a>
 				</div>
             </td>
@@ -157,13 +157,13 @@ $package_template_count = count($package_templates);
 	$confirm1->title			 = DUP_PRO_U::__('Delete the selected templates?');
     $confirm1->message			 = DUP_PRO_U::__('All schedules using this template will be reassigned to the "Default" Template.');
     $confirm1->message			.= '<br/><br/>';
-	$confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action removes all custom templates.</i></small>');
+	$confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action removes all selected custom templates.</i></small>');
 	$confirm1->progressText      = DUP_PRO_U::__('Removing Templates, Please Wait...');
 	$confirm1->jsCallback		 = 'DupPro.Storage.BulkDelete()';
 	$confirm1->initConfirm();
 
     $confirm2 = new DUP_PRO_UI_Dialog();
-    $confirm2->title            = DUP_PRO_U::__('Are you sure, you want to delete this template?');
+    $confirm2->title            = DUP_PRO_U::__('Are you sure you want to delete this template?');
     $confirm2->message          = DUP_PRO_U::__('All schedules using this template will be reassigned to the "Default" Template.');
     $confirm2->progressText     = $confirm1->progressText;
 	$confirm2->jsCallback		= 'DupPro.Template.DeleteThis(this)';

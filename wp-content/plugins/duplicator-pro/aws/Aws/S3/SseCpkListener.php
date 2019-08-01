@@ -2,6 +2,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\RuntimeException;
 use DuplicatorPro\Guzzle\Common\Event;
 use DuplicatorPro\Guzzle\Service\Command\CommandInterface;

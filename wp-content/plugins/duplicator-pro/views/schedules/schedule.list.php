@@ -69,12 +69,12 @@ TOOL-BAR -->
             </select>
             <input type="button" class="button action" value="<?php DUP_PRO_U::esc_attr_e("Apply") ?>" onclick="DupPro.Schedule.BulkAction()">
 			<span class="btn-separator"></span>
-			<a href="admin.php?page=duplicator-pro-settings&tab=schedule" class="button grey-icon" title="<?php DUP_PRO_U::esc_attr_e("Settings") ?>"><i class="fa fa-gear"></i></a>
-			<a href="admin.php?page=duplicator-pro-tools&tab=templates" id="btn-logs-dialog" class="button" title="<?php DUP_PRO_U::esc_attr_e("Templates") ?>"><i class="fa fa-clone"></i></a>
+			<a href="admin.php?page=duplicator-pro-settings&tab=schedule" class="button grey-icon" title="<?php DUP_PRO_U::esc_attr_e("Settings") ?>"><i class="fas fa-cog"></i></a>
+			<a href="admin.php?page=duplicator-pro-tools&tab=templates" id="btn-logs-dialog" class="button" title="<?php DUP_PRO_U::esc_attr_e("Templates") ?>"><i class="far fa-clone"></i></a>
         </td>
         <td>
 			<div class="btnnav">
-				<span><i class="fa fa-clock-o"></i> <?php DUP_PRO_U::esc_html_e("Schedules"); ?></span>
+				<span><i class="far fa-clock fa-sm"></i> <?php DUP_PRO_U::esc_html_e("Schedules"); ?></span>
 				<a href="<?php echo $edit_schedule_url; ?>" class="add-new-h2"><?php DUP_PRO_U::esc_attr_e("Add New"); ?></a>
 			</div>
         </td>
@@ -104,7 +104,7 @@ TOOL-BAR -->
 			<tr>
 				<td colspan="6" class="dpro-no-data">
 					<h2>
-						<i class="fa fa-clock-o"></i> <?php DUP_PRO_U::esc_html_e('No Schedules Found') ?> <br/>
+						<i class="far fa-clock fa-sm"></i> <?php DUP_PRO_U::esc_html_e('No Schedules Found') ?> <br/>
 						<a href="<?php echo $edit_schedule_url; ?>">[<?php DUP_PRO_U::esc_html_e('Create New Schedule') ?>]</a>
 					</h2>
 				</td>
@@ -122,8 +122,8 @@ TOOL-BAR -->
 				<td>
 					<input name="selected_id[]" type="checkbox" value="<?php echo $schedule->id ?>" class="item-chk" />
 				</td>
-				<td style="p">
-					<i id="<?php echo "icon-{$schedule->id}-status"; ?>" class="fa fa-gear fa-spin schedule-status-icon" style="display:<?php echo $icon_display; ?>; margin-right:4px;"></i>
+				<td>
+					<i id="<?php echo "icon-{$schedule->id}-status"; ?>" class="fas fa-cog fa-spin schedule-status-icon" style="display:<?php echo $icon_display; ?>; margin-right:4px;"></i>
 					<a id="<?php echo "text-{$schedule->id}"; ?>" href="javascript:void(0);" onclick="DupPro.Schedule.Edit('<?php echo $schedule->id ?>');" class="name"><?php echo $schedule->name; ?></a>
 					<div class="sub-menu">
 						<a href="javascript:void(0);" onclick="DupPro.Schedule.QuickView('<?php echo $schedule->id ?>');"><?php DUP_PRO_U::esc_html_e('Quick View'); ?></a> |
@@ -207,7 +207,7 @@ TOOL-BAR -->
 
 	$confirm1 = new DUP_PRO_UI_Dialog();
 	$confirm1->title			 = DUP_PRO_U::__('Delete Schedule?');
-	$confirm1->message			 = DUP_PRO_U::__('Are you sure, you want to delete the selected schedule(s)?');
+	$confirm1->message			 = DUP_PRO_U::__('Are you sure you want to delete the selected schedule(s)?');
 	$confirm1->message			.= '<br/>';
 	$confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action removes all schedules.</i></small>');
 	$confirm1->progressText      = DUP_PRO_U::__('Removing Schedules, Please Wait...');
@@ -216,14 +216,14 @@ TOOL-BAR -->
 
     $confirm2 = new DUP_PRO_UI_Dialog();
     $confirm2->title            = DUP_PRO_U::__('RUN SCHEDULE?');
-	$confirm2->message          = DUP_PRO_U::__('Are you sure, you want to run schedule now?');
+	$confirm2->message          = DUP_PRO_U::__('Are you sure you want to run schedule now?');
     $confirm2->progressText     = DUP_PRO_U::__('Running Schedule, Please Wait...');
 	$confirm2->jsCallback		= 'DupPro.Schedule.Run(this)';
 	$confirm2->initConfirm();
 
     $confirm3 = new DUP_PRO_UI_Dialog();
     $confirm3->title            = $confirm1->title;
-	$confirm3->message          = DUP_PRO_U::__('Are you sure, you want to delete this schedule?');
+	$confirm3->message          = DUP_PRO_U::__('Are you sure you want to delete this schedule?');
     $confirm3->progressText     = $confirm1->progressText;
 	$confirm3->jsCallback		= 'DupPro.Schedule.DeleteThis(this)';
 	$confirm3->initConfirm();
@@ -404,7 +404,7 @@ TOOL-BAR -->
                         console.error('JSON parse failed for response data: ' + respData);
                         console.log("error");
                         console.log(data);
-                        $(".schedule-status-icon").display('none');
+                        $(".schedule-status-icon").css('display', 'none');
                         DupPro.Schedule.SetUpdateInterval(60);
                         return false;
                     }
@@ -435,7 +435,7 @@ TOOL-BAR -->
                 error: function (data) {
                     console.log("error");
                     console.log(data);
-                    $(".schedule-status-icon").display('none');
+                    $(".schedule-status-icon").css('display', 'none');
                     DupPro.Schedule.SetUpdateInterval(60);
                 }
             });

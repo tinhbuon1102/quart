@@ -45,7 +45,7 @@ if (empty($archive_file)) {
     }
 }
 $archive_path        = empty($archive_file) ? '' : DUPLICATOR_PRO_WPROOTPATH.$archive_file;
-$long_installer_path = (isset($_GET['installer_name'])) ? DUPLICATOR_PRO_WPROOTPATH.sanitize_text_field($_GET['installer_name']) : '';
+$long_installer_path = (isset($_GET['in'])) ? DUPLICATOR_PRO_WPROOTPATH.sanitize_text_field($_GET['in']) : '';
 
 //POST BACK
 $action_updated     = null;

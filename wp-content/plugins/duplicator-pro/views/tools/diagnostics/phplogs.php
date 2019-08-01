@@ -36,11 +36,17 @@ if($log_path !== false){
 
     }
 } else {
-    $error = DUP_PRO_U::__("This can be good for you because there is no errors.").'<br><br>';
+    $error = DUP_PRO_U::__('This can be good for you because there is no errors.').'<br><br>';
 
-    $error.= sprintf(DUP_PRO_U::__("But if you in any case experience some errors and not see log here, that mean your error log file is placed on some unusual location or can't be created because some %s setup. In that case you must open %s file and define %s or call your system administrator to setup it properly."),"<b><i>php.ini</i></b>","<b><i>php.ini</i></b>","<code>error_log</code>").'<br><br>';
+    $error.= sprintf(DUP_PRO_U::__('But if you in any case experience some errors and not see log here, that mean your error log file is placed on some unusual location or can\'t be created because some %1$s setup. In that case you must open %2$s file and define %3$s or call your system administrator to setup it properly.'),
+                            "<b><i>php.ini</i></b>",
+                            "<b><i>php.ini</i></b>",
+                            "<code>error_log</code>").
+             '<br><br>';
     
-    $error.=sprintf(DUP_PRO_U::__("It would be great if you define new error log path to be inside root of your WordPress installation ( %s ) and name of file to be %s. That will solve this problem."),'<i><b>'.get_home_path().'</b></i>','<b>error.log</b>');
+    $error.= sprintf(DUP_PRO_U::__('It would be great if you define new error log path to be inside root of your WordPress installation ( %1$s ) and name of file to be %2$s. That will solve this problem.'),
+                            '<i><b>'.get_home_path().'</b></i>',
+                            '<b>error.log</b>');
 }
 
 
@@ -197,7 +203,7 @@ if($error) : ?>
 <?php
 $confirm1 = new DUP_PRO_UI_Dialog();
 $confirm1->title			 = DUP_PRO_U::__('Clear PHP Log?');
-$confirm1->message			 = DUP_PRO_U::__('Are you sure, you want to clear PHP log??');
+$confirm1->message			 = DUP_PRO_U::__('Are you sure you want to clear PHP log??');
 $confirm1->message			.= '<br/>';
 $confirm1->message			.= DUP_PRO_U::__('<small><i>Note: This action will delete all data and can\'t be stopped.</i></small>');
 $confirm1->progressText      = DUP_PRO_U::__('Clear PHP log, Please Wait...');

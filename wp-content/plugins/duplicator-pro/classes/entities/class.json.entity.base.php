@@ -1,5 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
 /**
  * Base class for entities that store their data in JSON format
  *
@@ -13,6 +12,8 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/utilities/class.u.low.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/entities/class.verifiers.php');
 
@@ -77,7 +78,6 @@ class DUP_PRO_JSON_Entity_Base
         $query_string .= " (type, data) VALUES (%s, %s)";
 
         $data = DUP_PRO_Low_U::getPublicProperties($this);
-
         $serialized_data = json_encode($data);
 
         if (strlen($serialized_data) < 65536) {
@@ -111,20 +111,17 @@ class DUP_PRO_JSON_Entity_Base
         $query_string = "UPDATE ".$this->table_name;
         $query_string .= " SET type = %s, data = %s WHERE id = %d";
 
-        $data = DUP_PRO_Low_U::getPublicProperties($this);
+        $data            = DUP_PRO_Low_U::getPublicProperties($this);
+        $serialized_data = DupProSnapJsonU::wp_json_encode_pprint($data);
 
-        $serialized_data = json_encode($data);
-
-        if (strlen($serialized_data) < 65536) {          
+        if (strlen($serialized_data) < 65536) {
 
             $prepared_query = $wpdb->prepare($query_string, $this->type, $serialized_data, $this->id);
-            $updated = $wpdb->query($prepared_query);
-            
-            $this->dirty    = false;
-            return true;
-            
-        } else {
+            $updated        = $wpdb->query($prepared_query);
 
+            $this->dirty = false;
+            return true;
+        } else {
             DUP_PRO_Low_U::errLog("Entity ({$this->type}) trying to be updated exceeds max size of 65K!");
             return false;
         }
@@ -309,7 +306,6 @@ class DUP_PRO_JSON_Entity_Base
 
         // First do a verifier scrub and only then let it fall through to set
         foreach ($post as $key => $value) {
-
             if (is_array($value)) {
                 foreach ($value as $individual_value) {
                     $local_error = $this->verify_posted_variable($key, $individual_value);
@@ -343,28 +339,41 @@ class DUP_PRO_JSON_Entity_Base
         } else {
             $this->set($key, $value);
         }
-
         return $error_string;
     }
 
     public function set($property_name, $property_value)
     {
-
         if (property_exists($this->type, $property_name)) {
-
             $this->$property_name = $property_value;
             $this->dirty          = true;
         }
     }
 
-    public function get($property_name)
+    /**
+     * check if prop exists ofr type
+     * 
+     * @param string $property_name
+     * @return mixed
+     */
+    public function __get($property_name)
     {
         if (property_exists($this->type, $property_name)) {
-
             return $this->$property_name;
         } else {
-
             return null;
         }
+    }
+
+    /**
+     * call __get magic method
+     * mantained for retro comapatibility
+     *
+     * @param string $property_name
+     * @return mixed
+     */
+    public function get($property_name)
+    {
+        return $this->$property_name;
     }
 }

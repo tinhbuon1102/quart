@@ -14,11 +14,11 @@ if (!defined('DUPLICATOR_PRO_VERSION')) exit; // Exit if accessed directly
 class DUP_PRO_DB extends wpdb
 {
 	public static $remove_placeholder_escape_exists = null;
+    public static $use_mysqli = false;
 
 	public static function init()
 	{
 		global $wpdb;
-
 		self::$remove_placeholder_escape_exists = method_exists($wpdb, 'remove_placeholder_escape');
 	}
 
@@ -117,7 +117,7 @@ class DUP_PRO_DB extends wpdb
         $custom_mysqldump_path = (strlen($global->package_mysqldump_path)) ? $global->package_mysqldump_path : '';
 
         //Common Windows Paths
-        if (DUP_PRO_U::isWindows()) {
+        if (DupProSnapLibOSU::isWindows()) {
             $paths = array(
                 $custom_mysqldump_path,
             	DUP_PRO_DB::getWindowsMySqlDumpRealPath(),
@@ -262,7 +262,29 @@ class DUP_PRO_DB extends wpdb
 		}
 
     }
-    
+
+    /**
+     * this function escape sql string without add and remove remove_placeholder_escape
+     * don't work on array
+     *
+     * @global type $wpdb
+     * @param mixed $sql
+     * @return string
+     */
+    public static function escValueToQueryString($value)
+    {
+        global $wpdb;
+
+        if (is_null($value)) {
+            return 'NULL';
+        }
+
+        if ($wpdb->use_mysqli) {
+            return '"'.mysqli_real_escape_string($wpdb->dbh, $value).'"';
+        } else {
+            return '"'.mysql_real_escape_string($value, $wpdb->dbh).'"';
+        }
+    }
 }
 
 DUP_PRO_DB::init();

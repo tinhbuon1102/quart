@@ -76,10 +76,9 @@ $data = array(
     <div class="col_left" >
         <h2><?php DUP_PRO_U::esc_html_e("Duplicator Build Test") ?> <a href="#" class="dup-options-toggle">Options <i class="fa fa-angle-double-right"></i></a></h2>
         <p>
-            <?php DUP_PRO_U::esc_html_e("This page is a diagnostics feature that lets support troubleshoot a build process and check the various process states. "
-				. "When a package is created it goes through many stages and this tool can help faciliate any issues that might arise during the tests.") ?>
+            <?php DUP_PRO_U::esc_html_e("This page is a diagnostics feature that lets support troubleshoot a build process and check the various process states. When a package is created it goes through many stages and this tool can help faciliate any issues that might arise during the tests."); ?>
         </p>
-        <button id="run_build_test" class="button button-primary" >Run package build test</button>
+        <button id="run_build_test" class="button button-primary" ><?php DUP_PRO_U::esc_html_e('Run package build test'); ?></button>
 
         <div id="package_build_test" class="tests_result no_display">
             <?php
@@ -120,7 +119,7 @@ $data = array(
                     <input type="checkbox" id="dup-test-filesfilter" checked="checked" >
                     <strong><?php DUP_PRO_U::esc_html_e("Filter all files") ?></strong>
                 </label>
-                <i class="fa fa-question-circle"
+                <i class="fas fa-question-circle fa-sm"
                    data-tooltip-title="<?php DUP_PRO_U::esc_attr_e('Filter all file'); ?>"
                    data-tooltip="<?php DUP_PRO_U::esc_attr_e('Checking this checkbox will enable filter all files. It emulate package creation without create a full package size'); ?>" data-hasqtip="0" aria-describedby="qtip-0"></i>
             </div>
@@ -129,7 +128,7 @@ $data = array(
                     <input type="checkbox" id="dup-test-dbfilter" checked="checked" >
                     <strong><?php DUP_PRO_U::esc_html_e("Filter all db table") ?></strong>
                 </label>
-                <i class="fa fa-question-circle"
+                <i class="fas fa-question-circle fa-sm"
                    data-tooltip-title="<?php DUP_PRO_U::esc_attr_e('Filter all db tables'); ?>"
                    data-tooltip="<?php DUP_PRO_U::esc_attr_e('Checking this checkbox will enable filter all db tables except wp_options'); ?>" data-hasqtip="0" aria-describedby="qtip-0"></i>
             </div>
@@ -138,7 +137,7 @@ $data = array(
                     <input type="checkbox" id="dup-test-delpack" checked="checked"  >
                     <strong><?php DUP_PRO_U::esc_html_e("Delete package after test") ?></strong>
                 </label>
-                <i class="fa fa-question-circle"
+                <i class="fas fa-question-circle fa-sm"
                    data-tooltip-title="<?php DUP_PRO_U::esc_attr_e('Delete package after test'); ?>"
                    data-tooltip="<?php DUP_PRO_U::esc_attr_e('Checking this checkbox will enable clean package test. if disabled pack created remain in pack list.'); ?>" data-hasqtip="0" aria-describedby="qtip-0"></i>
             </div>
@@ -163,7 +162,7 @@ $data = array(
                                    value="<?php echo intval($store->id); ?>" <?php DUP_PRO_UI::echoChecked($is_checked); ?> />
 
                             <?php
-                            echo ($is_valid == false) ? '<i class="fa fa-exclamation-triangle"></i>' : (($store_type == 'Local') ? '<i class="fa fa-server"></i>' : '<i class="fa fa-cloud"></i>');
+                            echo ($is_valid == false) ? '<i class="fa fa-exclamation-triangle fa-sm"></i>' : (($store_type == 'Local') ? '<i class="fa fa-server"></i>' : '<i class="fa fa-cloud"></i>');
                             echo ' <b>'.esc_html($store->name).'</b> (Type: '.esc_html($store_type).')';
                             ?>
 
@@ -424,7 +423,7 @@ $msg_response_error->showMessage();
         };
 
         DupPro.Tests.checkUpdateWait = function (elem) {
-            elem.find('.test-check').removeClass('pass fail').addClass('wait').html('<i class="fa fa-circle-o-notch fa-spin"></i> Wait');
+            elem.find('.test-check').removeClass('pass fail').addClass('wait').html('<i class="fas fa-circle-notch fa-spin"></i> Wait');
             elem.find('.accordion-section-content').empty();
         };
 

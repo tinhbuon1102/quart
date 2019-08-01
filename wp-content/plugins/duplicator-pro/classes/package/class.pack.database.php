@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /**
  * Classes for building the package database file
  *
@@ -89,6 +90,12 @@ class DUP_PRO_DatabaseInfo
     public $versionComment;
 
     /**
+     * table wise row counts array, Key as table name and value as row count
+     *  table name => row count
+     */
+    public $tableWiseRowCounts;
+
+    /**
      * Integer field file structure of table, table name as key
      */
     private $intFieldsStruct = array();
@@ -102,6 +109,7 @@ class DUP_PRO_DatabaseInfo
     function __construct()
     {
         $this->collationList = array();
+        $this->tableWiseRowCounts = array();
     }
 }
 
@@ -148,7 +156,12 @@ class DUP_PRO_Database
     /* @var $global DUP_PRO_Global_Entity  */
 
     //PUBLIC
+    /**
+     *
+     * @var DUP_PRO_DatabaseInfo
+     */
     public $info;
+    
     //PUBLIC: Legacy Style
     public $Type	 = 'MySQL';
     public $Size;
@@ -164,18 +177,31 @@ class DUP_PRO_Database
     private $endFileMarker;
     private $traceLogEnabled;
     private $Package;
+    private $throttleDelayInUs = 0;
 
-    //CONSTRUCTOR
+    /**
+     *
+     * @global wpdb $wpdb
+     * @param DUP_PRO_Package $package
+     */
     function __construct($package)
     {
         global $wpdb;
 
-        $this->Package = $package;
-        $this->endFileMarker			 = '';
-        $this->traceLogEnabled			 = DUP_PRO_Log::isTraceLogEnabled();
-        $this->info						 = new DUP_PRO_DatabaseInfo();
-        $this->info->varLowerCaseTables	 = DUP_PRO_U::isWindows() ? 1 : 0;
-        $wpdb->query("SET SESSION wait_timeout = " . DUPLICATOR_PRO_DB_MAX_TIME);
+        $this->Package                  = $package;
+        $this->endFileMarker            = '';
+        $this->traceLogEnabled          = DUP_PRO_Log::isTraceLogEnabled();
+        $this->info                     = new DUP_PRO_DatabaseInfo();
+        $this->info->varLowerCaseTables = DupProSnapLibOSU::isWindows() ? 1 : 0;
+        $global                         = DUP_PRO_Global_Entity::get_instance();
+        $this->throttleDelayInUs                = $global->getMicrosecLoadReduction();
+
+        $wpdb->query("SET SESSION wait_timeout = ".DUPLICATOR_PRO_DB_MAX_TIME);
+    }
+
+    function __destruct()
+    {
+        $this->Package = null;
     }
 
     /**
@@ -210,7 +236,12 @@ class DUP_PRO_Database
                 $log.= " (Legacy SQL)";
             }
 
-            $log .= ($mode == 'PHP') ? "(query limit - {$global->package_phpdump_qrylimit})\n" : "\n";
+            if ($mode == 'PHP') {
+                $log .= "(query limit - {$global->package_phpdump_qrylimit})\n";
+            } else {
+                $log .= "(query limit - {$global->package_mysqldump_qrylimit})\n";
+            }
+           
             $log .= "MYSQLDUMP:    {$mysqlDumpSupport}\n";
             $log .= "MYSQLTIMEOUT: ".DUPLICATOR_PRO_DB_MAX_TIME;
             DUP_PRO_Log::info($log);
@@ -349,6 +380,7 @@ class DUP_PRO_Database
     private function runMysqlDump($exePath)
     {
         global $wpdb;
+        $global = DUP_PRO_Global_Entity::get_instance();
 
         $host			 = explode(':', DB_HOST);
         $host			 = reset($host);
@@ -367,6 +399,7 @@ class DUP_PRO_Database
         $cmd .= ' --skip-comments';
         $cmd .= ' --skip-set-charset';
         $cmd .= ' --allow-keywords';
+        $cmd .= ' --net_buffer_length='.DupProSnapLibUtil::getIntBetween($global->package_mysqldump_qrylimit, DUP_PRO_Constants::MYSQL_DUMP_CHUNK_SIZE_MIN_LIMIT, DUP_PRO_Constants::MYSQL_DUMP_CHUNK_SIZE_MAX_LIMIT);
 
         //Compatibility mode
         if ($mysqlcompat_on) {
@@ -375,7 +408,15 @@ class DUP_PRO_Database
         }
 
         //Filter tables
-        $tables			 = $wpdb->get_col('SHOW TABLES');
+        $res = $wpdb->get_results('SHOW FULL TABLES', ARRAY_N);
+        $tables = array();
+        $baseTables = array();
+        foreach ($res as $row) {
+            $tables[] = $row[0];
+            if ('BASE TABLE' == $row[1]) {
+                $baseTables[] = $row[0];
+            }
+        }
         $filterTables	 = isset($this->FilterTables) ? explode(',', $this->FilterTables) : null;
         $mu_filter_tables = $this->Package->Multisite->getTablesToFilter();
         $tblAllCount	 = count($tables);
@@ -389,6 +430,8 @@ class DUP_PRO_Database
                 }
             }
         }
+        /*DUP_PRO_LOG::print_r_trace($tables , 'TABLES');
+        DUP_PRO_LOG::print_r_trace($mu_filter_tables , 'MU FILTER TABLES');*/
 
         //Filtering tables associated with subsite filtering
         if (!empty($mu_filter_tables)) {
@@ -510,6 +553,14 @@ class DUP_PRO_Database
         $sql_footer .= "/* ".DUPLICATOR_PRO_DB_EOF_MARKER." */\n";
         file_put_contents($this->dbStorePathPublic, $sql_footer, FILE_APPEND);
 
+        foreach ($tables as $table) {
+            if (in_array($table, $baseTables)) {
+                $row_count = $GLOBALS['wpdb']->get_var("SELECT Count(*) FROM `{$table}`");
+                $rewrite_table_as = $this->rewriteTableNameAs($table);
+                $this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as] = $row_count;
+            }
+        }
+
         return ($output) ? false : true;
     }
 
@@ -524,12 +575,12 @@ class DUP_PRO_Database
         $global = DUP_PRO_Global_Entity::get_instance();
 
         $wpdb->query("SET session wait_timeout = ".DUPLICATOR_PRO_DB_MAX_TIME);
-        $handle	 = fopen($this->dbStorePathPublic, 'w+');
-        $tables	 = $wpdb->get_col("SHOW FULL TABLES WHERE Table_Type != 'VIEW'");
+        $handle = fopen($this->dbStorePathPublic, 'w+');
+        $tables = $wpdb->get_col("SHOW FULL TABLES WHERE Table_Type != 'VIEW'");
 
-        $filterTables	 = isset($this->FilterTables) ? explode(',', $this->FilterTables) : null;
-        $mu_filter_tables = $this->Package->Multisite->getTablesToFilter();
-        $tblAllCount	 = count($tables);
+        $filterTables      = isset($this->FilterTables) ? explode(',', $this->FilterTables) : null;
+        $mu_filter_tables  = $this->Package->Multisite->getTablesToFilter();
+        $tblAllCount       = count($tables);
 
         //Filtering manually selected tables by user
         if (is_array($filterTables) && $this->FilterOn) {
@@ -548,9 +599,9 @@ class DUP_PRO_Database
                 }
             }
         }
-        $tables = array_values($tables);
-        $tblCreateCount	 = count($tables);
-        $tblFilterCount	 = $tblAllCount - $tblCreateCount;
+        $tables         = array_values($tables);
+        $tblCreateCount = count($tables);
+        $tblFilterCount = $tblAllCount - $tblCreateCount;
 
         DUP_PRO_Log::info("TABLES: total:{$tblAllCount} | filtered:{$tblFilterCount} | create:{$tblCreateCount}");
         DUP_PRO_Log::info("FILTERED: [{$this->FilterTables}]");
@@ -559,27 +610,27 @@ class DUP_PRO_Database
 
         //Added 'NO_AUTO_VALUE_ON_ZERO' at plugin version 3.4.8 to fix :
         //**ERROR** database error write 'Invalid default value for for older mysql versions
-        $sql_header  = "/* DUPLICATOR-PRO (PHP BUILD MODE) MYSQL SCRIPT CREATED ON : ".@date("Y-m-d H:i:s")." */\n\n";
+        $sql_header = "/* DUPLICATOR-PRO (PHP BUILD MODE) MYSQL SCRIPT CREATED ON : ".@date("Y-m-d H:i:s")." */\n\n";
         $sql_header .= "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n\n";
         $sql_header .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
         fwrite($handle, $sql_header);
 
-        $sql	 = '';
+        $sql = '';
         //BUILD CREATES:
         //All creates must be created before inserts do to foreign key constraints
         foreach ($tables as $table) {
             $rewrite_table_as = $this->rewriteTableNameAs($table);
 
-            $create = $wpdb->get_row("SHOW CREATE TABLE `{$table}`", ARRAY_N);
-            $count = 1;
+            $create             = $wpdb->get_row("SHOW CREATE TABLE `{$table}`", ARRAY_N);
+            $count              = 1;
             $create_table_query = str_replace($table, $rewrite_table_as, $create[1], $count);
 
             @fwrite($handle, "{$create_table_query};\n\n");
         }
 
-        $procedures = $wpdb->get_col("SHOW PROCEDURE STATUS WHERE `Db` = '{$wpdb->dbname}'",1);
-        if(count($procedures)){
-            foreach ($procedures as $procedure){
+        $procedures = $wpdb->get_col("SHOW PROCEDURE STATUS WHERE `Db` = '{$wpdb->dbname}'", 1);
+        if (count($procedures)) {
+            foreach ($procedures as $procedure) {
                 @fwrite($handle, "DELIMITER ;;\n");
                 $create = $wpdb->get_row("SHOW CREATE PROCEDURE `{$procedure}`", ARRAY_N);
                 @fwrite($handle, "{$create[2]} ;;\n");
@@ -588,8 +639,8 @@ class DUP_PRO_Database
         }
 
         $views = $wpdb->get_col("SHOW FULL TABLES WHERE Table_Type = 'VIEW'");
-        if(count($views)){
-            foreach ($views as $view){
+        if (count($views)) {
+            foreach ($views as $view) {
                 $create = $wpdb->get_row("SHOW CREATE VIEW `{$view}`", ARRAY_N);
                 @fwrite($handle, "{$create[1]};\n\n");
             }
@@ -601,62 +652,62 @@ class DUP_PRO_Database
 
             $this->setProgressPer($current_index);
 
-            $actual_row_count = $wpdb->get_var("SELECT Count(*) FROM `{$table}`");
+            $num_rows_in_table = $wpdb->get_var("SELECT Count(*) FROM `{$table}`");
+            if (empty($num_rows_in_table)) {
+                continue;
+            }
+
             $rewrite_table_as = $this->rewriteTableNameAs($table);
-            $row_count = 0;
-            if ($actual_row_count > $global->package_phpdump_qrylimit) {
-                $row_count = ceil($actual_row_count / $global->package_phpdump_qrylimit);
-            } else if ($actual_row_count > 0) {
-                $row_count = 1;
+            if (!isset($this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as])) {
+                $this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as] = $num_rows_in_table;
             }
 
-            if ($row_count >= 1) {
-                fwrite($handle, "\n/* INSERT TABLE DATA: {$table} */\n");
-            }
+            $page_count = ceil($num_rows_in_table / $global->package_phpdump_qrylimit);
+            fwrite($handle, "\n/* INSERT TABLE DATA: {$table} */\n");
+           
+            $row_offset   = 0;            
+            for ($i = 0; $i < $page_count; $i++) {
+                $limit = $i * $global->package_phpdump_qrylimit;
+                $query = "SELECT * FROM `{$table}` LIMIT {$limit}, {$global->package_phpdump_qrylimit}";
+                $rows  = $wpdb->get_results($query, ARRAY_A);
 
-            $row_offset = 0;
-            $bulk_counter = 0;
-            $bulk_done = false;
-            for ($i = 0; $i < $row_count; $i++) {               
-                $limit	 = $i * $global->package_phpdump_qrylimit;
-                $query	 = "SELECT * FROM `{$table}` LIMIT {$limit}, {$global->package_phpdump_qrylimit}";
-                $rows	 = $wpdb->get_results($query, ARRAY_A);
+                $select_last_error = $wpdb->last_error;
+                if ('' !== $select_last_error) {
+                    DUP_PRO_Log::info($select_last_error);
+                    if (false !== stripos($select_last_error, 'is marked as crashed and should be repaired')) {
+                        $repair_query = "REPAIR TABLE `{$table}`;";
+                        $fix = sprintf(DUP_PRO_U::__('Detected that database table %1$s is corrupt. Run repair tool or execute SQL command %2$s'), $table, $repair_query);
+                    } else {
+                        $fix = DUP_PRO_U::__('Please contact your DataBase administrator to fix the error.');
+                    }
+                    $this->setError($select_last_error, $fix);
+                    return;
+                }
+
                 if (is_array($rows)) {
+                    $sql = 'INSERT INTO `'.$rewrite_table_as.'` VALUES '."\n";
                     foreach ($rows as $row) {
-                        
-                        $sql		 .= ($bulk_counter === 0) ? "\nINSERT INTO `{$rewrite_table_as}` VALUES(" : "(";
-                        $num_values	 = count($row);
-                        $num_counter = 1;
-                        foreach ($row as $value) {
-                            if (is_null($value) || !isset($value)) {
-                                ($num_values == $num_counter) ? $sql .= 'NULL' : $sql .= 'NULL, ';
-                            } else {
-                                ($num_values == $num_counter)
-                                    ? $sql .= '"' . DUP_PRO_DB::escSQL($value, true) . '"'
-                                    : $sql .= '"' . DUP_PRO_DB::escSQL($value, true) . '", ';
+                        if (strlen($sql) >= DUPLICATOR_PRO_PHP_BULK_SIZE) {
+                            fwrite($handle, rtrim($sql,",\s\t\n").";\n\n");
+                            $sql = 'INSERT INTO `'.$rewrite_table_as.'` VALUES '."\n";
+                            if ($this->throttleDelayInUs > 0) {
+                                usleep($this->throttleDelayInUs * $global->package_phpdump_qrylimit);
                             }
-                            $num_counter++;
                         }
-                        $bulk_counter++;
-                        $row_offset++;
-                        $bulk_done = strlen($sql) >= DUPLICATOR_PRO_PHP_BULK_SIZE  || $row_offset == $actual_row_count;
-                        $sql .= ($bulk_done) ? ");\n" : "), ";
-                        if($bulk_done){
-                            fwrite($handle, $sql);
-                            $bulk_counter = 0;
-                            $sql = "";
-                            $bulk_done = false;
-                        }
+                        $sql .= '('.implode(',', array_map(array('DUP_PRO_DB','escValueToQueryString'), $row))."),\n";
+                    }
+                    
+                    fwrite($handle, rtrim($sql,",\s\t\n").";\n\n");
+                    if ($this->throttleDelayInUs > 0) {
+                        usleep($this->throttleDelayInUs * $global->package_phpdump_qrylimit);
                     }
                     if (0 == ($i % 10)) {
-                        $this->setProgressPer($current_index, $i, $row_count);
+                        $this->setProgressPer($current_index, $i, $page_count);
                     }
-    
-                }           
-
-            }            
-            $sql	 = null;
-            $rows	 = null;
+                }
+            }
+            $sql  = null;
+            $rows = null;
         }
 
         $sql_footer = "\nSET FOREIGN_KEY_CHECKS = 1; \n\n";
@@ -694,6 +745,20 @@ class DUP_PRO_Database
         $table_prefix = (is_multisite() && !defined('MULTISITE')) ? $wpdb->base_prefix : $wpdb->get_blog_prefix(0);
         return $table_prefix;
     }
+
+    private	function setError($message, $fix) {
+        DUP_PRO_LOG::trace($message);
+
+        $this->Package->build_progress->failed = true;
+        DUP_PRO_LOG::trace('Database: buildInChunks Failed');
+        $this->Package->update();
+
+		DUP_PRO_Log::error("$message **RECOMMENDATION:  $fix.", '', false);
+
+		$system_global = DUP_PRO_System_Global_Entity::get_instance();
+		$system_global->add_recommended_text_fix($message, $fix);
+		$system_global->save();
+	}
 
     /**
      * Uses PHP to build the SQL file in chunks over multiple http requests
@@ -937,27 +1002,29 @@ class DUP_PRO_Database
             $sql = $wpdb->prepare("SELECT TABLE_NAME AS `table`, (DATA_LENGTH + INDEX_LENGTH) AS `size` 
                         FROM information_schema.TABLES 
                         WHERE 
-                            TABLE_SCHEMA = %s 
-                            AND
-                            TABLE_NAME IN ('".implode("', '", $this->Package->db_build_progress->tablesToProcess)."');", $wpdb->dbname);
+                            TABLE_SCHEMA = %s;", $wpdb->dbname);
             $schemaRes = $wpdb->get_results($sql);
             if (!empty($schemaRes)) {
                 $totalSchemaSize = 0;
                 $tablesSchemaSizes = array();
                 foreach ($schemaRes as $schemaRow) {
+                    if (!in_array($schemaRow->table, $this->Package->db_build_progress->tablesToProcess)) {
+                        continue;
+                    }
                     $tableSize = intval($schemaRow->size);
                     $totalSchemaSize += $tableSize;
                     $tablesSchemaSizes[$schemaRow->table] = $tableSize;
                 }
                 $this->Package->db_build_progress->tablesSchemaSizes = $tablesSchemaSizes;
                 $this->Package->db_build_progress->totalSchemaSize = $totalSchemaSize;
+            } else {
+                DUP_PRO_Log::info("QUERY ERROR: ".$wpdb->last_error);
             }
         } else {
             $this->Package->db_build_progress->tablesSchemaSizes = array();
             $this->Package->db_build_progress->totalSchemaSize = 0;
         }
         DUP_PRO_Log::info("SCHEMA SIZE: [{$this->Package->db_build_progress->totalSchemaSize}]");
-
     }
 
     private function writeCreates()
@@ -1016,11 +1083,6 @@ class DUP_PRO_Database
     {
         global $wpdb;
         $global = DUP_PRO_Global_Entity::get_instance();
-        $server_load_delay = 0;
-
-        if ($global->server_load_reduction != DUP_PRO_Server_Load_Reduction::None) {
-            $server_load_delay = DUP_PRO_Server_Load_Reduction::microseconds_from_reduction($global->server_load_reduction);
-        }
 
         $db_file_size = filesize($this->dbStorePathPublic);
 
@@ -1088,7 +1150,12 @@ class DUP_PRO_Database
 
                 $table					 = $tables[$current_index];
                 $rewrite_table_as        = $this->rewriteTableNameAs($table);
-                $row_count				 = $wpdb->get_var("SELECT Count(*) FROM `{$table}`");
+                if (isset($this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as])) {
+                    $row_count = $this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as];
+                } else {
+                    $row_count = $wpdb->get_var("SELECT Count(*) FROM `{$table}`");
+                    $this->Package->Database->info->tableWiseRowCounts[$rewrite_table_as] = $row_count;
+                }
                 $rows_left_to_process	 = 0;
 
                 $this->setProgressPer($current_index, $row_offset, $row_count);
@@ -1118,55 +1185,49 @@ class DUP_PRO_Database
                 $int_field_struct = $this->getIntFieldsStruct($table);
                 $query	 = "SELECT * FROM `{$table}` LIMIT {$row_offset}, {$chunk_size}";
                 $rows	 = $wpdb->get_results($query, ARRAY_A);
+
+                $select_last_error = $wpdb->last_error;
+                if ('' !== $select_last_error) {
+                    DUP_PRO_Log::info($select_last_error);
+                    if (false !== stripos($select_last_error, 'is marked as crashed and should be repaired')) {
+                        $repair_query = "REPAIR TABLE `{$table}`;";
+                        $fix = sprintf(DUP_PRO_U::__('Detected that database table %1$s is corrupt. Run repair tool or execute SQL command %2$s'), $table, $repair_query);
+                    } else {
+                        $fix = DUP_PRO_U::__('Please contact your DataBase administrator to fix the error.');
+                    }
+                    $this->setError($select_last_error, $fix);
+                    return;
+                }
+
                 $bulk_done = false;
 
                 if ($row_count >= 1) {
                     if (is_array($rows)) {
+                        $sql = 'INSERT INTO `'.$rewrite_table_as.'` VALUES '."\n";
                         foreach ($rows as $row_index => $row) {
-                            if ($server_load_delay !== 0) {
-                                usleep($server_load_delay);
-                            }
+                            $sql .= '('.implode(',', array_map(array('DUP_PRO_DB', 'escValueToQueryString'), $row))."),\n";
 
-                            $sql		 .= $bulk_counter === 0 ? "INSERT INTO `{$rewrite_table_as}` VALUES(" : "(";
-                            $raw_field_values = array();
-                            foreach ($row as $field_name => $value) {
-                                if (isset($int_field_struct[$field_name])) {
-                                    $val = (null === $value || '' === $value) ? $int_field_struct[$field_name] : $value;
-                                    $raw_field_values[] = ('' === $val) ? "''" : $val;
-                                } else {
-                                    $raw_field_values[] = (is_null($value) || !isset($value)) ? 'NULL' : "'".DUP_PRO_DB::escSQL($value, true)."'";
-                                }
-                            }
-                            $sql .= implode(', ', $raw_field_values);
                             $row_offset++;
                             $bulk_counter++;
-                            
-                            // Temp: Uncomment this to randomly kill the php db process to simulate real world hosts and verify system recovers properly
-//                            if(($db_build_progress->failureCount === 0) && (rand(0, 5000) == 1)) {
-//                                DUP_PRO_LOG::trace("#### intentionally killing db");
-//                                exit(1);
-//                            }
-                        
-                            
-                            $db_build_progress->totalRowOffset++;
-                            $db_build_progress->tableOffset	 = $row_offset;
-                            $db_build_progress->bulkOffset = $bulk_counter;
 
-                            $elapsed_time = time() - $start_time;
-                            $time_over = $elapsed_time >= $worker_time;
+                            $db_build_progress->totalRowOffset++;
+                            $db_build_progress->tableOffset = $row_offset;
+                            $db_build_progress->bulkOffset  = $bulk_counter;
+
+                            $elapsed_time         = time() - $start_time;
+                            $time_over            = $elapsed_time >= $worker_time;
                             //query limit was reached or all rows of table were processed
                             $row_processed_in_qry = $row_index + 1;
-                            $bulk_done = ($bulk_size_offset + strlen($sql)) >= $bulk_size || $row_offset == $row_count || $row_processed_in_qry == $global->package_phpdump_qrylimit;
-                            $sql .= ($bulk_done || $time_over) ? ");\n" : "),\n ";
+                            $bulk_done            = ($bulk_size_offset + strlen($sql)) >= DUPLICATOR_PRO_PHP_BULK_SIZE || $row_offset == $row_count || $row_processed_in_qry == $global->package_phpdump_qrylimit;
 
                             //some tests I've done show, that writing to much data at once is slower
                             //than writing medium sized data multiple times, that's why we have the
                             //$bulk_done check below - TG
-                            if ($bulk_done || $time_over) {                                
-                                DUP_PRO_U::fwrite($handle, $sql);
+                            if ($bulk_done || $time_over) {
+                                DUP_PRO_U::fwrite($handle, rtrim($sql,",\s\t\n").";\n\n");
                                 if (($row_offset == $row_count)) {
-                                    $row_offset										 = 0;
-                                    $db_build_progress->tableOffset	 = $row_offset;
+                                    $row_offset                     = 0;
+                                    $db_build_progress->tableOffset = $row_offset;
                                     if ($table_count != $current_index + 1) {
                                         $current_index++;
                                         $this->setProgressPer($current_index);
@@ -1175,16 +1236,20 @@ class DUP_PRO_Database
                                         $is_completed = true;
                                     }
                                 }
-                                $db_build_progress->fileOffset = DUP_PRO_U::ftell($handle);
+                                $db_build_progress->fileOffset     = DUP_PRO_U::ftell($handle);
                                 $db_build_progress->bulkSizeOffset = 0;
-                                $db_build_progress->bulkOffset = 0;
-                                $bulk_done = false;
-                                $bulk_counter = 0;
+                                $db_build_progress->bulkOffset     = 0;
+                                $bulk_done                         = false;
+                                $bulk_counter                      = 0;
                                 DUP_PRO_LOG::trace("#### saving sql offset {$db_build_progress->fileOffset}");
-                                $sql = "";
+                                $sql = 'INSERT INTO `'.$rewrite_table_as.'` VALUES '."\n";
                                 if ($time_over) {
                                     break;
-                                }                                
+                                } else {
+                                    if ($this->throttleDelayInUs > 0) {
+                                        usleep($this->throttleDelayInUs * $bulk_counter);
+                                    }
+                                }
                             }
                         }
                         DUP_PRO_Log::trace("$row_offset of $row_count");
@@ -1235,31 +1300,34 @@ class DUP_PRO_Database
         fwrite($fileHandle, $sql_footer);
     }
 
-    private function setProgressPer($currentTableIndex = 0, $rowOffset = '', $rowCount = '') {
+    private function setProgressPer($currentTableIndex = 0, $rowOffset = '', $rowCount = '')
+    {
         if (!isset($this->indexProcessedSchemaSize[$currentTableIndex])) {
             $processedSchemaSize = 0;
-            for ($i=0; $i < $currentTableIndex; $i++) {
-                $tableName = $this->Package->db_build_progress->tablesToProcess[$i];
+            for ($i = 0; $i < $currentTableIndex; $i++) {
+                $tableName           = $this->Package->db_build_progress->tablesToProcess[$i];
                 $processedSchemaSize += intval($this->Package->db_build_progress->tablesSchemaSizes[$tableName]);
             }
             $this->indexProcessedSchemaSize[$currentTableIndex] = $processedSchemaSize;
         } else {
             $processedSchemaSize = $this->indexProcessedSchemaSize[$currentTableIndex];
         }
-        
+
         if (!empty($rowOffset) && !empty($rowCount)) {
             $processingTableIndex = $currentTableIndex + 1;
-            $tableName = $this->Package->db_build_progress->tablesToProcess[$processingTableIndex];
-            $tableSchemaSize = intval($this->Package->db_build_progress->tablesSchemaSizes[$tableName]);
-            /*
-                $rowCount           ->  $rowProcessed
-                $tableSchemaSize    ->      ?
-            */
-            $rowProcessed = $rowOffset + 1;
-            $processedSchemaSize += ($tableSchemaSize * $rowProcessed) / $rowCount;
-        }      
+            if (isset($this->Package->db_build_progress->tablesToProcess[$processingTableIndex])) {
+                $tableName           = $this->Package->db_build_progress->tablesToProcess[$processingTableIndex];
+                $tableSchemaSize     = intval($this->Package->db_build_progress->tablesSchemaSizes[$tableName]);
+                /*
+                  $rowCount           ->  $rowProcessed
+                  $tableSchemaSize    ->      ?
+                 */
+                $rowProcessed        = $rowOffset + 1;
+                $processedSchemaSize += ($tableSchemaSize * $rowProcessed) / $rowCount;
+            }
+        }
 
-        $per = SnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::DBSTART, DUP_PRO_PackageStatus::DBDONE, $this->Package->db_build_progress->totalSchemaSize, $processedSchemaSize);
+        $per = DupProSnapLibUtil::getWorkPercent(DUP_PRO_PackageStatus::DBSTART, DUP_PRO_PackageStatus::DBDONE, $this->Package->db_build_progress->totalSchemaSize, $processedSchemaSize);
         $this->Package->set_status($per);
     }
 

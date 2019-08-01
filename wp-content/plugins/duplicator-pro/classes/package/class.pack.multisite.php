@@ -8,7 +8,6 @@ class DUP_PRO_Multisite
 {
     public $FilterSites = array();
 
-
     public function getDirsToFilter(){
         if(!empty($this->FilterSites)){
             $path_arr = array();
@@ -29,10 +28,11 @@ class DUP_PRO_Multisite
                     }else{
                         $path_arr[] = $wp_content_dir.'/uploads';
                     }
-                }else{
-                    if(DUP_PRO_MU::getGeneration() == DUP_PRO_MU_Generations::ThreeFivePlus){
+                } else {
+                    if (file_exists($wp_content_dir.'/uploads/sites/'.$site_id)) {
                         $path_arr[] = $wp_content_dir.'/uploads/sites/'.$site_id;
-                    }else{
+                    }
+                    if (file_exists($wp_content_dir.'/blogs.dir/'.$site_id)) {
                         $path_arr[] = $wp_content_dir.'/blogs.dir/'.$site_id;
                     }
                 }
@@ -43,12 +43,13 @@ class DUP_PRO_Multisite
         }
     }
 
-    public function getTablesToFilter(){
+    public function getTablesToFilter()
+    {
         global $wpdb;
 
-		$tables = array();
+        $tables = array();
 
-        if(!empty($this->FilterSites)) {
+        if (!empty($this->FilterSites)) {
             foreach ($this->FilterSites as $site_id) {
                 $prefix = $wpdb->get_blog_prefix($site_id);
                 if ($site_id == 1) {
@@ -56,7 +57,7 @@ class DUP_PRO_Multisite
                         'commentmeta',
                         'comments',
                         'links',
-                        'options',
+                        //'options', include always options table
                         'postmeta',
                         'posts',
                         'terms',
@@ -65,15 +66,15 @@ class DUP_PRO_Multisite
                         'termmeta',
                     );
                     foreach ($default_tables as $tb) {
-                        $tables[] = $prefix . $tb;
+                        $tables[] = $prefix.$tb;
                     }
                 } else {
-                    $sql_query = $wpdb->prepare("SHOW TABLES LIKE '%s'", $prefix . '%');
-                    $tables = $wpdb->get_col($sql_query);
+                    $sql_query  = $wpdb->prepare("SHOW TABLES LIKE '%s'", $prefix.'%');
+                    $sub_tables = $wpdb->get_col($sql_query);
+                    $tables     = array_merge($tables, $sub_tables);
                 }
             }
         }
         return $tables;
     }
-
 }

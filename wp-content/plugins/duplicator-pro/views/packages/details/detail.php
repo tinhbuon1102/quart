@@ -95,7 +95,7 @@ $lang_notset = DUP_PRO_U::__("- not set -");
 GENERAL -->
 <div class="dup-box">
 <div class="dup-box-title">
-	<i class="fa fa-archive"></i> <?php DUP_PRO_U::esc_html_e('General') ?>
+	<i class="fa fa-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('General') ?>
 	<div class="dup-box-arrow"></div>
 </div>			
 <div class="dup-box-panel" id="dup-package-dtl-general-panel" style="<?php echo $ui_css_general ?>">
@@ -181,16 +181,16 @@ GENERAL -->
 				<div id="dpro-downloads-area">
 					<?php if ($error_display == 'none') :?>
 						<?php if ($package->contains_storage_type(DUP_PRO_Storage_Types::Local)) :?>
-							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(0, <?php echo $package->ID ?>);return false;"><i class="fa fa-bolt"></i> Installer</button>						
-							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(1, <?php echo $package->ID ?>);return false;"><i class="fa fa-file-archive-o"></i> Archive - <?php echo $package->ZipSize ?></button>
-							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(2, <?php echo $package->ID ?>);return false;"><i class="fa fa-table"></i> &nbsp; SQL - <?php echo DUP_PRO_U::byteSize($package->Database->Size)  ?></button>
-							<button class="button thickbox" onclick="DupPro.Pack.ShowLinksDialog(<?php echo "'{$link_sql}','{$link_archive}','{$link_installer}','{$link_log}'" ;?>);"><i class="fa fa-lock"></i> &nbsp; <?php DUP_PRO_U::esc_html_e("Share File Links")?></button>
+							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(0, <?php echo $package->ID ?>);return false;"><i class="fa fa-bolt fa-sm"></i> Installer</button>						
+							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(1, <?php echo $package->ID ?>);return false;"><i class="far fa-file-archive fa-sm"></i> Archive - <?php echo $package->ZipSize ?></button>
+							<button class="button" onclick="DupPro.Pack.DownloadPackageFile(2, <?php echo $package->ID ?>);return false;"><i class="fa fa-table fa-sm"></i> &nbsp; SQL - <?php echo DUP_PRO_U::byteSize($package->Database->Size)  ?></button>
+							<button class="button thickbox" onclick="DupPro.Pack.ShowLinksDialog(<?php echo "'{$link_sql}','{$link_archive}','{$link_installer}','{$link_log}'" ;?>);"><i class="fa fa-lock fa-sm"></i> &nbsp; <?php DUP_PRO_U::esc_html_e("Share File Links")?></button>
 						<?php else: ?>
 							<!-- CLOUD ONLY FILES -->
 							<div id="dpro-downloads-msg"><?php DUP_PRO_U::esc_html_e("These package files are in remote storage locations.  Please visit the storage provider to download.") ?></div> <br/>
-							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle"></i> Installer - <?php echo DUP_PRO_U::byteSize($package->Installer->Size) ?></button>						
-							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle"></i> Archive - <?php echo $package->ZipSize ?></button>
-							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle"></i> &nbsp; SQL - <?php echo DUP_PRO_U::byteSize($package->Database->Size)  ?></button>
+							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle fa-sm"></i> Installer - <?php echo DUP_PRO_U::byteSize($package->Installer->Size) ?></button>						
+							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle fa-sm"></i> Archive - <?php echo $package->ZipSize ?></button>
+							<button class="button" disabled="true"><i class="fa fa-exclamation-triangle fa-sm"></i> &nbsp; SQL - <?php echo DUP_PRO_U::byteSize($package->Database->Size)  ?></button>
 							
 						<?php endif; ?>
 					<?php else: ?>
@@ -232,7 +232,7 @@ DIALOG: SHARE LINKS -->
 <?php add_thickbox(); ?>
 <div id="dup-dlg-quick-path" title="<?php DUP_PRO_U::esc_attr_e('Download Links'); ?>" style="display:none">
 	<p>
-		<i class="fa fa-lock"></i>
+		<i class="fa fa-lock fa-sm"></i>
 		<?php DUP_PRO_U::esc_html_e("The following links contain sensitive data.  Please share with caution!");	?>
 	</p>
 	
@@ -251,7 +251,7 @@ STORAGE -->
 ?>
 <div class="dup-box">
 <div class="dup-box-title">
-	<i class="fa fa-database"></i> <?php DUP_PRO_U::esc_html_e('Storage') ?>
+	<i class="fas fa-database fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Storage') ?>
 	<div class="dup-box-arrow"></div>
 </div>			
 <div class="dup-box-panel" id="dup-package-dtl-storage-panel" style="<?php echo $ui_css_storage ?>">
@@ -330,13 +330,13 @@ ARCHIVE -->
 ?>
 <div class="dup-box">
 <div class="dup-box-title">
-	<i class="fa fa-file-archive-o"></i> <?php DUP_PRO_U::esc_html_e('Archive') ?>
+	<i class="far fa-file-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Archive') ?>
 	<div class="dup-box-arrow"></div>
 </div>			
 <div class="dup-box-panel" id="dup-package-dtl-archive-panel" style="<?php echo $ui_css_archive ?>">
 
 	<!-- FILES -->
-	<div class="dpro-box-panel-hdr"><i class="fa fa-files-o"></i> <?php DUP_PRO_U::esc_html_e('FILES'); ?></div>
+	<div class="dpro-box-panel-hdr"><i class="far fa-copy fa-sm"></i> <?php DUP_PRO_U::esc_html_e('FILES'); ?></div>
 	<table class='dpro-dtl-data-tbl'>
 		<tr>
 			<td><?php DUP_PRO_U::esc_html_e("Build Mode") ?>: </td>
@@ -345,7 +345,7 @@ ARCHIVE -->
 					$zip_mode_string	 = DUP_PRO_U::__('Unknown');
 
                     if(isset($package->build_progress->current_build_mode)) {
-                        if ($package->build_progress->current_build_mode === DUP_PRO_Archive_Build_Mode::ZipArchive) {
+                        if ($package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::ZipArchive) {
 							$zip_mode_string = DUP_PRO_U::__("ZipArchive");
 
 							if (isset($package->ziparchive_mode)) {
@@ -353,7 +353,7 @@ ARCHIVE -->
 									$zip_mode_string = DUP_PRO_U::__("ZipArchive ST");
 								}
 							}
-                        } else if ($package->build_progress->current_build_mode === DUP_PRO_Archive_Build_Mode::Shell_Exec) {
+                        } else if ($package->build_progress->current_build_mode == DUP_PRO_Archive_Build_Mode::Shell_Exec) {
 							$zip_mode_string = DUP_PRO_U::__("Shell Exec");
 						} else {
 							$zip_mode_string = DUP_PRO_U::__("DupArchive");
@@ -452,7 +452,7 @@ ARCHIVE -->
 	</table><br/>
 
 	<!-- DATABASE -->
-	<div class="dpro-box-panel-hdr"><i class="fa fa-table"></i> <?php DUP_PRO_U::esc_html_e('DATABASE'); ?></div>
+	<div class="dpro-box-panel-hdr"><i class="fa fa-table fa-sm"></i> <?php DUP_PRO_U::esc_html_e('DATABASE'); ?></div>
 	<table class='dpro-dtl-data-tbl'>
 		<tr>
 			<td><?php DUP_PRO_U::esc_html_e("Type") ?>: </td>
@@ -485,9 +485,9 @@ ARCHIVE -->
 INSTALLER -->
 <div class="dup-box" style="margin-bottom: 50px">
 <div class="dup-box-title">
-	<i class="fa fa-bolt"></i> <?php DUP_PRO_U::esc_html_e('Installer') ?>
+	<i class="fa fa-bolt fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Installer') ?>
 	<?php if($package->Installer->OptsSecureOn) :?>
-		<span id="dpro-install-secure-lock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is on for this package.') ?>"><i class="fa fa-lock"></i> </span>
+		<span id="dpro-install-secure-lock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is on for this package.') ?>"><i class="fa fa-lock fa-sm"></i> </span>
 	<?php else : ?>
 		<span id="dpro-install-secure-unlock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is off for this package.') ?>"><i class="fa fa-unlock-alt"></i> </span>
 	<?php endif; ?>
@@ -515,7 +515,7 @@ INSTALLER -->
 				<td colspan="2">
 					<div id="dpro-pass-toggle">
 						<input type="password" name="secure-pass" id="secure-pass" required="required" value="<?php echo DUP_PRO_U::installerDecrypt($package->Installer->OptsSecurePass) ?>" />
-						<button type="button" id="secure-btn" class="pass-toggle" onclick="DupPro.togglePassword()" title="<?php DUP_PRO_U::esc_attr_e('Show/Hide Password') ?>"><i class="fa fa-eye"></i></button>
+						<button type="button" id="secure-btn" class="pass-toggle" onclick="DupPro.togglePassword()" title="<?php DUP_PRO_U::esc_attr_e('Show/Hide Password') ?>"><i class="fas fa-eye fa-sm"></i></button>
 					</div>
 				</td>
 			</tr>
@@ -658,10 +658,10 @@ jQuery(document).ready(function ($)
 		var $button =  $('#secure-btn');
 		if (($input).attr('type') == 'text') {
 			$input.attr('type', 'password');
-			$button.html('<i class="fa fa-eye"></i>');
+			$button.html('<i class="fas fa-eye fa-sm"></i>');
 		} else {
 			$input.attr('type', 'text');
-			$button.html('<i class="fa fa-eye-slash"></i>');
+			$button.html('<i class="fas fa-eye-slash fa-sm"></i>');
 		}
 	}
 	

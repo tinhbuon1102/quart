@@ -3,7 +3,7 @@
 STORED DATA -->
 <div class="dup-box">
 	<div class="dup-box-title">
-		<i class="fa fa-th-list"></i>
+		<i class="fas fa-th-list fa-sm"></i>
 		<?php DUP_PRO_U::esc_html_e("Stored Data"); ?>
 		<div class="dup-box-arrow"></div>
 	</div>

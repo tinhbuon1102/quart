@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Common;
+
+defined("ABSPATH") or die("");
 
 /**
  * An object that can be represented as an array

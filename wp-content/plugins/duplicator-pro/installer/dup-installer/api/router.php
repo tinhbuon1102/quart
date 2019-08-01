@@ -1,36 +1,27 @@
 <?php
-/** IDE HELPERS */
-/* @var $GLOBALS['DUPX_AC'] DUPX_ArchiveConfig */
+if (!defined('DUPXABSPATH')) {
+    define('DUPXABSPATH', dirname(__FILE__));
+}
 
-if ( !defined('DUPXABSPATH') )
-	define('DUPXABSPATH', dirname(__FILE__) . '/');
+$GLOBALS['DUPX_ROOT'] = str_replace("\\", '/', (realpath(dirname(__FILE__) . '/../..')));
+$GLOBALS['DUPX_INIT'] = "{$GLOBALS['DUPX_ROOT']}/dup-installer";
+require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.boot.php');
+/**
+ * init constants and include
+ */
+DUPX_Boot::init();
+DUPX_Boot::initArchiveAndLog();
 
-$GLOBALS['DUPX_INIT']  = str_replace("\\", '/', (realpath(dirname(__FILE__) . '/..')));
-$API['BaseRootPath']   = rtrim(str_replace("\\", '/', str_ireplace('api', '', dirname(__FILE__))), '/');
-
-//echo $GLOBALS['DUPX_INIT']. '<br/>';
-//echo $API['BaseRootPath']. '<br/>';
-
-require_once("{$API['BaseRootPath']}/classes/utilities/class.u.php");
-require_once("{$API['BaseRootPath']}/classes/config/class.constants.php");
-require_once("{$API['BaseRootPath']}/classes/config/class.archive.config.php");
-
-$GLOBALS['DUPX_AC'] = DUPX_ArchiveConfig::getInstance();
-
-
-
-require_once("{$API['BaseRootPath']}/classes/class.http.php");
-require_once("{$API['BaseRootPath']}/classes/class.server.php");
+require_once("{$GLOBALS['DUPX_INIT']}/classes/class.http.php");
+require_once("{$GLOBALS['DUPX_INIT']}/classes/class.server.php");
 require_once('class.api.php');
 require_once('class.cpnl.base.php');
 require_once('class.cpnl.ctrl.php');
-
 
 //Register API Engine - If it processes the current route it spits out JSON and exits the process
 $API_Server = new DUPX_API_Server();
 $API_Server->add_controller(new DUPX_cPanel_Controller());
 $API_Server->process_request(false);
-
 ?>
 
 <!DOCTYPE html>
@@ -55,10 +46,10 @@ $API_Server->process_request(false);
 		div.api-area pre {font-size:11px; line-height: 13px; padding: 2px; border:1px solid silver; background: #efefef; border-radius: 3px}
 	</style>	
 	<?php
-		require_once("{$API['BaseRootPath']}/assets/inc.libs.css.php");
-		require_once("{$API['BaseRootPath']}/assets/inc.css.php");
-		require_once("{$API['BaseRootPath']}/assets/inc.libs.js.php");
-		require_once("{$API['BaseRootPath']}/assets/inc.js.php");
+		require_once("{$GLOBALS['DUPX_INIT']}/assets/inc.libs.css.php");
+		require_once("{$GLOBALS['DUPX_INIT']}/assets/inc.css.php");
+		require_once("{$GLOBALS['DUPX_INIT']}/assets/inc.libs.js.php");
+		require_once("{$GLOBALS['DUPX_INIT']}/assets/inc.js.php");
 	?>
 	<script>
 		function RequestAPI(template, test) {

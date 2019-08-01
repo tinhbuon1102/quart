@@ -1,4 +1,6 @@
 <?php
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+    die("");
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -66,8 +68,8 @@ class DupArchiveHeader// extends HeaderBase
     {
         $isCompressedString = DupArchiveUtil::boolToString($this->isCompressed);
 
-        //SnapLibIOU::fwrite($archiveHandle, "<A><V>{$this->version}</V><C>{$isCompressedString}</C></A>");
-		SnapLibIOU::fwrite($archiveHandle, '<A><V>'.$this->version.'</V><C>'.$isCompressedString.'</C></A>');
+        //DupProSnapLibIOU::fwrite($archiveHandle, "<A><V>{$this->version}</V><C>{$isCompressedString}</C></A>");
+		DupProSnapLibIOU::fwrite($archiveHandle, '<A><V>'.$this->version.'</V><C>'.$isCompressedString.'</C></A>');
     }
 }
 }

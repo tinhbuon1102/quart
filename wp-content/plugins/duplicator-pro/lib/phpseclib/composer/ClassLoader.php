@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Composer.
  *
@@ -11,6 +10,7 @@
  */
 
 namespace Composer\Autoload;
+defined("ABSPATH") or die("");
 
 /**
  * ClassLoader implements a PSR-0, PSR-4 and classmap class loader.

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Random Number Generator
  *
@@ -23,7 +22,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\AES;
 use phpseclib\Crypt\Base;
 use phpseclib\Crypt\Blowfish;
@@ -130,7 +129,8 @@ class Random
             }
 
             session_id(1);
-            ini_set('session.use_cookies', 0);
+            if (DupProSnapLibUtil::wp_is_ini_value_changeable('session.use_cookies'))
+                @ini_set('session.use_cookies', 0);
             session_cache_limiter('');
             session_start();
 
@@ -154,7 +154,8 @@ class Random
             if ($old_session_id != '') {
                 session_id($old_session_id);
                 session_start();
-                ini_set('session.use_cookies', $old_use_cookies);
+                if (DupProSnapLibUtil::wp_is_ini_value_changeable('session.use_cookies'))
+                    @ini_set('session.use_cookies', $old_use_cookies);
                 session_cache_limiter($old_session_cache_limiter);
             } else {
                 if ($_OLD_SESSION !== false) {

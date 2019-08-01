@@ -170,7 +170,7 @@
 			(icon.length)
 				? $(icon).addClass(style[src].open )
 				: $(this).html("- " + text );
-			target.show();
+			target.show().removeClass('no-display');
 		} else {
 			(icon.length)
 				? $(icon).addClass(style[src].close)
@@ -189,7 +189,7 @@
 		var i = Math.floor(Math.log(bytes) / Math.log(k));
 		return (bytes / Math.pow(k, i)).toPrecision(dm) + ' ' + sizes[i];
 	}
-
+    
 	$(document).ready(function()
     {
 		<?php if ($GLOBALS['DUPX_DEBUG']) : ?>
@@ -229,5 +229,6 @@
 		DUPX.loadQtip();
 
 	});
-
 </script>
+<?php
+DUPX_U_Html::js();

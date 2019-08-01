@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\Message;
+
+defined("ABSPATH") or die("");
 
 /**
  * Pecl HTTP message parser

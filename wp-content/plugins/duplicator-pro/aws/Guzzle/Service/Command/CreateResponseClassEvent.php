@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Command;
 
 use DuplicatorPro\Guzzle\Common\Event;

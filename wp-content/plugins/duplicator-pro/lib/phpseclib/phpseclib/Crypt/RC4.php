@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of RC4.
  *
@@ -43,7 +42,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Base;
 
 /**

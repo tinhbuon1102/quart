@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of Rijndael.
  *
@@ -53,7 +52,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Base;
 
 /**

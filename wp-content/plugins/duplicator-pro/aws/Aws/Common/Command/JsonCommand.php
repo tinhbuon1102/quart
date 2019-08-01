@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Command;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Guzzle\Service\Command\OperationCommand;
 use DuplicatorPro\Guzzle\Http\Curl\CurlHandle;
 

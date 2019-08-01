@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Stream\StreamInterface;
 

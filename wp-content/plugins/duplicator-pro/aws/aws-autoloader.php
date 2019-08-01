@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 if (!class_exists('dup_pro_aws_autoload'))
 {
 	$GLOBALS['dup_pro_aws_mapping'] = array(

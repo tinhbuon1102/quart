@@ -19,7 +19,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
         add_action('wp_ajax_DUP_PRO_CTRL_Tools_migrationUploader', array($this, 'migrationUploader'));
         add_action('wp_ajax_DUP_PRO_CTRL_Tools_removeUploadedFilePart', array($this, 'removeUploadedFilePart'));
         add_action('wp_ajax_DUP_PRO_CTRL_Tools_prepareArchiveForImport', array($this, 'prepareArchiveForImport'));
-        add_action('wp_ajax_nopriv_DUP_PRO_CTRL_Tools_prepareArchiveForImport', array($this, 'prepareArchiveForImport'));
+        // add_action('wp_ajax_nopriv_DUP_PRO_CTRL_Tools_prepareArchiveForImport', array($this, 'prepareArchiveForImport'));
         add_action('wp_ajax_DUP_PRO_CTRL_Tools_deleteExistingPackage', array($this, 'deleteExistingFile'));
     }
 
@@ -33,21 +33,19 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
      */
     public function runScanValidator($post)
     {
-        //@set_time_limit(0);
-
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('DUP_PRO_CTRL_Tools_runScanValidator', 'nonce');
+        DUP_PRO_U::hasCapability('export');
         $nonce = sanitize_text_field($_REQUEST['nonce']);
-        if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Tools_runScanValidator')) {
-            DUP_PRO_LOG::trace('Security issue');
-            die('Security issue');
-        }
-
+        
+        //@set_time_limit(0);
         // Let's setup execution time on proper way (multiserver supported)
         try {
             if(function_exists('set_time_limit'))
                 set_time_limit(0); // unlimited
             else
             {
-                if(function_exists('ini_set'))
+                if (function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
                     ini_set('max_execution_time', 0); // unlimited
             }
 
@@ -58,7 +56,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
                 @set_time_limit(3600); // 60 minutes
             else
             {
-                if(function_exists('ini_set'))
+                if(function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
                     @ini_set('max_execution_time', 3600); //  60 minutes
             }
         }
@@ -98,23 +96,21 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
      */
     public function prepareArchiveForImport($post)
     {
-        DUP_PRO_LOG::trace("prepare archive for import");
-       // @set_time_limit(0);
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('DUP_PRO_CTRL_Tools_prepareArchiveForImport', 'nonce');
+        DUP_PRO_U::hasCapability('export');
 
-        $nonce = sanitize_text_field($_POST['nonce']);
-        if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Tools_prepareArchiveForImport')) {
-            DUP_PRO_LOG::trace('Security issue');
-            die('Security issue');
-        }
-        
+        DUP_PRO_LOG::trace("prepare archive for import");
+        // @set_time_limit(0);
+
         // Let's setup execution time on proper way (multiserver supported)
         try {
             if(function_exists('set_time_limit'))
                 set_time_limit(0); // unlimited
             else
             {
-                if(function_exists('ini_set'))
-                    ini_set('max_execution_time', 0); // unlimited
+                if(function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
+                    @ini_set('max_execution_time', 0); // unlimited
             }
        
         // there is error inside PHP because of PHP versions and server setup,
@@ -124,7 +120,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
                 @set_time_limit(3600); // 60 minutes
             else
             {
-                if(function_exists('ini_set'))
+                if(function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
                     @ini_set('max_execution_time', 3600); //  60 minutes
             }
         }
@@ -151,7 +147,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
 
                 if(!file_exists(DUPLICATOR_PRO_WPROOTPATH . $post['archive-filename']))
                 {
-                    SnapLibIOU::rename($archive_filepath, $newArchiveFilepath, true);
+                    DupProSnapLibIOU::rename($archive_filepath, $newArchiveFilepath, true);
                 }
 
 				DUP_PRO_LOG::trace("4b");
@@ -177,7 +173,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
                     $global = DUP_PRO_Global_Entity::get_instance();
 
                     // Assumption is that if shell exec zip works so does unzip
-                 // RSR TODO: for now always use ziparchive   $useShellZip = ($global->get_auto_zip_mode() === DUP_PRO_Archive_Build_Mode::Shell_Exec);
+                 // RSR TODO: for now always use ziparchive   $useShellZip = ($global->get_auto_zip_mode() == DUP_PRO_Archive_Build_Mode::Shell_Exec);
                     $useShellZip = false;
 
                     DUP_PRO_Zip_U::extractFiles($newArchiveFilepath, $relativeFilepaths, DUPLICATOR_PRO_WPROOTPATH, $useShellZip);
@@ -199,7 +195,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
 
 				DUP_PRO_LOG::trace("4g");
                 //$final_installer_filepath= DUPLICATOR_PRO_WPROOTPATH . 'installer-'
-                SnapLibIOU::rename($extracted_installer_filepath, DUPLICATOR_PRO_IMPORT_INSTALLER_FILEPATH);
+                DupProSnapLibIOU::rename($extracted_installer_filepath, DUPLICATOR_PRO_IMPORT_INSTALLER_FILEPATH);
 
 				DUP_PRO_LOG::trace("4h");
             }
@@ -228,21 +224,17 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
      */
     public function migrationUploader($post)
     {
-        // @set_time_limit(0);
-
-        $nonce = sanitize_text_field($_POST['nonce']);
-        if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Tools_migrationUploader')) {
-            DUP_PRO_LOG::trace('Security issue');
-            die('Security issue');
-        }
-
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('DUP_PRO_CTRL_Tools_migrationUploader', 'nonce');
+        DUP_PRO_U::hasCapability('export');
+        
         // Let's setup execution time on proper way (multiserver supported)
         try {
             if(function_exists('set_time_limit'))
                 set_time_limit(0); // unlimited
             else
             {
-                if(function_exists('ini_set'))
+                if(function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
                     ini_set('max_execution_time', 0); // unlimited
             }
 
@@ -253,7 +245,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
                 @set_time_limit(3600); // 60 minutes
             else
             {
-                if(function_exists('ini_set'))
+                if(function_exists('ini_set') && DupProSnapLibUtil::wp_is_ini_value_changeable('max_execution_time'))
                     @ini_set('max_execution_time', 3600); //  60 minutes
             }
         }
@@ -267,7 +259,7 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
 
         try {
             if (!file_exists(DUPLICATOR_PRO_SSDIR_PATH_IMPORTS)) {
-                SnapLibIOU::mkdir(DUPLICATOR_PRO_SSDIR_PATH_IMPORTS, 0755, true);
+                DupProSnapLibIOU::mkdir(DUPLICATOR_PRO_SSDIR_PATH_IMPORTS, 0755, true);
             }
 
             //CONTROLLER LOGIC
@@ -281,8 +273,8 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
 
             //	$ini_upload = ini_get('upload_max_filesize');
             //	$ini_post   = ini_get('post_max_size');
-            //	$ini_upload = SnapLibUtil::convertToBytes($ini_upload);
-            //	$ini_post	= SnapLibUtil::convertToBytes($ini_post);
+            //	$ini_upload = DupProSnapLibUtil::convertToBytes($ini_upload);
+            //	$ini_post	= DupProSnapLibUtil::convertToBytes($ini_post);
 
             $chunk = $_POST["chunk"];
             $chunks = $_POST["chunks"];
@@ -385,11 +377,9 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
      *
      */
     public function removeUploadedFilePart($post = array()) {
-        $nonce = sanitize_text_field($_POST['nonce']);
-        if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Tools_removeUploadedFilePart')) {
-            DUP_PRO_LOG::trace('Security issue');
-            die('Security issue');
-        }
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('DUP_PRO_CTRL_Tools_removeUploadedFilePart', 'nonce');
+        DUP_PRO_U::hasCapability('export');
 
         $post = $this->postParamMerge($post);
         check_ajax_referer($post['action'], 'nonce');
@@ -402,14 +392,11 @@ class DUP_PRO_CTRL_Tools extends DUP_PRO_CTRL_Base
     }
 
     public function deleteExistingFile($post){
+        DUP_PRO_Handler::init_error_handler();
+        check_ajax_referer('DUP_PRO_CTRL_Tools_deleteExistingPackage', 'nonce');
+        DUP_PRO_U::hasCapability('export');
+
         $post = $this->postParamMerge($post);
-
-        $nonce = sanitize_text_field($post['nonce']);
-        if (!wp_verify_nonce($nonce, 'DUP_PRO_CTRL_Tools_deleteExistingPackage')) {
-            DUP_PRO_LOG::trace('Security issue');
-            die('Security issue');
-        }
-
         if(file_exists($post['path']))
         {
             @unlink($post['path']);

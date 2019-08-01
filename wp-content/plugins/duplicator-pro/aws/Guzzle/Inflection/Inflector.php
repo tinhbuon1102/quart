@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Inflection;
+
+defined("ABSPATH") or die("");
 
 /**
  * Default inflection implementation

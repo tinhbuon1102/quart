@@ -1,7 +1,7 @@
 <?php
 
 namespace DuplicatorPro\Krizalys\Onedrive;
-
+defined("ABSPATH") or die("");
 class NameConflictBehaviorParameterizer
 {
     /**

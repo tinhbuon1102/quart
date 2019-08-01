@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /*
 Copyright (c) 2008 Sebastián Grignoli
 All rights reserved.

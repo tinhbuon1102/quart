@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\S3\Enum\Permission;
 use DuplicatorPro\Aws\Common\Exception\InvalidArgumentException;
 use DuplicatorPro\Guzzle\Common\ToArrayInterface;

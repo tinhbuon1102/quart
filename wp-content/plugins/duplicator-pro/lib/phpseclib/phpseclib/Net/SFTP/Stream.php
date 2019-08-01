@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SFTP Stream Wrapper
  *
@@ -16,7 +15,7 @@
  */
 
 namespace phpseclib\Net\SFTP;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SFTP;
 

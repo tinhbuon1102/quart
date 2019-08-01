@@ -18,6 +18,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'save') {
 	$global->ssl_disableverify = isset($_REQUEST['ssl_disableverify']) ? 1 : 0;
 	$global->ipv4_only = isset($_REQUEST['ipv4_only']) ? 1 : 0;
 
+	$global->gdrive_upload_chunksize_in_kb  = (int) $_REQUEST['gdrive_upload_chunksize_in_kb'];
     $global->dropbox_upload_chunksize_in_kb = (int) $_REQUEST['dropbox_upload_chunksize_in_kb'];
     $global->dropbox_transfer_mode          = $_REQUEST['dropbox_transfer_mode'];
     $global->max_storage_retries            = (int) $_REQUEST['max_storage_retries'];
@@ -106,6 +107,31 @@ SSL SETTINGS -->
 				<?php
 				DUP_PRO_U::esc_html_e("To use IPv4 only, which can help if your host has a broken IPv6 setup (currently only supported by Google Drive)");
 				?>
+			</p>
+		</td>
+	</tr>
+</table>
+
+<!-- ===============================
+GDRIVE SETTINGS -->
+<h3 class="title"><?php DUP_PRO_U::esc_html_e("Google Drive") ?></h3>
+<hr size="1" />
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Upload Size (KB)"); ?></label></th>
+		<td>
+			<input class="narrow-input" 
+                   type="number"
+                   min="1000"
+                   name="gdrive_upload_chunksize_in_kb"
+                   id="gdrive_upload_chunksize_in_kb"
+                   data-parsley-required
+                   data-parsley-type="number"
+                   data-parsley-errors-container="#gdrive_upload_chunksize_in_kb_error_container"
+                   value="<?php echo esc_attr($global->gdrive_upload_chunksize_in_kb); ?>" />
+			<div id="gdrive_upload_chunksize_in_kb_error_container" class="duplicator-error-container"></div>
+			<p class="description">
+				<?php DUP_PRO_U::esc_html_e('How much should be uploaded to Google Drive per attempt. Higher=faster but less reliable.'); ?>
 			</p>
 		</td>
 	</tr>

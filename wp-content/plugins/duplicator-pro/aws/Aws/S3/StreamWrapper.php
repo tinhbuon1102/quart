@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\RuntimeException;
 use DuplicatorPro\Aws\S3\Exception\S3Exception;
 use DuplicatorPro\Aws\S3\Exception\NoSuchKeyException;

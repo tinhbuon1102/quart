@@ -125,13 +125,13 @@ if (DUP_PRO_U::PHP53()) {
 
         // Upload a file all in one shot
         // returns true/false for success/failure
-        public static function upload_file($s3_client, $bucket, $src_filepath, $remote_directory, $storage_class)
+        public static function upload_file($s3_client, $bucket, $src_filepath, $remote_directory, $storage_class, $dest_filename = '')
         {
             // storage classes: s3 standard, s3 infrequent access, reduced redundency
             $success = false;
 
             try {
-                $filename = basename($src_filepath);
+                $filename = !empty($dest_filename) ? $dest_filename : basename($src_filepath);
                 $key      = trim($remote_directory, '/');
                 $key      = "$key/$filename";
 
@@ -396,19 +396,18 @@ if (DUP_PRO_U::PHP53()) {
             $client = DuplicatorPro\Aws\S3\S3Client::factory($args);
 
             $global = DUP_PRO_Global_Entity::get_instance();
+
             $opts = array();
-            // $client->setSslVerification($ssl_ca_cert, $verify_peer, $verify_host);
-
-            $opts[CURLOPT_SSL_VERIFYPEER] = $global->ssl_disableverify ? false : true;
-            $opts[CURLOPT_SSL_VERIFYHOST] = $global->ssl_disableverify ? 0 : 2; 
-            if (!$global->ssl_useservercerts) {
-                $opts[CURLOPT_CAINFO] = DUPLICATOR_PRO_CERT_PATH;
-                $opts[CURLOPT_CAPATH] = DUPLICATOR_PRO_CERT_PATH;
-                $opts['ssl.certificate_authority'] = DUPLICATOR_PRO_CERT_PATH;
-            }
             if ($global->ipv4_only) $opts[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
-
             $client->setConfig($opts);
+
+            $verify_peer = $global->ssl_disableverify ? false : true;
+            $verify_host = $global->ssl_disableverify ? 0 : 2;
+            $ssl_ca_cert = false;
+            if (!$global->ssl_useservercerts) {
+                $ssl_ca_cert = DUPLICATOR_PRO_CERT_PATH;
+            }
+            $client->setSslVerification($ssl_ca_cert, $verify_peer, $verify_host);
 
             return $client;
         }

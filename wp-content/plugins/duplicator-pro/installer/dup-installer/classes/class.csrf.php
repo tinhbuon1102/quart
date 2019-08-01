@@ -1,23 +1,46 @@
 <?php
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 class DUPX_CSRF {
 	
 	/** Session var name
 	 * @var string
 	 */
 	public static $prefix = '_DUPX_CSRF';
+	private static $CSRFVars;
+
+	public static function setKeyVal($key, $val) {
+		$CSRFVars = self::getCSRFVars();
+		$CSRFVars[$key] = $val;
+		self::saveCSRFVars($CSRFVars);
+		self::$CSRFVars = false;
+	}
+
+	public static function getVal($key) {
+		$CSRFVars = self::getCSRFVars();
+		if (isset($CSRFVars[$key])) {
+			return $CSRFVars[$key];
+		} else {
+			return false;
+		}
+
+	}
 	
 	/** Generate DUPX_CSRF value for form
 	 * @param	string	$form	- Form name as session key
 	 * @return	string	- token
 	 */
 	public static function generate($form = NULL) {
-		if (!empty($_COOKIE[DUPX_CSRF::$prefix . '_' . $form])) {
-			$token = $_COOKIE[DUPX_CSRF::$prefix . '_' . $form];
+		$keyName = self::getKeyName($form);
+
+		$existingToken = self::getVal($keyName);
+		if (false !== $existingToken) {
+			$token = $existingToken;
 		} else {
-            $token = DUPX_CSRF::token() . DUPX_CSRF::fingerprint();
+			$token = DUPX_CSRF::token() . DUPX_CSRF::fingerprint();
 		}
-		$cookieName = DUPX_CSRF::$prefix . '_' . $form;
-        $ret = DUPX_CSRF::setCookie($cookieName, $token);
+		
+		self::setKeyVal($keyName, $token);
 		return $token;
 	}
 	
@@ -27,12 +50,10 @@ class DUPX_CSRF {
 	 * @return	boolean
 	 */
 	public static function check($token, $form = NULL) {
-		if (!self::isCookieEnabled()) {
+		$keyName = self::getKeyName($form);
+		$CSRFVars = self::getCSRFVars();
+		if (isset($CSRFVars[$keyName]) && $CSRFVars[$keyName] == $token) { // token OK
 			return true;
-		}
-		if (isset($_COOKIE[DUPX_CSRF::$prefix . '_' . $form]) && $_COOKIE[DUPX_CSRF::$prefix . '_' . $form] == $token) { // token OK
-			return true;
-			// return (substr($token, -32) == DUPX_CSRF::fingerprint()); // fingerprint OK?
 		}
 		return FALSE;
 	}
@@ -55,42 +76,55 @@ class DUPX_CSRF {
 		return strtoupper(md5(implode('|', array($_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']))));
 	}
 
-	public static function setCookie($cookieName, $cookieVal) {
-		$_COOKIE[$cookieName] = $cookieVal;
-		return setcookie($cookieName, $cookieVal, time() + 10800, '/');
-	}
-	
-	/**
-	* @return bool
-	*/
-	protected static function isCookieEnabled() {
-		return (count($_COOKIE) > 0);
+	private static function getKeyName($form) {
+		return DUPX_CSRF::$prefix . '_' . $form;
 	}
 
-	public static function resetAllTokens() {
-		foreach ($_COOKIE as $cookieName => $cookieVal) {
-			if (0 === strpos($cookieName, DUPX_CSRF::$prefix) || 'archive' == $cookieName || 'bootloader' == $cookieName) {
-				$baseUrl = self::getBaseUrl();
-				setcookie($cookieName, '', time() - 86400, $baseUrl);	
+	private static function getPackageHash() {
+		if (class_exists('DUPX_Bootstrap')) {
+			return DUPX_Bootstrap::PACKAGE_HASH;
+		} else {
+			return $GLOBALS['DUPX_AC']->package_hash;
+		}
+	}
+
+	private static function getFilePath() {
+		if (class_exists('DUPX_Bootstrap')) {
+			$dupInstallerfolderPath = dirname(__FILE__).'/dup-installer/';
+		} else {
+			$dupInstallerfolderPath = $GLOBALS['DUPX_INIT'].'/';
+		}
+		$packageHash = self::getPackageHash();
+		$fileName = 'dup-installer-csrf__'.$packageHash.'.txt';
+		$filePath = $dupInstallerfolderPath.$fileName;
+		return $filePath;
+	}
+
+	private static function getCSRFVars() {
+		if (!isset(self::$CSRFVars) || false === self::$CSRFVars) {
+			$filePath = self::getFilePath();
+			if (file_exists($filePath)) {
+				$contents = file_get_contents($filePath);
+				if (empty($contents)) {
+					self::$CSRFVars = array();
+				} else {
+					$CSRFobjs = json_decode($contents);
+					foreach ($CSRFobjs as $key => $value) {
+						self::$CSRFVars[$key] = $value;
+					}
+				}
+			} else {
+				self::$CSRFVars = array();
 			}
 		}
-		$_COOKIE = array();
+		return self::$CSRFVars;
 	}
 
-	private static function getBaseUrl() {
-		// output: /myproject/index.php
-		$currentPath = $_SERVER['PHP_SELF']; 
-		
-		// output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index ) 
-		$pathInfo = pathinfo($currentPath); 
-		
-		// output: localhost
-		$hostName = $_SERVER['HTTP_HOST']; 
-		
-		// output: http://
-		$protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https://'?'https://':'http://';
-		
-		// return: http://localhost/myproject/
-		return $protocol.$hostName.$pathInfo['dirname']."/";
+	private static function saveCSRFVars($CSRFVars) {
+		$contents = json_encode($CSRFVars);
+		$filePath = self::getFilePath();
+		file_put_contents($filePath, $contents);
 	}
 }
+
+?>

@@ -50,7 +50,7 @@ TOOL-BAR -->
 		<td></td>
 		<td>
 			<div class="btnnav">
-				<a href="<?php echo esc_url($storage_tab_url); ?>" class="add-new-h2"> <i class="fa fa-database"></i> <?php DUP_PRO_U::esc_html_e('Providers'); ?></a>
+				<a href="<?php echo esc_url($storage_tab_url); ?>" class="add-new-h2"> <i class="fas fa-database fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Providers'); ?></a>
 				<span><?php DUP_PRO_U::esc_html_e('Edit Default Storage'); ?></span>
 			</div>
 		</td>
@@ -67,7 +67,7 @@ TOOL-BAR -->
             <th scope="row"><label><?php DUP_PRO_U::esc_html_e("Name"); ?></label></th>
             <td>
 				<?php DUP_PRO_U::esc_html_e('Default'); ?>
-				<i class="fa fa-question-circle"
+				<i class="fas fa-question-circle fa-sm"
 				   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Default Storage Type:"); ?>"
 				   data-tooltip="<?php DUP_PRO_U::esc_attr_e('The "Default" storage type is a built in type that cannot be removed.  This storage type is used by default should '
 					   . 'no other storage types be available.  This storage type is always stored to the local server.'); ?>">

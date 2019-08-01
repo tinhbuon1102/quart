@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of Blowfish.
  *
@@ -36,6 +35,7 @@
  */
 
 namespace phpseclib\Crypt;
+defined("ABSPATH") or die("");
 
 use phpseclib\Crypt\Base;
 

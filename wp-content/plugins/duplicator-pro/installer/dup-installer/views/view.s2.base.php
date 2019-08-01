@@ -26,11 +26,13 @@ $_POST['remove_redundant'] = (isset($_POST['remove_redundant'])) ? DUPX_U::sanit
 
 $_POST['logging'] = isset($_POST['logging']) ? DUPX_U::sanitize_text_field($_POST['logging']) : 1;
 $cpnl_supported =  DUPX_U::$on_php_53_plus ? true : false;
+
 ?>
 
 <form id='s2-input-form' method="post" class="content-form"  data-parsley-validate="true" data-parsley-excluded="input[type=hidden], [disabled], :hidden">
+
 	<div class="dupx-logfile-link">
-		<a href="<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]).'?now='.DUPX_U::esc_attr($GLOBALS['NOW_TIME']); ?>" target="dup-installer">installer-log.txt</a>
+		<?php DUPX_View_Funcs::installerLogLink(); ?>
 	</div>
 	<div class="hdr-main">
 		Step <span class="step">2</span> of 4: Install Database
@@ -65,7 +67,7 @@ $cpnl_supported =  DUPX_U::$on_php_53_plus ? true : false;
 		$post_exe_safe_mode = DUPX_U::sanitize_text_field($_POST['exe_safe_mode']);
 		?>
 		<input type="hidden" name="exe_safe_mode" id="exe-safe-mode"  value="<?php echo DUPX_U::esc_attr($post_exe_safe_mode); ?>"/>
-		<input type="hidden" name="subsite-id" id="subsite-id" value="<?php echo intval($_POST['subsite-id']); ?>" />
+		<input type="hidden" name="subsite_id" id="subsite-id" value="<?php echo intval($_POST['subsite_id']); ?>" />
 		<?php
 		$post_remove_redundant = DUPX_U::sanitize_text_field($_POST['remove_redundant']);
 		?>
@@ -121,7 +123,7 @@ VIEW: STEP 2 - AJAX RESULT
 Auto Posts to view.step3.php  -->
 <form id='s2-result-form' method="post" class="content-form" style="display:none">
 
-	<div class="dupx-logfile-link"><a href="<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"].'?now='.$GLOBALS['NOW_TIME']);?>" target="dup-installer">installer-log.txt</a></div>
+	<div class="dupx-logfile-link"><?php DUPX_View_Funcs::installerLogLink(); ?></div>
 	<div class="hdr-main">
 		Step <span class="step">2</span> of 4: Install Database
 	</div>
@@ -143,7 +145,7 @@ Auto Posts to view.step3.php  -->
 		<input type="hidden" name="dbcharset" id="ajax-dbcharset" />
 		<input type="hidden" name="dbcollate" id="ajax-dbcollate" />
 		<input type="hidden" name="exe_safe_mode" id="ajax-exe-safe-mode" />
-		<input type="hidden" name="subsite-id" id="ajax-subsite-id" />
+		<input type="hidden" name="subsite_id" id="ajax-subsite-id" />
         <input type="hidden" name="remove_redundant" id="ajax-remove-redundant"/>
         <input type="hidden" name="retain_config" value="<?php echo DUPX_U::esc_attr($_POST['retain_config']); ?>" />
 		<input type="hidden" name="json"   id="ajax-json" />
@@ -153,7 +155,7 @@ Auto Posts to view.step3.php  -->
 	<!--  PROGRESS BAR -->
 	<div id="progress-area">
 		<div style="width:500px; margin:auto">
-			<div class="progress-text"><i class="fa fa-circle-o-notch fa-spin"></i> Installing Database <span id="progress-pct"></span></div>
+			<div class="progress-text"><i class="fas fa-circle-notch fa-spin"></i> Installing Database <span id="progress-pct"></span></div>
 			<div id="progress-bar"></div>
 			<h3> Please Wait...</h3><br/><br/>
 			<i>Keep this window open during the creation process.</i><br/>
@@ -165,7 +167,7 @@ Auto Posts to view.step3.php  -->
 	<div id="ajaxerr-area" style="display:none">
 		<p>Please try again an issue has occurred.</p>
 		<div style="padding: 0px 10px 10px 0px;">
-			<div id="ajaxerr-data">An unknown issue has occurred with the file and database setup process.  Please see the installer-log.txt file for more details.</div>
+			<div id="ajaxerr-data">An unknown issue has occurred with the file and database setup process.  Please see the <?php DUPX_View_Funcs::installerLogLink(); ?> file for more details.</div>
 			<div style="text-align:center; margin:10px auto 0px auto">
 				<input type="button" onclick="$('#s2-result-form').hide();  $('#s2-input-form').show(200); $('#dbchunk_retry').val(0);" value="&laquo; Try Again" class="default-btn" /><br/><br/>
 				<i style='font-size:11px'>See online help for more details at <a href='https://snapcreek.com/' target='_blank'>snapcreek.com</a></i>
@@ -307,7 +309,7 @@ Auto Posts to view.step3.php  -->
 					loadProgress();
 				}
 			},
-			success: function (respData, textStatus, xHr) {
+			success: function (respData, textStatus, xhr) {
 				try {
 					var data = DUPX.parseJSON(respData);
 				} catch(err) {
@@ -412,6 +414,9 @@ Auto Posts to view.step3.php  -->
 					<?php endif; ?>
 					$('#progress-area').fadeOut(700);
 				} else {
+					if (data.error_message) {
+						$('#ajaxerr-data').html(data.error_message);
+					}					
 					DUPX.hideProgressBar();
 				}
 			},

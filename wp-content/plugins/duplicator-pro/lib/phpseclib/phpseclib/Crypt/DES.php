@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of DES.
  *
@@ -41,7 +40,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\Base;
 
 /**

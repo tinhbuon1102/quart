@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /**
  * Dropbox v2 API with wordpress http api
  * https://www.dropbox.com/developers/documentation/http/documentation
@@ -99,6 +100,8 @@ if (!class_exists('DUP_PRO_DropboxV2Client')) {
                 )
             );
             $args = $this->injectExtraReqArgs($args);
+
+            $args['timeout'] = 30;
             $response = wp_remote_post($url, $args);
 
             if (is_wp_error($response)) {
@@ -329,7 +332,7 @@ if (!class_exists('DUP_PRO_DropboxV2Client')) {
             while (($end_of_file == false) && ($time_passed < $max_upload_time_in_sec)) {
 
                 if($server_load_delay > 0) {
-                    usleep($delay);
+                    usleep($server_load_delay);
                 }
                 
                 $content = fread($fh, $upload_chunk_size);                
@@ -427,10 +430,17 @@ if (!class_exists('DUP_PRO_DropboxV2Client')) {
                 );
                 $params['content']                     = null;
                 $dropbox_client_upload_info->file_meta = $this->apiCall('files/upload_session/finish', 'POST', $params, true);
-                // ob_start();
-                // print_r($dropbox_client_upload_info->file_meta);
-                // $data=ob_get_clean();
-                // file_put_contents(dirname(__FILE__) . '/file_meta.log',$data,FILE_APPEND);
+                /*
+                ob_start();
+                print_r($dropbox_client_upload_info->file_meta);
+                $data=ob_get_clean();
+                file_put_contents(dirname(__FILE__) . '/file_meta.log',$data,FILE_APPEND);
+                */
+                if (null == $dropbox_client_upload_info->file_meta) {
+                    DUP_PRO_LOG::traceError("**** Upload finish dropbox API call given null value! Something going wrong.");
+                    usleep(500);
+                    $dropbox_client_upload_info->increase_failure_count();
+                }
             }
 
             $dropbox_client_upload_info->upload_id   = $upload_id;
@@ -565,6 +575,10 @@ if (!class_exists('DUP_PRO_DropboxV2Client')) {
             $path = str_replace('//', '/', $path);
             $path = '/'.$path;
             return $path;
+        }
+
+        public function getQuota() {
+            return $this->apiCall('users/get_space_usage'); 
         }
 
         private function apiCall($path, $method = "POST", $params = array(), $content_call = false)

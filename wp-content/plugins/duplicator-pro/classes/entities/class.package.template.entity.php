@@ -1,5 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
 /**
  * Enity layer for the packate template
  *
@@ -13,6 +12,8 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
+
 require_once('class.json.entity.base.php');
 require_once (DUPLICATOR_PRO_PLUGIN_PATH . 'classes/class.crypt.custom.php');
 
@@ -210,26 +211,53 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
     }
 
     public function set_post_variables($post)
-    {   
+    {
+        if (isset($post['_database_filter_tables'])) {
+            $this->database_filter_tables = implode(',', $post['_database_filter_tables']);
+        } else {
+            $this->database_filter_tables = '';
+        }
+
+        if (isset($post['_archive_filter_dirs'])) {
+            $post_filter_dirs          = DupProSnapLibUtil::sanitize_non_stamp_chars($post['_archive_filter_dirs']);
+            $this->archive_filter_dirs = DUP_PRO_Archive::parseDirectoryFilter($post_filter_dirs);
+        } else {
+            $this->archive_filter_dirs = '';
+        }
+
+        if (isset($post['_archive_filter_exts'])) {
+            $post_filter_exts          = sanitize_text_field($post['_archive_filter_exts']);
+            $this->archive_filter_exts = DUP_PRO_Archive::parseExtensionFilter($post_filter_exts);
+        } else {
+            $this->archive_filter_exts = '';
+        }
+
+        if (isset($post['_archive_filter_files'])) {
+            $post_filter_files          = DupProSnapLibUtil::sanitize_non_stamp_chars($post['_archive_filter_files']);
+            $this->archive_filter_files = DUP_PRO_Archive::parseFileFilter($post_filter_files);
+        } else {
+            $this->archive_filter_files = '';
+        }
+        $this->filter_sites = !empty($post['_mu_exclude']) ? $post['_mu_exclude'] : '';
+
         //Archive
-		$this->set_checkbox_variable($post, '_archive_export_onlydb', 'archive_export_onlydb');
+        $this->set_checkbox_variable($post, '_archive_export_onlydb', 'archive_export_onlydb');
         $this->set_checkbox_variable($post, '_archive_filter_on', 'archive_filter_on');
         $this->set_checkbox_variable($post, '_database_filter_on', 'database_filter_on');
 
         //Installer
         $this->set_checkbox_variable($post, '_installer_opts_secure_on', 'installer_opts_secure_on');
         $this->set_checkbox_variable($post, '_installer_opts_skip_scan', 'installer_opts_skip_scan');
-        $this->set_checkbox_variable($post, '_installer_opts_cpnl_enable', 'installer_opts_cpnl_enable');         
-        
-        $post_installer_opts_secure_pass = sanitize_text_field($post['_installer_opts_secure_pass']);
+        $this->set_checkbox_variable($post, '_installer_opts_cpnl_enable', 'installer_opts_cpnl_enable');
+
+        $post_installer_opts_secure_pass  = sanitize_text_field($post['_installer_opts_secure_pass']);
         $this->installer_opts_secure_pass = base64_encode($post_installer_opts_secure_pass);
 
         // Replaces any \n \r or \n\r from the package notes
-        $unwanted_chars = array("\n","\r","\n\r");
-        $post['notes'] = str_replace($unwanted_chars, '', sanitize_textarea_field($post['notes']));
+        $unwanted_chars = array("\n", "\r", "\n\r");
+        $post['notes']  = str_replace($unwanted_chars, '', sanitize_textarea_field($post['notes']));
 
         parent::set_post_variables($post);
-
     }
 
     private function set_checkbox_variable($post, $key, $name)
@@ -282,25 +310,40 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $this->installer_opts_cpnl_db_name = $source_template->installer_opts_cpnl_db_name;
         $this->installer_opts_cpnl_db_user = $source_template->installer_opts_cpnl_db_user;
 
-        $this->name = sprintf(DUP_PRO_U::__('%1$s - Copy'), $source_template->name);
+        $source_template_name = $source_template->is_manual ? DUP_PRO_U::__("Active Build Settings") : $source_template->name;
+        $this->name = sprintf(DUP_PRO_U::__('%1$s - Copy'), $source_template_name);
 
         $this->notes = $source_template->notes;
     }
-
+/*
     public function populate_from_post($post)
     {
-        $filter_exts	= isset($post['filter-exts']) ? $this->parseExtensionFilter($post['filter-exts']) : '';
-        $filter_dirs	= isset($post['filter-dirs']) ? $this->parseDirectoryFilter($post['filter-dirs']) : '';
-        $filter_files	= isset($post['filter-files']) ? $this->parseExtensionFilter($post['filter-files']) : '';
         $tablelist		= isset($post['dbtables']) ? implode(',', $post['dbtables']) : '';
         $compatlist		= isset($post['dbcompat']) ? implode(',', $post['dbcompat']) : '';
 
         // Archive
         $this->archive_export_onlydb = isset($post['export-onlydb']) ? 1 : 0;
 		$this->archive_filter_on = isset($post['filter-on']) ? 1 : 0;
-        $this->archive_filter_dirs = sanitize_textarea_field($filter_dirs);
-        $this->archive_filter_exts = str_replace(array('.', ' '), "", sanitize_text_field($filter_exts));
-        $this->archive_filter_files = str_replace(array('.', ' '), "", sanitize_textarea_field($filter_files));
+        if (isset($post['filter-dirs'])) {
+            $post_filter_dirs = DupProSnapLibUtil::sanitize_non_stamp_chars($post['filter-dirs']);
+            $this->archive_filter_dirs = DUP_PRO_Archive::parseDirectoryFilter($post_filter_dirs);
+        } else {
+            $this->archive_filter_dirs = '';
+        }
+
+        if (isset($post['filter-exts'])) {
+            $post_filter_exts = sanitize_text_field($post['filter-exts']);
+            $this->archive_filter_exts = DUP_PRO_Archive::parseExtensionFilter($post_filter_exts);
+        } else {
+            $this->archive_filter_exts = '';
+        }
+
+        if (isset($post['filter-files'])) {
+            $post_filter_files = DupProSnapLibUtil::sanitize_non_stamp_chars($post['filter-files']);
+            $this->archive_filter_files = DUP_PRO_Archive::parseFileFilter($post_filter_files);
+        } else {
+            $this->archive_filter_files = '';
+        }
 
         // Brand
         $this->installer_opts_brand = isset($post['brand']) ? (is_numeric($post['brand']) && (int)$post['brand'] > 0 ? (int)$post['brand'] : -2 ) : -2;
@@ -327,7 +370,7 @@ class DUP_PRO_Package_Template_Entity extends DUP_PRO_JSON_Entity_Base
         $this->database_filter_on = isset($post['dbfilter-on']) ? 1 : 0;
         $this->database_filter_tables = esc_html($tablelist);
         $this->database_compatibility_modes = $compatlist;
-    }
+    }*/
 
     public static function compare_templates($a, $b)
     {

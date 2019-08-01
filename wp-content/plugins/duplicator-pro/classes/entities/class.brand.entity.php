@@ -1,6 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
-
 /**
  * Brand entity layer
  *
@@ -14,6 +12,7 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 /* @var $global DUP_PRO_Global_Entity */
 /* @var $brand DUP_PRO_Brand_Entity */
@@ -38,7 +37,7 @@ class DUP_PRO_Brand_Entity extends DUP_PRO_JSON_Entity_Base
     public $name		 = '';
     public $notes		 = '';
     public $editable	 = true;
-    public $logo         = '<i class="fa fa-bolt"></i> Duplicator Pro';
+    public $logo         = '<i class="fa fa-bolt fa-sm"></i> Duplicator Pro';
     public $active		 = false;
     public $attachments = array();
     protected $brandMode	 = DUP_PRO_Brand_Modes::removePlugin;
@@ -192,7 +191,7 @@ class DUP_PRO_Brand_Entity extends DUP_PRO_JSON_Entity_Base
         $default_brand->name                 = DUP_PRO_U::__('Default');
         $default_brand->notes                = DUP_PRO_U::__('The default content used when a brand is not defined');
         $default_brand->id                   = DUP_PRO_BRAND_IDS::defaultBrand;
-		$default_brand->logo                 = '<i class="fa fa-bolt"></i> ' . DUP_PRO_U::__('Duplicator Pro');
+		$default_brand->logo                 = '<i class="fa fa-bolt fa-sm"></i> ' . DUP_PRO_U::__('Duplicator Pro');
         $default_brand->editable             = false;
         $default_brand->attachments          = array();
         return $default_brand;
@@ -215,7 +214,7 @@ class DUP_PRO_Brand_Entity extends DUP_PRO_JSON_Entity_Base
 
         if($attachments === null) {
             if(file_exists($installer) && is_dir($installer)){
-                SnapLibIOU::rrmdir($installer);
+                return DupProSnapLibIOU::rrmdir($installer);
             }
 
             return true;
@@ -237,14 +236,14 @@ class DUP_PRO_Brand_Entity extends DUP_PRO_JSON_Entity_Base
             $dir = $upload_dir['basedir']; //Uploads folder
             $dir = str_replace(array('\\','//'),array('/','/'),$dir);
 
-            SnapLibIOU::mkdir($installer);
+            DupProSnapLibIOU::mkdir($installer);
 
             $copy = array();
             foreach($attachments as $attachment)
             {
                 if(file_exists("{$dir}{$attachment}"))
                 {
-                    SnapLibIOU::mkdir(dirname("{$installer}{$attachment}"),0755,true);
+                    DupProSnapLibIOU::mkdir(dirname("{$installer}{$attachment}"),0755,true);
                     if(@copy("{$dir}{$attachment}", "{$installer}{$attachment}") === false) {
                         DUP_PRO_Log::error("Error copying {$dir}{$attachment} to {$installer}{$attachment}", '', false);
                     }

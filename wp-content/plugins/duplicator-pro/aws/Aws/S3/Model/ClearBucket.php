@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Client\AwsClientInterface;
 use DuplicatorPro\Guzzle\Common\AbstractHasDispatcher;
 use DuplicatorPro\Guzzle\Batch\FlushingBatch;

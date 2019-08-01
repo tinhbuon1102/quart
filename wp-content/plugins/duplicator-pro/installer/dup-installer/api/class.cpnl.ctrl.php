@@ -1,5 +1,5 @@
 <?php
-defined("DUPXABSPATH") or die("");
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 //This class is called through both the router.php and main.installer.php
 //Full Path: {$GLOBALS['DUPX_INIT']}/api/

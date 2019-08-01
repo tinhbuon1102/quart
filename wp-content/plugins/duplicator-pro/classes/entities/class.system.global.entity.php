@@ -1,5 +1,4 @@
-<?php defined("ABSPATH") or die("");
-
+<?php
 /**
  * Global System Enity
  *
@@ -13,8 +12,9 @@
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
-require_once(DUPLICATOR_PRO_PLUGIN_PATH   . '/classes/entities/class.json.entity.base.php');
+require_once(DUPLICATOR_PRO_PLUGIN_PATH.'/classes/entities/class.json.entity.base.php');
 
 abstract class DUP_PRO_Recommended_Fix_Type
 {
@@ -143,27 +143,24 @@ class DUP_PRO_System_Global_Entity extends DUP_PRO_JSON_Entity_Base
         return $text_fix_strings;
     }
 
-    public static function &get_instance()
+    /**
+     *
+     * @return DUP_PRO_System_Global_Entity
+     */
+    public static function get_instance()
     {
-        if(isset($GLOBALS[self::NAME_IN_GLOBALS]) == false)
-        {
+        static $system_global = null;
+        if (is_null($system_global)) {
             /* @var $system_globals DUP_PRO_System_Global_Entity */
-            $system_global = null;
-
             $system_globals = DUP_PRO_JSON_Entity_Base::get_by_type(get_class());
 
-            if (count($system_globals) > 0)
-            {
+            if (count($system_globals) > 0) {
                 $system_global = $system_globals[0];
-            }
-            else
-            {
+            } else {
                 DUP_PRO_LOG::traceError("System Global entity is null!");
             }
-
-            $GLOBALS[self::NAME_IN_GLOBALS] = $system_global;
         }
 
-        return $GLOBALS[self::NAME_IN_GLOBALS];
+        return $system_global;
     }
 }

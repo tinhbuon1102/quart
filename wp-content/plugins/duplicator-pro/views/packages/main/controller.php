@@ -5,8 +5,8 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.dialog.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/lib/snaplib/class.snaplib.u.url.php');
 
 $packages_url = DUP_PRO_U::getMenuPageURL(DUP_PRO_Constants::$PACKAGES_SUBMENU_SLUG, false);
-$packages_tab_url = SnapLibURLU::appendQueryValue($packages_url, 'tab', 'packages');
-$edit_package_url = SnapLibURLU::appendQueryValue($packages_tab_url, 'inner_page', 'new1');
+$packages_tab_url = DupProSnapLibURLU::appendQueryValue($packages_url, 'tab', 'packages');
+$edit_package_url = DupProSnapLibURLU::appendQueryValue($packages_tab_url, 'inner_page', 'new1');
 $edit_package_url = wp_nonce_url($edit_package_url, 'new1-package', '_wpnonce');
 $inner_page = isset($_REQUEST['inner_page']) ? sanitize_text_field($_REQUEST['inner_page']) : 'list';
 

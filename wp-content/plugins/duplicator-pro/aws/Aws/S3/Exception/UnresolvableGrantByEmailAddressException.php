@@ -13,8 +13,9 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace DuplicatorPro\Aws\S3\Exception;
+
+defined("ABSPATH") or die("");
 
 /**
  * The e-mail address you provided does not match any account on record.

@@ -102,22 +102,26 @@ jQuery(function($){
 		<script src="<?php echo get_template_directory_uri(); ?>/js/grid/classie.js"></script>
 		<script src="<?php echo get_template_directory_uri(); ?>/js/grid/AnimOnScroll.js"></script>
 		<script>
-			new AnimOnScroll( document.getElementById( 'ngrid' ), {
-				minDuration : 0.4,
-				maxDuration : 0.7,
-				viewportFactor : 0.2
-			} );
-		</script>
-		<script>
-jQuery(function($){	
-	$('#news-grid').masonry({
-    itemSelector: '.item',
-    isAnimated: true,
-    isFitWidth: true,
-    isResizable: true
-	});
-		
-});
+			jQuery(function($){	
+				if ($('#news-grid').length)
+				{
+					$('#news-grid').masonry({
+						itemSelector: '.item',
+						isAnimated: true,
+						isFitWidth: true,
+						isResizable: true
+					});
+				}
+
+				if ($('#ngrid').length)
+				{
+					new AnimOnScroll( document.getElementById( 'ngrid' ), {
+						minDuration : 0.4,
+						maxDuration : 0.7,
+						viewportFactor : 0.2
+					} );
+				}
+			});
 </script>
 <!--<script src="<?php echo get_template_directory_uri(); ?>/js/GammaGallery/js/jquery.history.js"></script>
 		<script src="<?php echo get_template_directory_uri(); ?>/js/GammaGallery/js/js-url.min.js"></script>

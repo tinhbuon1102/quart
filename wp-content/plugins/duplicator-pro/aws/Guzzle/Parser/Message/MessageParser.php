@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\Message;
+
+defined("ABSPATH") or die("");
 
 /**
  * Default request and response parser used by Guzzle. Optimized for speed.

@@ -1,5 +1,5 @@
 <?php
-defined("DUPXABSPATH") or die("");
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 /**
  * Class used to update and edit web server configuration files
@@ -88,7 +88,7 @@ class DUPX_WPConfig
 //			$err_log = "\nWARNING: Unable to update file permissions and write to {$wpconfig_path}.  ";
 //			$err_log .= "Check that the wp-config.php is in the archive.zip and check with your host or administrator to enable PHP to write to the wp-config.php file.  ";
 //			$err_log .= "If performing a 'Manual Extraction' please be sure to select the 'Manual Archive Extraction' option on step 1 under options.";
-//			chmod($wpconfig_path, 0644) ? DUPX_Log::info("File Permission Update: {$wpconfig_path} set to 0644") : DUPX_Log::error("{$err_log}");
+//			DupProSnapLibIOU::chmod($wpconfig_path, 0644) ? DUPX_Log::info("File Permission Update: {$wpconfig_path} set to 0644") : DUPX_Log::error("{$err_log}");
 //		}
 
 		//$wpconfig = preg_replace($patterns, $replace, $wpconfig);

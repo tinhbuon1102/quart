@@ -1,12 +1,12 @@
 <?php
-defined("ABSPATH") or die("");
 /** ================================================================================
   Plugin Name: Duplicator Pro
   Plugin URI: http://snapcreek.com/
   Description: Create, schedule and transfer a copy of your WordPress files and database. Duplicate and move a site from one location to another quickly.
-  Version: 3.8.1
+  Version: 3.8.4.1
   Author: Snap Creek
   Author URI: http://snapcreek.com
+  Network: true
   License: GPLv2 or later
 
   Copyright 2011-2017  Snapcreek LLC
@@ -24,6 +24,7 @@ defined("ABSPATH") or die("");
   along with this program; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   ================================================================================ */
+defined('ABSPATH') || exit;
 
 require_once(dirname(__FILE__) . "/define.php");
 require_once(DUPLICATOR_PRO_PLUGIN_PATH  . '/lib/snaplib/snaplib.all.php');
@@ -34,8 +35,8 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.date.php')
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.zip.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.license.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.upgrade.php');
+require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.validator.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.tree.files.php');
-require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/utilities/class.u.wp.php');
 
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/class.crypt.blowfish.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.system.global.entity.php');
@@ -46,7 +47,7 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/class.db.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.alert.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/class.logging.php');
-
+require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/host/class.custom.host.manager.php');
 
 define('EDD_DUPPRO_STORE_URL', 'https://snapcreek.com');
 define('EDD_DUPPRO_ITEM_NAME', 'Duplicator Pro');
@@ -96,6 +97,26 @@ if (get_option('duplicator_pro_plugin_version') == DUPLICATOR_PRO_VERSION) {
             DUP_PRO_LOG::setProfileLogs($profileLogsEntity->profileLogs);
             DUP_PRO_LOG::trace("set profile logs");
         }
+    }
+}
+
+if (!function_exists('wp_doing_ajax')) {
+    /**
+     * Determines whether the current request is a WordPress Ajax request.
+     *
+     * @since 4.7.0
+     *
+     * @return bool True if it's a WordPress Ajax request, false otherwise.
+     */
+    function wp_doing_ajax() {
+        /**
+         * Filters whether the current request is a WordPress Ajax request.
+         *
+         * @since 4.7.0
+         *
+         * @param bool $wp_doing_ajax Whether the current request is a WordPress Ajax request.
+         */
+        return apply_filters( 'wp_doing_ajax', defined( 'DOING_AJAX' ) && DOING_AJAX );
     }
 }
 
@@ -226,12 +247,14 @@ if (is_admin() === true) {
         define('WP_MAX_MEMORY_LIMIT', '256M');
     }
 
-    @ini_set('memory_limit', WP_MAX_MEMORY_LIMIT);
+    if (DupProSnapLibUtil::wp_is_ini_value_changeable('memory_limit'))
+        @ini_set('memory_limit', WP_MAX_MEMORY_LIMIT);
 
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.global.entity.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.package.template.entity.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.viewstate.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.notice.php');
+    require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/ui/class.ui.messages.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/class.server.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/package/class.pack.php');
     require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.json.entity.base.php');
@@ -280,8 +303,8 @@ if (is_admin() === true) {
      * @access global
      * @return null
      */
-    function duplicator_pro_activate()
-    {
+    function duplicator_pro_activate($force = false)
+    {        
         global $wpdb;
         
         $current_version = get_option("duplicator_pro_plugin_version");
@@ -289,7 +312,7 @@ if (is_admin() === true) {
 		error_log('activate');
 
         //Only update database on version update        
-        if (DUPLICATOR_PRO_VERSION != $current_version)
+        if (DUPLICATOR_PRO_VERSION != $current_version || $force)
         {
             if ($current_version === false) {
                 // Only do the environment checks th first time we are activating
@@ -306,7 +329,7 @@ if (is_admin() === true) {
 			   status INT(11) NOT NULL,
 			   created DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 			   owner VARCHAR(60) NOT NULL,
-			   package MEDIUMBLOB NOT NULL,
+			   package LONGTEXT NOT NULL,
 			   PRIMARY KEY  (id),
 			   KEY hash (hash))";
 
@@ -320,11 +343,8 @@ if (is_admin() === true) {
             DUP_PRO_System_Global_Entity::initialize_plugin_data();
             DUP_PRO_Package_Template_Entity::create_default();
             DUP_PRO_Package_Template_Entity::create_manual();
-		
-            if ($current_version === false) {
-				error_log('current version is null');
-                duplicator_pro_activate_new_install();
-            } else if(version_compare($current_version, DUPLICATOR_PRO_VERSION, '<')){
+
+            if(($current_version === false) || version_compare($current_version, DUPLICATOR_PRO_VERSION, '<')){
                 DUP_PRO_Upgrade_U::PerformUpgrade($current_version, DUPLICATOR_PRO_VERSION);
             } else {
 				error_log("version isn't null nor is it before the new version");
@@ -346,20 +366,6 @@ if (is_admin() === true) {
 
         //Setup All Directories
         DUP_PRO_U::initStorageDirectory();
-    }
-
-    /**
-     * Activation New:
-     * Called only for first time install of plugin
-     *
-     * @access global
-     * @return null
-     */
-    function duplicator_pro_activate_new_install()
-    {
-        $global = DUP_PRO_Global_Entity::get_instance();
-        $global->lock_mode = DUP_PRO_Global_Entity::get_lock_type();        
-        $global->save();
     }
 
     /**
@@ -389,6 +395,10 @@ if (is_admin() === true) {
     function duplicator_pro_patched_data_initialization()
     {
         $global = DUP_PRO_Global_Entity::get_instance();
+        if (is_null($global)) {
+            duplicator_pro_activate(true);
+            $global = DUP_PRO_Global_Entity::get_instance();
+        }
         $global->configure_dropbox_transfer_mode();
 
         if ($global->initial_activation_timestamp == 0) {
@@ -446,7 +456,7 @@ if (is_admin() === true) {
             [section] => log
         )
         */
-        if (isset($_GET['page']) && 'duplicator-pro-tools' == $_GET['page'] && isset($_GET['tab']) && 'diagnostics' == $_GET['tab'] && isset($_GET['section']) && 'log' == $_GET['section']) {
+        if (isset($_GET['page']) && 'duplicator-pro-tools' == $_GET['page'] && isset($_GET['tab']) && ('diagnostics' == $_GET['tab'] || 'd' == $_GET['tab']) && isset($_GET['section']) && 'log' == $_GET['section']) {
             $clear_trace_log_js = 'DupPro.UI.ClearTraceLog(1);'; 
         } else {
             $clear_trace_log_js = 'DupPro.UI.ClearTraceLog(0); jQuery("#dup_pro_trace_txt").html("'.$txt_trace_zero.'"); ';
@@ -456,8 +466,8 @@ if (is_admin() === true) {
 			<style>p#footer-upgrade {display:none}</style>
 			<div id='dpro-monitor-trace-area'>
 				<b>{$txt_trace_title}</b><br/>
-				<a class='button button-small' href="admin.php?page=duplicator-pro-tools&tab=diagnostics&section=log" target="_duptracelog"><i class="fa fa-file-text"></i> {$txt_trace_read}</a>
-                <a class='button button-small' onclick='{$clear_trace_log_js}'><i class="fa fa-remove"></i> {$txt_clear_trace}</a>
+				<a class='button button-small' href="admin.php?page=duplicator-pro-tools&tab=diagnostics&section=log" target="_duptracelog"><i class="fa fa-file-alt"></i> {$txt_trace_read}</a>
+                <a class='button button-small' onclick='{$clear_trace_log_js}'><i class="fa fa-times"></i> {$txt_clear_trace}</a>
 				<a class='button button-small' onclick="var actionLocation = ajaxurl + '?action=duplicator_pro_get_trace_log&nonce={$nonce}'; location.href = actionLocation;"><i class="fa fa-download"></i> <span id='dup_pro_trace_txt'>{$txt_trace_load}</span></a>
 				<a class='button button-small' href='{$url}' onclick='window.location.reload();'><i class="fa fa-power-off"></i> {$txt_trace_on}</a>
 			</div>
@@ -488,12 +498,13 @@ HTML;
         add_action('network_admin_menu', 'duplicator_pro_menu');
         add_action('network_admin_notices', array('DUP_PRO_UI_Notice', 'showReservedFilesNotice'));
         add_action('network_admin_notices', array('DUP_PRO_UI_Alert', 'licenseAlertCheck'));
-        add_action('network_admin_notices', array('DUP_PRO_UI_Alert', 'failedScheduleCheck'));
+        add_action('network_admin_notices', array('DUP_PRO_UI_Alert', 'phpUpgrade'));
     } else {
         add_action('admin_menu', 'duplicator_pro_menu');
         add_action('admin_notices', array('DUP_PRO_UI_Notice', 'showReservedFilesNotice'));
         add_action('admin_notices', array('DUP_PRO_UI_Alert', 'licenseAlertCheck'));
         add_action('admin_notices', array('DUP_PRO_UI_Alert', 'failedScheduleCheck'));
+        add_action('admin_notices', array('DUP_PRO_UI_Alert', 'phpUpgrade'));
     }
 
     /**
@@ -521,22 +532,37 @@ HTML;
      */
     function duplicator_pro_init()
     {
+        // custom host init
+        DUP_PRO_Custom_Host_Manager::getInstance()->init();
+        
         // Check post migration hook and take action of post migration
         $is_migration = get_option('duplicator_pro_migration');
         if ($is_migration) {
             $global = DUP_PRO_Global_Entity::get_instance();
             $global->lock_mode = DUP_PRO_Global_Entity::get_lock_type();
             $global->ajax_protocol = DUP_PRO_Global_Entity::get_ajax_protocol();
+            $global->server_kick_off_sslverify = DUP_PRO_Global_Entity::get_server_kick_sslverify_flag();
+            if ($global->archive_build_mode !== DUP_PRO_Archive_Build_Mode::DupArchive) {
+                $global->set_build_mode();
+            }
             $global->save();
 
             delete_option('duplicator_pro_migration');
+        }
+
+        $duplicator_pro_reset_user_settings_required = get_option('duplicator_pro_reset_user_settings_required', 0);
+        if ($duplicator_pro_reset_user_settings_required) {
+            $global = DUP_PRO_Global_Entity::get_instance();
+            $global->ResetUserSettings();
+            $global->save();
+            update_option('duplicator_pro_reset_user_settings_required', 0);
         }
 
         // wp_doing_ajax introduced in WP 4.7
 		if (!function_exists('wp_doing_ajax') || ( ! wp_doing_ajax() ) ) {
 			// CSS
 			wp_register_style('dup-pro-jquery-ui', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/jquery-ui.css', null, "1.11.2");
-			wp_register_style('dup-pro-font-awesome', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/font-awesome.min.css', null, '4.3.0');
+			wp_register_style('dup-pro-font-awesome', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/fontawesome-all.min.css', null, '5.7.2');
 			wp_register_style('dup-pro-plugin-style', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/style.css', null, DUPLICATOR_PRO_VERSION);
 			wp_register_style('dup-pro-parsley', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/parsley.css', null, '2.0.6');
 			wp_register_style('dup-pro-parsley', DUPLICATOR_PRO_PLUGIN_URL.'assets/css/parsley.css', null, '2.0.6');
@@ -562,8 +588,11 @@ HTML;
     function duplicator_pro_menu()
     {
         $wpfront_caps_translator = 'wpfront_user_role_editor_duplicator_pro_translate_capability';
-        $icon_svg                = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQXJ0d29yayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIyMy4yNXB4IiBoZWlnaHQ9IjIyLjM3NXB4IiB2aWV3Qm94PSIwIDAgMjMuMjUgMjIuMzc1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMy4yNSAyMi4zNzUiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwYXRoIGZpbGw9IiM5Q0ExQTYiIGQ9Ik0xOC4wMTEsMS4xODhjLTEuOTk1LDAtMy42MTUsMS42MTgtMy42MTUsMy42MTRjMCwwLjA4NSwwLjAwOCwwLjE2NywwLjAxNiwwLjI1TDcuNzMzLDguMTg0QzcuMDg0LDcuNTY1LDYuMjA4LDcuMTgyLDUuMjQsNy4xODJjLTEuOTk2LDAtMy42MTUsMS42MTktMy42MTUsMy42MTRjMCwxLjk5NiwxLjYxOSwzLjYxMywzLjYxNSwzLjYxM2MwLjYyOSwwLDEuMjIyLTAuMTYyLDEuNzM3LTAuNDQ1bDIuODksMi40MzhjLTAuMTI2LDAuMzY4LTAuMTk4LDAuNzYzLTAuMTk4LDEuMTczYzAsMS45OTUsMS42MTgsMy42MTMsMy42MTQsMy42MTNjMS45OTUsMCwzLjYxNS0xLjYxOCwzLjYxNS0zLjYxM2MwLTEuOTk3LTEuNjItMy42MTQtMy42MTUtMy42MTRjLTAuNjMsMC0xLjIyMiwwLjE2Mi0xLjczNywwLjQ0M2wtMi44OS0yLjQzNWMwLjEyNi0wLjM2OCwwLjE5OC0wLjc2MywwLjE5OC0xLjE3M2MwLTAuMDg0LTAuMDA4LTAuMTY2LTAuMDEzLTAuMjVsNi42NzYtMy4xMzNjMC42NDgsMC42MTksMS41MjUsMS4wMDIsMi40OTUsMS4wMDJjMS45OTQsMCwzLjYxMy0xLjYxNywzLjYxMy0zLjYxM0MyMS42MjUsMi44MDYsMjAuMDA2LDEuMTg4LDE4LjAxMSwxLjE4OHoiLz48L3N2Zz4=';
-		
+		//SVG Icon: See https://websemantics.uk/tools/image-to-data-uri-converter/
+		//older version
+		//$icon_svg = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQXJ0d29yayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIyMy4yNXB4IiBoZWlnaHQ9IjIyLjM3NXB4IiB2aWV3Qm94PSIwIDAgMjMuMjUgMjIuMzc1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMy4yNSAyMi4zNzUiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxwYXRoIGZpbGw9IiM5Q0ExQTYiIGQ9Ik0xOC4wMTEsMS4xODhjLTEuOTk1LDAtMy42MTUsMS42MTgtMy42MTUsMy42MTRjMCwwLjA4NSwwLjAwOCwwLjE2NywwLjAxNiwwLjI1TDcuNzMzLDguMTg0QzcuMDg0LDcuNTY1LDYuMjA4LDcuMTgyLDUuMjQsNy4xODJjLTEuOTk2LDAtMy42MTUsMS42MTktMy42MTUsMy42MTRjMCwxLjk5NiwxLjYxOSwzLjYxMywzLjYxNSwzLjYxM2MwLjYyOSwwLDEuMjIyLTAuMTYyLDEuNzM3LTAuNDQ1bDIuODksMi40MzhjLTAuMTI2LDAuMzY4LTAuMTk4LDAuNzYzLTAuMTk4LDEuMTczYzAsMS45OTUsMS42MTgsMy42MTMsMy42MTQsMy42MTNjMS45OTUsMCwzLjYxNS0xLjYxOCwzLjYxNS0zLjYxM2MwLTEuOTk3LTEuNjItMy42MTQtMy42MTUtMy42MTRjLTAuNjMsMC0xLjIyMiwwLjE2Mi0xLjczNywwLjQ0M2wtMi44OS0yLjQzNWMwLjEyNi0wLjM2OCwwLjE5OC0wLjc2MywwLjE5OC0xLjE3M2MwLTAuMDg0LTAuMDA4LTAuMTY2LTAuMDEzLTAuMjVsNi42NzYtMy4xMzNjMC42NDgsMC42MTksMS41MjUsMS4wMDIsMi40OTUsMS4wMDJjMS45OTQsMCwzLjYxMy0xLjYxNywzLjYxMy0zLjYxM0MyMS42MjUsMi44MDYsMjAuMDA2LDEuMTg4LDE4LjAxMSwxLjE4OHoiLz48L3N2Zz4=';
+		$icon_svg = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iMjU2cHgiIGhlaWdodD0iMjU2cHgiIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNTYgMjU2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxnPg0KCQk8cGF0aCBmaWxsPSIjQTdBOUFDIiBkPSJNMTcyLjEwMywzNS4yMjNsLTEuMzk1LTI0LjA5N0wxNTMuMzYsNi40NzhsLTEzLjI1MywyMC4xNzFjLTYuNzQyLTAuNjc1LTEzLjUzNS0wLjY5Ni0yMC4yNzYtMC4wNDINCgkJCUwxMDYuNDY3LDYuMjdsLTE3LjM0OCw0LjY0N2wtMS40LDI0LjIwNGMtNi4wNzMsMi43MjQtMTEuOTMsNi4wNzQtMTcuNDg1LDEwLjAzOUw0OC40MDMsMzQuMTgzTDM1LjcwNCw0Ni44ODJsMTAuOTEsMjEuNzAxDQoJCQljLTQuMDExLDUuNTIyLTcuMzk2LDExLjM1Mi0xMC4xNywxNy4zOTdsLTI0LjM2NywxLjQxbC00LjY0OCwxNy4zNDhsMjAuMjQxLDEzLjNjLTAuNzA4LDYuNzM0LTAuNzg1LDEzLjUyMy0wLjE2NiwyMC4yNjUNCgkJCWwtMjAuMjg0LDEzLjMzbDQuNjQ4LDE3LjM0OGwyMy4zMjQsMS4zNDlsMC4yMjctMC44MjZsOS4xMDYtMzMuMTc2Yy0yLjEyNS0yNC4zMzMsNi4xMDQtNDkuMzk3LDI0LjcyOS02OC4wMjMNCgkJCWMyNy4zOTMtMjcuMzkzLDY4LjcxLTMyLjMxNSwxMDEuMTQ1LTE0LjgzM0w1NC40MjIsMTY5LjQ0N2wtMi41ODUtMzIuMzU1TDMwLjg5LDIxMy4zOThsMzEuNjE0LTMxLjYxNEwxODIuNzM1LDYxLjU1Mw0KCQkJbDQuMjA0LTQuMjA2bDcuOTc4LTcuOTc4QzE4Ny44MzYsNDMuNTU3LDE4MC4xNSwzOC44NTcsMTcyLjEwMywzNS4yMjN6Ii8+DQoJCTxwYXRoIGZpbGw9IiNBN0E5QUMiIGQ9Ik0xMDUuMjE0LDkuNTU4bDEyLjIzMSwxOC42MTRsMC45NDUsMS40NGwxLjcxNS0wLjE2NmMzLjE4Mi0wLjMwOCw2LjQyMy0wLjQ2NSw5LjYzNC0wLjQ2NQ0KCQkJYzMuMzQ3LDAsNi43MzYsMC4xNywxMC4wODIsMC41MDZsMS43MTksMC4xNzJsMC45NS0xLjQ0NGwxMi4xMjItMTguNDQ5bDEzLjM2NSwzLjU4MWwxLjI3NCwyMi4wNDFsMC4xMDEsMS43MjRsMS41NzMsMC43MTENCgkJCWM3LjAzNiwzLjE3NSwxMy42NTIsNy4xMzYsMTkuNzExLDExLjc5MWwtNS43MTcsNS43MThsLTQuMjAzLDQuMjAzTDYwLjQ4NSwxNzkuNzY2bC0yMy45OTEsMjMuOTkybDEzLjc5Mi01MC4yNDRsMS4yOTIsMTYuMTYyDQoJCQlsMC40OTMsNi4xNTlsNC4zNjktNC4zNjdMMTcyLjQxNiw1NS40OWwyLjcwOS0yLjcxMWwtMy4zNzItMS44MThjLTEyLjgyOS02LjkxNS0yNy4zNDktMTAuNTcxLTQxLjk5NC0xMC41NzENCgkJCWMtMjMuNjIsMC00NS44MjMsOS4xOTgtNjIuNTIyLDI1Ljg5N0M0OC44MzMsODQuNjksMzkuNTIsMTEwLjA5NSw0MS42MzksMTM2LjA2MWwtOC41ODcsMzEuMjg4bC0xOC45NjItMS4wOTlsLTMuNTgxLTEzLjM2Mw0KCQkJbDE4LjU2Mi0xMi4xOThsMS40MzEtMC45NDJsLTAuMTU2LTEuNzA0Yy0wLjU5Mi02LjQzNi0wLjUzOC0xMy4wNjUsMC4xNjEtMTkuNzA2bDAuMTgyLTEuNzI4bC0xLjQ1Mi0wLjk1NWwtMTguNTE4LTEyLjE2Nw0KCQkJbDMuNTgxLTEzLjM2NmwyMi4zMDktMS4yOTFsMS43MTItMC4wOThsMC43MTctMS41NTljMi43MjktNS45NDgsNi4wNTUtMTEuNjM5LDkuODg1LTE2LjkxM2wxLjAyMS0xLjQwNmwtMC43NzktMS41NTINCgkJCWwtOS45ODQtMTkuODU5bDkuNzg0LTkuNzg0bDE5Ljk4OCwxMC4wNDlsMS41MzgsMC43NzRsMS40MDEtMS4wMDFjNS4zNDMtMy44MTEsMTEuMDYxLTcuMDk0LDE2Ljk5Ny05Ljc1N2wxLjU4MS0wLjcxMmwwLjEtMS43MjgNCgkJCWwxLjI4MS0yMi4xNDVMMTA1LjIxNCw5LjU1OCBNMTA2LjQ2Nyw2LjI3bC0xNy4zNDgsNC42NDdsLTEuNCwyNC4yMDRjLTYuMDczLDIuNzI2LTExLjkzLDYuMDc0LTE3LjQ4NiwxMC4wMzlsLTIxLjgzLTEwLjk3Ng0KCQkJbC0xMi43LDEyLjcwMWwxMC45MSwyMS42OTljLTQuMDExLDUuNTIyLTcuMzk2LDExLjM1My0xMC4xNywxNy4zOTdsLTI0LjM2NywxLjQxbC00LjY0OCwxNy4zNDhsMjAuMjQsMTMuMw0KCQkJYy0wLjcwOCw2LjczNC0wLjc4NCwxMy41MjMtMC4xNjUsMjAuMjY1bC0yMC4yODQsMTMuMzNsNC42NDgsMTcuMzQ4bDIzLjMyNCwxLjM0OWwwLjIyNy0wLjgyNmw5LjEwNi0zMy4xNzYNCgkJCWMtMi4xMjUtMjQuMzMzLDYuMTA0LTQ5LjM5NywyNC43MjktNjguMDIzYzE2LjcxLTE2LjcxMSwzOC42MDctMjUuMDYsNjAuNTA1LTI1LjA2YzEzLjk5OCwwLDI3Ljk5MiwzLjQxMSw0MC42NCwxMC4yMjcNCgkJCUw1NC40MjIsMTY5LjQ0OWwtMi41ODUtMzIuMzU3TDMwLjg5LDIxMy4zOThsMzEuNjE0LTMxLjYxNEwxODIuNzM1LDYxLjU1M2w0LjIwMy00LjIwNGw3Ljk3OS03Ljk3OQ0KCQkJYy03LjA4My01LjgxNS0xNC43NjctMTAuNTEzLTIyLjgxNC0xNC4xNDdsLTEuMzk1LTI0LjA5N0wxNTMuMzYsNi40NzhsLTEzLjI1NCwyMC4xN2MtMy40NDctMC4zNDYtNi45MDctMC41Mi0xMC4zNjYtMC41Mg0KCQkJYy0zLjMwNywwLTYuNjE0LDAuMTYtOS45MSwwLjQ3OUwxMDYuNDY3LDYuMjdMMTA2LjQ2Nyw2LjI3eiIvPg0KCTwvZz4NCgk8Zz4NCgkJPHBhdGggZmlsbD0iI0E3QTlBQyIgZD0iTTg3LjgwMiwyMjIuMjFsMS4zOTQsMjQuMDk3bDE3LjM0OCw0LjY0OWwxMy4yNTUtMjAuMTdjNi43NDIsMC42NzUsMTMuNTMzLDAuNjkzLDIwLjI3NCwwLjA0MQ0KCQkJbDEzLjM2NSwyMC4zMzVsMTcuMzQ3LTQuNjQ2bDEuMzk5LTI0LjIwMmM2LjA3My0yLjcyNSwxMS45My02LjA3NCwxNy40ODYtMTAuMDM4bDIxLjgzMSwxMC45NzRsMTIuNjk5LTEyLjY5OGwtMTAuOTEtMjEuNzAxDQoJCQljNC4wMTItNS41MjEsNy4zOTYtMTEuMzUyLDEwLjE2OS0xNy4zOThsMjQuMzY5LTEuNDA4bDQuNjQ2LTE3LjM0OGwtMjAuMjM5LTEzLjNjMC43MDgtNi43MzYsMC43ODQtMTMuNTIzLDAuMTY0LTIwLjI2Ng0KCQkJbDIwLjI4NC0xMy4zMjhsLTQuNjQ3LTE3LjM0OGwtMjMuMzIzLTEuMzQ5bC0wLjIyOCwwLjgyNWwtOS4xMDcsMzMuMTc1YzIuMTI3LDI0LjMzMi02LjEwNCw0OS4zOTctMjQuNzI5LDY4LjAyNA0KCQkJYy0yNy4zOTIsMjcuMzkzLTY4LjcwOSwzMi4zMTUtMTAxLjE0NCwxNC44MzFMMjA1LjQ4LDg3Ljk4NGwyLjU4NiwzMi4zNTZsMjAuOTQ4LTc2LjMwNWwtMzEuNjE1LDMxLjYxM0w3Ny4xNjksMTk1Ljg4DQoJCQlsLTQuMjA2LDQuMjA1bC03Ljk3OCw3Ljk3OUM3Mi4wNjgsMjEzLjg3Niw3OS43NTIsMjE4LjU3NSw4Ny44MDIsMjIyLjIxeiIvPg0KCQk8cGF0aCBmaWxsPSIjQTdBOUFDIiBkPSJNMjIzLjQwOSw1My42NzZsLTEzLjc5Myw1MC4yNGwtMS4yOS0xNi4xNmwtMC40OTQtNi4xNTlsLTQuMzY4LDQuMzdMODcuNDg3LDIwMS45NDJsLTIuNzA5LDIuNzEyDQoJCQlsMy4zNzMsMS44MThjMTIuODI4LDYuOTE0LDI3LjM1MSwxMC41NjgsNDEuOTk3LDEwLjU2OGMyMy42MTgsMCw0NS44MjEtOS4xOTUsNjIuNTItMjUuODk2DQoJCQljMTguNDAzLTE4LjQwMiwyNy43MTctNDMuODA3LDI1LjU5OC02OS43NzVsOC41ODgtMzEuMjgzbDE4Ljk2MSwxLjA5N2wzLjU4MiwxMy4zNjRsLTE4LjU2MywxMi4xOTdsLTEuNDMsMC45NDFsMC4xNTUsMS43MDUNCgkJCWMwLjU5Miw2LjQzNiwwLjUzOSwxMy4wNjctMC4xNiwxOS43MDZsLTAuMTgzLDEuNzI3bDEuNDUxLDAuOTU0bDE4LjUyMSwxMi4xNzFsLTMuNTgyLDEzLjM2NWwtMjIuMzExLDEuMjkxbC0xLjcxMiwwLjA5OQ0KCQkJbC0wLjcxNiwxLjU2Yy0yLjcyNyw1Ljk0NC02LjA1MywxMS42MzMtOS44ODYsMTYuOTExbC0xLjAyLDEuNDA0bDAuNzgsMS41NTRsOS45ODMsMTkuODU5bC05Ljc4NSw5Ljc4M2wtMTkuOTktMTAuMDUNCgkJCWwtMS41MzYtMC43NzJsLTEuNDAyLDAuOTk5Yy01LjM0MSwzLjgxNC0xMS4wNTksNy4wOTYtMTYuOTk0LDkuNzU4bC0xLjU4MiwwLjcxbC0wLjA5OSwxLjcyOWwtMS4yODMsMjIuMTQ2bC0xMy4zNjMsMy41ODENCgkJCWwtMTIuMjMzLTE4LjYxNWwtMC45NDYtMS40MzhsLTEuNzEzLDAuMTYzYy0zLjE4LDAuMzEtNi40MTcsMC40NjUtOS42MjYsMC40NjVjLTMuMzQ4LDAtNi43NDMtMC4xNjktMTAuMDktMC41MDVsLTEuNzE5LTAuMTcxDQoJCQlsLTAuOTUsMS40NDNsLTEyLjEyMiwxOC40NDhsLTEzLjM2Ni0zLjU4MWwtMS4yNzUtMjIuMDM4bC0wLjEtMS43MjdsLTEuNTc0LTAuNzA5Yy03LjAzNS0zLjE4LTEzLjY1My03LjEzOS0xOS43MS0xMS43OTINCgkJCWw1LjcxNi01LjcxNWw0LjIwNS00LjIwN0wxOTkuNDE4LDc3LjY2NkwyMjMuNDA5LDUzLjY3NiBNMjI5LjAxNSw0NC4wMzZsLTMxLjYxNSwzMS42MTNMNzcuMTY5LDE5NS44OGwtNC4yMDYsNC4yMDVsLTcuOTc3LDcuOTc5DQoJCQljNy4wOCw1LjgxMiwxNC43NjUsMTAuNTExLDIyLjgxNCwxNC4xNDZsMS4zOTQsMjQuMDk3bDE3LjM0OCw0LjY0OWwxMy4yNTQtMjAuMTczYzMuNDQ4LDAuMzQ4LDYuOTEyLDAuNTIzLDEwLjM3NCwwLjUyMw0KCQkJYzMuMzA0LDAsNi42MDctMC4xNjIsOS45LTAuNDc5bDEzLjM2NSwyMC4zMzVsMTcuMzQ3LTQuNjQ2bDEuMzk5LTI0LjIwMmM2LjA3My0yLjcyNSwxMS45MzEtNi4wNzcsMTcuNDg2LTEwLjAzOGwyMS44MzEsMTAuOTc0DQoJCQlsMTIuNjk5LTEyLjY5OGwtMTAuOTEtMjEuNzAxYzQuMDEyLTUuNTIxLDcuMzk2LTExLjM1MiwxMC4xNjktMTcuMzk4bDI0LjM2OS0xLjQwOGw0LjY0OS0xNy4zNDhsLTIwLjI0Mi0xMy4zDQoJCQljMC43MDgtNi43MzYsMC43ODQtMTMuNTIzLDAuMTY0LTIwLjI2NmwyMC4yODUtMTMuMzI4bC00LjY0OC0xNy4zNDhsLTIzLjMyNC0xLjM0OWwtMC4yMjcsMC44MjVsLTkuMTA3LDMzLjE3NQ0KCQkJYzIuMTI3LDI0LjMzMi02LjEwNCw0OS40MDEtMjQuNzI5LDY4LjAyNGMtMTYuNzA5LDE2LjcxLTM4LjYwNCwyNS4wNjEtNjAuNTAxLDI1LjA2MWMtMTMuOTk4LDAtMjcuOTk1LTMuNDEtNDAuNjQzLTEwLjIyOQ0KCQkJTDIwNS40OCw4Ny45ODRsMi41ODYsMzIuMzU2TDIyOS4wMTUsNDQuMDM2TDIyOS4wMTUsNDQuMDM2eiIvPg0KCTwvZz4NCjwvZz4NCjwvc3ZnPg0K';
+
 		/* @var $global DUP_PRO_Global_Entity */
 		$global = DUP_PRO_Global_Entity::get_instance();
 

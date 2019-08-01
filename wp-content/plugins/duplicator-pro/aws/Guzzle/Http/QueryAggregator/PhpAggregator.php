@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http\QueryAggregator;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Http\QueryString;
 

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * This happens when the user sends an empty xml document as a request. The error message is, "Request body is empty."
  */

@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 /**
  * Provides access to the AWS credentials used for accessing AWS services: AWS
  * access key ID, secret access key, and security token. These credentials are

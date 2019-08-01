@@ -149,8 +149,8 @@ IMPORT -->
 	<h2><?php DUP_PRO_U::esc_html_e("Export Duplicator Pro Data?") ?></h2>
 	<p>
 		<?php DUP_PRO_U::esc_html_e("This process will:") ?><br/><br/>
-		<i class="fa fa-check-circle-o"></i> <?php DUP_PRO_U::esc_html_e("Export schedules, storage and templates to a file for import into another Duplicator instance."); ?> <br/>
-		<span style="color:#BB1506"><i class="fa fa-warning"></i> <?php DUP_PRO_U::esc_html_e("For security purposes, restrict access to this file and delete after use."); ?></span> <br/>
+		<i class="far fa-check-circle"></i> <?php DUP_PRO_U::esc_html_e("Export schedules, storage and templates to a file for import into another Duplicator instance."); ?> <br/>
+		<span style="color:#BB1506"><i class="fas fa-exclamation-triangle fa-sm"></i></i> <?php DUP_PRO_U::esc_html_e("For security purposes, restrict access to this file and delete after use."); ?></span> <br/>
 		<br/>
 		<?php DUP_PRO_U::esc_html_e("Click the 'Run Export' button to generate and download the export file.") ?><br/><br/>
 	</p>
@@ -165,9 +165,9 @@ IMPORT -->
 	<h2><?php DUP_PRO_U::esc_html_e("Import Duplicator Pro Data?") ?></h2>
 	<p>
 		<?php DUP_PRO_U::esc_html_e("This process will:") ?><br/><br/>
-		<i class="fa fa-check-circle-o"></i> <?php DUP_PRO_U::esc_html_e("Append schedules, storage and templates if those options are checked."); ?> <br/>		
-		<i class="fa fa-check-circle-o"></i> <?php DUP_PRO_U::esc_html_e("Overwrite current settings data if the settings option is checked."); ?> <br/>
-		<span style="color:#BB1506"><i class="fa fa-warning"></i> <?php DUP_PRO_U::esc_html_e("Review templates and local storages after import to ensure correct path values."); ?> <br/></span>
+		<i class="far fa-check-circle"></i> <?php DUP_PRO_U::esc_html_e("Append schedules, storage and templates if those options are checked."); ?> <br/>		
+		<i class="far fa-check-circle"></i> <?php DUP_PRO_U::esc_html_e("Overwrite current settings data if the settings option is checked."); ?> <br/>
+		<span style="color:#BB1506"><i class="fas fa-exclamation-triangle fa-sm"></i> <?php DUP_PRO_U::esc_html_e("Review templates and local storages after import to ensure correct path values."); ?> <br/></span>
 		<br/>
 		<?php DUP_PRO_U::esc_html_e("Click the 'Run Import' button to process the import file.") ?><br/><br/>
 	</p>

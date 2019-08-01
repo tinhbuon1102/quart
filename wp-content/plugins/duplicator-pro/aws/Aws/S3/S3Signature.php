@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Credentials\CredentialsInterface;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;
 use DuplicatorPro\Guzzle\Http\QueryString;

@@ -1,5 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
 /**
  * Entity for duparchive expand state
  *
@@ -13,6 +12,7 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.json.entity.base.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/classes/entities/class.system.global.entity.php');
@@ -53,8 +53,10 @@ class DUP_PRO_DupArchive_Expand_State_Entity extends DUP_PRO_JSON_Entity_Base
 
     function __construct()
     {
-        parent::__construct();        
-    }  
+        parent::__construct();
+        $global                  = DUP_PRO_Global_Entity::get_instance();
+        $this->throttleDelayInUs = $global->getMicrosecLoadReduction();
+    }
 
     public static function get_all()
     {

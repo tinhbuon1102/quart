@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Http;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Http\Client;
 use DuplicatorPro\Guzzle\Http\ClientInterface;

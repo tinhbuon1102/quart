@@ -42,13 +42,13 @@ $ui_css_transfer_log = (isset($view_state['dup-transfer-transfer-log']) && $view
 	STEP 1 Old -->
 	<div id="step1-section" style="display:none">
 		<h3><?php DUP_PRO_U::esc_html_e('1: Select Files') ?></h3>
-		<input type="checkbox" checked="checked" id="files-installer" /> <i class="fa fa-bolt"></i> 
+		<input type="checkbox" checked="checked" id="files-installer" /> <i class="fa fa-bolt fa-sm"></i> 
 		<label for="files-installer"><?php echo DUP_PRO_U::__('Installer') . ' ' . DUP_PRO_U::byteSize($package->Installer->Size); ?> </label>
 
-		<input type="checkbox" checked="checked" id="files-archive" /> <i class="fa fa-archive"></i>
+		<input type="checkbox" checked="checked" id="files-archive" /> <i class="fa fa-archive fa-sm"></i>
 		<label for="files-archive"><?php echo DUP_PRO_U::__('Archive') . ' ' . $package->ZipSize ?></label>
 
-		<input type="checkbox" id="files-database" /> <i class="fa fa-database"></i> 
+		<input type="checkbox" id="files-database" /> <i class="fas fa-database fa-sm"></i> 
 		<label for="files-database"><?php echo DUP_PRO_U::__('Database') . ' ' . DUP_PRO_U::byteSize($package->Database->Size); ?></label> 
 	</div>
 
@@ -101,7 +101,7 @@ $ui_css_transfer_log = (isset($view_state['dup-transfer-transfer-log']) && $view
 							<td>
 								<a href="?page=duplicator-pro-storage&tab=storage&inner_page=edit&storage_id=<?php echo intval($store->id); ?>" target="_blank">
 									<?php
-									echo ($is_valid == false) ? '<i class="fa fa-exclamation-triangle"></i>' : (($store_type == 'Local') ? '<i class="fa fa-server"></i>' : '<i class="fa fa-cloud"></i>');
+									echo ($is_valid == false) ? '<i class="fa fa-exclamation-triangle fa-sm"></i>' : (($store_type == 'Local') ? '<i class="fa fa-server"></i>' : '<i class="fa fa-cloud"></i>');
 									echo " {$store->name}";
 									?>
 								</a>
@@ -173,7 +173,7 @@ $ui_css_transfer_log = (isset($view_state['dup-transfer-transfer-log']) && $view
 			<div id="dpro-progress-bar-area" class="dpro-active-status-area">
 				<div id="dpro-progress-bar"></div>
 				<button disabled id="dup-pro-stop-transfer-btn" type="button" class="button button-large button-primarybutton dpro-btn-stop" value="" onclick="DupPro.Pack.Transfer.StopBuild();">
-									<i class="fa fa-close"></i> &nbsp; <?php DUP_PRO_U::esc_html_e('Stop Transfer'); ?>
+									<i class="fa fa-times fa-sm"></i> &nbsp; <?php DUP_PRO_U::esc_html_e('Stop Transfer'); ?>
 				</button>
 			</div>			
 		</div>				
@@ -183,7 +183,7 @@ $ui_css_transfer_log = (isset($view_state['dup-transfer-transfer-log']) && $view
 	TRANSFER LOG -->
 	<div class="dup-box">
 		<div class="dup-box-title">
-			<i class="fa fa-database"></i> <?php DUP_PRO_U::esc_html_e('Transfer Log') ?>
+			<i class="fas fa-database fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Transfer Log') ?>
 			<div class="dup-box-arrow"></div>
 		</div>			
 		<div class="dup-box-panel" id="dup-transfer-transfer-log" style="<?php echo $ui_css_transfer_log ?>">

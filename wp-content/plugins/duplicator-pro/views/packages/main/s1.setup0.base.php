@@ -116,7 +116,7 @@ TOOL-BAR -->
 		</td>
 		<td>
 			<div class="btnnav">
-				<a href="<?php echo esc_url($packages_tab_url); ?>" class="add-new-h2"><i class="fa fa-archive"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
+				<a href="<?php echo esc_url($packages_tab_url); ?>" class="add-new-h2"><i class="fa fa-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
 				<span> <?php _e("Create New"); ?></span>
 			</div>
 		</td>
@@ -137,15 +137,15 @@ $form_action_url = '?page=duplicator-pro&tab=packages&inner_page=new2&_wpnonce='
 	<input type="hidden" id="dup-form-opts-action" name="action" value="">
 	<div class="dpro-general-area">
 		<label class="lbl-larger">&nbsp;Apply Template:</label>
-		<i class="fa fa-question-circle"
+		<i class="fas fa-question-circle fa-sm"
 			data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Apply Template:"); ?>"
 			data-tooltip="<?php DUP_PRO_U::esc_attr_e('An optional template configuration that can be applied to this package setup. An [Unassigned] template will retain the settings from the last scan/build.'); ?>"></i>
 		<div style="float:right">
 			<a href="admin.php?page=duplicator-pro-tools&tab=templates" class="button button-small" title="<?php DUP_PRO_U::esc_attr_e("List All Templates") ?>" target="_blank">
-				<i class="fa fa-clone"></i>
+				<i class="far fa-clone"></i>
 			</a>
 			<a href="javascript:void(0)" onclick="DupPro.Pack.EditTemplate()"  class="button button-small" title="<?php DUP_PRO_U::esc_attr_e("Edit Selected Template") ?>">
-				<i class="fa fa-pencil-square-o"></i>
+                <i class="fa fa-pen-square"></i>
 			</a>
 		</div>
 		<br/>
@@ -168,7 +168,7 @@ $form_action_url = '?page=duplicator-pro&tab=packages&inner_page=new2&_wpnonce='
 		<a href="javascript:void(0)" onClick="DupPro.Pack.ResetName()" title="<?php DUP_PRO_U::esc_attr_e('Toggle a default name') ?>"><i class="fa fa-undo"></i></a>
 		<div class="dup-notes-add">
 			<a href="javascript:void(0)" onClick="jQuery('#dup-notes-area').toggle()" class="button button-small"  title="<?php DUP_PRO_U::esc_attr_e('Add Notes') ?>">
-				<i class="fa fa-pencil-square-o"></i>
+				<i class="far fa-edit"></i>
 			</a>
 		</div>
 		<input id="package-name"  name="package-name" type="text" maxlength="40"  required="true" data-regexp="^[0-9A-Za-z|_]+$" />
@@ -462,6 +462,7 @@ jQuery(document).ready(function ($) {
     DupPro.Pack.ExportOnlyDB();
     DPRO_NAME_LAST  = $('#package-name').val();
 	DupPro.Pack.CountFilters();
+	$('input#package-name').focus().select();
 
 });
 </script>

@@ -14,7 +14,7 @@
  */
 
 namespace phpseclib\System\SSH\Agent;
-
+defined("ABSPATH") or die("");
 use phpseclib\System\SSH\Agent;
 
 /**

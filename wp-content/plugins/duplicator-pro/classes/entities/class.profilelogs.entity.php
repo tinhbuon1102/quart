@@ -1,6 +1,4 @@
 <?php
-defined("ABSPATH") or die("");
-
 /**
  * Global System Enity
  *
@@ -14,6 +12,7 @@ defined("ABSPATH") or die("");
  *
  * @todo Finish Docs
  */
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 require_once(DUPLICATOR_PRO_PLUGIN_PATH   . '/classes/entities/class.json.entity.base.php');
 

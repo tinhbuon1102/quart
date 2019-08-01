@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser;
+
+defined("ABSPATH") or die("");
 
 /**
  * Registry of parsers used by the application

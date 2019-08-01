@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Guzzle\Cache\CacheAdapterInterface;
 
 /**

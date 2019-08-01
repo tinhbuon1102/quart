@@ -1,4 +1,6 @@
 <?php
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+    die("");
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -26,9 +28,9 @@ class FileOpsState
             self::$instance = new FileOpsState();
 
             if (file_exists($stateFilepath)) {
-                $stateHandle = SnapLibIOU::fopen($stateFilepath, 'rb');
+                $stateHandle = DupProSnapLibIOU::fopen($stateFilepath, 'rb');
 
-                SnapLibIOU::flock($stateHandle, LOCK_EX);
+                DupProSnapLibIOU::flock($stateHandle, LOCK_EX);
 
                 $stateString = fread($stateHandle, filesize($stateFilepath));
 
@@ -38,9 +40,9 @@ class FileOpsState
 
               //  self::$instance->fileRenames = (array)(self::$instance->fileRenames);
 
-                SnapLibIOU::flock($stateHandle, LOCK_UN);
+                DupProSnapLibIOU::flock($stateHandle, LOCK_UN);
 
-                SnapLibIOU::fclose($stateHandle);
+                DupProSnapLibIOU::fclose($stateHandle);
             } else {
                 $reset = true;
             }
@@ -64,29 +66,29 @@ class FileOpsState
     {
         $stateFilepath = dirname(__FILE__).'/'.self::StateFilename;
 
-        $stateHandle = SnapLibIOU::fopen($stateFilepath, 'w');
+        $stateHandle = DupProSnapLibIOU::fopen($stateFilepath, 'w');
 
-        SnapLibIOU::flock($stateHandle, LOCK_EX);
+        DupProSnapLibIOU::flock($stateHandle, LOCK_EX);
 
         $this->initMembers();
 
-        SnapLibIOU::fwrite($stateHandle, json_encode($this));
+        DupProSnapLibIOU::fwrite($stateHandle, json_encode($this));
 
-        SnapLibIOU::fclose($stateHandle);
+        DupProSnapLibIOU::fclose($stateHandle);
     }
 
     public function save()
     {
         $stateFilepath = dirname(__FILE__).'/'.self::StateFilename;
 
-        $stateHandle = SnapLibIOU::fopen($stateFilepath, 'w');
+        $stateHandle = DupProSnapLibIOU::fopen($stateFilepath, 'w');
 
-        SnapLibIOU::flock($stateHandle, LOCK_EX);
+        DupProSnapLibIOU::flock($stateHandle, LOCK_EX);
 
         DupArchiveUtil::tlog("saving state");
-        SnapLibIOU::fwrite($stateHandle, json_encode($this));
+        DupProSnapLibIOU::fwrite($stateHandle, json_encode($this));
 
-        SnapLibIOU::fclose($stateHandle);
+        DupProSnapLibIOU::fclose($stateHandle);
     }
 
     private function initMembers()

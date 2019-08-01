@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of SCP.
  *
@@ -31,7 +30,7 @@
  */
 
 namespace phpseclib\Net;
-
+defined("ABSPATH") or die("");
 use phpseclib\Net\SSH1;
 use phpseclib\Net\SSH2;
 

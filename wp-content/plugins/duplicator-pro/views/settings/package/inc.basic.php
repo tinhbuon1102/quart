@@ -4,7 +4,7 @@ defined("ABSPATH") or die("");
 
 $is_zip_available			= (DUP_PRO_Zip_U::getShellExecZipPath() != null);
 $is_shellexec_on			= DUP_PRO_Shell_U::isShellExecEnabled();
-$phpdump_chunkopts			= array("20", "100", "500", "1000", "2000");
+
 $user_id = get_current_user_id();
 $package_ui_created = is_numeric(get_user_meta($user_id,'duplicator_pro_created_format',true)) ? get_user_meta($user_id,'duplicator_pro_created_format',true) : 1; //Old option was $global->package_ui_created
 
@@ -15,30 +15,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 	check_admin_referer($nonce_action);
 
 	//DATABASE
-	$enable_mysqldump					 = isset($_REQUEST['_package_dbmode']) && $_REQUEST['_package_dbmode'] == 'mysql' ? "1" : "0";
-	$phpdump_mode						 = isset($_REQUEST['_phpdump_mode']) && $_REQUEST['_phpdump_mode'] == DUP_PRO_PHPDump_Mode::Multithreaded ? 0 : 1;
-	$global->package_mysqldump			 = $enable_mysqldump ? 1 : 0;
-	$global->package_phpdump_mode   	 = $phpdump_mode;
-	$global->package_phpdump_qrylimit	 = isset($_REQUEST['_package_phpdump_qrylimit']) ? (int) $_REQUEST['_package_phpdump_qrylimit'] : 100;
-	
-	$package_mysqldump_path 			 = sanitize_text_field($_REQUEST['_package_mysqldump_path']);
-	$global->package_mysqldump_path		 = trim($package_mysqldump_path);
+    $global->setDbMode();
 
 	//ARCHIVE SETTINGS
-	DUP_PRO_U::initStorageDirectory();
-	$global->archive_compression = isset($_REQUEST['archive_compression']) ? (bool) $_REQUEST['archive_compression'] : true;
-	$prelim_build_mode = (int) $_REQUEST['archive_build_mode'];
-	
-	// Something has changed which invalidates Shell exec so move it to ZA
-	$global->archive_build_mode = (!$is_zip_available && ($prelim_build_mode == DUP_PRO_Archive_Build_Mode::Shell_Exec))
-		? DUP_PRO_Archive_Build_Mode::ZipArchive
-		: $prelim_build_mode;
-
-	$global->ziparchive_mode		= isset($_REQUEST['ziparchive_mode']) ? (int) $_REQUEST['ziparchive_mode'] : 0;
-	$global->ziparchive_validation	= isset($_REQUEST['ziparchive_validation']);
-	if (isset($_REQUEST['ziparchive_chunk_size_in_mb'])) {
-		$global->ziparchive_chunk_size_in_mb = (int) $_REQUEST['ziparchive_chunk_size_in_mb'];
-	}
+    DUP_PRO_U::initStorageDirectory();
+    $global->setArchiveMode();
 
 	//PROCESSING
 	$global->max_package_runtime_in_min	 = (int) $_REQUEST['max_package_runtime_in_min'];
@@ -92,19 +73,20 @@ class DUP_PRO_UI_Settings_General_Basic
 
     public static function getMySQLDumpMessage($mysqlDumpFound = false, $mysqlDumpPath = '')
     { ?>
-        <?php if ( $mysqlDumpFound ) : ?>
+        <?php if ($mysqlDumpFound) : ?>
             <div class="dup-feature-found">
-                <i class="fa fa-check-circle"></i>
-                <?php DUP_PRO_U::esc_html_e("Successfully Found:"); ?> &nbsp;
-                <i><?php echo $mysqlDumpPath ?></i>
-            </div><br/>
+				<?php echo $mysqlDumpPath ?> &nbsp;
+                <small>
+					<i class="fa fa-check-circle"></i>&nbsp;<i><?php DUP_PRO_U::esc_html_e("Successfully Found"); ?></i>
+				</small>
+            </div>
         <?php else : ?>
             <div class="dup-feature-notfound">
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                <i class="fa fa-exclamation-triangle fa-sm" aria-hidden="true"></i>
                 <?php
                     self::getMySqlDumpPathProblems($mysqlDumpPath, !empty($mysqlDumpPath));
                 ?>
-            </div><br/>
+            </div>
         <?php endif;
     }
 
@@ -136,7 +118,7 @@ class DUP_PRO_UI_Settings_General_Basic
 				DUP_PRO_U::esc_html_e("If the problem persist contact your server admin for the correct path. For a list of approved providers that support mysqldump ");
 				echo "<a href='https://snapcreek.com/wordpress-hosting/' target='_blank'>".DUP_PRO_U::esc_html__("click here")."</a>.";
 			} else {
-				DUP_PRO_U::esc_html_e('The mysqldump program was not found at its default location. Please try to use custom mysqldump path to resolve this issue.');
+				DUP_PRO_U::esc_html_e('The mysqldump program was not found at its default location. To use mysqldump, ask your host to install it or for a custom mysqldump path.');
 			}
 		}
 
@@ -187,7 +169,6 @@ DATABASE -->
 
 			<!-- MYSQLDUMP IN-ACTIVE -->
 			<?php if (! $is_shellexec_on) : ?>
-
 				<div class="dup-feature-notfound">
 					<?php
 						echo DUP_PRO_U::__("In order to use mysqldump the PHP function shell_exec needs to be enabled. This server currently does not allow ")
@@ -197,26 +178,40 @@ DATABASE -->
 							. "until this issue is resolved by your hosting provider.";
 					?>
 				</div><br/>
-
 			<!-- MYSQLDUMP ACTIVE -->
 			<?php else : ?>
 
+					<label><?php DUP_PRO_U::esc_html_e("Current Path:"); ?></label>
 					<?php DUP_PRO_UI_Settings_General_Basic::getMySQLDumpMessage($mysqlDumpFound, (!empty($mysqlDumpPath) ? $mysqlDumpPath : $global->package_mysqldump_path)); ?>
+					<br/>
+                    <label for="_package_mysqldump_qrylimit"><?php DUP_PRO_U::esc_html_e("Query Limit Size"); ?>:</label>
+                    <select name="_package_mysqldump_qrylimit" id="_package_mysqldump_qrylimit" style="width:70px">
+                        <?php
+                            foreach (DUP_PRO_Constants::getMysqlDumpChunkSizes() as $value => $label) {
+                                $selected = ( $global->package_mysqldump_qrylimit == $value ? "selected='selected'" : '' );
+                                echo "<option {$selected} value='".esc_attr($value)."'>".esc_html($label).'</option>';
+                            }
+                        ?>
+                    </select>
+					<i style="margin-right:7px" class="fas fa-question-circle fa-sm"
+						data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("MYSQL query Limit Size:"); ?>"
+						data-tooltip="<?php DUP_PRO_U::esc_attr_e('A higher limit size will speed up the database build time, however it will use more memory.  If your host has memory caps start off low.'); ?>"></i>
 
-					<label><?php DUP_PRO_U::esc_html_e("Custom Path"); ?></label>
-					<i class="fa fa-question-circle"
+                    <br>
+					<label><?php DUP_PRO_U::esc_html_e("Custom Path:"); ?></label>
+					<input class="wide-input" type="text" name="_package_mysqldump_path" id="_package_mysqldump_path" value="<?php echo esc_attr($global->package_mysqldump_path); ?>"  placeholder="<?php DUP_PRO_U::esc_attr_e("/usr/bin/mypath/mysqldump"); ?>" />
+                    <i class="fas fa-question-circle fa-sm"
 						data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("mysqldump"); ?>"
 						data-tooltip="<?php DUP_PRO_U::esc_attr_e('Add a custom path if the path to mysqldump is not properly detected.   For all paths use a forward slash as the '
 							. 'path seperator.  On Linux systems use mysqldump for Windows systems use mysqldump.exe.  If the path tried does not work please contact your hosting '
-							. 'provider for details on the correct path.'); ?>"></i><br/>
-					<input class="wide-input" type="text" name="_package_mysqldump_path" id="_package_mysqldump_path" value="<?php echo esc_attr($global->package_mysqldump_path); ?>"  placeholder="<?php DUP_PRO_U::esc_attr_e("/usr/bin/mypath/mysqldump"); ?>" />
+							. 'provider for details on the correct path.'); ?>"></i>
 					<br/>
+
 			<?php endif; ?>
 		</div>
 
 		<!-- PHP OPTION -->
 		<div class="engine-sub-opts" id="dbengine-details-2" style="display:none; line-height: 35px; margin-top:-5px">
-
 			<label><?php DUP_PRO_U::esc_html_e("Mode"); ?>:</label>
 			<select name="_phpdump_mode">
 				<option <?php echo DUP_PRO_UI::echoSelected($global->package_phpdump_mode == DUP_PRO_PHPDump_Mode::Multithreaded); ?> value="<?php echo DUP_PRO_PHPDump_Mode::Multithreaded ?>">
@@ -227,7 +222,7 @@ DATABASE -->
 				</option>
 			</select>
 
-			<i style="margin-right:7px;" class="fa fa-question-circle"
+			<i style="margin-right:7px;" class="fas fa-question-circle fa-sm"
 				data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("PHP Code Mode:"); ?>"
 				data-tooltip="<?php DUP_PRO_U::esc_attr_e('Single-Threaded mode attempts to create the entire database script in one request.  Multi-Threaded mode allows the database script '
 					. 'to be chunked over multiple requests.  Multi-Threaded mode is typically slower but much more reliable especially for larger databases.'); ?>"></i>
@@ -237,16 +232,15 @@ DATABASE -->
 
 			<select name="_package_phpdump_qrylimit" id="_package_phpdump_qrylimit" style="width:70px">
 				<?php
-					foreach ($phpdump_chunkopts as $value) {
+					foreach (DUP_PRO_Constants::getPhpDumpChunkSizes() as $value) {
 						$selected = ( $global->package_phpdump_qrylimit == $value ? "selected='selected'" : '' );
 						echo "<option {$selected} value='".esc_attr($value)."'>".number_format($value).'</option>';
 					}
 				?>
 			</select>
-						<i style="margin-right:7px" class="fa fa-question-circle"
+			<i style="margin-right:7px" class="fas fa-question-circle fa-sm"
 			   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("PHP Query Limit Size:"); ?>"
 			   data-tooltip="<?php DUP_PRO_U::esc_attr_e('A higher limit size will speed up the database build time, however it will use more memory.  If your host has memory caps start off low.'); ?>"></i>
-
 		</div>
 	</td>
 </tr>
@@ -269,7 +263,7 @@ ARCHIVE ENGINE -->
 		<label for="archive_compression_off"><?php DUP_PRO_U::esc_html_e("Off"); ?></label> &nbsp;
 		<input type="radio" name="archive_compression"  id="archive_compression_on" value="1" <?php echo DUP_PRO_UI::echoChecked($global->archive_compression == true); ?>  />
 		<label for="archive_compression_on"><?php DUP_PRO_U::esc_html_e("On"); ?></label>
-		<i style="margin-right:7px;" class="fa fa-question-circle"
+		<i style="margin-right:7px;" class="fas fa-question-circle fa-sm"
 			data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Shell Exec Archive Compression:"); ?>"
 			data-tooltip="<?php DUP_PRO_U::esc_attr_e('Controls archive compression. This setting applies to DupArchive, Shell Zip and ZipArchive only on PHP 7.0 or higher.'); ?>"></i>
 	</td>
@@ -324,7 +318,7 @@ ARCHIVE ENGINE -->
 					<?php DUP_PRO_U::esc_html_e("Single-Threaded"); ?>
 				</option>
 			</select>
-			<i style="margin-right:7px;" class="fa fa-question-circle"
+			<i style="margin-right:7px;" class="fas fa-question-circle fa-sm"
 				data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("PHP ZipArchive Mode:"); ?>"
 				data-tooltip="<?php DUP_PRO_U::esc_attr_e('Single-Threaded mode attempts to create the entire archive in one request.  Multi-Threaded mode allows the archive '
 					. 'to be chunked over multiple requests.  Multi-Threaded mode is typically slower but much more reliable especially for larger sites.'); ?>"></i>
@@ -339,8 +333,8 @@ ARCHIVE ENGINE -->
 				<input style="width:84px;" maxlength="4"
 					   data-parsley-required data-parsley-errors-container="#ziparchive_chunk_size_error_container" data-parsley-min="5" data-parsley-type="number"
 					   type="text" name="ziparchive_chunk_size_in_mb" id="ziparchive_chunk_size_in_mb" value="<?php echo $global->ziparchive_chunk_size_in_mb; ?>" />
-				<label><?php DUP_PRO_U::esc_html_e('MB'); ?></label>
-				<i style="margin-right:7px" class="fa fa-question-circle"
+				<?php DUP_PRO_U::esc_html_e('MB'); ?>
+				<i style="margin-right:7px" class="fas fa-question-circle fa-sm"
 					data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("PHP ZipArchive Buffer:"); ?>"
 					data-tooltip="<?php DUP_PRO_U::esc_attr_e('Buffer size only applies to multi-threaded requests and indicates how large an archive will get before a close is registered.  Higher values are faster but can be more unstable based on the hosts max_execution time.'); ?>"></i>
 				<div id="ziparchive_chunk_size_error_container" class="duplicator-error-container"></div>
@@ -378,7 +372,53 @@ PROCESSING -->
 		<p class="description">  <?php DUP_PRO_U::esc_html_e('Max build and storage time until package is auto-cancelled. Set to 0 for no limit.'); ?>  </p>
 	</td>
 </tr>
-</table>
+</table><br/>
+
+
+<!-- ===============================
+CLEANUP 
+<h3 class="title"><?php DUP_PRO_U::esc_html_e("Cleanup") ?> </h3>
+<hr size="1" />
+<table class="form-table">
+<tr>
+	<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Mode"); ?></label></th>
+	<td>
+		<input type="radio" id="package_file_cleanup_off" name="package_file_cleanup" value="<?php echo DUP_PRO_Email_Build_Mode::No_Emails; ?>" <?php echo DUP_PRO_UI::echoChecked($global->package_file_cleanup == DUP_PRO_Server_Load_Reduction::None); ?> />
+		<label for="package_file_cleanup_off"><?php DUP_PRO_U::esc_html_e("Off"); ?></label> &nbsp;
+		
+		<input type="radio" id="package_file_cleanup_email"  name="package_file_cleanup" value="<?php echo DUP_PRO_Server_Load_Reduction::A_Bit; ?>" <?php echo DUP_PRO_UI::echoChecked($global->package_file_cleanup == DUP_PRO_Server_Load_Reduction::A_Bit); ?> />
+		<label for="package_file_cleanup_email"><?php DUP_PRO_U::esc_html_e("Email Notice"); ?></label> &nbsp;
+		
+		<input type="radio" id="package_file_cleanup_auto"  name="package_file_cleanup"  value="<?php echo DUP_PRO_Server_Load_Reduction::More; ?>" <?php echo DUP_PRO_UI::echoChecked($global->package_file_cleanup == DUP_PRO_Server_Load_Reduction::More); ?> />
+		<label for="package_file_cleanup_auto"><?php DUP_PRO_U::esc_html_e("Auto Cleanup"); ?></label> &nbsp;
+		<p class="description">
+			<?php
+				DUP_PRO_U::esc_html_e("Email Notice: An email will be sent daily until the installer files are removed.");
+				echo "<br/>";
+				DUP_PRO_U::esc_html_e("Auto Cleanup: Installer files will be cleaned up automatilcally based on setting below.");
+			
+			?>
+		</p>
+	</td>
+</tr>
+	<tr valign="top">
+		<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Email Address"); ?></label></th>
+		<td>
+			<input style="display:block;margin-right:6px; width:25em;" data-parsley-errors-container="#package_file_cleanup_email_addr" data-parsley-type="email" type="email" name="package_file_cleanup_email_addr" id="package_file_cleanup_email_addr" value="" />
+			<p class="description">  <?php DUP_PRO_U::esc_html_e('Admin email will be used if empty.'); ?>  </p>
+			<div id="package_file_cleanup_email_addr_error_container" class="duplicator-error-container"></div>
+		</td>
+	</tr>
+<tr valign="top">
+	<th scope="row"><label><?php DUP_PRO_U::esc_html_e("Auto Cleanup"); ?></label></th>
+	<td>
+		<input style="float:left;display:block;margin-right:6px;" data-parsley-required data-parsley-errors-container="#package_file_cleanup_auto_hours" data-parsley-min="0" data-parsley-type="number" class="narrow-input" type="text" name="max_package_runtime_in_min" id="max_package_runtime_in_min" value="" />
+		<p style="margin-left:4px;"><?php DUP_PRO_U::esc_html_e('Hours'); ?></p>
+		<div id="max_package_runtime_in_min_error_container" class="duplicator-error-container"></div>
+		<p class="description">  <?php DUP_PRO_U::esc_html_e('Auto cleanup will run every N hours based on value above.'); ?>  </p>
+	</td>
+</tr>
+</table>-->
 
 <p class="submit dpro-save-submit">
 	<input type="submit" name="submit" id="submit" class="button-primary" value="<?php DUP_PRO_U::esc_attr_e('Save Package Settings') ?>" style="display: inline-block;" />

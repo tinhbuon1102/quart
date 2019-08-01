@@ -79,7 +79,7 @@ class DUP_PRO_Package_Screen extends DUP_PRO_UI_Screen
 					blue dot will show as &nbsp; <i class='fa fa-bars remote-data-pass'></i> &nbsp; on the more items menu button.  If a red icon shows 
 					<i class='fa fa-bars remote-data-fail'></i> &nbsp; then one or more of the storage locations failed during the transfer phase.<br/><br/>"
 
-				. "<b><i class='fa fa-file-archive-o'></i> Archive Types</b><br/>"
+				. "<b><i class='far fa-file-archive fa-sm'></i> Archive Types</b><br/>"
 				. "An archive file can be saved as either a .zip file or .daf file.  A zip file is a common archive format used to compress and group files.  The daf file short for "
 				. "'Duplicator Archive Format' is a custom format used specifically  for working with larger packages and scale-ability issues on many shared hosting platforms.  Both "
 				. "formats work very similar the main difference is that the daf file can only be extracted using the installer.php file or the "

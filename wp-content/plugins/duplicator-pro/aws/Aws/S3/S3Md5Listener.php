@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Signature\SignatureV4;
 use DuplicatorPro\Aws\Common\Signature\SignatureInterface;
 use DuplicatorPro\Guzzle\Common\Event;

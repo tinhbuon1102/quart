@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Exception;
 
+defined("ABSPATH") or die("");
+
 /**
  * A conflicting conditional operation is currently in progress against this resource. Please try again.
  */

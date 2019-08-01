@@ -1,5 +1,6 @@
 <?php
-
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+	die("");
 require_once(dirname(__FILE__).'/../headers/class.duparchive.header.directory.php');
 
 if(!class_exists('DupArchiveDirectoryProcessor')) {
@@ -12,7 +13,7 @@ class DupArchiveDirectoryProcessor
 		$directoryHeader = new DupArchiveDirectoryHeader();
 
 		$directoryHeader->permissions        = substr(sprintf('%o', fileperms($sourceDirectoryPath)), -4);
-		$directoryHeader->mtime              = SnapLibIOU::filemtime($sourceDirectoryPath);
+		$directoryHeader->mtime              = DupProSnapLibIOU::filemtime($sourceDirectoryPath);
 		$directoryHeader->relativePath       = $relativeDirectoryPath;
 		$directoryHeader->relativePathLength = strlen($directoryHeader->relativePath);
 

@@ -1,4 +1,6 @@
 <?php
+if (!defined("ABSPATH") && !defined("DUPXABSPATH"))
+    die("");
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -121,7 +123,7 @@ class DupArchiveUtil
         {
             if($callingFunctionName === null)
             {
-                $callingFunctionName = SnapLibUtil::getCallingFunctionName();
+                $callingFunctionName = DupProSnapLibUtil::getCallingFunctionName();
             }
 
             self::$logger->log($s, $flush, $callingFunctionName);
@@ -139,7 +141,7 @@ class DupArchiveUtil
 
             if($callingFunctionName === null)
             {
-                $callingFunctionName = SnapLibUtil::getCallingFunctionName();
+                $callingFunctionName = DupProSnapLibUtil::getCallingFunctionName();
             }
 
             self::log("####{$s}", $flush, $callingFunctionName);
@@ -166,7 +168,7 @@ class DupArchiveUtil
 
         if($callingFunctionName === null)
         {
-            $callingFunctionName = SnapLibUtil::getCallingFunctionName();
+            $callingFunctionName = DupProSnapLibUtil::getCallingFunctionName();
         }
 
         self::tlog($s, $flush, $callingFunctionName);
@@ -179,7 +181,7 @@ class DupArchiveUtil
 
         if($callingFunctionName === null)
         {
-            $callingFunctionName = SnapLibUtil::getCallingFunctionName();
+            $callingFunctionName = DupProSnapLibUtil::getCallingFunctionName();
         }
 
         self::log($s, $flush, $callingFunctionName);

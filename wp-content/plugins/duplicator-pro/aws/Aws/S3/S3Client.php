@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Client\AbstractClient;
 use DuplicatorPro\Aws\Common\Client\ClientBuilder;
 use DuplicatorPro\Aws\Common\Client\ExpiredCredentialsChecker;

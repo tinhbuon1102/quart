@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Base Class for all \phpseclib\Crypt\* cipher classes
  *
@@ -35,6 +34,7 @@
  */
 
 namespace phpseclib\Crypt;
+defined("ABSPATH") or die("");
 
 use phpseclib\Crypt\Hash;
 

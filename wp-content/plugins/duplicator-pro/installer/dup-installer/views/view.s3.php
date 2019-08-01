@@ -1,5 +1,8 @@
 <?php
 defined("DUPXABSPATH") or die("");
+
+require_once($GLOBALS['DUPX_INIT'].'/classes/class.s3.func.php');
+
 /** IDE HELPERS */
 /* @var $GLOBALS['DUPX_AC'] DUPX_ArchiveConfig */
 
@@ -28,8 +31,7 @@ defined("DUPXABSPATH") or die("");
 	}
 	
 	if (isset($_POST['dbpass'])) {
-		$post_db_pass = DUPX_U::wp_unslash($_POST['dbpass']);
-		$_POST['dbpass'] = trim($post_db_pass);
+		$_POST['dbpass'] = trim($_POST['dbpass']);
 	} else {
 		$_POST['dbpass'] = null;
 	}
@@ -37,13 +39,13 @@ defined("DUPXABSPATH") or die("");
 	$_POST['dbport']		= isset($_POST['dbhost']) ? parse_url($_POST['dbhost'], PHP_URL_PORT) : 3306;
 	$_POST['dbport']		= (! empty($_POST['dbport'])) ? DUPX_U::sanitize_text_field($_POST['dbport']) : 3306;
 
-	$_POST['subsite-id']	= isset($_POST['subsite-id']) ? intval($_POST['subsite-id']) : -1;
+	$_POST['subsite_id']	= isset($_POST['subsite_id']) ? intval($_POST['subsite_id']) : -1;
     $_POST['remove_redundant'] = (isset($_POST['remove_redundant'])) ? DUPX_U::sanitize_text_field($_POST['remove_redundant']) : 0;
 	$_POST['exe_safe_mode']	= isset($_POST['exe_safe_mode']) ? DUPX_U::sanitize_text_field($_POST['exe_safe_mode']) : 0;
 
 	$dbh = DUPX_DB::connect($_POST['dbhost'], $_POST['dbuser'], $_POST['dbpass'], $_POST['dbname'], $_POST['dbport']);
 
-	$subsite_id = intval($_POST['subsite-id']);
+	$subsite_id = intval($_POST['subsite_id']);
     if ($subsite_id > 0) {
 		foreach ($GLOBALS['DUPX_AC']->subsites as $ac_subsite) {
 			if ($subsite_id == $ac_subsite->id) {
@@ -85,7 +87,7 @@ VIEW: STEP 3- INPUT -->
 <form id='s3-input-form' method="post" class="content-form">
 
 	<div class="logfile-link">
-		<a href="<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]).'?now='.DUPX_U::esc_attr($GLOBALS['NOW_TIME']);?> target="dup-installer">installer-log.txt</a>
+		<?php DUPX_View_Funcs::installerLogLink(); ?>
 	</div>
 	<div class="hdr-main">
 		Step <span class="step">3</span> of 4: Update Data
@@ -95,19 +97,30 @@ VIEW: STEP 3- INPUT -->
 		if ($_POST['dbaction'] == 'manual') {
 			echo '<div class="dupx-notice s3-manaual-msg">Manual SQL execution is enabled</div>';
 		}
+
+        $actionParams = array(
+            'ctrl_action' => 'ctrl-step3',
+            'ctrl_csrf_token' => DUPX_CSRF::generate('ctrl-step3'),
+            'view' => 'step3',
+            'csrf_token' => DUPX_CSRF::generate('step3'),
+            'secure-pass' => $_POST['secure-pass'],
+            'bootloader' => $GLOBALS['BOOTLOADER_NAME'],
+            'archive' => $GLOBALS['FW_PACKAGE_PATH'],
+            'logging' => $_POST['logging']
+        );
 	?>
 
 	<!--  POST PARAMS -->
 	<div class="dupx-debug">
 		<i>Step 3 - Page Load</i>
-		<input type="hidden" name="ctrl_action"	  value="ctrl-step3" />
-		<input type="hidden" name="ctrl_csrf_token" value="<?php echo DUPX_CSRF::generate('ctrl-step3'); ?>"> 
-		<input type="hidden" name="view"		  value="step3" />
-		<input type="hidden" name="csrf_token" value="<?php echo DUPX_CSRF::generate('step3'); ?>">
-		<input type="hidden" name="secure-pass"   value="<?php echo DUPX_U::esc_attr($_POST['secure-pass']); ?>" />
-		<input type="hidden" name="bootloader" value="<?php echo DUPX_U::esc_attr($GLOBALS['BOOTLOADER_NAME']); ?>" />
-		<input type="hidden" name="archive" value="<?php echo DUPX_U::esc_attr($GLOBALS['FW_PACKAGE_PATH']); ?>" />
-		<input type="hidden" name="logging"		  value="<?php echo DUPX_U::esc_attr($_POST['logging']); ?>" />
+		<input type="hidden" name="ctrl_action"	    value="<?php echo DUPX_U::esc_attr($actionParams['ctrl_action']); ?>" />
+		<input type="hidden" name="ctrl_csrf_token" value="<?php echo DUPX_U::esc_attr($actionParams['ctrl_csrf_token']); ?>">
+		<input type="hidden" name="view"		    value="<?php echo DUPX_U::esc_attr($actionParams['view']); ?>" />
+		<input type="hidden" name="csrf_token"      value="<?php echo DUPX_U::esc_attr($actionParams['csrf_token']); ?>">
+		<input type="hidden" name="secure-pass"     value="<?php echo DUPX_U::esc_attr($actionParams['secure-pass']); ?>" />
+		<input type="hidden" name="bootloader"      value="<?php echo DUPX_U::esc_attr($actionParams['bootloader']); ?>" />
+		<input type="hidden" name="archive"         value="<?php echo DUPX_U::esc_attr($actionParams['archive']); ?>" />
+		<input type="hidden" name="logging"		    value="<?php echo DUPX_U::esc_attr($actionParams['logging']); ?>" />
 		<input type="hidden" name="dbhost"		  value="<?php echo DUPX_U::esc_attr($_POST['dbhost']); ?>" />
 		<input type="hidden" name="dbuser" 		  value="<?php echo DUPX_U::esc_attr($_POST['dbuser']); ?>" />
 		<input type="hidden" name="dbpass" 		  value="<?php echo DUPX_U::esc_attr($_POST['dbpass']); ?>" />
@@ -116,7 +129,7 @@ VIEW: STEP 3- INPUT -->
 		<input type="hidden" name="dbcollate" 	  value="<?php echo DUPX_U::esc_attr($_POST['dbcollate']); ?>" />
 		<input type="hidden" name="retain_config" value="<?php echo DUPX_U::esc_attr($_POST['retain_config']); ?>" />
 		<input type="hidden" name="exe_safe_mode" id="exe-safe-mode" value="<?php echo DUPX_U::esc_attr($_POST['exe_safe_mode']); ?>" />
-		<input type="hidden" name="subsite-id"    id="subsite-id" value="<?php echo intval($_POST['subsite-id']); ?>" />
+		<input type="hidden" name="subsite_id"    id="subsite-id" value="<?php echo intval($_POST['subsite_id']); ?>" />
         <input type="hidden" name="remove_redundant" id="remove-redundant" value="<?php echo DUPX_U::esc_attr($_POST['remove_redundant']); ?>" />
         <input type="hidden" name="json"		  value="<?php echo DUPX_U::esc_attr($_POST['json']); ?>" />
 	</div>
@@ -129,7 +142,7 @@ VIEW: STEP 3- INPUT -->
             <tr id="new-url-container">
                 <td>URL:</td>
                 <td>
-                    <input type="text" name="url_new" id="url_new" value="" />
+                    <input type="text" name="url_new" id="url_new" class="sync_url_new" value="" />
                     <a href="javascript:DUPX.getNewURL('url_new')" style="font-size:12px">get</a>
                 </td>
             </tr>
@@ -165,25 +178,30 @@ VIEW: STEP 3- INPUT -->
                 <tr>
                     <td>URLs:</td>
                     <td>
-                        <div>
-                            <input style="width: 42%!important;" type="text" name="url_old" id="url_old" value="<?php echo DUPX_U::esc_attr($subsites[0]->name); ?>" readonly="readonly"  class="readonly" />
-                            to
-							<?php
-							$url_new = DUPX_U::getDefaultURL($subsites[0]->name,$main_url,$is_subdomain);
-							?>
-                            <input style="width: 42%!important;" type="text" name="url_new" id="url_new" value="<?php echo DUPX_U::esc_attr($url_new); ?>" />
-                        </div>
                         <?php
-                            unset($subsites[0]);
-                            foreach ($subsites as $subsite):
+						foreach ($subsites as $subsite):
+							$isMainSite = ($subsite->id == $GLOBALS['DUPX_AC']->main_site_id);
+                            $title = ($isMainSite ? 'Main' : 'Sub').' site: '.$subsite->blogname;
                         ?>
-                            <div style="margin-top: 10px;">
-                                <input style="width: 42%!important;" type="text" name="mu_search[]" id="url_old_<?php echo intval($subsite->id); ?>" value="<?php echo $subsite->name ?>" readonly="readonly"  class="readonly" />
+                            <div class="site-item <?php echo $isMainSite ? 'main_site' : 'sub_site'; ?>" title="<?php echo DUPX_U::esc_attr($title); ?>" >
+                                <input style="width: 42%!important;"
+                                       type="text"
+                                       name="mu_search[<?php echo intval($subsite->id); ?>]"
+                                       id="url_old_<?php echo intval($subsite->id); ?>"
+                                       value="<?php echo $subsite->name ?>"
+                                       readonly="readonly"
+                                       class="mu_search readonly"
+                                       />
                                 to
 								<?php
 								$url_new = DUPX_U::getDefaultURL($subsite->name,$main_url,$is_subdomain);
 								?>
-                                <input style="width: 42%!important;" type="text" name="mu_replace[]" id="url_new_<?php echo intval($subsite->id); ?>" value="<?php echo DUPX_U::esc_attr($url_new); ?>" />
+                                <input style="width: 42%!important;" type="text" 
+                                    name="mu_replace[<?php echo intval($subsite->id); ?>]"
+                                    id="url_new_<?php echo intval($subsite->id); ?>"
+									value="<?php echo DUPX_U::esc_attr($url_new); ?>"
+                                    class="mu_replace <?php echo $isMainSite ? ' sync_url_new' : ''; ?>"
+                                />
                             </div>
                         <?php endforeach; ?>
                     </td>
@@ -202,7 +220,7 @@ VIEW: STEP 3- INPUT -->
 
     <div id="s3-custom-replace" style="display:none;">
         <div class="help-target">
-            <a href="<?php echo $GLOBALS['_HELP_URL_PATH'];?>#help-s3" target="help"><i class="fa fa-question-circle"></i></a>
+            <?php DUPX_View_Funcs::helpIconLink('step3'); ?>
         </div><br/>
 
         <table class="s3-opts" id="search-replace-table">
@@ -214,6 +232,7 @@ VIEW: STEP 3- INPUT -->
         </table>
         <button type="button" onclick="DUPX.addSearchReplace();return false;" style="font-size:12px;display: block; margin: 10px 0 0 0; " class="default-btn">Add More</button>
     </div>
+
     <br/><br/>
 
 	<!-- ==========================
@@ -234,7 +253,7 @@ VIEW: STEP 3- INPUT -->
 		ADMIN TAB -->
 		<div id="tabs-admin-account">
 			<div class="help-target">
-				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+				<?php DUPX_View_Funcs::helpIconLink('step3'); ?>
 			</div><br/>
 
 			<!-- NEW ADMIN ACCOUNT -->
@@ -255,7 +274,15 @@ VIEW: STEP 3- INPUT -->
 				</tr>
 				<tr>
 					<td>Password:</td>
-					<td><input type="text" name="wp_password" id="wp_password" value="" title="6 characters minimum"  placeholder="(6 or more characters)" /></td>
+					<td>
+                        <?php
+                        DUPX_U_Html::inputPasswordToggle('wp_password', 'wp_password', array(),
+                            array(
+                            'placeholder' => '(6 or more characters',
+                            'title' => '6 characters minimum'
+                        ));
+                        ?>
+                    </td>
 				</tr>
 				<tr>
 					<td>Mail:</td>
@@ -280,10 +307,23 @@ VIEW: STEP 3- INPUT -->
 		SCAN TAB -->
 		<div id="tabs-scan-options">
 			<div class="help-target">
-				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+				<?php DUPX_View_Funcs::helpIconLink('step3'); ?>
 			</div><br/>
 			<div class="hdr-sub3">Database Scan Options</div>
 			<table  class="s3-opts">
+                <tr>
+					<td><label for="mode_chunking" style="font-weight: bold">Replace Mode:</label></td>
+					<td>
+                        <select id="mode_chunking" name="mode_chunking" size="2">
+                            <option value="<?php echo DUPX_S3_Funcs::MODE_NORMAL; ?>" selected>Normal</option>
+                            <option value="<?php echo DUPX_S3_Funcs::MODE_CHUNK; ?>">Chunking mode</option>
+                            <?php 
+                                // Prepared but not yet implemented
+                                // <option value="<?php echo DUPX_S3_Funcs::MODE_SKIP; ? >">Skip mode</option>
+                            ?>
+                        </select>
+					</td>
+				</tr>
 				<tr style="display: <?php echo $empty_schedule_display; ?>">
 					<td>Cleanup:</td>
 					<td>
@@ -322,7 +362,7 @@ VIEW: STEP 3- INPUT -->
 							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',true);">[All]</a>
 							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',false);">[None]</a>
 						</div><br style="clear:both" />
-						<select id="tables" name="tables[]" multiple="multiple" style="width:315px; height:100px">
+						<select id="tables" name="tables[]" multiple="multiple" style="width:315px;" size="10">
 							<?php
 							$need_to_check_scan_table = false;
 							if ($GLOBALS['DUPX_AC']->mu_generation > 0
@@ -357,7 +397,7 @@ VIEW: STEP 3- INPUT -->
 							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',true);">[All]</a>
 							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',false);">[None]</a>
 						</div><br style="clear:both" />
-						<select id="plugins" name="plugins[]" multiple="multiple" style="width:315px; height:100px" <?php echo ($_POST['exe_safe_mode'] > 0) ? 'disabled="true"' : ''; ?>>
+						<select id="plugins" name="plugins[]" multiple="multiple" style="width:315px;" <?php echo ($_POST['exe_safe_mode'] > 0) ? 'disabled="true"' : ''; ?> size="10">
 							<?php
 							$exclude_plugins = array(
 								'really-simple-ssl/rlrsssl-really-simple-ssl.php',
@@ -378,8 +418,26 @@ VIEW: STEP 3- INPUT -->
 				</tr>
 			</table>
 			<br>
+			<input type="checkbox" name="search_replace_email_domain" id="search_replace_email_domain" value="1" /> <label for="search_replace_email_domain">Update email domains</label><br/>
 			<input type="checkbox" name="fullsearch" id="fullsearch" value="1" /> <label for="fullsearch">Use Database Full Search Mode</label><br/>
 			<input type="checkbox" name="postguid" id="postguid" value="1" /> <label for="postguid">Keep Post GUID Unchanged</label><br/>
+            <label>
+                <B>Max size check for serialize objects:</b>
+                <input type="number" 
+                       name="<?php echo DUPX_CTRL::NAME_MAX_SERIALIZE_STRLEN_IN_M; ?>"
+                       value="<?php echo DUPX_Constants::DEFAULT_MAX_STRLEN_SERIALIZED_CHECK_IN_M; ?>"
+                       min="0" max="99" step="1" size="2"
+                       style="width: 40px;width: 50px; text-align: center;" /> MB
+            </label>
+            <?php
+            if ($is_network_install) {
+                $checked = (count($subsites) <= MAX_SITES_TO_DEFAULT_ENABLE_CORSS_SEARCH) ? 'checked="checked"' : '';
+                ?>
+                <input type="checkbox" name="cross_search" id="cross_search" value="1" <?php echo $checked; ?> />
+                <label for="cross_search" style="font-weight: normal">Cross-search between the sites of the network.</label><br/>
+                <?php
+            }
+            ?>
 			<br/><br/>
 		</div>
 
@@ -387,11 +445,11 @@ VIEW: STEP 3- INPUT -->
 		WP-CONFIG TAB -->
 		<div id="tabs-wp-config-file">
 			<div class="help-target">
-				<a href="<?php echo DUPX_U::esc_url($GLOBALS['_HELP_URL_PATH'].'#help-s3');?>" target="help"><i class="fa fa-question-circle"></i></a>
+				<?php DUPX_View_Funcs::helpIconLink('step3'); ?>
 			</div><br/>
 
 			<?php
-				require_once($GLOBALS['DUPX_INIT'].'/classes/config/class.wp.config.tranformer.php');
+				require_once($GLOBALS['DUPX_INIT'].'/lib/config/class.wp.config.tranformer.php');
 				$root_path		= $GLOBALS['DUPX_ROOT'];
 				$wpconfig_ark_path	= "{$root_path}/dup-wp-config-arc__{$GLOBALS['DUPX_AC']->package_hash}.txt";
                 if (file_exists($wpconfig_ark_path)) {
@@ -413,7 +471,7 @@ VIEW: STEP 3- INPUT -->
 							$disallow_file_edit_val = $config_transformer->get_value('constant', 'DISALLOW_FILE_EDIT');
 						}
 						?>
-						<input type="checkbox" id="disallow_file_edit" name="disallow_file_edit" <?php SnapLibUIU::echoChecked($disallow_file_edit_val);?> value="1">
+						<input type="checkbox" id="disallow_file_edit" name="disallow_file_edit" <?php DupProSnapLibUIU::echoChecked($disallow_file_edit_val);?> value="1">
 						<label for="disallow_file_edit"><?php echo DUPX_U::esc_attr('Disable the Plugin/Theme Editor'); ?></label>
 					</td>
 				</tr>
@@ -462,7 +520,7 @@ VIEW: STEP 3- INPUT -->
 					}
 					?>
 					<td>
-						<input type="checkbox" name="ssl_admin" id="ssl_admin" <?php SnapLibUIU::echoChecked($force_ssl_admin_val);?> /> <label for="ssl_admin">Enforce on Admin</label>
+						<input type="checkbox" name="ssl_admin" id="ssl_admin" <?php DupProSnapLibUIU::echoChecked($force_ssl_admin_val);?> /> <label for="ssl_admin">Enforce on Admin</label>
 					</td>
 				</tr>
 				<?php
@@ -510,7 +568,7 @@ VIEW: STEP 3- INPUT -->
 							$wp_cache_val = $config_transformer->get_value('constant', 'WP_CACHE');
 						}
 						?>
-						<input type="checkbox" name="cache_wp" id="cache_wp" <?php SnapLibUIU::echoChecked($wp_cache_val);?> /> <label for="cache_wp">Keep Enabled</label>
+						<input type="checkbox" name="cache_wp" id="cache_wp" <?php DupProSnapLibUIU::echoChecked($wp_cache_val);?> /> <label for="cache_wp">Keep Enabled</label>
 						<br>
 						<?php
 						$wpcachehome_val = '';
@@ -518,7 +576,7 @@ VIEW: STEP 3- INPUT -->
 							$wpcachehome_val = $config_transformer->get_value('constant', 'WPCACHEHOME');
 						}
 						?>
-						<input type="checkbox" name="cache_path" id="cache_path" <?php SnapLibUIU::echoChecked($wpcachehome_val);?> /> <label for="cache_path">Keep Home Path</label>
+						<input type="checkbox" name="cache_path" id="cache_path" <?php DupProSnapLibUIU::echoChecked($wpcachehome_val);?> /> <label for="cache_path">Keep Home Path</label>
 					</td>
 				</tr>
 				<tr id="wp_post_revisions_no_cont">
@@ -542,7 +600,7 @@ VIEW: STEP 3- INPUT -->
 					?>
 					<td>Media Trash</td>
 					<td>
-						<input type="checkbox" name="media_trash" id="media_trash" <?php SnapLibUIU::echoChecked($media_trash_val);?> /> <label for="media_trash">Enable trash for media</label>
+						<input type="checkbox" name="media_trash" id="media_trash" <?php DupProSnapLibUIU::echoChecked($media_trash_val);?> /> <label for="media_trash">Enable trash for media</label>
 					</td>
 				</tr>
 				*/
@@ -556,7 +614,7 @@ VIEW: STEP 3- INPUT -->
 							$wp_debug_val = $config_transformer->get_value('constant', 'WP_DEBUG');
 						}
 						?>
-						<input type="checkbox" id="wp-debug" name="wp_debug" <?php SnapLibUIU::echoChecked($wp_debug_val);?> value="1">
+						<input type="checkbox" id="wp-debug" name="wp_debug" <?php DupProSnapLibUIU::echoChecked($wp_debug_val);?> value="1">
 						<label for="wp-debug">Display errors and warnings</label>
 					</td>
 				</tr>
@@ -569,7 +627,7 @@ VIEW: STEP 3- INPUT -->
 							$wp_debug_log_val = $config_transformer->get_value('constant', 'WP_DEBUG_LOG');
 						}
 						?>
-						<input type="checkbox" id="wp-debug-log" name="wp_debug_log" <?php SnapLibUIU::echoChecked($wp_debug_log_val);?> value="1">
+						<input type="checkbox" id="wp-debug-log" name="wp_debug_log" <?php DupProSnapLibUIU::echoChecked($wp_debug_log_val);?> value="1">
 						<label for="wp-debug-log">Log errors and warnings</label>
 					</td>
 				</tr>
@@ -582,7 +640,7 @@ VIEW: STEP 3- INPUT -->
 							$wp_debug_display_val = $config_transformer->get_value('constant', 'WP_DEBUG_DISPLAY');
 						}
 						?>
-						<input type="checkbox" id="wp_debug_display" name="wp_debug_display" <?php SnapLibUIU::echoChecked($wp_debug_display_val);?> value="1">
+						<input type="checkbox" id="wp_debug_display" name="wp_debug_display" <?php DupProSnapLibUIU::echoChecked($wp_debug_display_val);?> value="1">
 						<label for="wp_debug_display">Display errors and warnings</label>
 					</td>
 				</tr>
@@ -595,7 +653,7 @@ VIEW: STEP 3- INPUT -->
 							$script_debug_val = $config_transformer->get_value('constant', 'SCRIPT_DEBUG');
 						}
 						?>
-						<input type="checkbox" id="script_debug" name="script_debug" <?php SnapLibUIU::echoChecked($script_debug_val);?> value="1">
+						<input type="checkbox" id="script_debug" name="script_debug" <?php DupProSnapLibUIU::echoChecked($script_debug_val);?> value="1">
 						<label for="script_debug">JavaScript or CSS errors</label>
 					</td>
 				</tr>
@@ -608,7 +666,7 @@ VIEW: STEP 3- INPUT -->
 							$savequeries_val = $config_transformer->get_value('constant', 'SAVEQUERIES');
 						}
 						?>
-						<input type="checkbox" id="savequeries" name="savequeries" <?php SnapLibUIU::echoChecked($savequeries_val);?> value="1">
+						<input type="checkbox" id="savequeries" name="savequeries" <?php DupProSnapLibUIU::echoChecked($savequeries_val);?> value="1">
 						<label for="savequeries"><?php echo DUPX_U::esc_attr('Save database queries in an array ($wpdb->queries)'); ?></label>
 					</td>
 				</tr>
@@ -618,10 +676,18 @@ VIEW: STEP 3- INPUT -->
 					$cookie_domain_val = '';
 					if ($config_transformer->exists('constant', 'COOKIE_DOMAIN')) {
 						$cookie_domain_val = $config_transformer->get_value('constant', 'COOKIE_DOMAIN');
-						if (!empty($cookie_domain_val)) {
+						if (0 === strpos($cookie_domain_val, '$')) {
+							$cookie_domain_val = '';
+						} elseif (!empty($cookie_domain_val)) {
 							$parsedUrlOld = parse_url($GLOBALS['DUPX_AC']->url_old);
 							$oldDomain = $parsedUrlOld['host'];
-							$newDomain = $_SERVER['HTTP_HOST'];
+							// for ngrok url and Local by Flywheel Live URL
+							if (isset($_SERVER['HTTP_X_ORIGINAL_HOST'])) {
+								$host = $_SERVER['HTTP_X_ORIGINAL_HOST'];
+							} else {
+								$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];//WAS SERVER_NAME and caused problems on some boxes
+							}
+							$newDomain = $host;
 							$cookie_domain_val = str_ireplace($oldDomain, $newDomain, $cookie_domain_val);
 						}
 					}
@@ -685,7 +751,7 @@ VIEW: STEP 3- INPUT -->
 VIEW: STEP 3 - AJAX RESULT  -->
 <form id='s3-result-form' method="post" class="content-form" style="display:none">
 
-	<div class="logfile-link"><a href="<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]).'?now='.DUPX_U::esc_attr($GLOBALS['NOW_TIME']);?>" target="dup-installer">installer-log.txt</a></div>
+	<div class="logfile-link"><?php DUPX_View_Funcs::installerLogLink(); ?></div>
 	<div class="hdr-main">
 		Step <span class="step">3</span> of 4: Update Data
 	</div>
@@ -701,7 +767,7 @@ VIEW: STEP 3 - AJAX RESULT  -->
 		<input type="hidden" name="logging" id="logging" value="<?php echo DUPX_U::esc_attr($_POST['logging']); ?>" />
 		<input type="hidden" name="url_new" id="ajax-url_new"  />
 		<input type="hidden" name="exe_safe_mode" id="ajax-exe-safe-mode" />
-		<input type="hidden" name="subsite-id" id="ajax-subsite-id" />
+		<input type="hidden" name="subsite_id" id="ajax-subsite-id" />
         <input type="hidden" name="remove_redundant" id="ajax-remove-redundant"/>
 		<input type="hidden" name="json"    id="ajax-json" />
 		<input type='submit' value='manual submit'>
@@ -710,7 +776,7 @@ VIEW: STEP 3 - AJAX RESULT  -->
 	<!--  PROGRESS BAR -->
 	<div id="progress-area">
 		<div style="width:500px; margin:auto">
-			<div class="progress-text"><i class="fa fa-circle-o-notch fa-spin"></i> Processing Data Replacement</div>
+            <div class="progress-text"><i class="fas fa-circle-notch fa-spin"></i> Processing Data Replacement <span class="progress-perc">0%</span></div>
 			<div id="progress-bar"></div>
 			<h3> Please Wait...</h3><br/><br/>
 			<i>Keep this window open during the replacement process.</i><br/>
@@ -722,7 +788,17 @@ VIEW: STEP 3 - AJAX RESULT  -->
 	<div id="ajaxerr-area" style="display:none">
 		<p>Please try again an issue has occurred.</p>
 		<div style="padding: 0px 10px 10px 10px;">
-			<div id="ajaxerr-data">An unknown issue has occurred with the update setup step.  Please see the installer-log.txt file for more details.</div>
+			<div id="ajaxerr-data">
+                <div class="content" >
+                    An unknown issue has occurred with the update setup step.  Please see the <?php DUPX_View_Funcs::installerLogLink(); ?> file for more details.
+                </div>
+                <div class="troubleshooting" >
+                    <b>Additional Troubleshooting Tips:</b><br/>
+                    - Check the <?php DUPX_View_Funcs::installerLogLink(); ?> file for warnings or errors.<br/>
+                    - Check the web server and PHP error logs. <br/>
+                    - For timeout issues visit the <a href="https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q" target="_blank">Timeout FAQ Section</a>
+                </div>
+            </div>
 			<div style="text-align:center; margin:10px auto 0px auto">
 			<?php
 			$archive_config = DUPX_ArchiveConfig::getInstance();
@@ -810,60 +886,108 @@ DUPX.runUpdate = function()
         $("#subsite-map-container").remove();
     }
 
-	$.ajax({
+    DUPX.ajaxRequest();
+};
+
+var lastChunkPosition = null;
+
+DUPX.checkDataResponseData = function(respData, textStatus , xHr) {
+    try {
+        var data = $.parseJSON(respData);
+    } catch(err) {
+        console.error(err);
+        console.error('JSON parse failed for response data: ' + respData);
+        var status  = "<b>Server Code:</b> "	+ xHr.status		+ "<br/>";
+        status += "<b>Status:</b> "			+ xHr.statusText	+ "<br/>";
+        status += "<b>Response:</b> "		+ xHr.responseText  + "<hr/>";
+        status += "Json response not well formatted<br>";
+        $('#ajaxerr-data .content').html(status);
+        DUPX.hideProgressBar();
+        return false;
+    }
+
+    if (typeof(data) != 'undefined') {
+        if (data.step3.chunk == 1) {
+            if (JSON.stringify(lastChunkPosition) !== JSON.stringify(data.step3.chunkPos)) {
+                var lastChunkPosition =  data.step3.chunkPos;
+                $('.progress-perc').text(data.step3.progress_perc + '%');
+                // if chunk recover the request
+                DUPX.ajaxRequest(true);
+            } else {
+                console.error('Chunk is stuck: ' + respData);
+                var status  = "<b>Server Code:</b> "	+ xHr.status		+ "<br/>";
+                status += "<b>Status:</b> "			+ xHr.statusText	+ "<br/>";
+                status += "<b>Response:</b> "		+ xHr.responseText  + "<hr/>";
+                status += "Chunkink is stuck<br>";
+                $('#ajaxerr-data .content').html(status);
+                DUPX.hideProgressBar();
+                return false;
+            }
+        } else if (data.step3.pass == 1) {
+            if ($('input[name=replace_mode]:checked').val() === 'mapping') {
+                $("#ajax-url_new").val($("#url_new_1").val());
+            } else {
+                $("#ajax-url_new").val($("#url_new").val());
+            }
+            $("#ajax-subsite-id").val($("#subsite-id").val());
+            $("#ajax-remove-redundant").val($("#remove-redundant").val());
+            $("#ajax-exe-safe-mode").val($("#exe-safe-mode").val());
+            $("#ajax-json").val(escape(JSON.stringify(data)));
+            <?php if (! $GLOBALS['DUPX_DEBUG']) : ?>
+                setTimeout(function(){$('#s3-result-form').submit();}, 1000);
+            <?php endif; ?>
+            $('#progress-area').fadeOut(1800);
+        } else  {
+            DUPX.hideProgressBar();
+        }
+    } else {
+        DUPX.hideProgressBar();
+    }
+};
+
+DUPX.ajaxRequest = function(chunk) {
+    chunk = chunk || false;
+
+    if (chunk) {
+        var data = <?php echo DupProSnapJsonU::wp_json_encode($actionParams); ?>;
+    } else {
+        var data = $('#s3-input-form').serialize();
+    }
+
+    let params = {
 		type: "POST",
 		timeout: 10000000,
 		url: window.location.href,
-		data: $('#s3-input-form').serialize(),
+		data: data,
 		cache: false,
-		beforeSend: function() {
+		success: function(respData, textStatus , xhr){
+            DUPX.checkDataResponseData(respData, textStatus , xhr);
+		},
+		error: function(xhr , textStatus, errorThrown) {
+            try {
+                console.log('xhr', xhr);
+                console.log('textStatus',textStatus);
+                DUPX.checkDataResponseData(xhr.responseText, textStatus , xhr);
+            } catch(err) {
+                var status  = "<b>Server Code:</b> "	+ xhr.status		+ "<br/>";
+                status += "<b>Status:</b> "			+ xhr.statusText	+ "<br/>";
+                status += "<b>Response:</b> "		+ xhr.responseText  + "<hr/>";
+                status += "Ajax response error<br>";
+                $('#ajaxerr-data .content').html(status);
+                DUPX.hideProgressBar();
+            }
+		}
+	};
+
+    if (chunk === false) {
+        params.beforeSend = function() {
 			DUPX.showProgressBar();
 			$('#s3-input-form').hide();
 			$('#s3-result-form').show();
-		},
-		success: function(respData, textStatus, xHr){
-			try {
-                var data = DUPX.parseJSON(respData);
-            } catch(err) {
-                console.error(err);
-                console.error('JSON parse failed for response data: ' + respData);
-                var status  = "<b>Server Code:</b> "	+ xHr.status		+ "<br/>";
-				status += "<b>Status:</b> "			+ xHr.statusText	+ "<br/>";
-				status += "<b>Response:</b> "		+ xHr.responseText  + "<hr/>";
-				status += "<b>Additional Troubleshooting Tips:</b><br/>";
-				status += "- Check the <a href='<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]);?>' target='dup-installer'>installer-log.txt</a> file for warnings or errors.<br/>";
-				status += "- Check the web server and PHP error logs. <br/>";
-				status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
-				$('#ajaxerr-data').html(status);
-				DUPX.hideProgressBar();
-                return false;
-            }
-			if (typeof(data) != 'undefined' && data.step3.pass == 1) {
-				$("#ajax-url_new").val($("#url_new").val());
-				$("#ajax-subsite-id").val($("#subsite-id").val());
-				$("#ajax-remove-redundant").val($("#remove-redundant").val());
-				$("#ajax-exe-safe-mode").val($("#exe-safe-mode").val());
-				$("#ajax-json").val(escape(JSON.stringify(data)));
-				<?php if (! $GLOBALS['DUPX_DEBUG']) : ?>
-					setTimeout(function(){$('#s3-result-form').submit();}, 1000);
-				<?php endif; ?>
-				$('#progress-area').fadeOut(1800);
-			} else {
-				DUPX.hideProgressBar();
-			}
-		},
-		error: function(xhr) {
-			var status  = "<b>Server Code:</b> "	+ xhr.status		+ "<br/>";
-			status += "<b>Status:</b> "			+ xhr.statusText	+ "<br/>";
-			status += "<b>Response:</b> "		+ xhr.responseText  + "<hr/>";
-			status += "<b>Additional Troubleshooting Tips:</b><br/>";
-			status += "- Check the <a href='<?php echo './'.DUPX_U::esc_attr($GLOBALS["LOG_FILE_NAME"]);?>' target='dup-installer'>installer-log.txt</a> file for warnings or errors.<br/>";
-			status += "- Check the web server and PHP error logs. <br/>";
-			status += "- For timeout issues visit the <a href='https://snapcreek.com/duplicator/docs/faqs-tech/#faq-trouble-100-q' target='_blank'>Timeout FAQ Section</a><br/>";
-			$('#ajaxerr-data').html(status);
-			DUPX.hideProgressBar();
-		}
-	});
+		};
+    }
+
+    $.ajax(params);
 };
 
 /**
@@ -875,8 +999,7 @@ DUPX.getNewURL = function(id)
 	newVal = newVal.replace("/" + filename, '');
 	var last_slash = newVal.lastIndexOf("/");
 	newVal = newVal.substring(0, last_slash);
-
-	$("#" + id).val(newVal);
+	$("#" + id).val(newVal).keyup();
 };
 
 /**
@@ -962,6 +1085,8 @@ DUPX.showHideRevisionNo = function() {
 
 //DOCUMENT LOAD
 $(document).ready(function() {
+	$('#wp_username').val('');
+	$('#wp_password').val('');
 	$("#tabs").tabs();
 	DUPX.showHideRevisionNo();
 	$('#wp_post_revisions').change(DUPX.showHideRevisionNo);
@@ -987,6 +1112,12 @@ $(document).ready(function() {
             $("#new-url-container").show();
             $("#subsite-map-container").hide();
         }
+    });
+
+    // Sync new urls link
+    var inputs_new_urls = $(".sync_url_new");
+    inputs_new_urls.keyup(function() {
+          inputs_new_urls.val($(this).val());
     });
 });
 </script>

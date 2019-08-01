@@ -1,5 +1,5 @@
 <?php
-defined("ABSPATH") or die("");
+defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 class DUP_PRO_JSON_U
 {
@@ -15,11 +15,7 @@ class DUP_PRO_JSON_U
     public static function customEncode($value, $iteration = 1)
     {
         if (DUP_PRO_U::PHP53()) {
-            if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-                $encoded = json_encode($value, JSON_PRETTY_PRINT);
-            } else {
-                $encoded = json_encode($value);
-            }
+            $encoded = DupProSnapJsonU::wp_json_encode_pprint($value);
 
             switch (json_last_error()) {
                 case JSON_ERROR_NONE:
@@ -49,38 +45,21 @@ class DUP_PRO_JSON_U
         }
     }
 
-    public static function encode($value, $options = 0)
+    public static function safeEncode($data, $options = 0, $depth = 512)
     {
-        $result = json_encode($value, $options);
-
-        if ($result !== FALSE) {
-
-            return $result;
+        try {
+            $jsonString = DupProSnapJsonU::wp_json_encode($data, $options, $depth);
+        } catch (Exception $e) {
+            $jsonString = false;
         }
 
-        if (function_exists('json_last_error')) {
-            $message = self::$_messages[json_last_error()];
-        } else {
-            $message = DUP_PRO_U::__('One or more filenames isn\'t compatible with JSON encoding');
-        }
-
-        throw new RuntimeException($message);
-    }
-
-    public static function safeEncode($value)
-    {
-        $jsonString = json_encode($value);
-
-        if(($jsonString === false) || trim($jsonString) == '')
-        {
+        if (($jsonString === false) || trim($jsonString) == '') {
             $jsonString = self::customEncode($value);
 
-            if(($jsonString === false) || trim($jsonString) == '')
-            {
+            if (($jsonString === false) || trim($jsonString) == '') {
                 throw new Exception('Unable to generate JSON from object');
             }
         }
-
         return $jsonString;
     }
 
@@ -90,10 +69,8 @@ class DUP_PRO_JSON_U
     }
 
     /** ========================================================
-	 * PRIVATE METHODS
+     * PRIVATE METHODS
      * =====================================================  */
-
-
     private static function makeUTF8($mixed)
     {
         if (is_array($mixed)) {
@@ -124,7 +101,7 @@ class DUP_PRO_JSON_U
             //}
             //$val = implode(',', $arr);
             //$out .= "{{$val}}";
-            $in = get_object_vars($in);
+            $in        = get_object_vars($in);
         }
         //else
         if (is_array($in)) {

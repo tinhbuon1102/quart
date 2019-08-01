@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\Common\Client;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\Parser\ExceptionParserInterface;
 use DuplicatorPro\Guzzle\Http\Exception\HttpException;
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;

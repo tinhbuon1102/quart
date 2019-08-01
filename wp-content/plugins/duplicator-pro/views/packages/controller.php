@@ -1,6 +1,7 @@
 <?php
 defined("ABSPATH") or die("");
 
+DUP_PRO_Handler::init_error_handler();
 DUP_PRO_U::hasCapability('export');
 
 global $wpdb;

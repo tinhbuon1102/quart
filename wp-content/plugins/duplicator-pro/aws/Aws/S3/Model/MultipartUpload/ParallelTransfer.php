@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model\MultipartUpload;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Exception\RuntimeException;
 use DuplicatorPro\Aws\Common\Enum\DateFormat;
 use DuplicatorPro\Aws\Common\Enum\UaString as Ua;

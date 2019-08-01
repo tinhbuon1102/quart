@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementations of keyed-hash message authentication codes (HMACs) and various cryptographic hashing functions.
  *
@@ -37,7 +36,7 @@
  */
 
 namespace phpseclib\Crypt;
-
+defined("ABSPATH") or die("");
 use phpseclib\Math\BigInteger;
 
 /**

@@ -26,15 +26,15 @@
 INSTALLER -->
 <div class="dup-box">
 <div class="dup-box-title">
-	<i class="fa fa-bolt"></i> <?php DUP_PRO_U::esc_html_e('Installer') ?>
-	<span id="dpro-install-secure-lock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is on') ?>"><i class="fa fa-lock"></i> </span>
-	<span id="dpro-install-secure-unlock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is off') ?>"><i class="fa fa-unlock-alt"></i> </span>
+	<i class="fa fa-bolt fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Installer') ?>
+	<span id="dpro-install-secure-lock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is on') ?>"><i class="fa fa-lock fa-sm"></i> </span>
+	<span id="dpro-install-secure-unlock" title="<?php DUP_PRO_U::esc_attr_e('Installer password protection is off') ?>"><i class="fa fa-unlock fa-sm"></i> </span>
 	<div class="dup-box-arrow"></div>
 </div>		
 <div class="dup-box-panel" id="dpro-pack-installer-panel" style="<?php echo esc_attr($ui_css_installer); ?>">
 	<div class="dpro-panel-optional-txt">
 		<b><?php DUP_PRO_U::esc_html_e('All values in this section are'); ?> <u><?php DUP_PRO_U::esc_html_e('optional'); ?></u></b>
-		<i class="fa fa-question-circle"
+		<i class="fas fa-question-circle fa-sm"
 			data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Setup/Prefills"); ?>"
 			data-tooltip="<?php DUP_PRO_U::esc_attr_e('All values in this section are OPTIONAL! If you know ahead of time the database input fields the installer will use, '
 				. 'then you can optionally enter them here and they will be prefilled at install time.  Otherwise you can just enter them in at install time and ignore '
@@ -75,7 +75,7 @@ INSTALLER -->
 					}
 					?>
 					<a href="<?php echo $preview_url[$active_brand_id > 0 ? 1 : 0]; ?>" target="_blank" class="button" id="brand-preview"><?php DUP_PRO_U::esc_html_e("Preview"); ?></a> &nbsp;
-					<i class="fa fa-question-circle"
+					<i class="fas fa-question-circle fa-sm"
 					   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Choose Brand:"); ?>"
 					   data-tooltip="<?php DUP_PRO_U::esc_attr_e('This option changes the branding of the installer file.  Click the preview button to see the selected style.'); ?>"></i>
 				<?php else : ?>
@@ -92,7 +92,7 @@ INSTALLER -->
 				?>
 				<input type="checkbox" name="secure-on" id="secure-on" onclick="DupPro.Pack.EnableInstallerPassword()" />
 				<label for="secure-on"><?php DUP_PRO_U::esc_html_e("Enable Password Protection") ?></label>
-				<i class="fa fa-question-circle"
+				<i class="fas fa-question-circle fa-sm"
 				   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Security:"); ?>"
 				   data-tooltip="<?php DUP_PRO_U::esc_attr_e('Enabling this option will allow for basic password protection on the installer. Before running the installer the '
 							   . 'password below must be entered before proceeding with an install.  This password is a general deterrent and should not be substituted for properly '
@@ -101,7 +101,7 @@ INSTALLER -->
 
 				<div id="dpro-pass-toggle">
 					<input type="password" name="secure-pass" id="secure-pass" required="required" value="<?php echo $dup_install_secure_pass; ?>" />
-					<button type="button" id="secure-btn" class="pass-toggle" onclick="DupPro.Pack.ToggleInstallerPassword()" title="<?php DUP_PRO_U::esc_attr_e('Show/Hide Password'); ?>"><i class="fa fa-eye"></i></button>
+					<button type="button" id="secure-btn" class="pass-toggle" onclick="DupPro.Pack.ToggleInstallerPassword()" title="<?php DUP_PRO_U::esc_attr_e('Show/Hide Password'); ?>"><i class="fas fa-eye fa-sm"></i></button>
 				</div>
 				<br/>
 			</td>
@@ -160,7 +160,7 @@ INSTALLER -->
 					<td>
 						<input type="checkbox" name="cpnl-enable" id="cpnl-enable" />
 						<label for="cpnl-enable"><?php DUP_PRO_U::esc_html_e("Auto Select cPanel") ?></label>
-						<i class="fa fa-question-circle"
+						<i class="fas fa-question-circle fa-sm"
 							data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Auto Select cPanel:"); ?>"
 							data-tooltip="<?php DUP_PRO_U::esc_attr_e('Enabling this options will automatically select the cPanel tab when step one of the installer is shown.'); ?>">
 						</i>
@@ -253,10 +253,10 @@ INSTALLER -->
 		var $button =  $('#secure-btn');
 		if (($input).attr('type') == 'text') {
 			$input.attr('type', 'password');
-			$button.html('<i class="fa fa-eye"></i>');
+			$button.html('<i class="fas fa-eye fa-sm"></i>');
 		} else {
 			$input.attr('type', 'text');
-			$button.html('<i class="fa fa-eye-slash"></i>');
+			$button.html('<i class="fas fa-eye-slash fa-sm"></i>');
 		}
 	}
 

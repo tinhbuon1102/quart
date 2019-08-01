@@ -22,7 +22,7 @@ SYSTEM REQUIREMENTS -->
 <?php if (! $dup_tests['Success']) : ?>
 <div class="dup-box">
     <div class="dup-box-title">
-        <i class="fa fa-check-o"></i>
+        <i class="far fa-check-circle"></i>
         <?php
 			DUP_PRO_U::esc_html_e("Requirements:");
 			echo ($dup_tests['Success']) ? ' <div class="dup-sys-pass">Pass</div>' : ' <div class="dup-sys-fail">Fail</div>';

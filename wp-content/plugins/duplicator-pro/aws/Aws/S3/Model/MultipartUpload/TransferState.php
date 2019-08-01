@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Model\MultipartUpload;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Client\AwsClientInterface;
 use DuplicatorPro\Aws\Common\Model\MultipartUpload\AbstractTransferState;
 use DuplicatorPro\Aws\Common\Model\MultipartUpload\UploadIdInterface;

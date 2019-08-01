@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Common\Exception;
+
+defined("ABSPATH") or die("");
 
 /**
  * Collection of exceptions

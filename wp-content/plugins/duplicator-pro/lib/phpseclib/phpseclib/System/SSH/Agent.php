@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP ssh-agent client.
  *
@@ -32,7 +31,7 @@
  */
 
 namespace phpseclib\System\SSH;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\RSA;
 use phpseclib\System\SSH\Agent\Identity;
 

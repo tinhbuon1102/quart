@@ -1,3 +1,4 @@
+<?php defined("ABSPATH") or die(""); ?>
 <form id="dup-settings-form" action="<?php echo self_admin_url('admin.php?page=duplicator-pro-tools&tab=diagnostics'); ?>" method="post">
 <?php wp_nonce_field('duplicator_pro_settings_page'); ?>
 <input type="hidden" id="dup-settings-form-action" name="action" value="">
@@ -157,12 +158,12 @@
 
 <?php
 
-if(isset($_GET['safe_mode'])){
+if(isset($_GET['sm'])){
 	
 	$safe_title = DUP_PRO_U::__('This site has been successfully migrated!');
 	$safe_msg = DUP_PRO_U::__('Please test the entire site to validate the migration process!');
 
-	switch($_GET['safe_mode']){
+	switch($_GET['sm']){
 
 		//safe_mode basic
 		case 1:
@@ -209,7 +210,7 @@ include_once 'inc.phpinfo.php';
 </form>
 <?php
 	$confirm1 = new DUP_PRO_UI_Dialog();
-	$confirm1->title			 = DUP_PRO_U::__('Are you sure, you want to delete?');
+	$confirm1->title			 = DUP_PRO_U::__('Are you sure you want to delete?');
 	$confirm1->message			 = DUP_PRO_U::__('Delete this option value.');
 	$confirm1->progressText      = DUP_PRO_U::__('Removing, Please Wait...');
 	$confirm1->jsCallback		 = 'DupPro.Settings.DeleteThisOption(this)';

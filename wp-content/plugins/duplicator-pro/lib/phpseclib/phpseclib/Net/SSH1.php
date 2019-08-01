@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of SSHv1.
  *
@@ -47,7 +46,7 @@
  */
 
 namespace phpseclib\Net;
-
+defined("ABSPATH") or die("");
 use phpseclib\Crypt\DES;
 use phpseclib\Crypt\Random;
 use phpseclib\Crypt\TripleDES;

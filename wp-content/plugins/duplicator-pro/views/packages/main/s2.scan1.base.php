@@ -47,7 +47,7 @@ $archive_export_onlydb = isset($_POST['export-onlydb']) ? 1 :0;
 
 <style>
 	/*PROGRESS-BAR - RESULTS - ERROR */
-	form#form-duplicator {text-align:center; max-width:1024px; min-height:200px; margin:0px auto 0px auto; padding:0px;}
+	form#form-duplicator {text-align:center; max-width:825px; min-height:200px; margin:0px auto 0px auto; padding:0px;}
 	div.dup-progress-title {font-size:22px; padding:5px 0 20px 0; font-weight:bold}
 	div#dup-msg-success {padding:0 5px 5px 5px; text-align:left}
 	div#dup-msg-success div.details {padding:10px 15px 10px 15px; margin:5px 0 15px 0; background:#fff; border-radius:5px; border:1px solid #ddd;box-shadow:0 8px 6px -6px #999; }
@@ -150,7 +150,12 @@ $archive_export_onlydb = isset($_POST['export-onlydb']) ? 1 :0;
 	div#data-db-tablelist {max-height:250px; overflow-y:scroll; border:1px solid silver; padding:8px; background: #efefef; border-radius: 4px}
 	div#data-db-tablelist td{padding:0 5px 3px 20px; min-width:100px}
     div#data-db-size1 {display: inline-block; font-size:11px; margin-right:1px;}
-    /*FILES */
+    /*WARNING-CONTINUE*/
+	div#dpro-scan-warning-continue {display:none; text-align:center; padding:0 0 15px 0}
+	div#dpro-scan-warning-continue div.msg1 label{font-size:16px; color:#630f0f}
+	div#dpro-scan-warning-continue div.msg2 {padding:2px; line-height:13px}
+	div#dpro-scan-warning-continue div.msg2 label {font-size:11px !important}
+	/*FILES */
 	div#dpro-confirm-area {color:maroon; display:none; font-size:14px; line-height:24px; font-weight: bold; margin: -5px 0 10px 0}
 	div#dpro-confirm-area label {font-size:14px !important}
 
@@ -169,6 +174,38 @@ $archive_export_onlydb = isset($_POST['export-onlydb']) ? 1 :0;
 
 
 </style>
+
+<?php
+$validator = $Package->validateInputs();
+if (!$validator->isSuccess()) {
+    ?>
+<form id="form-duplicator" method="post" action="<?php echo $package_list_url ?>">
+		<!--  ERROR MESSAGE -->
+		<div id="dup-msg-error">
+			<div class="dup-hdr-error"><i class="fa fa-exclamation-circle"></i> <?php DUP_PRO_U::esc_html_e('Input fields not valid'); ?></div>
+			<i><?php DUP_PRO_U::esc_html_e('Please try again!'); ?></i><br/>
+			<div style="text-align:left">
+				<b><?php DUP_PRO_U::esc_html_e("Server Status:"); ?></b> &nbsp;
+				<div id="dup-msg-error-response-status" style="display:inline-block"></div><br/>
+				<b><?php DUP_PRO_U::esc_html_e("Error Message:"); ?></b>
+                <div id="dup-msg-error-response-text">
+                    <ul>
+                        <?php
+                        $validator->getErrorsFormat("<li>%s</li>");
+                        ?>
+                    </ul>
+                </div>
+			</div>
+		</div>
+        <?php
+		$back_nonce = wp_create_nonce('new1-package');
+		?>
+		<input type="button" value="&#9664; <?php DUP_PRO_U::esc_html_e("Back") ?>" onclick="window.location.assign('?page=duplicator-pro&tab=packages&inner_page=new1&_wpnonce='+'<?php echo $back_nonce;?>')" class="button button-large" />
+</form>
+    <?php
+    return;
+}
+?>
 
 
 <!-- ====================
@@ -189,7 +226,7 @@ TOOL-BAR -->
         </td>
         <td>
 			<div class="btnnav">
-				<a href="<?php echo $packages_tab_url; ?>" class="add-new-h2"><i class="fa fa-archive"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
+				<a href="<?php echo $packages_tab_url; ?>" class="add-new-h2"><i class="fa fa-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Packages'); ?></a>
 				<span> <?php _e("Create New"); ?></span>
 			</div>
         </td>
@@ -205,7 +242,7 @@ TOOL-BAR -->
 
 		<!--  PROGRESS BAR -->
 		<div id="dup-progress-bar-area">
-			<div style="font-size:1.7em; margin-bottom:20px"><i class="fa fa-circle-o-notch fa-spin"></i> <?php DUP_PRO_U::esc_html_e('Scanning Site'); ?></div>
+			<div style="font-size:1.7em; margin-bottom:20px"><i class="fa fa-circle-notch fa-spin"></i> <?php DUP_PRO_U::esc_html_e('Scanning Site'); ?></div>
 			<div id="dup-progress-bar"></div>
 			<b><?php DUP_PRO_U::esc_html_e('Please Wait...'); ?></b><br/><br/>
 			<i><?php DUP_PRO_U::esc_html_e('Keep this window open during the scan process.'); ?></i><br/>
@@ -215,7 +252,7 @@ TOOL-BAR -->
 		<!--  SCAN DETAILS REPORT -->
 		<div id="dup-msg-success" style="display:none">
 			<div style="text-align:center">
-				<div class="dup-hdr-success"><i class="fa fa-check-square-o"></i> <?php DUP_PRO_U::esc_html_e('Scan Complete'); ?></div>
+				<div class="dup-hdr-success"><i class="far fa-check-square"></i> <?php DUP_PRO_U::esc_html_e('Scan Complete'); ?></div>
 				<div id="dup-msg-success-subtitle">
 					<?php DUP_PRO_U::esc_html_e("Process Time:"); ?> <span id="data-rpt-scantime"></span>
 				</div>
@@ -239,6 +276,28 @@ TOOL-BAR -->
 				<b><?php DUP_PRO_U::esc_html_e("Error Message:"); ?></b>
 				<div id="dup-msg-error-response-text"></div>
 			</div>
+		</div>
+	</div>
+
+	<!-- WARNING CONTINUE -->
+	<div id="dpro-scan-warning-continue">
+		<div class="msg1">
+			<label for="dup-scan-warning-continue-checkbox">
+				<?php esc_html_e('A notice status has been detected, are you sure you want to continue?', 'duplicator');?>
+			</label>
+			<div style="padding:8px 0">
+				<input type="checkbox" id="dup-scan-warning-continue-checkbox" onclick="DupPro.Pack.warningContinue(this);"/>
+				<label for="dup-scan-warning-continue-checkbox"><?php esc_html_e('Yes.  Continue with the build process!', 'duplicator');?></label>
+			</div>
+		</div>
+		<div class="msg2">
+			<label for="dup-scan-warning-continue-checkbox">
+				<?php
+					_e("Scan checks are not required to pass, however they could cause issues on some systems.", 'duplicator');
+					echo '<br/>';
+					_e("Please review the details for each section by clicking on the detail title.", 'duplicator');
+				?>
+			</label>
 		</div>
 	</div>
 
@@ -355,6 +414,7 @@ jQuery(document).ready(function ($)
 		$('#dup-msg-success,#dup-msg-error,.dup-button-footer,#dpro-confirm-area').hide();
 		$('#dpro-confirm-check').prop('checked', false);
 		$('#dup-progress-bar-area').show();
+		$('#dpro-scan-warning-continue').hide();
 		DupPro.Pack.runScanner(callbackOnSuccess);
 	}
 
@@ -431,12 +491,47 @@ jQuery(document).ready(function ($)
 						html += '</tr></table>';
 					});
 				}
-				$('#data-db-tablelist').append(html);
+				$('#data-db-tablelist').html(html);
 			} else {
 				html = '<?php DUP_PRO_U::esc_html_e("Unable to report on database stats") ?>';
 				$('#dup-scan-db').html(html);
 			}
 
+			var isWarn = false;
+			for (key in data.ARC.Status) {
+				if ('Big' != key && 'Warn' == data.ARC.Status[key]) {
+					isWarn = true;
+				}
+			}
+
+			if (!isWarn) {
+				if ('Warn' == data.DB.Status.Size) {
+					isWarn = true;
+				}
+			}
+
+			if (!isWarn && 'Warn' == data.DB.Status.Rows) {
+				isWarn = true;
+			}
+
+			if (!isWarn && 'Warn' == data.SRV.PHP.ALL) {
+				isWarn = true;
+			}
+
+			if (!isWarn && 'Warn' == data.SRV.WP.ALL) {
+				isWarn = true;
+			}
+
+			if (isWarn) {
+				$('#dpro-scan-warning-continue').show();
+				$('#dup-build-button').prop("disabled",true).removeClass('button-primary');
+				if ($('#dpro-scan-warning-continue-checkbox').is(':checked')) {
+					$('#dup-build-button').removeAttr('disabled').addClass('button-primary');
+				}
+			} else {
+				$('#dpro-scan-warning-continue').hide();
+				$('#dup-build-button').prop("disabled",false).addClass('button-primary');
+			}
 		}
 		catch(err) {
 			err += '<br/> Please try again!'
@@ -454,10 +549,10 @@ jQuery(document).ready(function ($)
 			$('#form-duplicator').submit();
 			return true;
 		}
-        
-		var sizeChecks = $('#hb-files-large-jstree').jstree(true).get_checked();
+
+		var sizeChecks = $('#hb-files-large-jstree').length ? $('#hb-files-large-jstree').jstree(true).get_checked() : 0;
 		var addonChecks = $('#hb-addon-sites-result input:checked');
-		var utf8Checks = $('#hb-files-utf8-jstree').jstree(true).get_checked();
+		var utf8Checks = $('#hb-files-utf8-jstree').length ? $('#hb-files-utf8-jstree').jstree(true).get_checked() : 0;
 		if (sizeChecks.length > 0 || addonChecks.length > 0 || utf8Checks.length > 0) {
 			$('#dpro-confirm-area').show();
 			$('#dup-build-button').prop('disabled', true);
@@ -486,7 +581,7 @@ jQuery(document).ready(function ($)
 	{      
 		var result;
 		switch (status) {
-			case false :    result = '<div class="scan-warn"><i class="fa fa-exclamation-triangle"></i></div>'; break;
+			case false :    result = '<div class="scan-warn"><i class="fa fa-exclamation-triangle fa-sm"></i></div>'; break;
 			case 'Warn' :   result = '<div class="badge badge-warn">Notice</div>'; break;
 			case true :     result = '<div class="scan-good"><i class="fa fa-check"></i></div>'; break;
 			case 'Good' :   result = '<div class="badge badge-pass">Good</div>'; break;
@@ -494,6 +589,14 @@ jQuery(document).ready(function ($)
 				result = 'unable to read';
 		}
 		return result;
+	}
+
+	//Allows user to continue with build if warnings found
+	DupPro.Pack.warningContinue = function(checkbox)
+	{
+		($(checkbox).is(':checked'))
+			?	$('#dup-build-button').prop('disabled',false).addClass('button-primary')
+			:	$('#dup-build-button').prop('disabled',true).removeClass('button-primary');
 	}
 
 	//Page Init:

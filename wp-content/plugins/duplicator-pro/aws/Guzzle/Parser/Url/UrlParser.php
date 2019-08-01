@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\Url;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Version;
 

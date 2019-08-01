@@ -197,7 +197,7 @@ class DUP_PRO_ShellZip extends DUP_PRO_Archive
                             DUP_PRO_U::__('How to resolve "zip warning: No such file or directory"?'));
                         $system_global->add_recommended_text_fix($error_text, $fix_text);
                     } else {
-                        $fix_text = DUP_PRO_U::__("Click on button to switch to the DupArchive archive engine.");
+                        $fix_text = DUP_PRO_U::__("Click on button to switch to the DupArchive engine.");
                         $system_global->add_recommended_quick_fix($error_text, $fix_text, 'global : {archive_build_mode:3}');
                     }
 
@@ -241,7 +241,7 @@ class DUP_PRO_ShellZip extends DUP_PRO_Archive
                                 DUP_PRO_U::__('How to resolve "zip warning: No such file or directory"?'));
                             $system_global->add_recommended_text_fix($error_text, $fix_text);
                         } else {
-                            $fix_text = DUP_PRO_U::__("Click on button to switch to the DupArchive archive engine.");
+                            $fix_text = DUP_PRO_U::__("Click on button to switch to the DupArchive engine.");
                             $system_global->add_recommended_quick_fix($error_text, $fix_text, 'global : {archive_build_mode:3}');
                         }
 

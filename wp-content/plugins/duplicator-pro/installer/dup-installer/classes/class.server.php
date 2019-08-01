@@ -75,10 +75,7 @@ class DUPX_Server
 		);
 	}
 
-	public static function setFilePermission($path)
-    {
-		$set_file_perms = true;
-		$set_dir_perms = true;
+	public static function setFilePermission($path) {
 		$file_perms_value = 0644;
 		$dir_perms_value = 0755;
 
@@ -88,34 +85,50 @@ class DUPX_Server
 		$ignore_paths = array(
 			$path.DIRECTORY_SEPARATOR.'installer.php',
 		);
-		
 
 		$ignore_path_prefixes = array(
-			$path.DIRECTORY_SEPARATOR.'dup_installer',
-			$path.DIRECTORY_SEPARATOR.'.', // any special directory
-			$GLOBALS['FW_PACKAGE_PATH'],
+			$path.'/dup_installer',
+			$path.'/.', // any special directory
+			$GLOBALS['FW_PACKAGE_PATH']
 		);
+
+		$root_dirs_files = self::getRootDirsAndFilesForPermissionCheck($path);
 
 		$ret = true;
 		$failedObjects = array();
 		foreach ($objects as $name => $object) {
-
-			if (in_array($name, $ignore_paths))  continue;
-
 			$last_char_of_path = substr($name, -1);
 			if ('.' == $last_char_of_path)  continue;
 
-			$is_continue = false;
+			$isPathPrefixed = self::isPathPrefixedWithArrayPath($name, $root_dirs_files['dirs']);
+
+			$name = DUPX_U::wp_normalize_path($name);
+			if (in_array($name, $ignore_paths))  continue;
+
 			foreach($ignore_path_prefixes as $ignore_path_prefix) {
 				if (0 === stripos($name, $ignore_path_prefix)) {
-					$is_continue = true;
+					continue;
 				}
 			}
 
-			if ($is_continue)  continue;
-            
-			if ($set_file_perms && is_file($name) && !is_dir($name)) {
-				$retVal = @chmod($name, $file_perms_value);
+			if (empty($name)) {
+				continue;
+			}
+
+			if (is_writable($name)) {
+				continue;
+			}
+
+			$isPathPrefixedForDir = self::isPathPrefixedWithArrayPath($name, $root_dirs_files['dirs']);
+			$isPathPrefixedForFile = self::isPathPrefixedWithArrayPath($name, $root_dirs_files['files']);
+			if (!$isPathPrefixedForDir && !$isPathPrefixedForFile) {
+				continue;
+			}
+
+			// Temp
+			DUPX_Log::info($name);
+			if (is_file($name) && !is_dir($name)) {
+				$retVal = DupProSnapLibIOU::chmod($name, $file_perms_value);
 				if (!$retVal) {
 					$failedObjects[] = $name;
 					if ($ret) {
@@ -127,8 +140,8 @@ class DUPX_Server
 					}
 				}
 			} else {
-				if ($set_dir_perms && is_dir($name)) {
-					$retVal = @chmod($name, $dir_perms_value);
+				if (is_dir($name)) {
+					$retVal = DupProSnapLibIOU::chmod($name, $dir_perms_value);
 					if (!$retVal) {
 						$failedObjects[] = $name;
                         if ($ret) {
@@ -140,14 +153,91 @@ class DUPX_Server
 						}
 					}
 				}
-			}			        			
+			}
 		}
 
 		return array(
 					'ret' => $ret,
 					'failedObjects' => $failedObjects,
 		);
-    }
+	}
+
+	/**
+	 * Check given path prefixed with path array
+	 * 
+	 * @param string $checkPath Path to check
+	 * @param array $pathsArr check against
+	 * @return boolean
+	 */
+	private static function isPathPrefixedWithArrayPath($checkPath, $pathsArr) {
+		foreach ($pathsArr as $path)  {
+			if (0 === strpos($checkPath, $path)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Get root folders and files
+	 * 
+	 * @return array
+	 */
+	public static function getRootDirsAndFilesForPermissionCheck($path) {
+		// start
+		$dirs_list_file = $GLOBALS['DUPX_INIT'].'/dup-scanned-dirs__'.$GLOBALS['DUPX_AC']->package_hash.'.txt';
+		$files_list_file = $GLOBALS['DUPX_INIT'].'/dup-scanned-files__'.$GLOBALS['DUPX_AC']->package_hash.'.txt';
+
+		$all_dirs_txt = file_get_contents($dirs_list_file);
+		$all_files_txt = file_get_contents($files_list_file);
+
+		$all_dirs_arr = explode(";\n", $all_dirs_txt);
+		$all_files_arr = explode(";\n", $all_files_txt);
+
+		$path_with_sep = $path.'/';
+		// find root dirs only
+		$root_dirs_array = array();
+		$root_files_array = array();
+
+		$wproot_path_length = strlen($GLOBALS['DUPX_AC']->wproot);
+		foreach ($all_dirs_arr as $source_dir) {
+			if (!empty($source_dir)) {
+				$wp_root_path_pos = strpos($source_dir, $GLOBALS['DUPX_AC']->wproot);
+				if (0 === $wp_root_path_pos) {
+					$rel_path = substr($source_dir, $wproot_path_length);
+					if (!empty($rel_path)) {
+						$path_sep_pos = strpos($rel_path, '/');
+						if (!$path_sep_pos) {
+							$root_dirs_array[] = $path_with_sep.$rel_path;
+						}
+					}
+				}
+			}
+		}
+
+		// find root files only
+		foreach ($all_files_arr as $source_file) {
+			if (!empty($source_file)) {
+				$wp_root_path_pos = strpos($source_file, $GLOBALS['DUPX_AC']->wproot);
+				if (0 === $wp_root_path_pos) {
+					$rel_path = substr($source_file, $wproot_path_length);
+					if (!empty($rel_path)) {
+						$path_sep_pos = strpos($rel_path, '/');
+						if (!$path_sep_pos) {
+							$root_files_array[] = $path_with_sep.$rel_path;
+						}
+					}
+				}
+			}
+		}
+
+		$ret_array = array(
+			'dirs' =>  $root_dirs_array,
+			'files' =>  $root_files_array
+		);
+
+		return $ret_array;
+	}
 
 	/**
 	 *  Can this server process in shell_exec mode

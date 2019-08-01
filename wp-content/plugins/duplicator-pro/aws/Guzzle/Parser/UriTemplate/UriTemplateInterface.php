@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\UriTemplate;
+
+defined("ABSPATH") or die("");
 
 /**
  * Expands URI templates using an array of variables

@@ -9,10 +9,10 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/views/inc.header.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/lib/snaplib/class.snaplib.u.url.php');
 
 $profile_url = DUP_PRO_U::getMenuPageURL(DUP_PRO_Constants::$STORAGE_SUBMENU_SLUG, false);
-$storage_tab_url = SnapLibURLU::appendQueryValue($profile_url, 'tab', 'storage');
+$storage_tab_url = DupProSnapLibURLU::appendQueryValue($profile_url, 'tab', 'storage');
 
-$edit_storage_url = SnapLibURLU::appendQueryValue($storage_tab_url, 'inner_page', 'edit');
-$edit_default_storage_url = SnapLibURLU::appendQueryValue($storage_tab_url, 'inner_page', 'edit-default');
+$edit_storage_url = DupProSnapLibURLU::appendQueryValue($storage_tab_url, 'inner_page', 'edit');
+$edit_default_storage_url = DupProSnapLibURLU::appendQueryValue($storage_tab_url, 'inner_page', 'edit-default');
 
 $inner_page = isset($_REQUEST['inner_page']) ? sanitize_text_field($_REQUEST['inner_page']) : 'storage';
 

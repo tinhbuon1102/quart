@@ -16,6 +16,8 @@
 
 namespace DuplicatorPro\Aws\S3\Iterator;
 
+defined("ABSPATH") or die("");
+
 use DuplicatorPro\Aws\Common\Iterator\AwsResourceIterator;
 use DuplicatorPro\Guzzle\Service\Resource\Model;
 

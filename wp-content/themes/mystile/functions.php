@@ -882,7 +882,7 @@ function pr($data)
 
 add_filter( 'woocommerce_get_catalog_ordering_args', 'mystile_woocommerce_get_catalog_ordering_args', 10000, 1 );
 function mystile_woocommerce_get_catalog_ordering_args($args) {
-	if((strpos($_SERVER['REDIRECT_URL'], '/shop') !== false || $_REQUEST['action'] == 'woof_draw_products') && !$_GET['orderby']){
+	if((strpos($_SERVER['REDIRECT_URL'], '/shop') !== false || $_REQUEST['action'] == 'woof_draw_products') && !$_GET['orderby'] && !$_GET['test_order']){
 		$args['orderby']  = 'menu_order title';
 		$args['order']    = 'ASC';
 		$args['meta_key'] = '';

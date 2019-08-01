@@ -207,6 +207,18 @@ class DUP_PRO_U
     }
 
     /**
+     * Localize and echo the current text as a variable
+     *
+     * @param string $text The text to localize
+     *
+     * @return variable Returns the text as a localized variable
+     */
+    public static function _e($text)
+    {
+        return _e($text, DUP_PRO_Constants::PLUGIN_SLUG);
+    }
+
+    /**
      * Localize and return the current text as a variable with escaping
      *
      * @param string $text The text to localize
@@ -433,20 +445,56 @@ class DUP_PRO_U
         }
     }
 
+    const SECURE_ISSUE_DIE   = 'die';
+    const SECURE_ISSUE_THROW = 'throw';
+    const SECURE_ISSUE_RETURN = 'return';
+
+    /**
+     * Does the current user have the capability
+     *
+     * @param type $permission
+     * @param type $exit    //  SECURE_ISSUE_DIE die script with die function
+     *                          SECURE_ISSUE_THROW throw an exception if fail
+     *                          SECURE_ISSUE_RETURN return false if fail
+     *
+     * @return boolean      // return false is fail and $exit is SECURE_ISSUE_THROW
+     *                      // true if success
+     *
+     * @throws Exception    // thow exception if $exit is SECURE_ISSUE_THROW
+     */
+    public static function hasCapability($permission = 'read', $exit = self::SECURE_ISSUE_DIE)
+    {
+        $capability = apply_filters('wpfront_user_role_editor_duplicator_pro_translate_capability', $permission);
+
+        if (!current_user_can($capability)) {
+            $exitMsg = DUP_PRO_U::esc_html__('You do not have sufficient permissions to access this page.');
+            DUP_PRO_LOG::trace('You do not have sufficient permissions to access this page. PERMISSION: '.$permission);
+
+            switch ($exit) {
+                case self::SECURE_ISSUE_THROW:
+                    throw new Exception($exitMsg);
+                case self::SECURE_ISSUE_RETURN:
+                    return false;
+                case self::SECURE_ISSUE_DIE:
+                default:
+                    wp_die($exitMsg);
+            }
+        }
+        return true;
+    }
+
     /**
      * Does the current user have the capability
      *
      * @return null Dies if user doesn't have the correct capability
      */
-    public static function hasCapability($permission = 'read')
+    public static function checkAjax()
     {
-        $capability = $permission;
-        $capability = apply_filters('wpfront_user_role_editor_duplicator_pro_translate_capability', $capability);
-
-        if (!current_user_can($capability))
-        {
-            wp_die(DUP_PRO_U::esc_html__('You do not have sufficient permissions to access this page.'));
-            return;
+        if (!wp_doing_ajax()) {
+            $errorMsg = DUP_PRO_U::esc_html__('You do not have called from AJAX to access this page.');
+            DUP_PRO_LOG::trace($errorMsg);
+            error_log($errorMsg);
+            wp_die($errorMsg);
         }
     }
 
@@ -487,11 +535,6 @@ class DUP_PRO_U
         @fwrite($ssfile, '<?php error_reporting(0);  if (stristr(php_sapi_name(), "fcgi")) { $url  =  "http://" . $_SERVER["HTTP_HOST"]; header("Location: {$url}/404.html");} else { header("HTTP/1.1 404 Not Found", true, 404);} exit();');
         @fclose($ssfile);
 
-        //SSDIR: Create token file in snapshot
-        $tokenfile = @fopen($path_ssdir . '/dtoken.php', 'w');
-        @fwrite($tokenfile, '<?php error_reporting(0);  if (stristr(php_sapi_name(), "fcgi")) { $url  =  "http://" . $_SERVER["HTTP_HOST"]; header("Location: {$url}/404.html");} else { header("HTTP/1.1 404 Not Found", true, 404);} exit();');
-        @fclose($tokenfile);
-
         //SSDIR: Create .htaccess
         // $storage_htaccess_off = DUP_PRO_Settings::Get('storage_htaccess_off');
         if ($global->storage_htaccess_off)
@@ -510,11 +553,6 @@ class DUP_PRO_U
         $robotfile = @fopen($path_ssdir . '/robots.txt', 'w');
         @fwrite($robotfile, "User-agent: * \nDisallow: /" . DUPLICATOR_PRO_SSDIR_NAME . '/');
         @fclose($robotfile);
-
-        //PLUG DIR: Create token file in plugin
-        $tokenfile2 = @fopen($path_plugin . 'installer/dtoken.php', 'w');
-        @fwrite($tokenfile2, '<?php @error_reporting(0); @require_once("../../../../wp-admin/admin.php"); global $wp_query; $wp_query->set_404(); header("HTTP/1.1 404 Not Found", true, 404); header("Status: 404 Not Found"); @include(get_template_directory () . "/404.php");');
-        @fclose($tokenfile2);
     }
 
     /**
@@ -528,21 +566,6 @@ class DUP_PRO_U
     public static function installerDecrypt($string)
     {
         return base64_decode($string);
-    }
-
-    /**
-     * Is the server running Windows operating system
-     *
-     * @return bool Returns true if operating system is Windows
-     *
-     */
-    public static function isWindows()
-    {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
-        {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -757,26 +780,83 @@ class DUP_PRO_U
      */
     public static function getWPCoreTables()
     {
-		global $wpdb;
-		return array(
-			"{$wpdb->prefix}commentmeta",
-			"{$wpdb->prefix}comments",
-			"{$wpdb->prefix}links",
-			"{$wpdb->prefix}options",
-			"{$wpdb->prefix}postmeta",
-			"{$wpdb->prefix}posts",
-			"{$wpdb->prefix}term_relationships",
-			"{$wpdb->prefix}term_taxonomy",
-			"{$wpdb->prefix}termmeta",
-			"{$wpdb->prefix}terms",
-			"{$wpdb->prefix}usermeta",
-			"{$wpdb->prefix}blogs",
-			"{$wpdb->prefix}blog_versions",
-			"{$wpdb->prefix}users");
+        global $wpdb;
+        $result = array();
+        foreach (self::getWPCoreTablesEnd() as $tend) {
+            $result[] = $wpdb->prefix.$tend;
+        }
+        return $result;
     }
 
+    public static function getWPCoreTablesEnd()
+    {
+        return array(
+            'commentmeta',
+            'comments',
+            'links',
+            'options',
+            'postmeta',
+            'posts',
+            'term_relationships',
+            'term_taxonomy',
+            'termmeta',
+            'terms',
+            'usermeta',
+            'blogs',
+            'blog_versions',
+            'blogmeta',
+            'users',
+            'site',
+            'sitemeta',
+            'signups',
+            'registration_log',
+            'blog_versions');
+    }
 
-   /**
+    public static function isWPCoreTable($table)
+    {
+        global $wpdb;
+
+        if (strpos($table, $wpdb->prefix) !== 0) {
+            return false;
+        }
+
+        $subTName = substr($table, strlen($wpdb->prefix));
+        $coreEnds = self::getWPCoreTablesEnd();
+
+        if (in_array($subTName, $coreEnds)) {
+            return true;
+        } else if (is_multisite()) {
+            $exTable = explode('_', $subTName);
+            if (count($exTable) >= 2 && is_numeric($exTable[0])) {
+                $tChekc = implode('_', array_slice($exTable, 1));
+                if (get_blog_details((int) $exTable[0], false) !== false && in_array($tChekc, $coreEnds)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static function getWPBlogIdTable($table)
+    {
+        global $wpdb;
+
+        if (!is_multisite() || strpos($table, $wpdb->prefix) !== 0) {
+            return 0;
+        }
+
+        $subTName = substr($table, strlen($wpdb->prefix));
+        $exTable  = explode('_', $subTName);
+        if (count($exTable) >= 2 && is_numeric($exTable[0]) && get_blog_details((int) $exTable[0], false) !== false) {
+            return (int) $exTable[0];
+        } else {
+            return 0;
+        }
+    }
+
+    /**
     * Finds if its a valid executable or not
     * @param type $exe A non zero length executable path to find if that is executable or not.
     * @param type $expectedValue expected value for the result
@@ -804,38 +884,36 @@ class DUP_PRO_U
     }
 
     /**
-    * Look into string and try to fix its natural expected value type
-    * @param type $string Simple string
-    * @return value with it's natural string type
-    */
+     * Look into string and try to fix its natural expected value type
+     * @param mixed $string Simple string
+     * @return mixed value with it's natural string type
+     */
     public static function valType($string)
     {
-        if(is_array($string))
-		{
-			foreach($string as $key=>$str)
-				$string[$key]=DUP_PRO_U::valType($str);
-		}
-		else
-		{
-			if(!is_bool($string))
-			{
-				if(is_numeric($string))
-				{
-					if((int)$string == $string)
-						return (int)$string;
-					else if((float)$string == $string)
-						return (float)$string;
-				}
+        if (is_array($string)) {
+            foreach ($string as $key => $str) {
+                $string[$key] = DUP_PRO_U::valType($str);
+            }
+        } else if (!is_string()) {
+            return $string;
+        } else {
+            if (!is_bool($string)) {
+                if (is_numeric($string)) {
+                    if ((int) $string == $string) {
+                        return (int) $string;
+                    } else if ((float) $string == $string) {
+                        return (float) $string;
+                    }
+                }
 
-				if(is_string($string))
-				{
-					if(in_array(strtolower($string), array('true', 'false'), true) !== false)
-						return ($string=='true' ? true : false);
-				}
-			}
-		}
-
-		return $string;
+                if (is_string($string)) {
+                    if (in_array(strtolower($string), array('true', 'false'), true) !== false) {
+                        return ($string == 'true' ? true : false);
+                    }
+                }
+            }
+        }
+        return $string;
     }
 
     /**

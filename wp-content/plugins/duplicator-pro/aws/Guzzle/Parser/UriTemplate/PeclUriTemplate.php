@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Parser\UriTemplate;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Common\Exception\RuntimeException;
 

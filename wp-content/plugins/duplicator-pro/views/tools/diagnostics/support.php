@@ -1,6 +1,7 @@
 <?php
 defined("ABSPATH") or die("");
-DUP_PRO_U::hasCapability('read');
+// DUP_PRO_U::hasCapability('read');
+DUP_PRO_U::hasCapability('export');
 
 $thanks_display = 'none';
 $error_display = 'none';
@@ -35,7 +36,7 @@ $message = '';
 			<!-- HELP LINKS -->
 			<div class="dup-support-hlp-area" >
 				<div class="dup-support-hlp-hdrs">
-					<i class="fa fa-cube fa-2x pull-left"></i>
+					<i class="fas fa-cube fa-2x fa-pull-left"></i>
 					<div><?php DUP_PRO_U::esc_html_e('Knowledgebase') ?></div>
 				</div>
 				<div class="dup-support-hlp-txt">
@@ -56,7 +57,7 @@ $message = '';
 				<!-- HELP TICKET-->
 				<div class="dup-support-hlp-area">
 					<div class="dup-support-hlp-hdrs">
-						<i class="fa fa-lightbulb-o fa-2x pull-left"></i>
+						<i class="far fa-lightbulb fa-2x fa-pull-left"></i>
 						<div><?php DUP_PRO_U::esc_html_e('Submit Help Ticket') ?></div>
 					</div>
 					<div class="dup-support-hlp-txt">

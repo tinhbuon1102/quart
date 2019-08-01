@@ -44,12 +44,12 @@ class DUP_PRO_Log
     /**
      * The file handle used to write to the package log file
      */
-    private static $logFileHandle;
+    private static $logFileHandle = null;
 
     /**
      * Get the setting which indicates if tracing is enabled
      */
-    private static $traceEnabled;
+    private static $traceEnabled = false;
 
     public static $profileLogs = null;
 
@@ -79,7 +79,6 @@ class DUP_PRO_Log
         {
             self::$profileLogs = $profileLogs;
         }
-
     }
 
     /**
@@ -91,22 +90,38 @@ class DUP_PRO_Log
      */
     public static function open($nameHash)
     {
-        if (!isset($nameHash)) throw new Exception("A name value is required to open a file log.");
-        self::$logFileHandle = @fopen(DUPLICATOR_PRO_SSDIR_PATH."/{$nameHash}_log.txt", "a+");
+        if (!isset($nameHash)) {
+            throw new Exception("A name value is required to open a file log.");
+        }
+        self::close();
+        if ((self::$logFileHandle = @fopen(DUPLICATOR_PRO_SSDIR_PATH."/{$nameHash}_log.txt", "a+")) === false) {
+            self::$logFileHandle = null;
+            return false;
+        } else {
+            /**
+             * By initializing the error_handler on opening the log, I am sure that when a package is processed, the handler is active.
+             */
+            DUP_PRO_Handler::init_error_handler();
+            return true;
+        }
     }
 
     /**
-     * Close the package log file connection
+     * Close the package log file connection if is opened
      *
      * @return bool Returns TRUE on success or FALSE on failure.
      */
     public static function close()
     {
-        return @fclose(self::$logFileHandle);
+        if (!is_null(self::$logFileHandle)) {
+            $result              = @fclose(self::$logFileHandle);
+            self::$logFileHandle = null;
+        }
+        return $result;
     }
 
     /**
-     *  General information send to the package log
+     *  General information send to the package log if opened
      *
      *  @param string $msg	The message to log
      * 
@@ -114,10 +129,19 @@ class DUP_PRO_Log
      */
     public static function info($msg)
     {
-        @fwrite(self::$logFileHandle, "{$msg} \n");
+        if (!is_null(self::$logFileHandle)) {
+            @fwrite(self::$logFileHandle, $msg."\n");
+        }
     }
 
-	   /**
+    public static function print_r_info($val, $name = '')
+    {
+        $msg = empty($name) ? '' : 'VALUE '.$name.': ';
+        $msg .= print_r($val, true);
+        self::info($msg);
+    }
+
+    /**
      *  General information send to the package log and trace log
      *
      *  @param string $msg	The message to log
@@ -144,11 +168,9 @@ class DUP_PRO_Log
         if ($detail == '') {
             $detail = '(no detail)';
         }
-
-        DUP_PRO_LOG::traceError("Forced Error Generated: ".$msg."-$detail");
         $source = self::getStack(debug_backtrace());
-
-        $err_msg = "\n====================================================================\n";
+        
+        $err_msg = "\n\n====================================================================\n";
         $err_msg .= "!RUNTIME ERROR!\n";
         $err_msg .= "---------------------------------------------------------------------\n";
         $err_msg .= "MESSAGE:\n{$msg}\n";
@@ -158,7 +180,8 @@ class DUP_PRO_Log
         $err_msg .= "---------------------------------------------------------------------\n";
         $err_msg .= "TRACE:\n{$source}";
         $err_msg .= "====================================================================\n\n";
-        @fwrite(self::$logFileHandle, "\n{$err_msg}");
+        self::infoTrace($err_msg);
+        self::close();
 
         if ($die) {
             //Output to browser
@@ -310,7 +333,11 @@ class DUP_PRO_Log
     {
         if (self::$traceEnabled || $force_trace) {
             $send_trace_to_error_log = (bool) get_option('duplicator_pro_send_trace_to_error_log', false);
-            $unique_id               = sprintf("%08x", abs(crc32($_SERVER['REMOTE_ADDR'].$_SERVER['REQUEST_TIME'].$_SERVER['REMOTE_PORT'])));
+            if (isset($_SERVER['REMOTE_PORT'])) {
+                $unique_id = sprintf("%08x", abs(crc32($_SERVER['REMOTE_ADDR'].$_SERVER['REQUEST_TIME'].$_SERVER['REMOTE_PORT'])));
+            } else {
+                $unique_id = sprintf("%08x", abs(crc32($_SERVER['REMOTE_ADDR'].$_SERVER['REQUEST_TIME'])));
+            }
 
             if ($calling_function_override == null) {
 				$calling_function = DUP_PRO_U::getCallingFunctionName();
@@ -338,6 +365,13 @@ class DUP_PRO_Log
             // Everything goes to the plugin log, whether it's part of package generation or not.
             self::writeToTrace($formatted_logging_message);
         }
+    }
+
+    public static function print_r_trace($val, $name = '', $audit = true, $calling_function_override = null, $force_trace = false)
+    {
+        $msg = empty($name) ? '' : 'VALUE '.$name.': ';
+        $msg .= print_r($val, true);
+        self::trace($msg, $audit, $calling_function_override, $force_trace);
     }
 
     /**
@@ -452,7 +486,7 @@ class DUP_PRO_Log
        
         foreach ($profileLogArray as $profileLog) {
 			$avgTime	= ($profileLog->numCalls != 0)	? $profileLog->culmulativeTime / $profileLog->numCalls	: -1;
-            $name		= SnapLibStringU::truncateString($profileLog->eventName, $eventWidth);
+            $name		= DupProSnapLibStringU::truncateString($profileLog->eventName, $eventWidth);
             $entry		= sprintf("%-{$eventWidth}s | %-7d | %-6.3f | %9.3f \n", $name, $profileLog->numCalls, $avgTime, $profileLog->culmulativeTime);
             $txt		.= $entry;
         }
@@ -497,6 +531,203 @@ class DUP_PRO_Log
 
         if (@file_put_contents($log_filepath, $formatted_logging_message, FILE_APPEND) === false) {
             // Not en error worth reporting
+        }
+    }
+}
+
+class DUP_PRO_Handler
+{
+    const MODE_OFF         = 0; // don't write in log
+    const MODE_LOG         = 1; // write errors in log file
+    const MODE_VAR         = 2; // put php errors in $varModeLog static var
+    const SHUTDOWN_TIMEOUT = 'tm';
+
+    /**
+     *
+     * @var bool
+     */
+    private static $inizialized = false;
+
+    /**
+     *
+     * @var array
+     */
+    private static $shutdownReturns = array(
+        'tm' => 'timeout'
+    );
+
+    /**
+     *
+     * @var int
+     */
+    private static $handlerMode = self::MODE_LOG;
+
+    /**
+     *
+     * @var bool // print code reference and errno at end of php error line  [CODE:10|FILE:test.php|LINE:100]
+     */
+    private static $codeReference = true;
+
+    /**
+     *
+     * @var bool // print prefix in php error line [PHP ERR][WARN] MSG: .....
+     */
+    private static $errPrefix = true;
+
+    /**
+     *
+     * @var string // php errors in MODE_VAR
+     */
+    private static $varModeLog = '';
+
+    /**
+     * This function only initializes the error handler the first time it is called
+     */
+    public static function init_error_handler()
+    {
+        if (!self::$inizialized) {
+            @set_error_handler(array(__CLASS__, 'error'));
+            @register_shutdown_function(array(__CLASS__, 'shutdown'));
+            self::$inizialized = true;
+        }
+    }
+
+    /**
+     * Error handler
+     *
+     * @param  integer $errno   Error level
+     * @param  string  $errstr  Error message
+     * @param  string  $errfile Error file
+     * @param  integer $errline Error line
+     * @return void
+     */
+    public static function error($errno, $errstr, $errfile, $errline)
+    {
+        switch (self::$handlerMode) {
+            case self::MODE_OFF:
+                if ($errno == E_ERROR) {
+                    $log_message = self::getMessage($errno, $errstr, $errfile, $errline);
+                    DUP_PRO_Log::error($log_message);
+                }
+                break;
+            case self::MODE_VAR:
+                self::$varModeLog .= self::getMessage($errno, $errstr, $errfile, $errline)."\n";
+                break;
+            case self::MODE_LOG:
+            default:
+                switch ($errno) {
+                    case E_ERROR :
+                        $log_message = self::getMessage($errno, $errstr, $errfile, $errline);
+                        DUP_PRO_Log::error($log_message);
+                        break;
+                    case E_NOTICE :
+                    case E_WARNING :
+                    default :
+                        $log_message = self::getMessage($errno, $errstr, $errfile, $errline);
+                        DUP_PRO_Log::infoTrace($log_message);
+                        break;
+                }
+        }
+    }
+
+    private static function getMessage($errno, $errstr, $errfile, $errline)
+    {
+        $result = '';
+
+        if (self::$errPrefix) {
+            $result = '[PHP ERR]';
+            switch ($errno) {
+                case E_ERROR :
+                    $result .= '[FATAL]';
+                    break;
+                case E_WARNING :
+                    $result .= '[WARN]';
+                    break;
+                case E_NOTICE :
+                    $result .= '[NOTICE]';
+                    break;
+                default :
+                    $result .= '[ISSUE]';
+                    break;
+            }
+            $result .= ' MSG:';
+        }
+
+        $result .= $errstr;
+
+        if (self::$codeReference) {
+            $result .= ' [CODE:'.$errno.'|FILE:'.$errfile.'|LINE:'.$errline.']';
+        }
+
+        return $result;
+    }
+
+    /**
+     * if setMode is called without params set as default
+     *
+     * @param int $mode
+     * @param bool $errPrefix // print prefix in php error line [PHP ERR][WARN] MSG: .....
+     * @param bool $codeReference // print code reference and errno at end of php error line  [CODE:10|FILE:test.php|LINE:100]
+     */
+    public static function setMode($mode = self::MODE_LOG, $errPrefix = true, $codeReference = true)
+    {
+        switch ($mode) {
+            case self::MODE_OFF:
+            case self::MODE_VAR:
+                self::$handlerMode = $mode;
+                break;
+            case self::MODE_LOG:
+            default:
+                self::$handlerMode = self::MODE_LOG;
+        }
+
+        self::$varModeLog    = '';
+        self::$errPrefix     = $errPrefix;
+        self::$codeReference = $codeReference;
+    }
+
+    /**
+     *
+     * @return string // return var log string in MODE_VAR
+     */
+    public static function getVarLog()
+    {
+        return self::$varModeLog;
+    }
+
+    /**
+     *
+     * @return string // return var log string in MODE_VAR and clean var
+     */
+    public static function getVarLogClean()
+    {
+        $result           = self::$varModeLog;
+        self::$varModeLog = '';
+        return $result;
+    }
+
+    /**
+     *
+     * @param string $status // timeout
+     * @param string 
+     */
+    public static function setShutdownReturn($status, $str)
+    {
+        self::$shutdownReturns[$status] = $str;
+    }
+
+    /**
+     * Shutdown handler
+     *
+     * @return void
+     */
+    public static function shutdown()
+    {
+        if (($error = error_get_last())) {
+            if (preg_match('/^Maximum execution time (?:.+) exceeded$/i', $error['message'])) {
+                echo self::$shutdownReturns[self::SHUTDOWN_TIMEOUT];
+            }
+            self::error($error['type'], $error['message'], $error['file'], $error['line']);
         }
     }
 }

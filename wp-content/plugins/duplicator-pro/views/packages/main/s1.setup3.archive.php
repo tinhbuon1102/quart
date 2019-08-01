@@ -27,6 +27,11 @@ defined("ABSPATH") or die("");
     /* Tab: Database */
     table#dup-dbtables td {padding:1px 7px 1px 4px}
 	label.core-table {color:#9A1E26;font-style:italic;font-weight:bold}
+    label.core-table.subcore-table-0 {color:#c12171;}
+    label.core-table.subcore-table-1 {color:#c14421;}
+
+
+
 	i.core-table-info {color:#9A1E26;font-style:italic}
 	label.non-core-table {color:#000}
 	label.non-core-table:hover, label.core-table:hover {text-decoration:line-through}
@@ -43,11 +48,11 @@ defined("ABSPATH") or die("");
  META-BOX: ARCHIVE -->
 <div class="dup-box">
 <div class="dup-box-title" >
-	<i class="fa fa-file-archive-o"></i> <?php DUP_PRO_U::esc_html_e('Archive') ?> 
+	<i class="far fa-file-archive fa-sm"></i> <?php DUP_PRO_U::esc_html_e('Archive') ?> 
 	<sup class="dup-box-title-badge"><?php echo esc_html($archive_format); ?></sup> &nbsp;
 	<span style="font-size:13px">
-		<span id="dup-archive-filter-file" title="<?php DUP_PRO_U::esc_attr_e('File filter enabled') ?>"><i class="fa fa-files-o"></i> <i class="fa fa-filter"></i> &nbsp;&nbsp;</span>
-		<span id="dup-archive-filter-db" title="<?php DUP_PRO_U::esc_attr_e('Database filter enabled') ?>"><i class="fa fa-table"></i> <i class="fa fa-filter"></i></span>
+		<span id="dup-archive-filter-file" title="<?php DUP_PRO_U::esc_attr_e('File filter enabled') ?>"><i class="fa fa-files fa-sm"></i> <i class="fa fa-filter fa-sm"></i> &nbsp;&nbsp;</span>
+		<span id="dup-archive-filter-db" title="<?php DUP_PRO_U::esc_attr_e('Database filter enabled') ?>"><i class="fa fa-table fa-sm"></i> <i class="fa fa-filter fa-sm"></i></span>
 		<span id="dup-archive-db-only" title="<?php DUP_PRO_U::esc_attr_e('Archive Only the Database') ?>"> <?php DUP_PRO_U::esc_html_e('Database Only') ?> </span>
 	</span>
 
@@ -84,7 +89,7 @@ defined("ABSPATH") or die("");
 			<div id="dup-exportdb-items-off">
 				<input type="checkbox" id="filter-on" name="filter-on" onclick="DupPro.Pack.ToggleFileFilters()" />
 				<label for="filter-on"><?php DUP_PRO_U::esc_html_e("Enable File Filters") ?></label>
-				<i class="fa fa-question-circle"
+				<i class="fas fa-question-circle fa-sm"
 				   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("File Filters:"); ?>"
 				   data-tooltip="<?php DUP_PRO_U::esc_attr_e('File filters allow you to ignore directories/files and file extensions.  When creating a package only include the data you '
 				   . 'want and need.  This helps to improve the overall archive build time and keep your backups simple and clean.'); ?>">
@@ -136,7 +141,8 @@ defined("ABSPATH") or die("");
 						DUP_PRO_U::esc_html_e("Use filenames without paths to filter same-named files across multiple directories.");
 						echo "</b>";
 						?> <br/>
-						<?php DUP_PRO_U::esc_html_e("Use semicolons to separate all items."); ?>
+						<?php DUP_PRO_U::esc_html_e("Use semicolons to separate all items."); ?><br/>
+                        <?php DUP_PRO_U::esc_html_e("Use # to comment a line."); ?>
 					</div>
 				</div>
 			</div>
@@ -189,7 +195,7 @@ defined("ABSPATH") or die("");
 					<td style="vertical-align:top"><input type="checkbox" id="dbfilter-on" name="dbfilter-on" onclick="DupPro.Pack.ToggleDBFilters()" /></td>
 					<td>
 						<label for="dbfilter-on"><?php DUP_PRO_U::esc_html_e("Enable Table Filters") ?> &nbsp;</label>
-						<i class="fa fa-question-circle"
+						<i class="fas fa-question-circle fa-sm"
 							data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Table Filters:"); ?>"
 							data-tooltip="<?php DUP_PRO_U::esc_attr_e('Table filters allow you to ignore certain tables from a database.  When creating a package only include the data you '
 							. 'want and need.  This helps to improve the overall archive build time and keep your backups simple and clean.'); ?>"> <br/>
@@ -206,7 +212,6 @@ defined("ABSPATH") or die("");
 
 				<div style="font-stretch:ultra-condensed; font-family: Calibri; white-space: nowrap">
 				<?php
-					$coreTables = DUP_PRO_U::getWPCoreTables();
 					$tables = $wpdb->get_results("SHOW FULL TABLES FROM `" . DB_NAME . "` WHERE Table_Type = 'BASE TABLE' ", ARRAY_N);
 					$num_rows = count($tables);
 					$next_row = round($num_rows / 4, 0);
@@ -214,9 +219,15 @@ defined("ABSPATH") or die("");
 
 					echo '<table id="dup-dbtables"><tr><td valign="top">';
 					foreach ($tables as $table) {
-						if (in_array($table[0], $coreTables)) {
+						if (DUP_PRO_U::isWPCoreTable($table[0])) {
+                            $tableBlogId = DUP_PRO_U::getWPBlogIdTable($table[0]);
+
 							$core_css	 = 'core-table';
 							$core_note	 = '*';
+
+                            if ($tableBlogId > 0) {
+                                $core_css .= ' subcore-table-'.($tableBlogId % 2);
+                            }
 						} else {
 							$core_css	 = 'non-core-table';
 							$core_note	 = '';
@@ -248,7 +259,7 @@ defined("ABSPATH") or die("");
 
 			<hr />
 			<?php DUP_PRO_U::esc_html_e("Compatibility Mode") ?> &nbsp;
-			<i class="fa fa-question-circle"
+			<i class="fas fa-question-circle fa-sm"
 			   data-tooltip-title="<?php DUP_PRO_U::esc_attr_e("Compatibility Mode:"); ?>"
 			   data-tooltip="<?php DUP_PRO_U::esc_attr_e('This is an advanced database backwards compatibility feature that should ONLY be used if having problems installing packages.'
 					   . ' If the database server version is lower than the version where the package was built then these options may help generate a script that is more compliant'

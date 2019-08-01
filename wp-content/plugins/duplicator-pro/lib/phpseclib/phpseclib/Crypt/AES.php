@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pure-PHP implementation of AES.
  *
@@ -48,6 +47,7 @@
  */
 
 namespace phpseclib\Crypt;
+defined("ABSPATH") or die("");
 
 use phpseclib\Crypt\Rijndael;
 

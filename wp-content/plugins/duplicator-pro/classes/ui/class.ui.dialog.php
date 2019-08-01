@@ -183,7 +183,7 @@ class DUP_PRO_UI_Dialog
             $progress_func1 = "__dpro_dialog_".$this->uniqid;
             $progress_func2 = ";{$progress_func1}(this)";
             $progress_data  = <<<HTML
-				<div class='dpro-dlg-confirm-progress' id="{$this->id}-progress"><i class='fa fa-circle-o-notch fa-spin fa-lg fa-fw'></i> {$this->progressText}</div>
+				<div class='dpro-dlg-confirm-progress' id="{$this->id}-progress"><i class='fa fa-circle-notch fa-spin fa-lg fa-fw'></i> {$this->progressText}</div>
 				<script> 
 					function {$progress_func1}(obj) 
 					{

@@ -1,4 +1,5 @@
 <?php
+defined("ABSPATH") or die("");
 /** 
  * DUP_PRO_OAuthSimple - A simpler version of OAuth
  *

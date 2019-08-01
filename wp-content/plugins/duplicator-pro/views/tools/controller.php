@@ -1,5 +1,6 @@
 <?php
 defined("ABSPATH") or die("");
+DUP_PRO_Handler::init_error_handler();
 DUP_PRO_U::hasCapability('manage_options');
 
 global $wpdb;
@@ -10,6 +11,9 @@ require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/assets/js/javascript.php');
 require_once(DUPLICATOR_PRO_PLUGIN_PATH . '/views/inc.header.php');
 
 $current_tab = isset($_REQUEST['tab']) ? sanitize_text_field($_REQUEST['tab']) : 'diagnostics';
+if ('d' == $current_tab) {
+      $current_tab = 'diagnostics';
+}
 
 ?>
 

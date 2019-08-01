@@ -76,7 +76,7 @@ defined("DUPXABSPATH") or die("");
 					</ul>
 				</li>
 				<li>If using the 'Basic' option then try using the <a href="javascript:void(0)" onclick="DUPX.togglePanels('cpanel')">'cPanel'</a> option.</li>
-				<li><i class="fa fa-file-code-o"> </i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
+				<li><i class="far fa-file-code"> </i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
 			</ul>
 		</div>
 
@@ -97,7 +97,7 @@ defined("DUPXABSPATH") or die("");
 			<div class="sub-title">TROUBLESHOOT</div>
 			<ul>
 				<li>Contact your host and have them upgrade your MySQL server.</li>
-				<li><i class="fa fa-file-code-o"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
+				<li><i class="far fa-file-code"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
 			</ul>
 		</div>
 
@@ -127,7 +127,7 @@ defined("DUPXABSPATH") or die("");
 						</ul>
 					</li>
 					<li>If using the 'Basic' option then try using the <a href="javascript:void(0)" onclick="DUPX.togglePanels('cpanel')">'cPanel'</a> option.</li>
-					<li><i class="fa fa-file-code-o"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
+					<li><i class="far fa-file-code"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
 				</ul>
 
 			</div>
@@ -167,7 +167,7 @@ defined("DUPXABSPATH") or die("");
 							<li><i class="fa fa-video-camera"></i> <a href="https://www.youtube.com/watch?v=CHwxXGPnw48" target="_video">Add database user in cPanel newer versions</a></li>
 						</ul>
 					</li>
-					<li><i class="fa fa-file-code-o"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
+					<li><i class="far fa-file-code"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
 				</ul>
 			</div>
 		{{/if_neq}}
@@ -224,7 +224,7 @@ defined("DUPXABSPATH") or die("");
 							<li><i class="fa fa-video-camera"></i> <a href="https://www.youtube.com/watch?v=FfX-B-h3vo0" target="_video">How to grant user privileges in phpMyAdmin</a></li>
 						</ul>
 					</li>
-				<li><i class="fa fa-file-code-o"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
+				<li><i class="far fa-file-code"></i> <a href='{{{faqURL}}}#faq-installer-100-q' target='_help'>I'm running into issues with the Database what can I do?</a></li>
 			</ul>
 		</div>
 
@@ -260,14 +260,29 @@ defined("DUPXABSPATH") or die("");
 
 			<div class="sub-title">TROUBLESHOOT</div>
 			<ul>
-				<li><i class="fa fa-file-code-o"></i> <a href='{{{faqURL}}}#faq-installer-110-q' target='_help'>What is Compatibility mode & 'Unknown Collation' errors?</a></li>
+				<li><i class="far fa-file-code"></i> <a href='{{{faqURL}}}#faq-installer-110-q' target='_help'>What is Compatibility mode & 'Unknown Collation' errors?</a></li>
 			</ul>
 
 		</div>
 
+		<!-- ==================================
+		REQ 80: CHECK GTID -->
+		<div class="status {{noticeStyle payload.reqs.80.pass}}">{{reqText payload.reqs.80.pass}}</div>
+		<div class="title" data-type="toggle" data-target="#s2-reqs80"><i class="fa fa-caret-right"></i> {{payload.reqs.80.title}}</div>
+		<div class="info s2-reqs80" id="s2-reqs80">
+			<div class="sub-title">STATUS</div>
+			{{{getInfo payload.reqs.80.pass payload.reqs.80.info}}}<br/>
+
+			<div class="sub-title">DETAILS</div>
+			This test checks to make sure the database server should not have GTID mode enabled.
+			<br/><br/>
+			<div class="sub-title">TROUBLESHOOT</div>
+			<ul>
+				<li><i class="far fa-file-code"></i> <a href='https://dev.mysql.com/doc/refman/5.6/en/replication-gtids-concepts.html' target='_help'>What is GTID?</a></li>
+			</ul>
+		</div>
+
 	</div>
-
-
 
 	<!-- ==================================
 	NOTICES
@@ -311,12 +326,57 @@ defined("DUPXABSPATH") or die("");
 Handlebars.registerHelper('if_eq',		function(a, b, opts) { return (a == b) ? opts.fn(this) : opts.inverse(this);});
 Handlebars.registerHelper('if_neq',		function(a, b, opts) { return (a != b) ? opts.fn(this) : opts.inverse(this);});
 Handlebars.registerHelper('faqURL',		function() { return "https://snapcreek.com/duplicator/docs/faqs-tech/";});
-Handlebars.registerHelper('reqText',	function(req)  { if  (req == -1)  {return ""}; return (req)  ? "Pass" : "Fail";});
-Handlebars.registerHelper('reqStyle',	function(req)  { if  (req == -1)  {return ""}; return (req)  ? "status-badge-pass" : "status-badge-fail";});
-Handlebars.registerHelper('noticeStyle',function(req)  { if  (req == -1)  {return ""}; return (req)  ? "status-badge-pass" : "status-badge-fail";});
+Handlebars.registerHelper('reqText',	function(req)  {
+	switch(req) {
+		case 0:
+			return "Fail";
+			break;
+  		case 1:
+		  return "Pass";
+		  break;
+		case 2:
+		  return "Warn";
+		  break;
+		case -1:
+		default:
+		  return "";
+	}
+});
+Handlebars.registerHelper('reqStyle',	function(req)  { 
+	switch (req) {
+		case 0:
+			return "status-badge-fail"
+			break;
+		case 1:
+			return "status-badge-pass"
+			break;
+		case 2:
+			return "status-badge-warn"
+			break;
+		case -1:
+		default:
+			return "";
+	}
+});
+Handlebars.registerHelper('noticeStyle',function(req)  { 
+	switch (req) {
+		case 0:
+			return "status-badge-fail"
+			break;
+		case 1:
+			return "status-badge-pass"
+			break;
+		case 2:
+			return "status-badge-warn"
+			break;
+		case -1:
+		default:
+			return "";
+	}
+});
 Handlebars.registerHelper('noticeText', function(warn) { if  (warn == -1) {return ""}; return (warn) ? "Good" : "Warn";});
 Handlebars.registerHelper('getInfo',	function(pass, info) {
-	return (pass && pass != -1)
+	return (pass == 1)
 		? "<div class='success-msg'>" + info + "</div>"
 		: "<div class='error-msg'>" + info + "</div>";
 });
@@ -358,7 +418,7 @@ DUPX.testDBConnect = function ()
 	}
 
 	$dbArea.show(250);
-	$dbResult.html("<div class='message'><i class='fa fa-circle-o-notch fa-spin fa-fw'></i>Running Database Validation. <br/>  Please wait...</div>");
+	$dbResult.html("<div class='message'><i class='fa fa-circle-notch fa-spin fa-fw'></i>Running Database Validation. <br/>  Please wait...</div>");
 	$dbButton.attr('disabled', 'true');
 
 	if (document.location.href.indexOf('?') > -1) {
@@ -452,9 +512,11 @@ DUPX.intTestDBResults = function(data, result)
 	$btnTestDB.removeAttr('disabled').removeClass('disabled');
 	$btnNext.removeAttr('disabled').removeClass('disabled');
 
-	if (data.payload.reqsPass == 1) {
+	if (data.payload.reqsPass == 1 || data.payload.reqsPass == 2) {
 		$btnTestDB.addClass('disabled').attr('disabled', 'true');
-		$divReqsAll.hide()
+		if (data.payload.reqsPass == 1) {
+			$divReqsAll.hide();
+		}
 	} else {
 		$btnNext.addClass('disabled').attr('disabled', 'true');
 		$divReqsAll.show();
@@ -462,7 +524,7 @@ DUPX.intTestDBResults = function(data, result)
 
 	data.payload.noticesPass ? $divNoticeAll.hide() : $divNoticeAll.show();
 
-	if (data.payload.reqsPass == 1 && data.payload.noticesPass == 1) {
+	if ((data.payload.reqsPass == 1 || data.payload.reqsPass == 2) && data.payload.noticesPass == 1) {
 		$btnTestDB.addClass('disabled').attr('disabled', 'true');
 	}
 
@@ -490,4 +552,3 @@ DUPX.resetDBTest = function(e)
 	$divTestArea.html("<div class='sub-message'>To continue click the 'Test Database'<br/>button to retest the database setup.</div>");
 }
 </script>
-

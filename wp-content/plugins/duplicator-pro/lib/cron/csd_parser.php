@@ -1,5 +1,5 @@
 <?php
-
+defined("ABSPATH") or die("");
 
 /**
  * Lightweight Class for easy calculation of UNIX timestamps from cron scheduling definitions.

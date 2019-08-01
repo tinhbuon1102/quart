@@ -1,6 +1,7 @@
 <?php
-
 namespace DuplicatorPro\Aws\Common\Command;
+
+defined("ABSPATH") or die("");
 
 use DuplicatorPro\Guzzle\Http\Message\RequestInterface;
 use DuplicatorPro\Guzzle\Service\Description\Parameter;

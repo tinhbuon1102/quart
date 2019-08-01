@@ -1,6 +1,8 @@
 <?php
 namespace DuplicatorPro\Aws\Common\Credentials;
 
+defined("ABSPATH") or die("");
+
 /**
  * A blank set of credentials. AWS clients must be provided credentials, but
  * there are some types of requests that do not need authentication. This class

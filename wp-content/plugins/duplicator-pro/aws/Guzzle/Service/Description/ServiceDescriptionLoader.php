@@ -1,5 +1,4 @@
 <?php
-
 namespace DuplicatorPro\Guzzle\Service\Description;
 
 use DuplicatorPro\Guzzle\Service\AbstractConfigLoader;

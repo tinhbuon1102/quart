@@ -32,8 +32,7 @@ if ($_POST['view_mode'] == 'basic') {
 	}
 	
 	if (isset($_POST['dbpass'])) {
-		$post_db_pass = DUPX_U::wp_unslash($_POST['dbpass']);
-		$_POST['dbpass'] = trim($post_db_pass);
+		$_POST['dbpass'] = trim($_POST['dbpass']);
 	} else {
 		$_POST['dbpass'] = null;
 	}
@@ -68,7 +67,7 @@ else {
 	$_POST['dbhost']	= isset($_POST['cpnl-dbhost']) ? DUPX_U::sanitize_text_field(trim($_POST['cpnl-dbhost'])) : null;
 	$_POST['dbname']	= isset($_POST['cpnl-dbname-result']) ? DUPX_U::sanitize_text_field(trim($_POST['cpnl-dbname-result'])) : null;
 	$_POST['dbuser']	= isset($_POST['cpnl-dbuser-result']) ? DUPX_U::sanitize_text_field(trim($_POST['cpnl-dbuser-result'])) : null;
-	$_POST['dbpass']	= isset($_POST['cpnl-dbpass']) ? trim(DUPX_U::wp_unslash($_POST['cpnl-dbpass'])) : null;
+	$_POST['dbpass']	= isset($_POST['cpnl-dbpass']) ? trim($_POST['cpnl-dbpass']) : null;
 	$_POST['dbport']	= isset($_POST['cpnl-dbhost']) ? parse_url($_POST['cpnl-dbhost'], PHP_URL_PORT) : 3306;
 	$_POST['dbport']	= (!empty($_POST['cpnl-dbport'])) ? DUPX_U::sanitize_text_field($_POST['cpnl-dbport']) : 3306;
 	$_POST['dbnbsp']	= (isset($_POST['cpnl-dbnbsp']) && $_POST['cpnl-dbnbsp'] == '1') ? true : false;
@@ -109,7 +108,7 @@ $dbTestIn->mode		 = DUPX_U::sanitize_text_field($_POST['view_mode']);
 $dbTestIn->dbaction	 = DUPX_U::sanitize_text_field($_POST['dbaction']);
 $dbTestIn->dbhost	 = DUPX_U::sanitize_text_field($_POST['dbhost']);
 $dbTestIn->dbuser	 = DUPX_U::sanitize_text_field($_POST['dbuser']);
-$dbTestIn->dbpass	 = trim(DUPX_U::wp_unslash($_POST['dbpass']));
+$dbTestIn->dbpass	 = trim($_POST['dbpass']);
 $dbTestIn->dbname	 = DUPX_U::sanitize_text_field($_POST['dbname']);
 $dbTestIn->dbport	 = DUPX_U::sanitize_text_field($_POST['dbport']);
 $dbTestIn->dbcollatefb = DUPX_U::sanitize_text_field($_POST['dbcollatefb']);
@@ -122,7 +121,6 @@ $dbTest	= new DUPX_DBTest($dbTestIn);
 
 //CLICKS 'Test Database'
 if (isset($_GET['dbtest'])) {
-	
 	$dbTest->runMode = 'TEST';
 	$dbTest->responseMode = 'JSON';
 	if (!headers_sent()) {
@@ -171,7 +169,7 @@ if ($_POST['view_mode'] == 'cpnl') {
 		//user passwords requirements are not met.
 		if ($_POST['cpnl-dbuser-chk']) {
 			$post_db_user = DUPX_U::sanitize_text_field($_POST['dbuser']);
-			$post_db_pass = trim(DUPX_U::wp_unslash($_POST['dbpass']));
+			$post_db_pass = trim($_POST['dbpass']);
 			$result = $CPNL->create_db_user($cpnlToken, $post_db_user, $post_db_pass);
 			if ($result['status'] !== true) {
 				DUPX_Log::info('CPANEL API ERROR: create_db_user ' . print_r($result['cpnl_api'], true), 2);
@@ -215,11 +213,31 @@ if ($_POST['view_mode'] == 'cpnl') {
 $not_yet_logged = (isset($_POST['first_chunk']) && $_POST['first_chunk']) || (!isset($_POST['continue_chunking']));
 
 if($not_yet_logged){
+    $labelPadSize = 20;
+    
     DUPX_Log::info("\n\n\n********************************************************************************");
     DUPX_Log::info('* DUPLICATOR PRO INSTALL-LOG');
     DUPX_Log::info('* STEP-2 START @ '.@date('h:i:s'));
     DUPX_Log::info('* NOTICE: Do NOT post to public sites or forums!!');
     DUPX_Log::info("********************************************************************************");
+    DUPX_Log::info("USER INPUTS");
+    DUPX_Log::info(str_pad('VIEW MODE', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['view_mode']));
+    DUPX_Log::info(str_pad('DB ACTION', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbaction']));
+    DUPX_Log::info(str_pad('DB HOST', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString('**OBSCURED**'));
+    DUPX_Log::info(str_pad('DB NAME', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString('**OBSCURED**'));
+    DUPX_Log::info(str_pad('DB PASS', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString('**OBSCURED**'));
+    DUPX_Log::info(str_pad('DB PORT', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString('**OBSCURED**'));
+    DUPX_Log::info(str_pad('NON-BREAKING SPACES', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbnbsp']));
+    DUPX_Log::info(str_pad('MYSQL MODE', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbmysqlmode']));
+    DUPX_Log::info(str_pad('MYSQL MODE OPTS', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbmysqlmode_opts']));
+    DUPX_Log::info(str_pad('CHARSET', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbcharset']));
+    DUPX_Log::info(str_pad('COLLATE', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbcollate']));
+    DUPX_Log::info(str_pad('COLLATE FB', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbcollatefb']));
+    DUPX_Log::info(str_pad('CUNKING', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbchunk']));
+    DUPX_Log::info(str_pad('VIEW CREATION', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbobj_views']));
+    DUPX_Log::info(str_pad('STORED PROCEDURE', $labelPadSize, '_', STR_PAD_RIGHT).': '.DUPX_Log::varToString($_POST['dbobj_procs']));
+    DUPX_Log::info("********************************************************************************\n");
+
     if (! empty($cpnllog)) {
         DUPX_Log::info($cpnllog);
     }
@@ -231,7 +249,8 @@ if($not_yet_logged){
     $log .= "POST DATA\n";
     $log .= "--------------------------------------\n";
     $log .= print_r($POST_LOG, true);
-    DUPX_Log::info($log, 2);
+    DUPX_Log::info($log, DUPX_Log::LV_DEBUG);
+    DUPX_Log::flush();
 }
 
 
@@ -288,10 +307,40 @@ if ($_POST['dbaction'] == 'manual') {
     echo json_encode($ret);
     die();
 } elseif(isset($_POST['continue_chunking']) && ($_POST['continue_chunking'] === 'false' && $_POST['pass'] == 1)) {
-    $JSON['pass'] = 1;
+    $rowCountMisMatchTables = $dbinstall->getRowCountMisMatchTables();
+	$JSON['pass'] = 1;
+	if (!empty($rowCountMisMatchTables)) {
+		$nManager = DUPX_NOTICE_MANAGER::getInstance();
+		$errMsg = 'ERROR: Database Table row count verification was failed for table(s): '
+									.implode(', ', $rowCountMisMatchTables).'.';
+		DUPX_Log::info($errMsg);
+		$nManager->addNextStepNoticeMessage($errMsg, DUPX_NOTICE_ITEM::HARD_WARNING);
+		$nManager->addFinalReportNotice(array(
+			'shortMsg' => 'Database Table row count validation error',
+			'level' => DUPX_NOTICE_ITEM::HARD_WARNING,
+			'longMsg' => $errMsg,
+			'sections' => 'database'
+		));
+		$nManager->saveNotices();
+	}
 } elseif(!isset($_POST['continue_chunking'])) {
 	$dbinstall->writeInDB();
-    $JSON['pass'] = 1;
+	$rowCountMisMatchTables = $dbinstall->getRowCountMisMatchTables();
+	$JSON['pass'] = 1;
+	if (!empty($rowCountMisMatchTables)) {
+		$nManager = DUPX_NOTICE_MANAGER::getInstance();
+		$errMsg = 'ERROR: Database Table row count verification was failed for table(s): '
+									.implode(', ', $rowCountMisMatchTables).'.';
+		DUPX_Log::info($errMsg);
+		$nManager->addNextStepNoticeMessage($errMsg , DUPX_NOTICE_ITEM::SOFT_WARNING);
+		$nManager->addFinalReportNotice(array(
+			'shortMsg' => 'Database Table row count validation error',
+			'level' => DUPX_NOTICE_ITEM::HARD_WARNING,
+			'longMsg' => $errMsg,
+			'sections' => 'database'
+		));
+		$nManager->saveNotices();
+	}
 }
 
 $dbinstall->runCleanupRotines();
@@ -306,4 +355,5 @@ DUPX_Log::info("\nINSERT DATA RUNTIME: " . DUPX_U::elapsedTime($dbinstall->profi
 DUPX_Log::info('STEP-2 COMPLETE @ '.@date('h:i:s')." - RUNTIME: {$ajax1_sum}");
 
 error_reporting($ajax2_error_level);
-die(json_encode($JSON));
+DUPX_Log::close();
+die(DupProSnapJsonU::wp_json_encode($JSON));
