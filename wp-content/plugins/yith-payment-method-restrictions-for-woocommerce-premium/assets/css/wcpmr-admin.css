@@ -1,0 +1,54 @@
+/*Metabox functions*/
+.yith-wcpmr-select {
+    width: 270px;
+}
+
+.yith-wcpmr-rule-payment-restriction > div {
+    margin-bottom:20px;
+}
+.yith-wcpmr-conditions-row {
+    clear:left;
+    margin-top:10px;
+    margin-bottom: 10px;
+    padding: 20px;
+    background-color: #f1f1f1;
+}
+.yith-wcpmr-condtions-list {
+    margin-top:25px;
+}
+.yith-wcpmr-row {
+    margin-left:5px;
+    display:inline;
+}
+
+.yith-wcpmr-message {
+    clear: left;
+    padding-top:20px;
+}
+
+.yith-wcpmr-restriction >label {
+    width:20%;
+    float:left;
+}
+
+#yith-wcpmr-bacs-account-select {
+    padding-top: 20px;
+}
+.yith-wcpmr-price {
+    width: 270px;
+    height: 30px;
+}
+
+
+.yith-wcpmr-delete-condition a.remove-button{
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    text-indent: -999999px;
+    overflow: hidden;
+    opacity: 0.6;
+    background: url( '../../assets/images/remove.png' ) no-repeat center center;
+}
+
+/*Metabox functions*/

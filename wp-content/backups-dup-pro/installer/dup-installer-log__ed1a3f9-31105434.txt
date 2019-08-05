@@ -1,0 +1,942 @@
+********************************************************************************
+* DUPLICATOR-PRO: Install-Log
+* STEP-1 START @ 05:20:26
+* VERSION: 3.8.4.1
+* NOTICE: Do NOT post to public sites or forums!!
+********************************************************************************
+PACKAGE INFO________ CURRENT SERVER                         |ORIGINAL SERVER
+PHP VERSION_________: 7.2.17                                |7.2.17
+OS__________________: Linux                                 |Linux
+CREATED_____________: 2019-07-31 10:54:34
+WP VERSION__________: 4.9.8
+DUP VERSION_________: 3.8.4.1
+DB__________________: 5.5.56
+DB TABLES___________: 45
+DB ROWS_____________: 93370
+DB FILE SIZE________: 28024577
+********************************************************************************
+SERVER INFO
+PHP_________________: 7.2.17 | SAPI: cgi-fcgi
+PHP MEMORY__________: 4294967296 | SUHOSIN: disabled
+SERVER______________: Apache
+DOC ROOT____________: "/home/lquartet/lquartet.xsrv.jp/public_html"
+DOC ROOT 755________: true
+LOG FILE 644________: true
+REQUEST URL_________: "http://lquartet.xsrv.jp/dup-installer/main.installer.php"
+********************************************************************************
+USER INPUTS
+ARCHIVE ENGINE______: "ziparchivechunking"
+CLIENT KICKOFF______: 0
+SET DIR PERMS_______: true
+DIR PERMS VALUE_____: 755
+SET FILE PERMS______: true
+FILE PERMS VALUE____: 644
+SAFE MODE___________: "0"
+LOGGING_____________: "1"
+RETAIN CONFIG_______: false
+FILE TIME___________: "current"
+REMOVE RENDUNDANT___: 0
+********************************************************************************
+
+
+--------------------------------------
+ARCHIVE SETUP
+--------------------------------------
+NAME________________: "20190731_lquartet_ed1a3f990b71839e5352_20190731105434_archive.zip"
+SIZE________________: 2.93MB
+
+
+
+START ZIP FILE EXTRACTION CHUNKING >>> 
+ARCHIVE OFFSET 0
+Archive just got done processing last file in list of 155
+Expected total archive extract time: 0.84906820428853
+Total extraction elapsed time until now: 0.84906820428853
+Resetting permissions
+
+WEB SERVER CONFIGURATION FILE STATUS:
+- .htaccess was reset and a backup made to .htaccess-[HASH].orig
+- .user.ini file was not reset or backed up.
+- web.config file was not reset or backed up.
+
+STEP-1 COMPLETE @ 05:20:26 - RUNTIME: 0.5307 sec.
+
+
+
+********************************************************************************
+* DUPLICATOR PRO INSTALL-LOG
+* STEP-2 START @ 05:21:26
+* NOTICE: Do NOT post to public sites or forums!!
+********************************************************************************
+USER INPUTS
+VIEW MODE___________: "basic"
+DB ACTION___________: "empty"
+DB HOST_____________: "**OBSCURED**"
+DB NAME_____________: "**OBSCURED**"
+DB PASS_____________: "**OBSCURED**"
+DB PORT_____________: "**OBSCURED**"
+NON-BREAKING SPACES_: false
+MYSQL MODE__________: "DEFAULT"
+MYSQL MODE OPTS_____: ""
+CHARSET_____________: "utf8"
+COLLATE_____________: "utf8_general_ci"
+COLLATE FB__________: true
+CUNKING_____________: true
+VIEW CREATION_______: true
+STORED PROCEDURE____: true
+********************************************************************************
+
+--------------------------------------
+DATABASE-ENVIRONMENT
+--------------------------------------
+MYSQL VERSION:	This Server: 5.5.56 -- Build Server: 5.5.56
+FILE SIZE:	dup-database__ed1a3f9-31105434.sql (15.34MB) - installer-data.sql (0B)
+TIMEOUT:	5000
+MAXPACK:	10485760
+SQLMODE-GLOBAL:	NOT_SET
+SQLMODE-SESSION:NO_AUTO_VALUE_ON_ZERO
+NEW SQL FILE:	[/home/lquartet/lquartet.xsrv.jp/public_html/dup-installer/dup-installer-data__ed1a3f9-31105434.sql]
+COLLATE FB:	On
+DB CHUNKING:	enabled
+DB VIEWS:	enabled
+DB PROCEDURES:	enabled
+--------------------------------------
+DATABASE RESULTS
+--------------------------------------
+--------------------------------------
+** DATABASE CHUNK install start
+--------------------------------------
+DATABASE CHUNK SEEK POSITION: "0"
+Auto Commit set to false successfully
+Auto Commit set to true successfully
+--------------------------------------
+** DATABASE CHUNK install end
+--------------------------------------
+Starting Cleanup Routine...
+Cleanup Routine Complete
+ERRORS FOUND:	0
+DROPPED TABLES:	52
+RENAMED TABLES:	0
+QUERIES RAN:	514
+
+TABLES ROWS
+
+TABLE "woof_query_cache"________________________________[ROWS:     0]
+TABLE "wp_commentmeta"__________________________________[ROWS:  1193]
+TABLE "wp_comments"_____________________________________[ROWS:  1648]
+TABLE "wp_duplicator_pro_entities"______________________[ROWS:     5]
+TABLE "wp_duplicator_pro_packages"______________________[ROWS:     0]
+TABLE "wp_gpi_page_blacklist"___________________________[ROWS:     0]
+TABLE "wp_gpi_page_reports"_____________________________[ROWS:     0]
+TABLE "wp_gpi_page_stats"_______________________________[ROWS:     0]
+TABLE "wp_imagify_files"________________________________[ROWS:   187]
+TABLE "wp_imagify_folders"______________________________[ROWS:     4]
+TABLE "wp_links"________________________________________[ROWS:     0]
+TABLE "wp_options"______________________________________[ROWS:  2880]
+TABLE "wp_postmeta"_____________________________________[ROWS: 64995]
+TABLE "wp_posts"________________________________________[ROWS:  3991]
+TABLE "wp_say_what_strings"_____________________________[ROWS:     0]
+TABLE "wp_term_relationships"___________________________[ROWS:  1445]
+TABLE "wp_term_taxonomy"________________________________[ROWS:   127]
+TABLE "wp_termmeta"_____________________________________[ROWS:   145]
+TABLE "wp_terms"________________________________________[ROWS:   127]
+TABLE "wp_usermeta"_____________________________________[ROWS:  6265]
+TABLE "wp_users"________________________________________[ROWS:   155]
+TABLE "wp_vtprd_lifetime_limits_purchaser"______________[ROWS:     0]
+TABLE "wp_vtprd_lifetime_limits_purchaser_logid_rule"___[ROWS:     0]
+TABLE "wp_vtprd_lifetime_limits_purchaser_rule"_________[ROWS:     0]
+TABLE "wp_vtprd_purchase_log"___________________________[ROWS:     0]
+TABLE "wp_vtprd_purchase_log_product"___________________[ROWS:     0]
+TABLE "wp_vtprd_purchase_log_product_rule"______________[ROWS:     0]
+TABLE "wp_wc_download_log"______________________________[ROWS:     0]
+TABLE "wp_wc_webhooks"__________________________________[ROWS:     0]
+TABLE "wp_woocommerce_api_keys"_________________________[ROWS:     0]
+TABLE "wp_woocommerce_attribute_taxonomies"_____________[ROWS:     3]
+TABLE "wp_woocommerce_downloadable_product_permissions"_[ROWS:     0]
+TABLE "wp_woocommerce_log"______________________________[ROWS:     0]
+TABLE "wp_woocommerce_order_itemmeta"___________________[ROWS:  8388]
+TABLE "wp_woocommerce_order_items"______________________[ROWS:  1327]
+TABLE "wp_woocommerce_payment_tokenmeta"________________[ROWS:     0]
+TABLE "wp_woocommerce_payment_tokens"___________________[ROWS:     0]
+TABLE "wp_woocommerce_sessions"_________________________[ROWS:     2]
+TABLE "wp_woocommerce_shipping_zone_locations"__________[ROWS:     0]
+TABLE "wp_woocommerce_shipping_zone_methods"____________[ROWS:     2]
+TABLE "wp_woocommerce_shipping_zones"___________________[ROWS:     1]
+TABLE "wp_woocommerce_tax_rate_locations"_______________[ROWS:     0]
+TABLE "wp_woocommerce_tax_rates"________________________[ROWS:     1]
+TABLE "wp_woof_query_cache"_____________________________[ROWS:     0]
+TABLE "wp_wpeditor_settings"____________________________[ROWS:    24]
+
+DATABASE CACHE/TRANSITIENT [ROWS:   416]
+
+INSERT DATA RUNTIME: 2.7868 sec.
+STEP-2 COMPLETE @ 05:21:29 - RUNTIME: 2.8053 sec.
+
+====================================
+SET SEARCH AND REPLACE LIST
+====================================
+
+
+********************************************************************************
+DUPLICATOR PRO INSTALL-LOG
+STEP-3 START @ 05:21:34
+NOTICE: Do NOT post to public sites or forums
+********************************************************************************
+CHARSET SERVER:	"utf8"
+CHARSET CLIENT:	"utf8"
+********************************************************************************
+OPTIONS:
+blogname______________: "LQUARTET"
+postguid______________: false
+fullsearch____________: false
+replace_mode__________: "legacy"
+path_old______________: "/home/lquartet/l-quartet.com/public_html/wp/"
+path_new______________: "/home/lquartet/lquartet.xsrv.jp/public_html/"
+siteurl_______________: "http://lquartet.xsrv.jp"
+url_old_______________: "https://l-quartet.com/wp"
+url_new_______________: "http://lquartet.xsrv.jp"
+cross_search__________: false
+subsite_id____________: -1
+maxSerializeStrlen____: 4000000
+remove_redundant______: false
+replaceMail___________: false
+dbhost________________: "mysql913.xserver.jp"
+dbuser________________: "lquartet_test"
+dbname________________: "lquartet_test"
+dbcharset_____________: "utf8"
+dbcollate_____________: "utf8_general_ci"
+wp_username___________: ""
+wp_mail_______________: ""
+wp_nickname___________: ""
+wp_first_name_________: ""
+wp_last_name__________: ""
+ssl_admin_____________: false
+auth_keys_and_salts___: false
+cache_wp______________: true
+cache_path____________: false
+wp_debug______________: false
+wp_debug_log__________: false
+wp_debug_display______: false
+script_debug__________: false
+savequeries___________: false
+wp_memory_limit_______: "512M"
+wp_max_memory_limit___: ""
+disallow_file_edit____: false
+cookie_domain_________: ""
+autosave_interval_____: 0
+wp_auto_update_core___: ""
+wp_post_revisions_____: "remove"
+empty_schedule_storage: true
+exe_safe_mode_________: false
+retain_config_________: false
+mode_chunking_________: 1
+action_mu_mode________: -1
+********************************************************************************
+
+
+====================================
+RUN SEARCH AND REPLACE
+====================================
+
+EVALUATE TABLE: "woof_query_cache"________________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_commentmeta"__________________________________[ROWS:  1193][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_comments"_____________________________________[ROWS:  1648][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_duplicator_pro_entities"______________________[ROWS:     5][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_duplicator_pro_packages"______________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_gpi_page_blacklist"___________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_gpi_page_reports"_____________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_gpi_page_stats"_______________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_imagify_files"________________________________[ROWS:   187][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_imagify_folders"______________________________[ROWS:     4][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_links"________________________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_options"______________________________________[ROWS:  2880][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_postmeta"_____________________________________[ROWS: 64995][PG:  19][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_posts"________________________________________[ROWS:  3991][PG:   2][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_say_what_strings"_____________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_term_relationships"___________________________[ROWS:  1445][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_term_taxonomy"________________________________[ROWS:   127][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_termmeta"_____________________________________[ROWS:   145][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_terms"________________________________________[ROWS:   127][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_usermeta"_____________________________________[ROWS:  6265][PG:   2][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_users"________________________________________[ROWS:   155][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_vtprd_lifetime_limits_purchaser"______________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_vtprd_lifetime_limits_purchaser_logid_rule"___[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_vtprd_lifetime_limits_purchaser_rule"_________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_vtprd_purchase_log"___________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_vtprd_purchase_log_product"___________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_vtprd_purchase_log_product_rule"______________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_wc_download_log"______________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_wc_webhooks"__________________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_api_keys"_________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_attribute_taxonomies"_____________[ROWS:     3][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_downloadable_product_permissions"_[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_log"______________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_order_itemmeta"___________________[ROWS:  8388][PG:   3][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_order_items"______________________[ROWS:  1327][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_payment_tokenmeta"________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_payment_tokens"___________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_sessions"_________________________[ROWS:     2][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_shipping_zone_locations"__________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_shipping_zone_methods"____________[ROWS:     2][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_shipping_zones"___________________[ROWS:     1][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woocommerce_tax_rate_locations"_______________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_woocommerce_tax_rates"________________________[ROWS:     1][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+
+EVALUATE TABLE: "wp_woof_query_cache"_____________________________[ROWS:     0][PG:   0][SCAN:no columns  ]
+
+EVALUATE TABLE: "wp_wpeditor_settings"____________________________[ROWS:    24][PG:   1][SCAN:text columns]
+	SEARCH  1:"/home/lquartet/l-quartet.com/public_html/wp/" ====> "/home/lquartet/lquartet.xsrv.jp/public_html/"
+	SEARCH  2:"\/home\/lquartet\/l-quartet.com\/public_html\/wp\/" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html\/"
+	SEARCH  3:"%2Fhome%2Flquartet%2Fl-quartet.com%2Fpublic_html%2Fwp%2F" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html%2F"
+	SEARCH  4:"\home\lquartet\l-quartet.com\public_html\wp" =====> "/home/lquartet/lquartet.xsrv.jp/public_html"
+	SEARCH  5:"\\home\\lquartet\\l-quartet.com\\public_html\\wp" => "\/home\/lquartet\/lquartet.xsrv.jp\/public_html"
+	SEARCH  6:"%5Chome%5Clquartet%5Cl-quartet.com%5Cpublic_html%5Cwp" => "%2Fhome%2Flquartet%2Flquartet.xsrv.jp%2Fpublic_html"
+	SEARCH  7:"//l-quartet.com/wp" ==============================> "//lquartet.xsrv.jp"
+	SEARCH  8:"\/\/l-quartet.com\/wp" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH  9:"%2F%2Fl-quartet.com%2Fwp" ========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 10:"//www.l-quartet.com/wp" ==========================> "//lquartet.xsrv.jp"
+	SEARCH 11:"\/\/www.l-quartet.com\/wp" =======================> "\/\/lquartet.xsrv.jp"
+	SEARCH 12:"%2F%2Fwww.l-quartet.com%2Fwp" ====================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 13:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 14:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 15:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+	SEARCH 16:"//l-quartet.com" =================================> "//lquartet.xsrv.jp"
+	SEARCH 17:"\/\/l-quartet.com" ===============================> "\/\/lquartet.xsrv.jp"
+	SEARCH 18:"%2F%2Fl-quartet.com" =============================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 19:"//www.l-quartet.com" =============================> "//lquartet.xsrv.jp"
+	SEARCH 20:"\/\/www.l-quartet.com" ===========================> "\/\/lquartet.xsrv.jp"
+	SEARCH 21:"%2F%2Fwww.l-quartet.com" =========================> "%2F%2Flquartet.xsrv.jp"
+	SEARCH 22:"https://lquartet.xsrv.jp" ========================> "http://lquartet.xsrv.jp"
+	SEARCH 23:"https:\/\/lquartet.xsrv.jp" ======================> "http:\/\/lquartet.xsrv.jp"
+	SEARCH 24:"https%3A%2F%2Flquartet.xsrv.jp" ==================> "http%3A%2F%2Flquartet.xsrv.jp"
+--------------------------------------
+SCANNED:	Tables:45 	|	 Rows:92915 	|	 Cells:467369 
+UPDATED:	Tables:4 	|	 Rows:4142 	|	 Cells:4932 
+ERRORS:		0 
+RUNTIME:	2.876900 sec
+
+====================================
+REMOVE MAINTENANCE MODE
+====================================
+
+====================================
+REMOVE LICENSE KEY
+====================================
+
+====================================
+CREATE NEW ADMIN USER
+====================================
+
+====================================
+CONFIGURATION FILE UPDATES
+====================================
+	UPDATE DB_NAME ""lquartet_test""
+	UPDATE DB_USER ""lquartet_test""
+	UPDATE DB_PASSWORD "** OBSCURED **"
+	UPDATE DB_HOST ""mysql913.xserver.jp""
+	UPDATE WP_CACHE true
+	REMOVE WPCACHEHOME
+	UPDATE WP_DEBUG false
+	UPDATE WP_MEMORY_LIMIT "512M"
+	REMOVE WP_MAX_MEMORY_LIMIT
+	REMOVE DISALLOW_FILE_EDIT
+	UPDATE WP_AUTO_UPDATE_CORE ""
+	
+*** UPDATED WP CONFIG FILE ***
+
+====================================
+HTACCESS UPDATE
+====================================
+
+WEB SERVER CONFIGURATION FILE UPDATED:
+- Preparing .htaccess file with multisite subdirectory setup.
+- Successfully updated the .htaccess file setting.
+
+====================================
+GENERAL UPDATES & CLEANUP
+====================================
+- Removed '0' schedule storage items
+
+====================================
+NOTICES TEST
+====================================
+No General Notices Found
+
+
+====================================
+CLEANUP TMP FILES
+====================================
+
+====================================
+FINAL REPORT NOTICES
+====================================
+
+STEP-3 COMPLETE @ 05:21:37 - RUNTIME: 2.9034 sec. 
+
+
+====================================
+FINAL REPORT NOTICES LIST
+====================================
+-----------------------
+[INFO] No general notices
+	SECTIONS: general
+
+-----------------------
+[INFO] No errors in database
+	SECTIONS: database
+
+-----------------------
+[INFO] No search and replace data errors
+	SECTIONS: search_replace
+
+-----------------------
+[INFO] No files extraction errors
+	SECTIONS: files
+
+====================================

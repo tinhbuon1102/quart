@@ -1,0 +1,456 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: YITH Payment Method Restrictions for WooCommerce\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/init\n"
+"POT-Creation-Date: 2018-12-13 14:47:17+00:00\n"
+"PO-Revision-Date: 2018-12-24 10:35+0100\n"
+"Last-Translator: \n"
+"Language-Team: YITH <plugins@yithemes.com>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;_n:1,2;__ngettext:1,2;"
+"__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;"
+"_nx_noop:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=n!=1;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: plugin-fw\n"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin-premium.php:63
+msgid "BACS account"
+msgstr "Conto bonifici bancari (BACS)"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin-premium.php:65
+msgid "General Settings"
+msgstr "Impostazioni generali"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:125
+msgid "Rules"
+msgstr "Regole"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:129
+msgid "Premium Version"
+msgstr "Versione premium"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:196
+msgid "Plugin documentation"
+msgstr "Documentazione plugin"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:200
+msgid "Help Center"
+msgstr "Centro assistenza"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:204
+msgid "Support platform"
+msgstr "Piattaforma di supporto"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:208
+msgid "Changelog"
+msgstr "Changelog"
+
+#: includes/class.yith-wcpmr-payment-restrictions-admin.php:208
+msgid "current version"
+msgstr "versione attuale"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:29
+msgid "Payment method restriction"
+msgstr "Restrizione metodo di pagamento"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:30
+msgid "Payment method restrictions"
+msgstr "Restrizioni metodo di pagamento"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:42
+msgid "Rule name"
+msgstr "Nome regola"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:43
+msgid "Payment Method"
+msgstr "Metodo di pagamento"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:44
+msgid "Status"
+msgstr "Stato"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:59
+msgid "All"
+msgstr "Tutte"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:60
+msgid "Published"
+msgstr "Pubblicate"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:61
+msgid "Trash"
+msgstr "Cestino"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:166
+msgid "Disabled"
+msgstr "Disabilitato"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:168
+msgid "Enabled"
+msgstr "Abilitato"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:221
+msgid "Delete permanently"
+msgstr "Rimuovi in modo permanente"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:225
+#: templates/metabox/wcpmr-conditions-row-premium.php:209
+#: templates/metabox/wcpmr-conditions-row.php:68
+msgid "Delete"
+msgstr "Rimuovi"
+
+#. translators: %s: post title
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:261
+msgid "Edit %s"
+msgstr "Modifica %s"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:262
+#: includes/class.yith-wcprm-post-types.php:96
+msgid "Edit"
+msgstr "Modifica"
+
+#. translators: %s: post title
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:272
+msgid "Restore %s from the Trash"
+msgstr "Ripristina %s dal cestino"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:273
+msgid "Restore"
+msgstr "Ripristina"
+
+#. translators: %s: post title
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:280
+msgid "Move %s to the Trash"
+msgstr "Sposta %s nel cestino"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:281
+msgctxt "verb"
+msgid "Trash"
+msgstr "Cestinare"
+
+#. translators: %s: post title
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:289
+msgid "Delete %s permanently"
+msgstr "Rimuovi %s in modo permanente"
+
+#: includes/class.yith-wcpmr-payment-restrictions-list.php:290
+msgid "Delete Permanently"
+msgstr "Rimuovi in modo permanente"
+
+#: includes/class.yith-wcprm-post-types.php:92
+#: includes/class.yith-wcprm-post-types.php:93
+#: includes/class.yith-wcprm-post-types.php:110
+msgid "Payment Method Restrictions"
+msgstr "Payment Method Restrictions"
+
+#: includes/class.yith-wcprm-post-types.php:94
+msgid "Add new rule"
+msgstr "Aggiungi una nuova regola"
+
+#: includes/class.yith-wcprm-post-types.php:95
+msgid "Add New Rule"
+msgstr "Aggiungi una nuova regola"
+
+#: includes/class.yith-wcprm-post-types.php:97
+msgid "Edit Rule"
+msgstr "Modifica regola"
+
+#: includes/class.yith-wcprm-post-types.php:98
+msgid "New Rule"
+msgstr "Nuova regola"
+
+#: includes/class.yith-wcprm-post-types.php:99
+#: includes/class.yith-wcprm-post-types.php:100
+msgid "View Rule"
+msgstr "Visualizza regola"
+
+#: includes/class.yith-wcprm-post-types.php:101
+msgid "Search Rules"
+msgstr "Cerca tra le regole"
+
+#: includes/class.yith-wcprm-post-types.php:102
+msgid "No Rules found"
+msgstr "Nessuna regola trovata"
+
+#: includes/class.yith-wcprm-post-types.php:103
+msgid "No Rules found in trash"
+msgstr "Nessuna regola trovata nel cestino"
+
+#: includes/class.yith-wcprm-post-types.php:104
+msgid "Parent Rules"
+msgstr "Regole genitore"
+
+#: includes/class.yith-wcprm-post-types.php:105
+msgctxt "Admin menu name"
+msgid "YITH Rules"
+msgstr "Regole YITH"
+
+#: includes/class.yith-wcprm-post-types.php:106
+msgid "All YITH Rules"
+msgstr "Tutte le regole (YITH)"
+
+#: includes/class.yith-wcprm-post-types.php:112
+msgid "This is where rules are stored."
+msgstr "Qui sono salvate tutte le regole."
+
+#: includes/class.yith-wcprm-post-types.php:139
+msgid "Payment method restriction rule"
+msgstr "Regola di restrizione sul metodo di pagamento"
+
+#: includes/class.yith-wcprm-post-types.php:236
+msgid "Back to rules"
+msgstr "Torna alle regole"
+
+#: includes/functions.yith-wcpmr-premium.php:5
+msgid "Restriction by:"
+msgstr "Restrizione per:"
+
+#: includes/functions.yith-wcpmr-premium.php:6
+msgid "Category"
+msgstr "Categoria"
+
+#: includes/functions.yith-wcpmr-premium.php:7
+msgid "Tag"
+msgstr "Tag"
+
+#: includes/functions.yith-wcpmr-premium.php:8
+msgid "Product"
+msgstr "Prodotto"
+
+#: includes/functions.yith-wcpmr-premium.php:9
+msgid "Price"
+msgstr "Prezzo"
+
+#: includes/functions.yith-wcpmr-premium.php:10
+msgid "Geolocalization"
+msgstr "Geolocalizzazione"
+
+#: includes/functions.yith-wcpmr-premium.php:11
+msgid "Role"
+msgstr "Ruolo"
+
+#: includes/functions.yith-wcpmr-premium.php:72
+msgid "Guest"
+msgstr "Ospite"
+
+#: includes/functions.yith-wcpmr.php:19
+msgid "Type of restriction:"
+msgstr "Tipo di restrizione"
+
+#: includes/functions.yith-wcpmr.php:20
+msgid "Include at least one of"
+msgstr "Includi almeno uno tra"
+
+#: includes/functions.yith-wcpmr.php:21
+msgid "Include all"
+msgstr "Includi tutti"
+
+#: includes/functions.yith-wcpmr.php:22
+msgid "Does not contain"
+msgstr "Non contiene"
+
+#: includes/functions.yith-wcpmr.php:30
+msgid "Less than"
+msgstr "Minore di"
+
+#: includes/functions.yith-wcpmr.php:31
+msgid "Less than or equal to"
+msgstr "Minore o uguale a"
+
+#: includes/functions.yith-wcpmr.php:32
+msgid "Equal to"
+msgstr "Uguale a"
+
+#: includes/functions.yith-wcpmr.php:33
+msgid "Greater than or equal to"
+msgstr "Maggiore o uguale a"
+
+#: includes/functions.yith-wcpmr.php:34
+msgid "Greater than"
+msgstr "Maggiore di"
+
+#: init.php:36
+msgctxt "Alert Message: WooCommerce requires"
+msgid ""
+"YITH Payment Method Restrictions is enabled but not effective. It requires "
+"WooCommerce in order to work."
+msgstr ""
+"YITH Payment Method Restrictions è abilitato ma non operativo. È necessario "
+"aver installato WooCommerce perché possa funzionare correttamente."
+
+#: panel/general-settings-options.php:14
+msgctxt "Panel: page title"
+msgid "General settings"
+msgstr "Impostazioni generali"
+
+#: panel/general-settings-options.php:20
+msgctxt "Admin option: Show Payment Restriction option for shop managers"
+msgid "Show Payment Restriction option for shop manager"
+msgstr "Mostra l'opzione Restrizione di pagamento per shop manager"
+
+#: panel/general-settings-options.php:22
+msgctxt ""
+"Admin option description: Check this option to manage payment restriction "
+"option for shop manager role"
+msgid ""
+"Check this option to manage payment restriction option for shop manager role"
+msgstr ""
+"Attiva questa opzione per gestire la restrizione del pagamento per il ruolo "
+"shop manager"
+
+#: templates/admin/bacs-account-tab.php:7
+msgid "Account details"
+msgstr "Dettagli conto"
+
+#: templates/admin/bacs-account-tab.php:12
+msgid "Account name"
+msgstr "Nome conto"
+
+#: templates/admin/bacs-account-tab.php:13
+msgid "Account number"
+msgstr "Numero conto"
+
+#: templates/admin/bacs-account-tab.php:14
+msgid "Bank name"
+msgstr "Nome banca"
+
+#: templates/admin/bacs-account-tab.php:15
+msgid "Sort code"
+msgstr "Ordina per filiale"
+
+#: templates/admin/bacs-account-tab.php:16
+msgid "IBAN"
+msgstr "IBAN"
+
+#: templates/admin/bacs-account-tab.php:17
+msgid "BIC / Swift"
+msgstr "BIC / Swift"
+
+#: templates/admin/bacs-account-tab.php:43
+msgid "+ Add account"
+msgstr "+ Aggiungi un conto"
+
+#: templates/admin/bacs-account-tab.php:43
+msgid "Remove selected account(s)"
+msgstr "Rimuovi i conti selezionati"
+
+#: templates/admin/bacs-account-tab.php:49
+msgid "Save"
+msgstr "Salva"
+
+#: templates/admin/payment-restriction-tab.php:19
+msgid "Payment Method Restrictions Rules"
+msgstr "Regole di restrizione sul metodo di pagamento"
+
+#: templates/admin/payment-restriction-tab.php:19
+msgid "Add new"
+msgstr "Aggiungi nuova"
+
+#: templates/metabox/wcpmr-conditions-row-premium.php:52
+#: templates/metabox/wcpmr-conditions-row.php:47
+msgid "Search for a product&hellip;"
+msgstr "Cerca un prodotto&hellip;"
+
+#: templates/metabox/wcpmr-conditions-row-premium.php:111
+msgid "Search for a category&hellip;"
+msgstr "Cerca una categoria &hellip;"
+
+#: templates/metabox/wcpmr-conditions-row-premium.php:149
+msgid "Search for a tag&hellip;"
+msgstr "Cerca un tag&hellip;"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:10
+msgid "Disable:"
+msgstr "Disabilita:"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:12
+msgid "Check this option to disable payment restriction rule"
+msgstr "Seleziona questa opzione per disabilitare la regola"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:15
+#: templates/metabox/wcpmr-template-restriction.php:9
+msgid "Payment method gateway:"
+msgstr "Metodo di pagamento:"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:26
+msgid "What to do with this payment gateway?"
+msgstr "Cosa fare con questo metodo di pagamento?"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:27
+msgid "Remove payment method"
+msgstr "Rimuovi metodo di pagamento"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:29
+msgid "Change BACS account"
+msgstr "Cambia conto BACS"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:38
+msgid "Select bank transfer account:"
+msgstr "Seleziona il conto per i bonifici:"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:56
+#: templates/metabox/wcpmr-template-restriction.php:20
+msgid "Conditions:"
+msgstr "Condizioni:"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:73
+#: templates/metabox/wcpmr-template-restriction.php:38
+msgid "+ Add new condition"
+msgstr "+ Aggiungi una condizione"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:78
+msgid "Message:"
+msgstr "Messaggio:"
+
+#: templates/metabox/wcpmr-template-restriction-premium.php:81
+msgid "Enter here the reason why the payment gateway is disabled"
+msgstr "Inserisci qui il motivo per cui il metodo di pagamento è disabilitato"
+
+#. Plugin Name of the plugin/theme
+msgid "YITH Payment Method Restrictions for WooCommerce Premium"
+msgstr "YITH Payment Method Restrictions for WooCommerce Premium"
+
+#. Plugin URI of the plugin/theme
+msgid ""
+"https://yithemes.com/themes/plugins/yith-payment-method-restrictions-for-"
+"woocommerce/"
+msgstr ""
+"https://yithemes.com/themes/plugins/yith-payment-method-restrictions-for-"
+"woocommerce/"
+
+#. Description of the plugin/theme
+msgid ""
+"<code><strong>YITH Payment Method Restrictions for WooCommerce Premium</"
+"strong></code> allows you to hide specific payment methods based on the "
+"products in cart or on user's origin.  <a href=\"https://yithemes.com/\" "
+"target=\"_blank\">Get more plugins for your e-commerce on <strong>YITH</"
+"strong></a>."
+msgstr ""
+"<code><strong>YITH Payment Method Restrictions for WooCommerce Premium</"
+"strong></code> ti permette di nascondere determinati metodi di pagamento in "
+"base ai prodotti presenti nel carrello o al paese dell'utente. <a href="
+"\"https://yithemes.com/\" target=\"_blank\">Ottieni altri plugin per il tuo "
+"e-commerce su <strong>YITH</strong></a>."
+
+#. Author of the plugin/theme
+msgid "YITH"
+msgstr "YITH "
+
+#. Author URI of the plugin/theme
+msgid "http://yithemes.com/"
+msgstr "http://yithemes.com/"
+
+#~ msgctxt "plugin name in admin page title"
+#~ msgid "Payment Method Restrictions"
+#~ msgstr "Payment Method Restrictions"
+
+#~ msgctxt "plugin name in admin WP menu"
+#~ msgid "Payment Method Restrictions"
+#~ msgstr "Payment Method Restrictions"
