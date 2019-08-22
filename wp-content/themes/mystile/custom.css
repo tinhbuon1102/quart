@@ -1762,7 +1762,7 @@ margin-right: 2.35765%;
   width: 31.46157%;
 }
 ul.products li.product.first {
-    clear: none;
+   /* clear: none;*/
 }
 ul.products li.product:nth-child(2n) {
 margin-right: 2.35765%;

@@ -1171,7 +1171,7 @@ add_filter( 'woocommerce_payment_gateways', 'elsey_woocommerce_payment_gateways'
 function elsey_woocommerce_payment_gateways($load_gateways) 
 {
 	if (is_admin()) return $load_gateways;
-	
+
 	$is_only_hatcap = true;
 	foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
 		$_product = $values['data'];
@@ -1204,4 +1204,20 @@ function elsey_woocommerce_payment_gateways($load_gateways)
 
 	$load_gateways = array_values($load_gateways);
 	return $load_gateways;
+}
+
+add_filter( 'posts_request', 'else_add_schedule_for_admin' );
+function else_add_schedule_for_admin( $input ) {
+	$user = wp_get_current_user();
+	$allowed_roles = array('administrator', 'shop_manager');
+	$is_admin_page = is_admin() ;
+	// Check if on frontend and main query is modified
+	if((strpos($_SERVER['REDIRECT_URL'], '/shop') !== false || $_REQUEST['action'] == 'woof_draw_products') && !$_GET['orderby'] && !$_GET['test_order']){
+
+		if (strpos($input, "post_type = 'product'") !== false)
+		{
+			$input = str_replace("wp_posts.post_status = 'private'", "wp_posts.post_status = 'publish'", $input);
+		}
+	}
+	return $input;
 }
