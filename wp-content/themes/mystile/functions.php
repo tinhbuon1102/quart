@@ -1170,6 +1170,8 @@ add_filter( 'views_edit-shop_order', 'ch_filter_edit_shop_order_views_mine' );
 add_filter( 'woocommerce_payment_gateways', 'elsey_woocommerce_payment_gateways', 1000, 1 );
 function elsey_woocommerce_payment_gateways($load_gateways) 
 {
+	if (is_admin()) return $load_gateways;
+	
 	$is_only_hatcap = true;
 	foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
 		$_product = $values['data'];
