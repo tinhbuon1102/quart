@@ -1165,3 +1165,41 @@ function ch_filter_edit_shop_order_views_mine( $views ) {
     return $views; 
 }
 add_filter( 'views_edit-shop_order', 'ch_filter_edit_shop_order_views_mine' ); 
+
+
+add_filter( 'woocommerce_payment_gateways', 'elsey_woocommerce_payment_gateways', 1000, 1 );
+function elsey_woocommerce_payment_gateways($load_gateways) 
+{
+	$is_only_hatcap = true;
+	foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
+		$_product = $values['data'];
+		$term_list = wp_get_post_terms($_product->id,'product_cat',array('fields'=>'all'));
+		foreach ($term_list as $key_term => $term) {
+
+			if ($term->slug !== 'hatcap')
+			{
+				$is_only_hatcap = false;
+				break;
+			}
+		}
+		if ($is_only_hatcap === false)
+		{
+			break;
+		}
+
+	}
+	if (!$is_only_hatcap)
+	{
+		foreach ($load_gateways as $key => $load_gateway) {
+			if ($load_gateway == 'WC_Gateway_COD')
+			{
+				unset($load_gateways[$key]);
+				break;
+			}
+
+		}
+	}
+
+	$load_gateways = array_values($load_gateways);
+	return $load_gateways;
+}
