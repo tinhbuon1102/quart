@@ -2813,6 +2813,14 @@ body.single-product.two-col-left {
     background: none;
     color: #000;
 }
+p.notice_info span {
+    display: inline;
+    color: #000;
+    background-color: #ffeb3b;
+    line-height: 1.35;
+    font-size: 13px;
+    font-weight: 600;
+}
 @media only screen and (min-width: 768px) {
 	div#thumbs .thum-image {
     cursor: pointer;

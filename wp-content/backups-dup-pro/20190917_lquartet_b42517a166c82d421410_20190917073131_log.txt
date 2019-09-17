@@ -1,0 +1,69 @@
+********************************************************************************
+DUPLICATOR PRO PACKAGE-LOG: 2019-09-17 07:31:38
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	3.8.4.1
+WORDPRESS:	4.9.8
+PHP INFO:	7.2.17 | SAPI: cgi-fcgi
+SERVER:		Apache 
+ARCHITECTURE:	64-bit 
+CLIENT KICKOFF: on 
+PHP TIME LIMIT: [7200] not allowed 
+PHP MAX MEMORY: 4294967296 (256M default) 
+RUN TYPE:	Manual
+MEMORY STACK:	2MB
+ARCHIVE ENGINE: Shell Zip
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   MYSQLDUMP (query limit - 131072)
+MYSQLDUMP:    Is Supported
+MYSQLTIMEOUT: 5000
+SQL CREATED: 20190917_lquartet_b42517a166c82d421410_20190917073131_database.sql
+SQL FILE SIZE: 15.39MB
+SQL FILE TIME: 2019-09-17 07:31:38
+SQL RUNTIME: 0.613 sec.
+MEMORY STACK: 2MB
+
+********************************************************************************
+ARCHIVE  Type=ZIP Mode=Shell
+********************************************************************************
+ARCHIVE DIR:  /home/lquartet/lquartet.xsrv.jp/public_html
+ARCHIVE FILE: 20190917_lquartet_b42517a166c82d421410_20190917073131_archive.zip
+FILTERS: *ON*
+DIRS:  /home/lquartet/lquartet.xsrv.jp/public_html/wp-content/cache
+	/home/lquartet/lquartet.xsrv.jp/public_html/.git
+EXTS:  avi;mov;mp4;mpeg;mpg;swf;wmv;aac;m3u;mp3;mpa;wav;wma;zip;rar;tar;gz;bz2;7z;git;
+FILES:  not set
+----------------------------------------
+COMPRESSING
+SIZE:	1.04GB
+STATS:	Dirs 2,201 | Files 31,461 | Total 33,662
+COMPRESSED SIZE: 862.34MB
+ARCHIVE RUNTIME: 75.659 sec.
+MEMORY STACK: 10MB
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/lquartet.xsrv.jp/public_html/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/lquartet.xsrv.jp/public_html/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+[PHP ERR][WARN] MSG:mkdir(): File exists [CODE:2|FILE:/home/lquartet/lquartet.xsrv.jp/public_html/wp-content/plugins/duplicator-pro/classes/class.io.php|LINE:319]
+
+********************************************************************************
+STORAGE:
+********************************************************************************
+LOCAL: Default, /home/lquartet/lquartet.xsrv.jp/public_html/wp-content/backups-dup-pro
+
+********************************************************************************
+INTEGRITY CHECKS:
+********************************************************************************
+SQL FILE: 15.39MB
+INSTALLER FILE: 59.09KB
+ARCHIVE FILE: 865.46MB 
+EXPECTED FILE/DIRECTORY COUNT: 33,662
+ACTUAL FILE/DIRECTORY COUNT: 33,682
+
+********************************************************************************
+RECORD ID:[10]
+TOTAL PROCESS RUNTIME: 119.980 sec.
+PEAK PHP MEMORY USED: 4MB
+DONE PROCESSING => 20190917_lquartet 2019-09-17 07:33:37
+

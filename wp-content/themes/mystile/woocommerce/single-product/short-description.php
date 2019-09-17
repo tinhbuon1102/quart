@@ -133,6 +133,6 @@ echo do_shortcode($tabs_shortcode);
 <?php
 if (is_accessory_product($post->ID))
 {
-    echo '<p class="notice_info">受注商品は通常商品と一緒にカートに入れることはできません。</p>';
+    echo '<p class="notice_info"><span>受注商品は通常商品と一緒にカートに入れることはできません。</span></p>';
 }
 ?>
