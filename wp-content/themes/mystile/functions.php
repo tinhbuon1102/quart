@@ -1221,3 +1221,57 @@ function else_add_schedule_for_admin( $input ) {
 	}
 	return $input;
 }
+
+function mystile_get_taxonomy_hierarchy( $taxonomy, $parent = 0, $slug = '', &$children = array() ) {
+    $taxonomy = is_array( $taxonomy ) ? array_shift( $taxonomy ) : $taxonomy;
+    if ($slug)
+    {
+        $terms = get_term_by('slug', $slug, $taxonomy);
+        if (!empty($terms))
+        {
+            $terms = array($terms);
+        }
+    }
+    else {
+        $terms = get_terms( $taxonomy, array( 'parent' => $parent ) );
+    }
+    $children = !empty($children) ? $children : array();
+    foreach ( $terms as $term ){
+        mystile_get_taxonomy_hierarchy( $taxonomy, $term->term_id, '', $children );
+        $children[ $term->term_id ] = $term;
+    }
+    return $children;
+}
+
+
+function is_accessory_product($product_id)
+{
+    $accessories = mystile_get_taxonomy_hierarchy('product_cat', 0, 'accessory');
+    $product_cats = get_the_terms( $product_id, 'product_cat' );
+    foreach ($product_cats as $product_cat) {
+        if (in_array($product_cat->term_id, array_keys($accessories)))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+add_filter('woocommerce_add_to_cart_validation', 'elsey_validate_specific_product_in_cart', 1, 5);
+function elsey_validate_specific_product_in_cart ( $valid, $product_id, $quantity = 0, $variation_id = 0, $variations = null )
+{
+    foreach ( WC()->cart->get_cart() as $cart_item )
+    {
+        if ( is_accessory_product($cart_item['product_id']) &&  !is_accessory_product($product_id))
+        {
+            wc_add_notice(__('受注商品は通常商品と一緒にカートに入れることはできません。別々にご注文をお願い致します。', 'elsey'), 'error');
+            return false;
+        }
+        elseif ( !is_accessory_product($cart_item['product_id']) &&  is_accessory_product($product_id))
+        {
+            wc_add_notice(__('受注商品は通常商品と一緒にカートに入れることはできません。別々にご注文をお願い致します。', 'elsey'), 'error');
+            return false;
+        }
+    }
+    return $valid;
+}

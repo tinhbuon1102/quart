@@ -11,7 +11,9 @@ wp-content/wp-cache-config.php
 wp-content/plugins/hello.php
 wp-snapshots
 wp-content/plugins/bwp-minify/cache
+wp-content/wp-rocket-config
 
+/.idea
 /.htaccess
 /license.txt
 /readme.html
