@@ -23,7 +23,7 @@ global $woo_options, $woocommerce;
 <link rel="stylesheet" type="text/css" href="<?php bloginfo('stylesheet_url'); echo '?' . filemtime( get_stylesheet_directory() . '/style.css'); ?>" media="screen" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/Fontsaddict.css" media="screen" />
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
-<link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700|Roboto:300,400|EB+Garamond' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Oswald:400,300,700|Roboto:300,400|EB+Garamond' rel='stylesheet' type='text/css'>
 <link href="https://fonts.googleapis.com/css?family=Droid+Serif" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/icons.css">
 <?php

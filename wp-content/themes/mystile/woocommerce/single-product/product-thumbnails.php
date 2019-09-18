@@ -47,10 +47,12 @@ if ( $attachment_ids ) {
 			?>
             
             
-             <?php if($zoom_img_caption['caption']=="zoom"){ ?>
+             <?php if($zoom_img_caption['caption']=="zoom"){
+                 $img_zoom= str_replace("https://l-quartet.com", "https://l-quartet.com/wp", $zoom_img_caption['description']);
+                 ?>
             
             <a style="float:right; padding:5px;" href="<?php echo $image_link ?>" title="<?php echo $image_title ?>" rel="useZoom: 'pdp-zoom'" class="pdp-image-alt pdp-image-alt-hide ">
-							<img width="75px" height="75px" src="<?php echo $zoom_img_caption['description']; ?>" rel="<?php echo $image_link ?>" alt="<?php echo $image_title ?>"/>
+							<img width="75px" height="75px" src="<?php echo $img_zoom; ?>" rel="<?php echo $image_link ?>" alt="<?php echo $image_title ?>"/>
 						</a>
                         <a style="float:right; padding:5px;" href="<?php echo $image_link ?>" title="<?php echo $image_title ?>" rel="useZoom: 'pdp-zoom'" class="pdp-image-alt pdp-image-alt-hide "></a>
                         

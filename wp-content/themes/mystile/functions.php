@@ -1275,3 +1275,31 @@ function elsey_validate_specific_product_in_cart ( $valid, $product_id, $quantit
     }
     return $valid;
 }
+
+
+//Change Tax rate
+function ch_wc_diff_rate_for_time($tax_class, $product) {
+    $schedule_specific = '2019-09-16 00:00:00';
+    $schedule_all = '2019-09-24 00:00:00';
+    $specific_category_slug='accessory';
+    if (current_time('timestamp') >= strtotime($schedule_specific) && current_time('timestamp') < strtotime($schedule_all)) {
+        $product_cat = get_term_by('slug', $specific_category_slug, 'product_cat');
+        $product_cat_id = $product_cat->term_id;
+        $product_cats_ids = wc_get_product_term_ids($product->id, 'product_cat');
+        if (in_array($product_cat_id, $product_cats_ids)) {//Apply for $specific_category_slug
+            $tax_class = 'Reduced Rate';
+        }
+    } elseif (current_time('timestamp') >= strtotime($schedule_all)) {
+        $product_cat = get_term_by('slug', $specific_category_slug, 'product_cat');
+        $product_cat_id = $product_cat->term_id;
+        $product_cats_ids = wc_get_product_term_ids($product->id, 'product_cat');
+        if (!in_array($product_cat_id, $product_cats_ids)) {//Apply for All products except $specific_category_slug
+            $tax_class = 'Reduced Rate';
+        }
+    }
+    return $tax_class;
+}
+
+add_filter('woocommerce_product_tax_class', 'ch_wc_diff_rate_for_time', 1, 2);
+add_filter('woocommerce_product_variation_get_tax_class', 'ch_wc_diff_rate_for_time', 1, 2);
+//End

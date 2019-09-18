@@ -20,7 +20,7 @@ global $post, $woo_options, $woocommerce;
 	//wp_head();
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/icons.css">
-<link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700|Roboto:300,400|EB+Garamond' rel='stylesheet' type='text/css'>
+<link href='//fonts.googleapis.com/css?family=Oswald:400,300,700|Roboto:300,400|EB+Garamond' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="<?php echo get_template_directory_uri(); ?>/css/lookbook.css">
 </head>
 <body id="looksingle" data-tmpdir="<?php echo esc_url(get_template_directory_uri()); ?>/" <?php body_class(); ?>>
