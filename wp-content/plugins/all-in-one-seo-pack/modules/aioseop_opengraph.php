@@ -2,12 +2,34 @@
 /**
  * The Opengraph class.
  *
- * @package All-in-One-SEO-Pack
+ * @package All_in_One_SEO_Pack
  * @version 2.3.16
  */
+
 if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
+
+	/**
+	 * Class All_in_One_SEO_Pack_Opengraph
+	 *
+	 * @since ?
+	 */
 	class All_in_One_SEO_Pack_Opengraph extends All_in_One_SEO_Pack_Module {
+		/**
+		 * Facebook Object Types
+		 *
+		 * @since ?
+		 *
+		 * @var array
+		 */
 		var $fb_object_types;
+
+		/**
+		 * Type
+		 *
+		 * @since ?
+		 *
+		 * @var string $type
+		 */
 		var $type;
 
 		/**
@@ -19,9 +41,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'og_admin_enqueue_scripts' ) );
 
-			$this->name            = __( 'Social Meta', 'all-in-one-seo-pack' );    // Human-readable name of the plugin
-			$this->prefix          = 'aiosp_opengraph_';                        // option prefix
-			$this->file            = __FILE__;                                    // the current file
+			$this->name            = __( 'Social Meta', 'all-in-one-seo-pack' ); // Human-readable name of the plugin.
+			$this->prefix          = 'aiosp_opengraph_';                         // option prefix.
+			$this->file            = __FILE__;                                   // the current file.
 			$this->fb_object_types = array(
 				'Activities'                 => array(
 					'activity' => __( 'Activity', 'all-in-one-seo-pack' ),
@@ -76,108 +98,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				),
 				'Websites'                   => array(
 					'article' => __( 'Article', 'all-in-one-seo-pack' ),
-					'blog'    => __( 'Blog', 'all-in-one-seo-pack' ),
 					'website' => __( 'Website', 'all-in-one-seo-pack' ),
 				),
 			);
 			parent::__construct();
-
-			$this->help_text = array(
-				'setmeta'                => __( 'Checking this box will use the Home Title and Home Description set in All in One SEO Pack, General Settings as the Open Graph title and description for your home page.', 'all-in-one-seo-pack' ),
-				'key'                    => __( 'Enter your Facebook Admin ID here. You can enter multiple IDs separated by a comma. You can look up your Facebook ID using this tool http://findmyfbid.com/', 'all-in-one-seo-pack' ),
-				'appid'                  => __( 'Enter your Facebook App ID here. Information about how to get your Facebook App ID can be found at https://developers.facebook.com/docs/apps/register', 'all-in-one-seo-pack' ),
-				'title_shortcodes'       => __( 'Run shortcodes that appear in social title meta tags.', 'all-in-one-seo-pack' ),
-				'description_shortcodes' => __( 'Run shortcodes that appear in social description meta tags.', 'all-in-one-seo-pack' ),
-				'sitename'               => __( 'The Site Name is the name that is used to identify your website.', 'all-in-one-seo-pack' ),
-				'hometitle'              => __( 'The Home Title is the Open Graph title for your home page.', 'all-in-one-seo-pack' ),
-				'description'            => __( 'The Home Description is the Open Graph description for your home page.', 'all-in-one-seo-pack' ),
-				'homeimage'              => __( 'The Home Image is the Open Graph image for your home page.', 'all-in-one-seo-pack' ),
-				'generate_descriptions'  => __( 'This option will auto generate your Open Graph descriptions from your post content instead of your post excerpt. WooCommerce users should read the documentation regarding this setting.', 'all-in-one-seo-pack' ),
-				'defimg'                 => __( 'This option lets you choose which image will be displayed by default for the Open Graph image. You may override this on individual posts.', 'all-in-one-seo-pack' ),
-				'fallback'               => __( 'This option lets you fall back to the default image if no image could be found above.', 'all-in-one-seo-pack' ),
-				'dimg'                   => __( 'This option sets a default image that can be used for the Open Graph image. You can upload an image, select an image from your Media Library or paste the URL of an image here.', 'all-in-one-seo-pack' ),
-				'dimgwidth'              => __( 'This option lets you set a default width for your images, where unspecified.', 'all-in-one-seo-pack' ),
-				'dimgheight'             => __( 'This option lets you set a default height for your images, where unspecified.', 'all-in-one-seo-pack' ),
-				'meta_key'               => __( 'Enter the name of a custom field (or multiple field names separated by commas) to use that field to specify the Open Graph image on Pages or Posts.', 'all-in-one-seo-pack' ),
-				'image'                  => __( 'This option lets you select the Open Graph image that will be used for this Page or Post, overriding the default settings.', 'all-in-one-seo-pack' ),
-				'customimg'              => __( 'This option lets you upload an image to use as the Open Graph image for this Page or Post.', 'all-in-one-seo-pack' ),
-				'imagewidth'             => __( 'Enter the width for your Open Graph image in pixels (i.e. 600).', 'all-in-one-seo-pack' ),
-				'imageheight'            => __( 'Enter the height for your Open Graph image in pixels (i.e. 600).', 'all-in-one-seo-pack' ),
-				'video'                  => __( 'This option lets you specify a link to the Open Graph video used on this Page or Post.', 'all-in-one-seo-pack' ),
-				'videowidth'             => __( 'Enter the width for your Open Graph video in pixels (i.e. 600).', 'all-in-one-seo-pack' ),
-				'videoheight'            => __( 'Enter the height for your Open Graph video in pixels (i.e. 600).', 'all-in-one-seo-pack' ),
-				'defcard'                => __( 'Select the default type of Twitter Card to display.', 'all-in-one-seo-pack' ),
-				'setcard'                => __( 'Select the Twitter Card type to use for this Page or Post, overriding the default setting.', 'all-in-one-seo-pack' ),
-				'twitter_site'           => __( 'Enter the Twitter username associated with your website here.', 'all-in-one-seo-pack' ),
-				'twitter_creator'        => __( 'Allows your authors to be identified by their Twitter usernames as content creators on the Twitter cards for their posts.', 'all-in-one-seo-pack' ),
-				'twitter_domain'         => __( 'Enter the name of your website here.', 'all-in-one-seo-pack' ),
-				'customimg_twitter'      => __( 'This option lets you upload an image to use as the Twitter image for this Page or Post.', 'all-in-one-seo-pack' ),
-				'gen_tags'               => __( 'Automatically generate article tags for Facebook type article when not provided.', 'all-in-one-seo-pack' ),
-				'gen_keywords'           => __( 'Use keywords in generated article tags.', 'all-in-one-seo-pack' ),
-				'gen_categories'         => __( 'Use categories in generated article tags.', 'all-in-one-seo-pack' ),
-				'gen_post_tags'          => __( 'Use post tags in generated article tags.', 'all-in-one-seo-pack' ),
-				'types'                  => __( 'Select which Post Types you want to use All in One SEO Pack to set Open Graph meta values for.', 'all-in-one-seo-pack' ),
-				'title'                  => __( 'This is the Open Graph title of this Page or Post.', 'all-in-one-seo-pack' ),
-				'desc'                   => __( 'This is the Open Graph description of this Page or Post.', 'all-in-one-seo-pack' ),
-				'category'               => __( 'Select the Open Graph type that best describes the content of this Page or Post.', 'all-in-one-seo-pack' ),
-				'facebook_debug'         => __( 'Press this button to have Facebook re-fetch and debug this page.', 'all-in-one-seo-pack' ),
-				'section'                => __( 'This Open Graph meta allows you to add a general section name that best describes this content.', 'all-in-one-seo-pack' ),
-				'tag'                    => __( 'This Open Graph meta allows you to add a list of keywords that best describe this content.', 'all-in-one-seo-pack' ),
-				'facebook_publisher'     => __( 'Link articles to the Facebook page associated with your website.', 'all-in-one-seo-pack' ),
-				'facebook_author'        => __( 'Allows your authors to be identified by their Facebook pages as content authors on the Opengraph meta for their articles.', 'all-in-one-seo-pack' ),
-				'person_or_org'          => __( 'Are the social profile links for your website for a person or an organization?', 'all-in-one-seo-pack' ),
-				'profile_links'          => __( "Add URLs for your website's social profiles here (Facebook, Twitter, Google+, Instagram, LinkedIn), one per line.", 'all-in-one-seo-pack' ),
-				'social_name'            => __( 'Add the name of the person or organization who owns these profiles.', 'all-in-one-seo-pack' ),
-			);
-
-			$this->help_anchors = array(
-				'title_shortcodes'       => '#run-shortcodes-in-title',
-				'description_shortcodes' => '#run-shortcodes-in-description',
-				'generate_descriptions'  => '#auto-generate-og-descriptions',
-				'setmeta'                => '#use-aioseo-title-and-description',
-				'sitename'               => '#site-name',
-				'hometitle'              => '#home-title-and-description',
-				'description'            => '#home-title-and-description',
-				'homeimage'              => '#home-image',
-				'defimg'                 => '#select-og-image-source',
-				'fallback'               => '#use-default-if-no-image-found',
-				'dimg'                   => '#default-og-image',
-				'dimgwidth'              => '#default-image-width',
-				'dimgheight'             => '#default-image-height',
-				'meta_key'               => '#use-custom-field-for-image',
-				'profile_links'          => '#social-profile-links',
-				'person_or_org'          => '#social-profile-links',
-				'social_name'            => '#social-profile-links',
-				'key'                    => '#facebook-admin-id',
-				'appid'                  => '#facebook-app-id',
-				'gen_tags'               => '#automatically-generate-article-tags',
-				'gen_keywords'           => '#use-keywords-in-article-tags',
-				'gen_categories'         => '#use-categories-in-article-tags',
-				'gen_post_tags'          => '#use-post-tags-in-article-tags',
-				'facebook_publisher'     => '#show-facebook-publisher-on-articles',
-				'facebook_author'        => '#show-facebook-author-on-articles',
-				'types'                  => '#enable-facebook-meta-for',
-				'defcard'                => '#default-twitter-card',
-				'twitter_site'           => '#twitter-site',
-				'twitter_creator'        => '#show-twitter-author',
-				'twitter_domain'         => '#twitter-domain',
-				'scan_header'            => '#scan-social-meta',
-				'title'                  => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#title',
-				'desc'                   => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#description',
-				'image'                  => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#image',
-				'customimg'              => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-image',
-				'imagewidth'             => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-image-width-height',
-				'imageheight'            => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-image-width-height',
-				'video'                  => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-video',
-				'videowidth'             => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-video-width-height',
-				'videoheight'            => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#specify-video-width-height',
-				'category'               => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#facebook-object-type',
-				'facebook_debug'         => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#facebook-debug',
-				'section'                => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#article-section',
-				'tag'                    => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#article-tags',
-				'setcard'                => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#twitter-card-type',
-				'customimg_twitter'      => 'https://semperplugins.com/documentation/social-meta-settings-individual-pagepost-settings/#custom-twitter-image',
-			);
 
 			if ( is_admin() ) {
 				add_action( 'admin_init', array( $this, 'admin_init' ), 5 );
@@ -185,21 +109,22 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				add_action( 'wp', array( $this, 'type_setup' ) );
 			}
 
-			if ( ! is_admin() || defined( 'DOING_AJAX' ) ) {
+			if ( ! is_admin() || wp_doing_ajax() || defined( 'AIOSEOP_UNIT_TESTING' ) ) {
 				$this->do_opengraph();
 			}
 			// Set variables after WordPress load.
 			add_action( 'init', array( &$this, 'init' ), 999999 );
-			add_filter( 'jetpack_enable_open_graph', '__return_false' ); // Avoid having duplicate meta tags
+			// Avoid having duplicate meta tags.
+			add_filter( 'jetpack_enable_open_graph', '__return_false' );
 			// Force refresh of Facebook cache.
 			add_action( 'post_updated', array( &$this, 'force_fb_refresh_update' ), 10, 3 );
 			add_action( 'transition_post_status', array( &$this, 'force_fb_refresh_transition' ), 10, 3 );
 			add_action( 'edited_term', array( &$this, 'save_tax_data' ), 10, 3 );
-			// Adds special filters
+			// Adds special filters.
 			add_filter( 'aioseop_opengraph_placeholder', array( &$this, 'filter_placeholder' ) );
 			add_action( 'aiosp_activate_opengraph', array( $this, 'activate_module' ) );
 			add_action( 'created_term', array( $this, 'created_term' ), 10, 3 );
-			// Call to init to generate menus
+			// Call to init to generate menus.
 			$this->init();
 		}
 
@@ -211,9 +136,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $taxonomy Taxonomy slug.
 		 */
 		function created_term( $term_id, $tt_id, $taxonomy_name ) {
-			$k = 'settings';
-			$prefix  = $this->get_prefix( $k );
-			$tax = get_taxonomy( $taxonomy_name );
+			$k      = 'settings';
+			$prefix = $this->get_prefix( $k );
+			$tax    = get_taxonomy( $taxonomy_name );
 			$this->set_object_type_for_taxonomy( $prefix, $k, $taxonomy_name, $tax, false, array( $term_id ) );
 		}
 
@@ -230,17 +155,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		private function set_object_type_for_taxonomy( $prefix, $k, $taxonomy_name, $tax, $bail_if_no_terms = false, $terms = null ) {
 			$object_type = null;
 			if ( ! $terms ) {
-				$terms = get_terms( $taxonomy_name, array(
-					'meta_query' => array(
-						array(
-							'key' => '_' . $prefix . $k,
-							'compare' => 'NOT EXISTS',
-						)
-					),
-					'number' => PHP_INT_MAX,
-					'fields' => 'ids',
-					'hide_empty' => false,
-				) );
+				$terms = get_terms(
+					$taxonomy_name,
+					array(
+						'meta_query' => array(
+							array(
+								'key'     => '_' . $prefix . $k,
+								'compare' => 'NOT EXISTS',
+							),
+						),
+						'number'     => PHP_INT_MAX,
+						'fields'     => 'ids',
+						'hide_empty' => false,
+					)
+				);
 			}
 
 			if ( empty( $terms ) && $bail_if_no_terms ) {
@@ -251,17 +179,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$object_type = 'article';
 			} else {
 				// custom taxonomy. Let's get a post against this to determine its post type.
-				$posts = get_posts( array(
-					'numberposts' => 1,
-					'post_type' => 'any',
-					'tax_query' => array(
-						array(
-							'taxonomy' => $taxonomy_name,
-							'field' => 'term_id',
-							'terms' => $terms
+				$posts = get_posts(
+					array(
+						'numberposts' => 1,
+						'post_type'   => 'any',
+						'tax_query'   => array(
+							array(
+								'taxonomy' => $taxonomy_name,
+								'field'    => 'term_id',
+								'terms'    => $terms,
+							),
 						),
-					),
-				) );
+					)
+				);
 				if ( $posts ) {
 					global $aioseop_options;
 					$post_type = $posts[0]->post_type;
@@ -278,20 +208,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			if ( $object_type ) {
-				$opts[ $prefix . $k .'_category' ] = $object_type;
+				$opts[ $prefix . $k . '_category' ] = $object_type;
 				foreach ( $terms as $term_id ) {
 					update_term_meta( $term_id, '_' . $prefix . $k, $opts );
 				}
 			}
 
 			return true;
-		 }
+		}
 
 		/**
 		 * Called when this module is activated.
 		 */
 		public function activate_module() {
-			if ( $this->locations !== null ) {
+			if ( null !== $this->locations ) {
 				foreach ( $this->locations as $k => $v ) {
 					if ( ! isset( $v['type'] ) || 'metabox' !== $v['type'] ) {
 						continue;
@@ -306,15 +236,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @param string $k The key against which the options will be determined/set.
 		 */
 		private function set_virgin_tax_terms( $k ) {
-			$prefix  = $this->get_prefix( $k );
-			$opts    = $this->default_options( $k );
+			$prefix     = $this->get_prefix( $k );
+			$opts       = $this->default_options( $k );
 			$taxonomies = get_taxonomies( array( 'public' => true ), 'object' );
 			if ( ! $taxonomies ) {
 				return;
 			}
 			foreach ( $taxonomies as $name => $tax ) {
 				$this->set_object_type_for_taxonomy( $prefix, $k, $name, $tax, true, null );
-
 
 			}
 		}
@@ -325,8 +254,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @since 2.4.14
 		 */
 		public function init() {
-			$count_desc = __( ' characters. Open Graph allows up to a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
-			// Create default options
+			$count_desc = __( ' characters. We recommend a maximum of %1$s chars for the %2$s.', 'all-in-one-seo-pack' );
+			// Create default options.
 			$this->default_options = array(
 				'scan_header'            => array(
 					'name' => __( 'Scan Header', 'all-in-one-seo-pack' ),
@@ -359,10 +288,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'text',
 				),
 				'hometitle'              => array(
-					'name'     => __( 'Home Title', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'textarea',
-					'condshow' => array(
+					'name'       => __( 'Home Title', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'text',
+					'count'      => true,
+					'count_desc' => $count_desc,
+					'size'       => 95,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
@@ -371,10 +303,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					),
 				),
 				'description'            => array(
-					'name'     => __( 'Home Description', 'all-in-one-seo-pack' ),
-					'default'  => '',
-					'type'     => 'textarea',
-					'condshow' => array(
+					'name'       => __( 'Home Description', 'all-in-one-seo-pack' ),
+					'default'    => '',
+					'type'       => 'textarea',
+					'count'      => true,
+					'count_desc' => $count_desc,
+					'size'       => 200,
+					'condshow'   => array(
 						'aiosp_opengraph_setmeta' => array(
 							'lhs' => 'aiosp_opengraph_setmeta',
 							'op'  => '!=',
@@ -394,13 +329,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'            => __( 'Select OG:Image Source', 'all-in-one-seo-pack' ),
 					'type'            => 'select',
 					'initial_options' => array(
-						''         => __( 'Default Image' ),
-						'featured' => __( 'Featured Image' ),
-						'attach'   => __( 'First Attached Image' ),
-						'content'  => __( 'First Image In Content' ),
-						'custom'   => __( 'Image From Custom Field' ),
-						'author'   => __( 'Post Author Image' ),
-						'auto'     => __( 'First Available Image' ),
+						''         => __( 'Default Image', 'all-in-one-seo-pack' ),
+						'featured' => __( 'Featured Image', 'all-in-one-seo-pack' ),
+						'attach'   => __( 'First Attached Image', 'all-in-one-seo-pack' ),
+						'content'  => __( 'First Image In Content', 'all-in-one-seo-pack' ),
+						'custom'   => __( 'Image From Custom Field', 'all-in-one-seo-pack' ),
+						'author'   => __( 'Post Author Image', 'all-in-one-seo-pack' ),
+						'auto'     => __( 'First Available Image', 'all-in-one-seo-pack' ),
 					),
 				),
 				'fallback'               => array(
@@ -485,9 +420,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'summary_large_image' => __( 'Summary Large Image', 'all-in-one-seo-pack' ),
 
 						/*
-						 REMOVING THIS TWITTER CARD TYPE FROM SOCIAL META MODULE
-						'photo' => __( 'Photo', 'all-in-one-seo-pack' )
-						*/
+						 * REMOVING THIS TWITTER CARD TYPE FROM SOCIAL META MODULE
+						 * 'photo' => __( 'Photo', 'all-in-one-seo-pack' )
+						 */
 					),
 				),
 				'setcard'                => array(
@@ -498,9 +433,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'summary'             => __( 'Summary', 'all-in-one-seo-pack' ),
 
 						/*
-						 REMOVING THIS TWITTER CARD TYPE FROM SOCIAL META MODULE
-						'photo' => __( 'Photo', 'all-in-one-seo-pack' )
-						*/
+						 * REMOVING THIS TWITTER CARD TYPE FROM SOCIAL META MODULE
+						 * 'photo' => __( 'Photo', 'all-in-one-seo-pack' )
+						 */
 					),
 				),
 				'twitter_site'           => array(
@@ -541,7 +476,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'types'                  => array(
 					'name'            => __( 'Enable Facebook Meta for Post Types', 'all-in-one-seo-pack' ),
 					'type'            => 'multicheckbox',
-					'default'         => array( 'post' => 'post', 'page' => 'page' ),
+					'default'         => array(
+						'post' => 'post',
+						'page' => 'page',
+					),
 					'initial_options' => $this->get_post_type_titles( array( '_builtin' => false ) ),
 				),
 				'title'                  => array(
@@ -556,7 +494,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'name'       => __( 'Description', 'all-in-one-seo-pack' ),
 					'default'    => '',
 					'type'       => 'textarea',
-					'cols'       => 250,
+					'cols'       => 50,
 					'rows'       => 4,
 					'count'      => 1,
 					'count_desc' => $count_desc,
@@ -573,7 +511,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'type'    => 'html',
 					'save'    => false,
 					'default' => '<a 
-						name="aioseop_opengraph_settings_facebook_debug"
 						id="aioseop_opengraph_settings_facebook_debug"
 						class="button-primary"
 						href=""
@@ -599,27 +536,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'facebook_author'        => array(
 					'name' => __( 'Show Facebook Author on Articles', 'all-in-one-seo-pack' ),
 				),
-				'profile_links'          => array(
-					'name' => __( 'Social Profile Links', 'all-in-one-seo-pack' ),
-					'type' => 'textarea',
-					'cols' => 60,
-					'rows' => 5,
-				),
-				'person_or_org'          => array(
-					'name'            => __( 'Person or Organization?', 'all-in-one-seo-pack' ),
-					'type'            => 'radio',
-					'initial_options' => array(
-						'person' => __( 'Person', 'all-in-one-seo-pack' ),
-						'org'    => __( 'Organization', 'all-in-one-seo-pack' ),
-					),
-				),
-				'social_name'            => array(
-					'name'    => __( 'Associated Name', 'all-in-one-seo-pack' ),
-					'type'    => 'text',
-					'default' => '',
-				),
 			);
-			// load initial options / set defaults
+			// load initial options / set defaults.
 			$this->update_options();
 			$display = array();
 			if ( isset( $this->options['aiosp_opengraph_types'] ) && ! empty( $this->options['aiosp_opengraph_types'] ) ) {
@@ -649,9 +567,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 						'dimgheight',
 						'meta_key',
 						'defcard',
-						'profile_links',
-						'person_or_org',
-						'social_name',
 						'twitter_site',
 						'twitter_creator',
 						'twitter_domain',
@@ -700,11 +615,6 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/#select-og-image-source',
 					'options'   => array( 'defimg', 'fallback', 'dimg', 'dimgwidth', 'dimgheight', 'meta_key' ),
 				),
-				'links'     => array(
-					'name'      => __( 'Social Profile Links', 'all-in-one-seo-pack' ),
-					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/#social-profile-links',
-					'options'   => array( 'profile_links', 'person_or_org', 'social_name' ),
-				),
 				'facebook'  => array(
 					'name'      => __( 'Facebook Settings', 'all-in-one-seo-pack' ),
 					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/#facebook-settings',
@@ -728,7 +638,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				'default'   => array(
 					'name'      => __( 'Advanced Settings', 'all-in-one-seo-pack' ),
 					'help_link' => 'https://semperplugins.com/documentation/social-meta-module/',
-					'options'   => array(), // this is set below, to the remaining options -- pdb
+					// this is set below, to the remaining options -- pdb.
+					'options'   => array(),
 				),
 				'scan_meta' => array(
 					'name'      => __( 'Scan Social Meta', 'all-in-one-seo-pack' ),
@@ -770,7 +681,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( $this->option_isset( 'types' ) && is_array( $this->options['aiosp_opengraph_types'] ) && in_array( $current_post_type, $this->options['aiosp_opengraph_types'] ) ) {
 				$post_url = aioseop_get_permalink( $post->ID );
 				$endpoint = sprintf(
-					'https://graph.facebook.com/?%s', http_build_query(
+					'https://graph.facebook.com/?%s',
+					http_build_query(
 						array(
 							'id'     => $post_url,
 							'scrape' => true,
@@ -798,7 +710,8 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( 'publish' === $post_after->post_status && $this->option_isset( 'types' ) && is_array( $this->options['aiosp_opengraph_types'] ) && in_array( $current_post_type, $this->options['aiosp_opengraph_types'] ) ) {
 				$post_url = aioseop_get_permalink( $post_id );
 				$endpoint = sprintf(
-					'https://graph.facebook.com/?%s', http_build_query(
+					'https://graph.facebook.com/?%s',
+					http_build_query(
 						array(
 							'id'     => $post_url,
 							'scrape' => true,
@@ -814,19 +727,20 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		function filter_options( $options, $location ) {
-			if ( $location == 'settings' ) {
+			if ( 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
+
 				list( $legacy, $images ) = $this->get_all_images( $options );
-				if ( isset( $options ) && isset( $options["{$prefix}image"] ) ) {
-					$thumbnail = $options["{$prefix}image"];
-					if ( ctype_digit( (string) $thumbnail ) || ( $thumbnail == 'post' ) ) {
-						if ( $thumbnail == 'post' ) {
+				if ( isset( $options ) && isset( $options[ "{$prefix}image" ] ) ) {
+					$thumbnail = $options[ "{$prefix}image" ];
+					if ( ctype_digit( (string) $thumbnail ) || ( 'post' == $thumbnail ) ) {
+						if ( 'post' == $thumbnail ) {
 							$thumbnail = $images['post1'];
 						} elseif ( ! empty( $legacy[ $thumbnail ] ) ) {
 							$thumbnail = $legacy[ $thumbnail ];
 						}
 					}
-					$options["{$prefix}image"] = $thumbnail;
+					$options[ "{$prefix}image" ] = $thumbnail;
 				}
 				if ( empty( $options[ $prefix . 'image' ] ) ) {
 					$img = array_keys( $images );
@@ -850,12 +764,12 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 */
 		function filter_settings( $settings, $location, $current ) {
 			global $aiosp, $post;
-			if ( $location == 'opengraph' || $location == 'settings' ) {
+			if ( 'opengraph' == $location || 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
-				if ( $location == 'opengraph' ) {
+				if ( 'opengraph' == $location ) {
 					return $settings;
 				}
-				if ( $location == 'settings' ) {
+				if ( 'settings' == $location ) {
 					list( $legacy, $settings[ $prefix . 'image' ]['initial_options'] ) = $this->get_all_images( $current );
 					$opts              = array( 'title', 'desc' );
 					$current_post_type = get_post_type();
@@ -868,10 +782,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 								$flat_type_list[ $k ] = $v;
 							}
 						}
+						$default_fb_type = $this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ];
+						// https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1013
+						// if 'blog' is the selected type but because it is no longer a schema type, we use 'website' instead.
+						if ( 'blog' === $default_fb_type ) {
+							$default_fb_type = 'website';
+						}
+						if ( isset( $flat_type_list[ $default_fb_type ] ) ) {
+							$default_fb_type = $flat_type_list[ $default_fb_type ];
+						}
 						$settings[ $prefix . 'category' ]['initial_options'] = array_merge(
 							array(
-								$this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] => __( 'Default ', 'all-in-one-seo-pack' ) . ' - '
-																										 . $flat_type_list[ $this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] ],
+								$this->options[ "aiosp_opengraph_{$current_post_type}_fb_object_type" ] => __( 'Default ', 'all-in-one-seo-pack' ) . ' - ' . $default_fb_type,
 							),
 							$settings[ $prefix . 'category' ]['initial_options']
 						);
@@ -879,40 +801,40 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					if ( isset( $this->options['aiosp_opengraph_defcard'] ) ) {
 						$settings[ $prefix . 'setcard' ]['default'] = $this->options['aiosp_opengraph_defcard'];
 					}
-					$info = $aiosp->get_page_snippet_info();
-					$title = $info['title'];
+					$info        = $aiosp->get_page_snippet_info();
+					$title       = $info['title'];
 					$description = $info['description'];
 
-					// Description options
+					// Description options.
 					if ( is_object( $post ) ) {
-						// Always show excerpt
+						// Always show excerpt.
 						$description = empty( $this->options['aiosp_opengraph_generate_descriptions'] )
 							? $aiosp->trim_excerpt_without_filters(
 								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ),
-								1000
+								200
 							)
 							: $aiosp->trim_excerpt_without_filters(
 								$aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ),
-								1000
+								200
 							);
 					}
 
-					// #1308 - we want to make sure we are ignoring php version only in the admin area while editing the post, so that it does not impact #932.
-					$screen = get_current_screen();
+					// #1308 - we want to make sure we are ignoring php version only in the admin area
+					// while editing the post, so that it does not impact #932.
+					$screen             = get_current_screen();
 					$ignore_php_version = is_admin() && isset( $screen->id ) && 'post' == $screen->id;
 
-					// Add filters
+					// Add filters.
 					$description = apply_filters( 'aioseop_description', $description, false, $ignore_php_version );
-					// Add placholders
+					// Add placholders.
 					$settings[ "{$prefix}title" ]['placeholder'] = apply_filters( 'aioseop_opengraph_placeholder', $title );
 					$settings[ "{$prefix}desc" ]['placeholder']  = apply_filters( 'aioseop_opengraph_placeholder', $description );
 				}
 				if ( isset( $current[ $prefix . 'setmeta' ] ) && $current[ $prefix . 'setmeta' ] ) {
 					foreach ( $opts as $opt ) {
 						if ( isset( $settings[ $prefix . $opt ] ) ) {
-							$settings[ $prefix . $opt ]['type']      = 'hidden';
-							$settings[ $prefix . $opt ]['label']     = 'none';
-							$settings[ $prefix . $opt ]['help_text'] = '';
+							$settings[ $prefix . $opt ]['type']  = 'hidden';
+							$settings[ $prefix . $opt ]['label'] = 'none';
 							unset( $settings[ $prefix . $opt ]['count'] );
 						}
 					}
@@ -942,9 +864,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 */
 		function override_options( $options, $location, $settings ) {
 			global $aioseop_options;
-			// Prepare default and prefix
+			// Prepare default and prefix.
 			$prefix = $this->get_prefix( $location ) . $location . '_';
-			$opts = array();
+			$opts   = array();
 
 			foreach ( $settings as $k => $v ) {
 				if ( $v['save'] ) {
@@ -955,11 +877,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				switch ( $k ) {
 					case $prefix . 'category':
 						if ( empty( $v ) ) {
-							// Get post type
+							// Get post type.
 							$type = isset( get_current_screen()->post_type )
 								? get_current_screen()->post_type
 								: null;
-							// Assign default from plugin options
+							// Assign default from plugin options.
 							if ( ! empty( $type )
 								&& isset( $aioseop_options['modules'] )
 								&& isset( $aioseop_options['modules']['aiosp_opengraph_options'] )
@@ -968,15 +890,23 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 								$options[ $prefix . 'category' ] =
 									$aioseop_options['modules']['aiosp_opengraph_options'][ 'aiosp_opengraph_' . $type . '_fb_object_type' ];
 							}
-							continue;
 						}
 						break;
 				}
-				if ( $v === null ) {
+				if ( null === $v ) {
 					unset( $options[ $k ] );
 				}
 			}
 			$options = wp_parse_args( $options, $opts );
+
+			// @issue #1013 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1013 ).
+			$post_types = $this->get_post_type_titles();
+			foreach ( $post_types as $slug => $name ) {
+				$field = 'aiosp_opengraph_' . $slug . '_fb_object_type';
+				if ( isset( $options[ $field ] ) && 'blog' === $options[ $field ] ) {
+					$options[ $field ] = 'website';
+				}
+			}
 
 			return $options;
 		}
@@ -1000,7 +930,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		 * @return array
 		 */
 		function filter_metabox_options( $options, $location, $post_id ) {
-			if ( $location == 'settings' ) {
+			if ( 'settings' == $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
 				if ( isset( $options[ $prefix . 'customimg_checker' ] )
 					&& $options[ $prefix . 'customimg_checker' ]
@@ -1013,11 +943,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 
 		/** Custom settings **/
 		function display_custom_options( $buf, $args ) {
-			if ( $args['name'] == 'aiosp_opengraph_scan_header' ) {
+			if ( 'aiosp_opengraph_scan_header' == $args['name'] ) {
 				$buf .= '<div class="aioseop aioseop_options aiosp_opengraph_settings"><div class="aioseop_wrapper aioseop_custom_type" id="aiosp_opengraph_scan_header_wrapper"><div class="aioseop_input" id="aiosp_opengraph_scan_header" style="padding-left:20px;">';
-				$args['options']['type'] = 'submit';
-				$args['attr']            = " class='button-primary' ";
-				$args['value']           = $args['options']['default'] = __( 'Scan Now', 'all-in-one-seo-pack' );
+
+				$args['options']['type']    = 'submit';
+				$args['attr']               = " class='button-primary' ";
+				$args['value']              = __( 'Scan Now', 'all-in-one-seo-pack' );
+				$args['options']['default'] = __( 'Scan Now', 'all-in-one-seo-pack' );
+
 				$buf .= __( 'Scan your site for duplicate social meta tags.', 'all-in-one-seo-pack' );
 				$buf .= '<br /><br />' . $this->get_option_html( $args );
 				$buf .= '</div></div></div>';
@@ -1027,7 +960,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 		}
 
 		function add_attributes( $output ) {
-			// avoid having duplicate meta tags
+			// avoid having duplicate meta tags.
 			$type = $this->type;
 			if ( empty( $type ) ) {
 				$type = 'website';
@@ -1062,8 +995,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			$attributes = apply_filters(
-				$this->prefix . 'attributes', array(
-					'prefix="og: http://ogp.me/ns#"',
+				$this->prefix . 'attributes',
+				array(
+					'prefix="og: https://ogp.me/ns#"',
 				)
 			);
 
@@ -1097,15 +1031,24 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$key               = $this->options['aiosp_opengraph_key'];
 			$dimg              = $this->options['aiosp_opengraph_dimg'];
 			$current_post_type = get_post_type();
-			$title             = $description = $image = $video = '';
+			$title             = '';
+			$description       = '';
+			$image             = '';
+			$video             = '';
 			$type              = $this->type;
 			$sitename          = $this->options['aiosp_opengraph_sitename'];
+			$tag               = '';
+
+			// for some reason, options is not populated correctly during unit tests.
+			if ( defined( 'AIOSEOP_UNIT_TESTING' ) ) {
+				$this->options = $aioseop_options['modules'][ $this->prefix . 'options' ];
+			}
 
 			$appid = isset( $this->options['aiosp_opengraph_appid'] ) ? $this->options['aiosp_opengraph_appid'] : '';
 
 			if ( ! empty( $aioseop_options['aiosp_hide_paginated_descriptions'] ) ) {
 				$first_page = false;
-				if ( $aiosp->get_page_number() < 2 ) {
+				if ( 2 > aioseop_get_page_number() ) {
 					$first_page = true;
 				}
 			} else {
@@ -1114,8 +1057,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$url = $aiosp->aiosp_mrt_get_url( $wp_query );
 			$url = apply_filters( 'aioseop_canonical_url', $url );
 
-			$setmeta      = $this->options['aiosp_opengraph_setmeta'];
-			$social_links = '';
+			// this will collect the extra values that are required outside the below IF block.
+			$extra_params = array();
+
+			$setmeta = $this->options['aiosp_opengraph_setmeta'];
 			if ( is_front_page() ) {
 				$title = $this->options['aiosp_opengraph_hometitle'];
 				if ( $first_page ) {
@@ -1125,9 +1070,9 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					}
 				}
 				if ( ! empty( $this->options['aiosp_opengraph_homeimage'] ) ) {
-					$thumbnail = $this->options['aiosp_opengraph_homeimage'];
+					$image = $this->options['aiosp_opengraph_homeimage'];
 				} else {
-					$thumbnail = $this->options['aiosp_opengraph_dimg'];
+					$image = $this->options['aiosp_opengraph_dimg'];
 				}
 
 				/* If Use AIOSEO Title and Desc Selected */
@@ -1149,10 +1094,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( empty( $description ) && $first_page && ! empty( $post ) && ! post_password_required( $post ) ) {
 
 					if ( ! empty( $post->post_content ) || ! empty( $post->post_excerpt ) ) {
-						$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ), 1000 );
+						$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_excerpt ) ), 200 );
 
 						if ( ! empty( $this->options['aiosp_opengraph_generate_descriptions'] ) ) {
-							$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ), 1000 );
+							$description = $aiosp->trim_excerpt_without_filters( $aiosp->internationalize( preg_replace( '/\s+/', ' ', $post->post_content ) ), 200 );
 						}
 					}
 				}
@@ -1160,25 +1105,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( empty( $description ) && $first_page ) {
 					$description = get_bloginfo( 'description' );
 				}
-				if ( ! empty( $this->options['aiosp_opengraph_profile_links'] ) ) {
-					$social_links = $this->options['aiosp_opengraph_profile_links'];
-					if ( ! empty( $this->options['aiosp_opengraph_social_name'] ) ) {
-						$social_name = $this->options['aiosp_opengraph_social_name'];
-					} else {
-						$social_name = '';
-					}
-					if ( $this->options['aiosp_opengraph_person_or_org'] == 'person' ) {
-						$social_type = 'Person';
-					} else {
-						$social_type = 'Organization';
-					}
-				}
-			} elseif ( is_singular() && $this->option_isset( 'types' )
-					   && is_array( $this->options['aiosp_opengraph_types'] )
-					   && in_array( $current_post_type, $this->options['aiosp_opengraph_types'] )
+			} elseif (
+					is_singular() && $this->option_isset( 'types' ) &&
+					is_array( $this->options['aiosp_opengraph_types'] ) &&
+					in_array( $current_post_type, $this->options['aiosp_opengraph_types'] )
 			) {
 
-				if ( $type == 'article' ) {
+				if ( 'article' == $type ) {
 					if ( ! empty( $metabox['aioseop_opengraph_settings_section'] ) ) {
 						$section = $metabox['aioseop_opengraph_settings_section'];
 					}
@@ -1194,7 +1127,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$domain = $this->options['aiosp_opengraph_twitter_domain'];
 				}
 
-				if ( $type == 'article' && ! empty( $post ) ) {
+				if ( 'article' == $type && ! empty( $post ) ) {
 					if ( isset( $post->post_author ) && ! empty( $this->options['aiosp_opengraph_facebook_author'] ) ) {
 						$author = get_the_author_meta( 'facebook', $post->post_author );
 					}
@@ -1212,6 +1145,18 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$video       = $metabox['aioseop_opengraph_settings_video'];
 				$title       = $metabox['aioseop_opengraph_settings_title'];
 				$description = $metabox['aioseop_opengraph_settings_desc'];
+
+				// Let's make a note of manually provided descriptions/titles as they might need special handling.
+				// @issue #808 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808 ).
+				// @issue #2296 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296 ).
+				$title_from_main_settings = trim( strip_tags( get_post_meta( $post->ID, '_aioseop_title', true ) ) );
+				$desc_from_main_settings  = trim( strip_tags( get_post_meta( $post->ID, '_aioseop_description', true ) ) );
+				if ( empty( $title ) && empty( $title_from_main_settings ) ) {
+					$extra_params['auto_generate_title'] = true;
+				}
+				if ( empty( $description ) && empty( $desc_from_main_settings ) ) {
+					$extra_params['auto_generate_desc'] = true;
+				}
 
 				/* Add AIOSEO variables if Site Title and Desc from AIOSEOP not selected */
 				global $aiosp;
@@ -1233,7 +1178,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$description = $post->post_excerpt;
 
 					if ( $this->options['aiosp_opengraph_generate_descriptions'] || empty( $description ) ) {
-						$description = $post->post_content;
+						if ( ! AIOSEOPPRO || ( AIOSEOPPRO && apply_filters( $this->prefix . 'generate_descriptions_from_content', true, $post ) ) ) {
+							$description = $post->post_content;
+						} else {
+							$description = $post->post_excerpt;
+						}
 					}
 				}
 				if ( empty( $type ) ) {
@@ -1246,7 +1195,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( isset( $metabox['aioseop_opengraph_settings_category'] ) ) {
 					$type = $metabox['aioseop_opengraph_settings_category'];
 				}
-				if ( $type == 'article' ) {
+				if ( 'article' == $type ) {
 					if ( ! empty( $metabox['aioseop_opengraph_settings_section'] ) ) {
 						$section = $metabox['aioseop_opengraph_settings_section'];
 					}
@@ -1260,7 +1209,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				if ( ! empty( $this->options['aiosp_opengraph_twitter_domain'] ) ) {
 					$domain = $this->options['aiosp_opengraph_twitter_domain'];
 				}
-				if ( $type == 'article' && ! empty( $post ) ) {
+				if ( 'article' == $type && ! empty( $post ) ) {
 					if ( isset( $post->post_author ) && ! empty( $this->options['aiosp_opengraph_facebook_author'] ) ) {
 						$author = get_the_author_meta( 'facebook', $post->post_author );
 					}
@@ -1282,11 +1231,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$title = $aiosp->wp_title();
 				}
 				if ( empty( $description ) ) {
-					$term_id = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
-					$term_id = $term_id ? $term_id : get_queried_object()->term_id;
+					$term_id     = isset( $_GET['tag_ID'] ) ? (int) $_GET['tag_ID'] : 0;
+					$term_id     = $term_id ? $term_id : get_queried_object()->term_id;
 					$description = trim( strip_tags( get_term_meta( $term_id, '_aioseop_description', true ) ) );
 				}
-				// Add default title
+				// Add default title.
 				if ( empty( $title ) ) {
 					$title = get_the_title();
 				}
@@ -1295,7 +1244,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 					$description = get_queried_object()->description;
 				}
 				if ( empty( $type ) ) {
-					# https://github.com/semperfiwebdesign/aioseop-pro/issues/321
+					// Pro Issue #321 ( https://github.com/semperfiwebdesign/aioseop-pro/issues/321 ).
 					if ( AIOSEOPPRO && ( is_category() || is_tag() || is_tax() ) ) {
 						$og_options        = $aioseop_options['modules'][ $this->prefix . 'options' ];
 						$current_post_type = get_post_type();
@@ -1328,7 +1277,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				return;
 			}
 
-			if ( $type === 'article' && ! empty( $post ) && is_singular() ) {
+			if ( 'article' === $type && ! empty( $post ) && is_singular() ) {
 				if ( ! empty( $this->options['aiosp_opengraph_gen_tags'] ) ) {
 					if ( ! empty( $this->options['aiosp_opengraph_gen_keywords'] ) ) {
 						$keywords = $aiosp->get_main_keywords();
@@ -1354,14 +1303,19 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			}
 
 			if ( ! empty( $this->options['aiosp_opengraph_title_shortcodes'] ) ) {
-				$title = do_shortcode( $title );
+				$title = aioseop_do_shortcodes( $title );
 			}
 			if ( ! empty( $description ) ) {
 				$description = $aiosp->internationalize( preg_replace( '/\s+/', ' ', $description ) );
 				if ( ! empty( $this->options['aiosp_opengraph_description_shortcodes'] ) ) {
-					$description = do_shortcode( $description );
+					$description = aioseop_do_shortcodes( $description );
 				}
-				$description = $aiosp->trim_excerpt_without_filters( $description, 1000 );
+				if ( ! empty( $this->options['aiosp_opengraph_generate_descriptions'] ) && $this->options['aiosp_opengraph_generate_descriptions'] ) {
+					$description = $aiosp->trim_excerpt_without_filters( $description, 200 );
+				} else {
+					// User input still needs to be run through this function to strip tags.
+					$description = $aiosp->trim_excerpt_without_filters( $description, 99999 );
+				}
 			}
 
 			$title       = $this->apply_cf_fields( $title );
@@ -1372,9 +1326,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			$sitename    = strip_tags( esc_attr( $sitename ) );
 			$description = strip_tags( esc_attr( $description ) );
 
-			if ( empty( $thumbnail ) && ! empty( $image ) ) {
-				$thumbnail = $image;
-			}
+			// Apply last filters.
+			$description = apply_filters( 'aioseop_description', $description );
+
+			/* *** HANDLE IMAGES *** */
+			$thumbnail = $image;
 
 			// Add user supplied default image.
 			if ( empty( $thumbnail ) ) {
@@ -1383,8 +1339,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				} else {
 					$img_type = $this->options['aiosp_opengraph_defimg'];
 					if ( ! empty( $post ) ) {
-						// Customize the type of image per post/post_type.
-						$img_type = apply_filters( $this->prefix . 'default_image_type', $img_type, $post, $type );
+						/**
+						 * Customize the type of image per post/post_type.
+						 *
+						 * @param string  $img_type Type of image source.
+						 * @param WP_Post $post     The global post.
+						 * @param string  $type     The OG Type.
+						 */
+						$img_type = apply_filters( 'aiosp_opengraph_default_image_type', $img_type, $post, $type );
 					}
 					switch ( $img_type ) {
 						case 'featured':
@@ -1423,8 +1385,14 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 			if ( empty( $thumbnail ) && ! empty( $this->options['aiosp_opengraph_fallback'] ) ) {
 				$thumbnail = $this->options['aiosp_opengraph_dimg'];
 				if ( ! empty( $post ) ) {
-					// Customize the default image per post/post_type.
-					$thumbnail = apply_filters( $this->prefix . 'default_image', $thumbnail, $post, $type );
+					/**
+					 * Customize the default image per post/post_type.
+					 *
+					 * @param string  $thumbnail The image URL.
+					 * @param WP_Post $post      The global post.
+					 * @param string  $type      The OG Type.
+					 */
+					$thumbnail = apply_filters( 'aiosp_opengraph_default_image', $thumbnail, $post, $type );
 				}
 			}
 
@@ -1433,7 +1401,11 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$thumbnail = set_url_scheme( $thumbnail );
 			}
 
-			$width = $height = '';
+			/* *** HANDLE IMAGE DIMENSIONS *** */
+
+			// TODO When Image ID is available, use meta data for image dimensions.
+			$width  = '';
+			$height = '';
 			if ( ! empty( $thumbnail ) ) {
 				if ( ! empty( $metabox['aioseop_opengraph_settings_imagewidth'] ) ) {
 					$width = $metabox['aioseop_opengraph_settings_imagewidth'];
@@ -1449,6 +1421,7 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
+			/* *** HANDLE VIDEO *** */
 			if ( ! empty( $video ) ) {
 				if ( ! empty( $metabox['aioseop_opengraph_settings_videowidth'] ) ) {
 					$videowidth = $metabox['aioseop_opengraph_settings_videowidth'];
@@ -1458,7 +1431,13 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				}
 			}
 
-			$card = 'summary';
+			/* *** HANDLE TWITTER CARD *** */
+			$card              = 'summary';
+			$site              = '';
+			$domain            = '';
+			$creator           = '';
+			$twitter_thumbnail = '';
+
 			if ( ! empty( $this->options['aiosp_opengraph_defcard'] ) ) {
 				$card = $this->options['aiosp_opengraph_defcard'];
 			}
@@ -1467,12 +1446,10 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$card = $metabox['aioseop_opengraph_settings_setcard'];
 			}
 
-			// support for changing legacy twitter cardtype-photo to summary large image
-			if ( $card == 'photo' ) {
+			// support for changing legacy twitter cardtype-photo to summary large image.
+			if ( 'photo' == $card ) {
 				$card = 'summary_large_image';
 			}
-
-			$site = $domain = $creator = '';
 
 			if ( ! empty( $this->options['aiosp_opengraph_twitter_site'] ) ) {
 				$site = $this->options['aiosp_opengraph_twitter_site'];
@@ -1488,124 +1465,231 @@ if ( ! class_exists( 'All_in_One_SEO_Pack_Opengraph' ) ) {
 				$creator = AIOSEOP_Opengraph_Public::prepare_twitter_username( $creator );
 			}
 
-			if ( ! empty( $thumbnail ) ) {
-				$twitter_thumbnail = $thumbnail; // Default Twitter image if custom isn't set.
-			}
-
 			if ( isset( $metabox['aioseop_opengraph_settings_customimg_twitter'] ) && ! empty( $metabox['aioseop_opengraph_settings_customimg_twitter'] ) ) {
 				// Set Twitter image from custom.
 				$twitter_thumbnail = set_url_scheme( $metabox['aioseop_opengraph_settings_customimg_twitter'] );
+			} elseif ( ! empty( $thumbnail ) ) {
+				$twitter_thumbnail = $thumbnail; // Default Twitter image if custom isn't set.
 			}
 
-			// Apply last filters.
-			$description = apply_filters( 'aioseop_description', $description );
-
+			/* *** COLLECT DATA *** */
 			$meta = array(
 				'facebook' => array(
-					'title'          => 'og:title',
-					'type'           => 'og:type',
-					'url'            => 'og:url',
-					'thumbnail'      => 'og:image',
-					'width'          => 'og:image:width',
-					'height'         => 'og:image:height',
-					'video'          => 'og:video',
-					'videowidth'     => 'og:video:width',
-					'videoheight'    => 'og:video:height',
-					'sitename'       => 'og:site_name',
-					'key'            => 'fb:admins',
-					'appid'          => 'fb:app_id',
-					'description'    => 'og:description',
-					'section'        => 'article:section',
-					'tag'            => 'article:tag',
-					'publisher'      => 'article:publisher',
-					'author'         => 'article:author',
-					'published_time' => 'article:published_time',
-					'modified_time'  => 'article:modified_time',
+					'og:type'                => $type,
+					'og:title'               => $title,
+					'og:description'         => $description,
+					'og:url'                 => $url,
+					'og:site_name'           => $sitename,
+					'og:image'               => $thumbnail,
+					'og:image:width'         => $width,
+					'og:image:height'        => $height,
+					'og:video'               => isset( $video ) ? $video : '',
+					'og:video:width'         => isset( $videowidth ) ? $videowidth : '',
+					'og:video:height'        => isset( $videoheight ) ? $videoheight : '',
+					'fb:admins'              => $key,
+					'fb:app_id'              => $appid,
+					'article:section'        => isset( $section ) ? $section : '',
+					'article:tag'            => $tag,
+					'article:published_time' => isset( $published_time ) ? $published_time : '',
+					'article:modified_time'  => isset( $modified_time ) ? $modified_time : '',
+					'article:publisher'      => isset( $publisher ) ? $publisher : '',
+					'article:author'         => isset( $author ) ? $author : '',
 				),
 				'twitter'  => array(
-					'card'              => 'twitter:card',
-					'site'              => 'twitter:site',
-					'creator'           => 'twitter:creator',
-					'domain'            => 'twitter:domain',
-					'title'             => 'twitter:title',
-					'description'       => 'twitter:description',
-					'twitter_thumbnail' => 'twitter:image',
+					'twitter:card'        => $card,
+					'twitter:site'        => $site,
+					'twitter:creator'     => $creator,
+					'twitter:domain'      => $domain,
+					'twitter:title'       => $title,
+					'twitter:description' => $description,
+					'twitter:image'       => $twitter_thumbnail,
 				),
 			);
 
-			// Only show if "use schema.org markup is checked".
-			if ( ! empty( $aioseop_options['aiosp_schema_markup'] ) ) {
-				$meta['google+'] = array( 'thumbnail' => 'image' );
+			// Issue #1848 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1848 ).
+			// Issue #2867 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2867 ).
+			if ( is_ssl() ) {
+				$meta['facebook'] += array( 'og:image:secure_url' => $thumbnail );
+				$meta['facebook'] += array( 'og:video:secure_url' => $video );
 			}
 
+			/* *** RENDER DATA *** */
 			$tags = array(
-				'facebook' => array( 'name' => 'property', 'value' => 'content' ),
-				'twitter'  => array( 'name' => 'name', 'value' => 'content' ),
-				'google+'  => array( 'name' => 'itemprop', 'value' => 'content' ),
+				'facebook' => array(
+					'name'  => 'property',
+					'value' => 'content',
+				),
+				'twitter'  => array(
+					'name'  => 'name',
+					'value' => 'content',
+				),
 			);
 
-			foreach ( $meta as $t => $data ) {
-				foreach ( $data as $k => $v ) {
-					if ( empty( $$k ) ) {
-						$$k = '';
-					}
-					$filtered_value = $$k;
-					$filtered_value = apply_filters( $this->prefix . 'meta', $filtered_value, $t, $k );
+			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_meta' filter.
+			$meta_keys = $this->get_reference_meta_keys();
+
+			foreach ( $meta as $k1_social_network => $v1_data ) {
+				foreach ( $v1_data as $k2_meta_tag => $v2_meta_value ) {
+					$filtered_value = $this->handle_meta_tag( $v2_meta_value, $k1_social_network, $k2_meta_tag, $extra_params );
+
+					$tmp_meta_slug = $meta_keys[ $k1_social_network ][ $k2_meta_tag ];
+					/**
+					 * Process meta tags for their idiosyncracies.
+					 *
+					 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
+					 *
+					 * @since 3.0
+					 * @since 3.3 Change variable names for readability.
+					 *
+					 * @param string $filtered_value    The value that is proposed to be shown in the tag.
+					 * @param string $k1_social_network The social network.
+					 * @param string $tmp_meta_slug     The meta tag without the network name prefixed.
+					 * @param string $k2_meta_tag       The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+					 * @param array  $extra_params      Extra parameters that might be required to process the meta tag.
+					 */
+					$filtered_value = apply_filters( 'aiosp_opengraph_meta', $filtered_value, $k1_social_network, $tmp_meta_slug, $k2_meta_tag, $extra_params );
+
 					if ( ! empty( $filtered_value ) ) {
 						if ( ! is_array( $filtered_value ) ) {
 							$filtered_value = array( $filtered_value );
 						}
 
 						/**
-						 * This is to accomodate multiple fb:admins on separate lines.
+						 * This is to accommodate multiple fb:admins on separate lines.
+						 *
 						 * @TODO Eventually we'll want to put this in its own function so things like images work too.
 						 */
-						if ( 'key' === $k ) {
+						if ( 'fb:admins' === $k2_meta_tag ) {
 							$fbadmins = explode( ',', str_replace( ' ', '', $filtered_value[0] ) ); // Trim spaces then turn comma-separated values into an array.
 							foreach ( $fbadmins as $fbadmin ) {
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . $fbadmin . '" />' . "\n";
+								echo '<meta ' . $tags[ $k1_social_network ]['name'] . '="' . $k2_meta_tag . '" ' . $tags[ $k1_social_network ]['value'] . '="' . $fbadmin . '" />' . "\n";
 							}
 						} else {
 							// For everything else.
 							foreach ( $filtered_value as $f ) {
 								// #1363: use esc_attr( $f ) instead of htmlspecialchars_decode( $f, ENT_QUOTES )
-								echo '<meta ' . $tags[ $t ]['name'] . '="' . $v . '" ' . $tags[ $t ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
+								echo '<meta ' . $tags[ $k1_social_network ]['name'] . '="' . $k2_meta_tag . '" ' . $tags[ $k1_social_network ]['value'] . '="' . esc_attr( $f ) . '" />' . "\n";
 							}
 						}
 					}
 				}
 			}
-			$social_link_schema = '';
-			if ( ! empty( $social_links ) ) {
-				$home_url     = esc_url( get_home_url() );
-				$social_links = explode( "\n", $social_links );
-				foreach ( $social_links as $k => $v ) {
-					$v = trim( $v );
-					if ( empty( $v ) ) {
-						unset( $social_links[ $k ] );
-					} else {
-						$v                  = esc_url( $v );
-						$social_links[ $k ] = $v;
-					}
-				}
-				$social_links       = join( '","', $social_links );
-				$social_link_schema = <<<END
-<script type="application/ld+json">
-{ "@context" : "http://schema.org",
-  "@type" : "{$social_type}",
-  "name" : "{$social_name}",
-  "url" : "{$home_url}",
-  "sameAs" : ["{$social_links}"]
-}
-</script>
+		}
 
-END;
+		/**
+		 * Process meta tags for specific idiosyncrasies.
+		 *
+		 * @since 3.0
+		 *
+		 * @param string $value The value that is proposed to be shown in the tag.
+		 * @param string $network The social network.
+		 * @param string $meta_tag The meta tag without the network name prefixed.
+		 * @param array $extra_params Extra parameters that might be required to process the meta tag.
+		 * @return string The final value that will be shown.
+		 */
+		function handle_meta_tag( $value, $network, $meta_tag, $extra_params ) {
+			switch ( $meta_tag ) {
+				case 'type':
+					// @issue 1013 ( https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/1013 ).
+					if ( 'blog' === $value ) {
+						$value = 'website';
+					}
+					break;
 			}
-			echo apply_filters( 'aiosp_opengraph_social_link_schema', $social_link_schema );
+
+			// TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_disable_meta_tag_truncation' filter.
+			$meta_keys = $this->get_reference_meta_keys();
+
+			$tmp_meta_slug = $meta_keys[ $network ][ $meta_tag ];
+
+			/**
+			 * Disables truncation of meta tags. Return true to shortcircuit and disable truncation.
+			 *
+			 * @todo Remove `$tmp_meta_slug` and remove `$meta_keys`.
+			 *
+			 * @since 3.0
+			 *
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/808
+			 * @issue https://github.com/semperfiwebdesign/all-in-one-seo-pack/issues/2296
+			 * @link https://developer.twitter.com/en/docs/tweets/optimize-with-cards/overview/markup.html
+			 *
+			 * @param bool The value that is proposed to be shown in the tag.
+			 * @param string $network The social network.
+			 * @param string $tmp_meta_slug The meta tag without the network name prefixed.
+			 * @param string $meta_tag The meta tag with the network name prefixed. This is not always $network:$meta_tag.
+			 */
+			if ( true === apply_filters( $this->prefix . 'disable_meta_tag_truncation', false, $network, $tmp_meta_slug, $meta_tag ) ) {
+				return $value;
+			}
+
+			if ( isset( $extra_params['auto_generate_desc'] ) && $extra_params['auto_generate_desc'] ) {
+				switch ( $meta_tag ) {
+					case 'twitter:title':
+						$value = trim( $this->substr( $value, 0, 70 ) );
+						break;
+					case 'og:description':
+					case 'twitter:description':
+						$value = trim( $this->substr( $value, 0, 200 ) );
+						break;
+				}
+			}
+
+			return $value;
+		}
+
+		/**
+		 * Get Reference Meta Keys Array.
+		 *
+		 * TODO Remove when `$tmp_meta_slug` is removed from 'aiosp_opengraph_disable_meta_tag_truncation' & 'aiosp_opengraph_meta' filter.
+		 *
+		 * @since 3.3
+		 *
+		 * @return array
+		 */
+		private function get_reference_meta_keys() {
+			$meta_keys = array(
+				'facebook' => array(
+					'og:type'                => 'type',
+					'og:title'               => 'title',
+					'og:description'         => 'description',
+					'og:url'                 => 'url',
+					'og:site_name'           => 'sitename',
+					'og:image'               => 'thumbnail',
+					'og:image:width'         => 'width',
+					'og:image:height'        => 'height',
+					'og:video'               => 'video',
+					'og:video:width'         => 'videowidth',
+					'og:video:height'        => 'videoheight',
+					'fb:admins'              => 'key',
+					'fb:app_id'              => 'appid',
+					'article:section'        => 'section',
+					'article:tag'            => 'tag',
+					'article:published_time' => 'published_time',
+					'article:modified_time'  => 'modified_time',
+					'article:publisher'      => 'publisher',
+					'article:author'         => 'author',
+				),
+				'twitter'  => array(
+					'twitter:card'        => 'card',
+					'twitter:site'        => 'site',
+					'twitter:creator'     => 'creator',
+					'twitter:domain'      => 'domain',
+					'twitter:title'       => 'title',
+					'twitter:description' => 'description',
+					'twitter:image'       => 'twitter_thumbnail',
+				),
+			);
+			if ( is_ssl() ) {
+				$meta_keys['facebook'] += array( 'og:image:secure_url' => 'thumbnail_1' );
+				$meta_keys['facebook'] += array( 'og:video:secure_url' => 'video_1' );
+			}
+
+			return $meta_keys;
 		}
 
 		/**
 		 * Do / adds opengraph properties to meta.
+		 *
 		 * @since 2.3.11
 		 *
 		 * @global array $aioseop_options AIOSEOP plugin options.
@@ -1617,7 +1701,7 @@ END;
 			) {
 				add_filter( 'language_attributes', array( &$this, 'add_attributes' ) );
 			}
-			if ( ! defined( 'DOING_AJAX' ) ) {
+			if ( ! wp_doing_ajax() ) {
 				add_action( 'aioseop_modules_wp_head', array( &$this, 'add_meta' ), 5 );
 				// Add social meta to AMP plugin.
 				if ( apply_filters( 'aioseop_enable_amp_social_meta', true ) === true ) {
@@ -1658,31 +1742,45 @@ END;
 		function admin_init() {
 			add_filter( $this->prefix . 'display_settings', array( &$this, 'filter_settings' ), 10, 3 );
 			add_filter( $this->prefix . 'override_options', array( &$this, 'override_options' ), 10, 3 );
-			add_filter( $this->get_prefix( 'settings' ) . 'default_options', array(
-				&$this,
-				'filter_default_options',
-			), 10, 2 );
 			add_filter(
-				$this->get_prefix( 'settings' ) . 'filter_metabox_options', array(
-				&$this,
-				'filter_metabox_options',
-			), 10, 3
+				$this->get_prefix( 'settings' ) . 'default_options',
+				array(
+					&$this,
+					'filter_default_options',
+				),
+				10,
+				2
 			);
 			add_filter(
-				$this->get_prefix( 'settings' ) . 'filter_term_metabox_options', array(
-				&$this,
-				'filter_metabox_options',
-			), 10, 3
+				$this->get_prefix( 'settings' ) . 'filter_metabox_options',
+				array(
+					&$this,
+					'filter_metabox_options',
+				),
+				10,
+				3
 			);
-			$post_types                                        = $this->get_post_type_titles();
-			$rempost                                           = array(
+			add_filter(
+				$this->get_prefix( 'settings' ) . 'filter_term_metabox_options',
+				array(
+					&$this,
+					'filter_metabox_options',
+				),
+				10,
+				3
+			);
+
+			$post_types = $this->get_post_type_titles();
+			$rempost    = array(
 				'revision'            => 1,
 				'nav_menu_item'       => 1,
 				'custom_css'          => 1,
 				'customize_changeset' => 1,
 			);
-			$post_types                                        = array_diff_key( $post_types, $rempost );
+			$post_types = array_diff_key( $post_types, $rempost );
+
 			$this->default_options['types']['initial_options'] = $post_types;
+
 			foreach ( $post_types as $slug => $name ) {
 				$field                                     = $slug . '_fb_object_type';
 				$this->default_options[ $field ]           = array(
@@ -1693,14 +1791,10 @@ END;
 					'default'         => 'article',
 					'condshow'        => array( 'aiosp_opengraph_types\[\]' => $slug ),
 				);
-				$this->help_text[ $field ]                 = __( 'Choose a default value that best describes the content of your post type.', 'all-in-one-seo-pack' );
-				$this->help_anchors[ $field ]              = '#content-object-types';
 				$this->locations['opengraph']['options'][] = $field;
 				$this->layout['facebook']['options'][]     = $field;
 			}
 			$this->setting_options();
-			$this->add_help_text_links();
-
 		}
 
 		function get_all_images( $options = null, $p = null ) {
@@ -1715,7 +1809,7 @@ END;
 				$size    = apply_filters( 'post_thumbnail_size', 'large' );
 				$default = $this->get_the_image_by_default();
 				if ( ! empty( $default ) ) {
-					$default = set_url_scheme( $default );
+					$default         = set_url_scheme( $default );
 					$img[ $default ] = 0;
 				}
 				$img = array_merge( $img, parent::get_all_images( $options, null ) );
@@ -1730,14 +1824,15 @@ END;
 				$img[ $options['aioseop_opengraph_settings_customimg_twitter'] ] = 'customimg_twitter';
 			}
 
-			if ( $author_img = $this->get_the_image_by_author( $p ) ) {
+			$author_img = $this->get_the_image_by_author( $p );
+			if ( $author_img ) {
 				$image['author'] = $author_img;
 			}
 			$image  = array_flip( $img );
 			$images = array();
 			if ( ! empty( $image ) ) {
 				foreach ( $image as $k => $v ) {
-					$images[ $v ] = '<img height=150 src="' . $v . '">';
+					$images[ $v ] = '<img alt="" height=150 src="' . $v . '">';
 				}
 			}
 
@@ -1745,7 +1840,7 @@ END;
 		}
 
 		function get_the_image_by_author( $options = null, $p = null ) {
-			if ( $p === null ) {
+			if ( null === $p ) {
 				global $post;
 			} else {
 				$post = $p;
@@ -1789,22 +1884,58 @@ END;
 		 * @param string $hook_suffix
 		 */
 		public function admin_enqueue_scripts( $hook_suffix ) {
-			wp_enqueue_script(
-				'aioseop-opengraph-script',
-				AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.js',
-				array(),
-				AIOSEOP_VERSION
-			);
+			global $current_screen;
+
+			$is_gutenberg = 'false';
+			if ( method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor() ) {
+				$is_gutenberg = 'true';
+			}
+
+			switch ( $hook_suffix ) {
+				case 'term.php':
+					// Legacy code for taxonomy terms until we refactor all title format related code.
+					$count_chars_data['aiosp_title_extra'] = 0;
+					wp_enqueue_script(
+						'aioseop-count-chars-old',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars-old.js',
+						array(),
+						AIOSEOP_VERSION,
+						true
+					);
+					break;
+				default:
+					wp_enqueue_script(
+						'aioseop-opengraph-script',
+						AIOSEOP_PLUGIN_URL . 'js/modules/aioseop_opengraph.js',
+						array(),
+						AIOSEOP_VERSION
+					);
+
+					wp_enqueue_script(
+						'aioseop-count-chars',
+						AIOSEOP_PLUGIN_URL . 'js/admin/aioseop-count-chars.js',
+						array(),
+						AIOSEOP_VERSION
+					);
+
+					$count_chars_data = array(
+						'isGutenberg'   => $is_gutenberg,
+						'pluginDirName' => AIOSEOP_PLUGIN_DIRNAME,
+						'currentPage'   => $hook_suffix,
+					);
+					wp_localize_script( 'aioseop-count-chars', 'aioseopOGCharacterCounter', $count_chars_data );
+					break;
+			}
 
 			// Dev note: If certain JS files need to be restricted to select screens, then follow concept
 			// used in `All_in_One_SEO_Pack::admin_enqueue_scripts()` (v2.9.1); which uses the `$hook_suffix`
 			// and a switch-case. This also helps prevent unnessecarily processing localized data when it isn't needed.
-
 			parent::admin_enqueue_scripts( $hook_suffix );
 		}
 
 		/**
 		 * Enqueue our file upload scripts and styles.
+		 *
 		 * @param $hook
 		 */
 		function og_admin_enqueue_scripts( $hook ) {
@@ -1825,9 +1956,9 @@ END;
 			if ( $update ) {
 				return;
 			}
-			if ( $this->locations !== null ) {
+			if ( null !== $this->locations ) {
 				foreach ( $this->locations as $k => $v ) {
-					if ( isset( $v['type'] ) && ( $v['type'] === 'metabox' ) ) {
+					if ( isset( $v['type'] ) && ( 'metabox' === $v['type'] ) ) {
 						$opts    = $this->default_options( $k );
 						$options = array();
 						$update  = false;
@@ -1851,6 +1982,7 @@ END;
 		/**
 		 * Returns the placeholder filtered and ready for DOM display.
 		 * filter:aioseop_opengraph_placeholder
+		 *
 		 * @since 2.4.14
 		 *
 		 * @param mixed  $placeholder Placeholder to be filtered.
@@ -1865,6 +1997,7 @@ END;
 		/**
 		 * Returns filtered default options.
 		 * filter:{prefix}default_options
+		 *
 		 * @since 2.4.13
 		 *
 		 * @param array  $options  Default options.
@@ -1873,9 +2006,9 @@ END;
 		 * @return array
 		 */
 		public function filter_default_options( $options, $location ) {
-			if ( $location === 'settings' ) {
+			if ( 'settings' === $location ) {
 				$prefix = $this->get_prefix( $location ) . $location . '_';
-				// Add image checker as default
+				// Add image checker as default.
 				$options[ $prefix . 'customimg_checker' ] = 0;
 			}
 			return $options;

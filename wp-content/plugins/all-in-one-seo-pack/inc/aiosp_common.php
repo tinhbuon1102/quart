@@ -1,7 +1,9 @@
 <?php
-
 /**
- * @package All-in-One-SEO-Pack
+ * AIOSEOP Common
+ *
+ * @package All_in_One_SEO_Pack
+ * @since ?
  */
 
 /**
@@ -15,6 +17,8 @@ class aiosp_common {
 // @codingStandardsIgnoreEnd
 
 	/**
+	 * Attachment URL => PostIDs
+	 *
 	 * @var null|array
 	 *
 	 * @since 2.9.2
@@ -22,15 +26,20 @@ class aiosp_common {
 	public static $attachment_url_postids = null;
 
 	/**
-	 * aiosp_common constructor.
+	 * Constructor
 	 *
+	 * @since 2.3.3
 	 */
 	function __construct() {
 
 	}
 
 	/**
+	 * Clear WPE Cache
+	 *
 	 * Clears WP Engine cache.
+	 *
+	 * @since 2.4.10
 	 */
 	static function clear_wpe_cache() {
 		if ( class_exists( 'WpeCommon' ) ) {
@@ -41,12 +50,15 @@ class aiosp_common {
 	}
 
 	/**
-	 * @param null $p
+	 * Get Blog Page
 	 *
+	 * @since 2.3.3
+	 *
+	 * @param null $p
 	 * @return array|null|string|WP_Post
 	 */
 	static function get_blog_page( $p = null ) {
-		static $blog_page = '';
+		static $blog_page      = '';
 		static $page_for_posts = '';
 		if ( null === $p ) {
 			global $post;
@@ -66,23 +78,26 @@ class aiosp_common {
 	}
 
 	/**
+	 * Get Upgrade Hyperlink
+	 *
+	 * @since 2.3.3
+	 *
 	 * @param string $location
 	 * @param string $title
 	 * @param string $anchor
 	 * @param string $target
 	 * @param string $class
 	 * @param string $id
-	 *
 	 * @return string
 	 */
 	static function get_upgrade_hyperlink( $location = '', $title = '', $anchor = '', $target = '', $class = '', $id = 'aio-pro-update' ) {
 
 		$affiliate_id = '';
 
-		// call during plugins_loaded
+		// call during plugins_loaded.
 		$affiliate_id = apply_filters( 'aiosp_aff_id', $affiliate_id );
 
-		// build URL
+		// build URL.
 		$url = 'https://semperplugins.com/all-in-one-seo-pack-pro-version/';
 		if ( $location ) {
 			$url .= '?loc=' . $location;
@@ -91,7 +106,7 @@ class aiosp_common {
 			$url .= "?ap_id=$affiliate_id";
 		}
 
-		// build hyperlink
+		// build hyperlink.
 		$hyperlink = '<a ';
 		if ( $target ) {
 			$hyperlink .= "target=\"$target\" ";
@@ -109,24 +124,31 @@ class aiosp_common {
 	}
 
 	/**
+	 * Get Upgrade URL
+	 *
 	 * Gets the upgrade to Pro version URL.
+	 *
+	 * @since 2.3.3
 	 */
 	static function get_upgrade_url() {
-		// put build URL stuff in here
+		// put build URL stuff in here.
 	}
 
 	/**
+	 * Absolutize URL
+	 *
 	 * Check whether a url is relative and if it is, make it absolute.
 	 *
-	 * @param string $url URL to check.
+	 * @since 2.4.2
 	 *
+	 * @param string $url URL to check.
 	 * @return string
 	 */
 	static function absolutize_url( $url ) {
 		if ( 0 !== strpos( $url, 'http' ) && '/' !== $url ) {
 			if ( 0 === strpos( $url, '//' ) ) {
 				// for //<host>/resource type urls.
-				$scheme = parse_url( home_url(), PHP_URL_SCHEME );
+				$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
 				$url    = $scheme . ':' . $url;
 			} else {
 				// for /resource type urls.
@@ -137,48 +159,58 @@ class aiosp_common {
 	}
 
 	/**
+	 * Make URL Valid Smartly
+	 *
 	 * Check whether a url is relative (does not contain a . before the first /) or absolute and makes it a valid url.
 	 *
-	 * @param string $url URL to check.
+	 * @since 2.8
 	 *
+	 * @param string $url URL to check.
 	 * @return string
 	 */
 	static function make_url_valid_smartly( $url ) {
-		$scheme = parse_url( home_url(), PHP_URL_SCHEME );
+		$scheme = wp_parse_url( home_url(), PHP_URL_SCHEME );
 		if ( 0 !== strpos( $url, 'http' ) ) {
 			if ( 0 === strpos( $url, '//' ) ) {
 				// for //<host>/resource type urls.
-				$url    = $scheme . ':' . $url;
+				$url = $scheme . ':' . $url;
 			} elseif ( strpos( $url, '.' ) !== false && strpos( $url, '/' ) !== false && strpos( $url, '.' ) < strpos( $url, '/' ) ) {
 				// if the . comes before the first / then this is absolute.
-				$url    = $scheme . '://' . $url;
+				$url = $scheme . '://' . $url;
 			} else {
 				// for /resource type urls.
 				$url = home_url( $url );
 			}
-		} else if ( strpos( $url, 'http://' ) === false ) {
+		} elseif ( strpos( $url, 'http://' ) === false ) {
 			if ( 0 === strpos( $url, 'http:/' ) ) {
-				$url	= $scheme . '://' .  str_replace( 'http:/', '', $url );
-			} else if ( 0 === strpos( $url, 'http:' ) ) {
-				$url	= $scheme . '://' . str_replace( 'http:', '', $url );
+				$url = $scheme . '://' . str_replace( 'http:/', '', $url );
+			} elseif ( 0 === strpos( $url, 'http:' ) ) {
+				$url = $scheme . '://' . str_replace( 'http:', '', $url );
 			}
 		}
 		return $url;
 	}
 
 	/**
+	 * Is URL Valid
+	 *
 	 * Check whether a url is valid.
 	 *
-	 * @param string $url URL to check.
+	 * @since 2.8
 	 *
+	 * @param string $url URL to check.
 	 * @return bool
 	 */
 	public static function is_url_valid( $url ) {
-		return filter_var( filter_var( $url, FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED ) !== false;
+		return filter_var( filter_var( $url, FILTER_SANITIZE_URL ), FILTER_VALIDATE_URL ) !== false;
 	}
 
 	/**
+	 * Make XML Safe
+	 *
 	 * Renders the value XML safe.
+	 *
+	 * @since 2.10
 	 */
 	public static function make_xml_safe( $tag, $value ) {
 		// some tags contain an array of values.
@@ -192,15 +224,10 @@ class aiosp_common {
 		} else {
 			// some tags contain sanitized to some extent but they do not encode < and >.
 			if ( ! in_array( $tag, array( 'image:title' ), true ) ) {
-				// use the WP core functions if they exist.
-				if ( function_exists( 'convert_chars' ) && function_exists( 'wptexturize' ) ) {
-					$value = convert_chars( wptexturize( $value ) );
-				} else {
-					$value = htmlspecialchars( $value, ENT_QUOTES );
-				}
+				$value = convert_chars( wptexturize( $value ) );
 			}
 		}
-		return esc_html( $value );
+		return ent2ncr( esc_html( $value ) );
 	}
 
 	/**
@@ -237,7 +264,7 @@ class aiosp_common {
 		static $results_1;
 		static $results_2;
 
-		$id = 0;
+		$id      = 0;
 		$url_md5 = md5( $url );
 
 		// Gets the URL => PostIDs array.
@@ -272,21 +299,23 @@ class aiosp_common {
 					$id = intval( $results_1[ $url_md5 ] );
 				}
 
+				// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 				// TODO Add setting to enable; this is TOO MEMORY INTENSE which could result in 1 or more crashes,
 				// TODO however some may still need custom image URLs.
 				// TODO NOTE: Transient data does prevent continual crashes.
-//				else {
-//					// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
-//					// and returns the original attachment ID (there is no custom attachment IDs).
-//
-//					if ( is_null( $results_2 ) ) {
-//						$results_2 = aiosp_common::attachment_url_to_postid_query_2();
-//					}
-//
-//					if ( isset( $results_2[ $url_md5 ] ) ) {
-//						$id = intval( $results_2[ $url_md5 ] );
-//					}
-//				}
+				// else {
+				// Results_2 query looks for the URL that is cropped and edited. This searches JSON strings
+				// and returns the original attachment ID (there is no custom attachment IDs).
+				//
+				// if ( is_null( $results_2 ) ) {
+				// $results_2 = aiosp_common::attachment_url_to_postid_query_2();
+				// }
+				//
+				// if ( isset( $results_2[ $url_md5 ] ) ) {
+				// $id = intval( $results_2[ $url_md5 ] );
+				// }
+				// }
+				// phpcs:enable
 			}
 
 			self::$attachment_url_postids[ $url_md5 ] = $id;
@@ -303,6 +332,8 @@ class aiosp_common {
 	}
 
 	/**
+	 * Set Transient URL Post IDs
+	 *
 	 * Sets the transient data at the last hook instead at every call.
 	 *
 	 * @see set_transient()
@@ -374,10 +405,12 @@ class aiosp_common {
 		global $wpdb;
 
 		$tmp_arr = array();
+		// @codingStandardsIgnoreStart WordPress.WP.PreparedSQL.NotPrepared
 		$results_2 = $wpdb->get_results(
 			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE `meta_key` = '_wp_attachment_metadata' AND `meta_value` != '" . serialize( array() ) . "';",
 			ARRAY_A
 		);
+		// @codingStandardsIgnoreStop WordPress.WP.PreparedSQL.NotPrepared
 		if ( $results_2 ) {
 			for ( $i = 0; $i < count( $results_2 ); $i++ ) {
 				// TODO Investigate potentual memory leak(s); currently with unserialize.
