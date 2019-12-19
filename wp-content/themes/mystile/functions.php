@@ -1094,7 +1094,7 @@ function add_schedule_private_product($post) {
                 });
             });
         </script>
-    </div><?php // /misc-pub-section     ?>
+    </div><?php // /misc-pub-section                                       ?>
     <?php
 }
 
@@ -1145,22 +1145,47 @@ function touch_private_time($edit = 1, $for_post = 1, $tab_index = 0, $multi = 0
     echo '</div><input type="hidden" id="ss_private" name="private_time[ss]" value="' . $ss . '" disabled/>';
 }
 
-add_filter('woocommerce_shipping_free_shipping_is_available', 'ch_free_is_available_in_time', 10, 1);
-if (!function_exists('ch_free_is_available_in_time')) {
-
-    function ch_free_is_available_in_time($is_available) {
-        date_default_timezone_set('Asia/Tokyo');
-        $from = "2018-12-21 21:00:00.0";
-        $to = "2018-12-25 23:59:00.0";
-//  check if date is today or in the future
-        if (time() >= strtotime($from) && time() <= strtotime($to)) {
-            return $is_available;
-        } else {
-            return false;
+function ch_hide_shipping_when_free_is_available($rates) {
+    $from = "2019-12-19 21:00:00.0";
+    $to = "2019-12-25 23:59:00.0";
+    //change free shipping except "luckybag20" category 
+    $hide_free_shipping = true;
+    $arr_cat_except_to_hide = array('luckybag20');
+    foreach (WC()->cart->get_cart() as $cart_item_key => $values) {
+        $_product = $values['data'];
+        $term_list = wp_get_post_terms($_product->id, 'product_cat', array('fields' => 'all'));
+        foreach ($term_list as $key_term => $term) {
+            if (@in_array($term->slug, $arr_cat_except_to_hide)) {
+                $hide_free_shipping = false;
+                break;
+            }
+        }
+        if ($hide_free_shipping === false) {
+            break;
         }
     }
-
+//  check if date is today or in the future
+    if (current_time('timestamp') >= strtotime($from) && current_time('timestamp') <= strtotime($to) && $hide_free_shipping === true) {
+        $free = array();
+        foreach ($rates as $rate_id => $rate) {
+            if ('free_shipping' === $rate->method_id) {
+                $free[$rate_id] = $rate;
+                break;
+            }
+        }
+        return !empty($free) ? $free : $rates;
+    } else {
+        foreach ($rates as $rate_id => $rate) {
+            if ('free_shipping' === $rate->method_id) {
+                unset($rates[$rate_id]); //remove free shipping
+                break;
+            }
+        }
+        return $rates;
+    }
 }
+
+add_filter('woocommerce_package_rates', 'ch_hide_shipping_when_free_is_available', 100);
 
 function ch_filter_edit_shop_order_views_mine($views) {
     // Unset the Mine option. 
@@ -1251,15 +1276,30 @@ function is_accessory_product($product_id) {
     return false;
 }
 
+function is_product_in_cat($product_id, $category_slug) {
+    $accessories = mystile_get_taxonomy_hierarchy('product_cat', 0, $category_slug);
+    $product_cats = get_the_terms($product_id, 'product_cat');
+    foreach ($product_cats as $product_cat) {
+        if (in_array($product_cat->term_id, array_keys($accessories))) {
+            return true;
+        }
+    }
+    return false;
+}
+
 add_filter('woocommerce_add_to_cart_validation', 'elsey_validate_specific_product_in_cart', 1, 5);
 
 function elsey_validate_specific_product_in_cart($valid, $product_id, $quantity = 0, $variation_id = 0, $variations = null) {
     foreach (WC()->cart->get_cart() as $cart_item) {
-        if (is_accessory_product($cart_item['product_id']) && !is_accessory_product($product_id)) {
-            wc_add_notice(__('受注商品は通常商品と一緒にカートに入れることはできません。別々にご注文をお願い致します。', 'elsey'), 'error');
+        $message = "予約商品、受注商品、通常商品は同時にご注文できません。";
+        if ((is_product_in_cat($cart_item['product_id'], 'luckybag20') && !is_product_in_cat($product_id, 'luckybag20')) || (is_product_in_cat($product_id, 'luckybag20') && !is_product_in_cat($cart_item['product_id'], 'luckybag20'))) {
+            wc_add_notice(__($message, 'elsey'), 'error');
             return false;
-        } elseif (!is_accessory_product($cart_item['product_id']) && is_accessory_product($product_id)) {
-            wc_add_notice(__('受注商品は通常商品と一緒にカートに入れることはできません。別々にご注文をお願い致します。', 'elsey'), 'error');
+        } elseif ((is_product_in_cat($cart_item['product_id'], 'pre-order') && !is_product_in_cat($product_id, 'pre-order')) || (is_product_in_cat($product_id, 'pre-order') && !is_product_in_cat($cart_item['product_id'], 'pre-order'))) {
+            wc_add_notice(__($message, 'elsey'), 'error');
+            return false;
+        } elseif ((is_product_in_cat($cart_item['product_id'], 'luckybag20') || is_product_in_cat($cart_item['product_id'], 'pre-order')) && (!is_product_in_cat($product_id, 'luckybag20') || !is_product_in_cat($product_id, 'pre-order'))) {
+            wc_add_notice(__($message, 'elsey'), 'error');
             return false;
         }
     }
